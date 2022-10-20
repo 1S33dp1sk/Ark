@@ -15,7 +15,7 @@
     #define PROTOCOL_STYLE "axA-E@N#A{E}"
     #define PROTOCOL_LINE "aAedNME\0"
     #define ATHER_SERVICE "0xather"
-    #define X_NODEF &"\0"
+    // #define X_NODEF &"\0"
 
 
     // #include <sys/types.h>
@@ -29,13 +29,6 @@
     #include <netinet/in.h>
     #include <errno.h>
     #include <poll.h>
-    
-    typedef struct {
-        unsigned char _diff; // 1 byte
-        unsigned int _len , _size , _select; // 2bytes each
-        unsigned char *_name , *_bin , *_type; // string
-        unsigned long long int _selector; // 8 bytes
-    } Protocol;
 
     #define MOR( __ather__ ) __MOR( __ather__ )
     #define LES( __ather__ ) __LES( __ather__ )
@@ -59,9 +52,9 @@
 
     static const char protocol_example[49] = "3xather-pub*\\1@4k#default\\{#}";
 
-    // int __I( unsigned char *__ , unsigned long long int _ , unsigned int b );
+    int __I( unsigned char *__ , unsigned long long int _ , unsigned int b );
     // int __T( unsigned char *__ , unsigned long long int _ , unsigned int b );
-    // unsigned long long int __R( unsigned char *__ , unsigned int _ ,unsigned int b);
+    unsigned long long int __R( unsigned char *__ , unsigned int _ ,unsigned int b);
     // unsigned int __pack( unsigned char *__ , char *__fmt , Protocol *p ); // return packet size
     // void unpack__( unsigned char *__ , char *__fmt , Protocol *p );
     // int sendall( int s , char *buf , int *len );
@@ -206,12 +199,6 @@
         errno = saved_errno;
     }
 
-    void *get_in_addr( struct sockaddr *__s_addr ) {
-        if ( __s_addr -> sa_family == AF_INET ) {
-            return &( ( ( struct sockaddr_in * ) __s_addr ) -> sin_addr );
-        }
-        return &( ( ( struct sockaddr_in6 * ) __s_addr ) -> sin6_addr );
-    }
 
     int __LES( Ather *_ ) {
 
@@ -538,128 +525,128 @@
     // __ buffer
     // b base 
     // `_` is a value of the unsigned char appended 
-    int __I( unsigned char *__ , unsigned long long int _ , unsigned int b ) {
-        while ( b > 0 ) {
-            *__++ = _>>(b+1)*8;
-            b--;
-        }
-        *__++ = _>>8; *__++ = _;
-        return 0;
-    }
+    // int __I( unsigned char *__ , unsigned long long int _ , unsigned int b ) {
+    //     while ( b > 0 ) {
+    //         *__++ = _>>(b+1)*8;
+    //         b--;
+    //     }
+    //     *__++ = _>>8; *__++ = _;
+    //     return 0;
+    // }
 
-    // `_` flag for signed/unsigned. `_` = 0 == unsigned
-    unsigned long long int __R( unsigned char *__ , unsigned int _ , unsigned int b ) {
-        unsigned int b__ = b;
-        if ( !b ) {
-            #if defined( xType )
-                #undef xType
-            #endif
-            #define xType unsigned int
-            #if defined( cType )
-                #undef cType
-            #endif
-            #define cType ( unsigned int )
-            #if defined( mVal )
-                #undef mVal
-            #endif
-            #define mVal 0x7fffu
-            #if defined( fVal )
-                #undef fVal
-            #endif
-            #define fVal 0xffffu
-            #if defined( sType )
-                #undef sType
-            #endif
-            #define sType int
-            #if defined( sCType )
-                #undef sCType
-            #endif
-            #define sCType ( int )
-            #if defined( DEBUG )
-                printf( "16-bit :: %04lx :: %04lx\n" , mVal , fVal );
-            #endif
-        }
-        else if ( b == 2 ) {
-            #if defined( xType )
-                #undef xType
-            #endif
-            #define xType unsigned long int 
-            #if defined( cType )
-                #undef cType
-            #endif
-            #define cType ( unsigned long int  )
-            #if defined( mVal )
-                #undef mVal
-            #endif
-            #define mVal 0x7fffffffu
-            #if defined( fVal )
-                #undef fVal
-            #endif
-            #define fVal 0xffffffffu
-            #if defined( sType )
-                #undef sType
-            #endif
-            #define sType long int 
-            #if defined( sCType )
-                #undef sCType
-            #endif
-            #define sCType ( long int  )
-            #if defined( DEBUG )
-               printf( "32-bit :: %08lx :: %08lx\n" , mVal , fVal );
-            #endif
-        }
-        else if ( b == 6 ) {
-            #if defined( xType )
-                #undef xType
-            #endif
-            #define xType unsigned long long int 
-            #if defined( cType )
-                #undef cType
-            #endif
-            #define cType ( unsigned long long int  )
-            #if defined( mVal )
-                #undef mVal
-            #endif
-            #define mVal 0x7fffffffffffffffu
-            #if defined( fVal )
-                #undef fVal
-            #endif
-            #define fVal 0xffffffffffffffffu
-            #if defined( sType )
-                #undef sType
-            #endif
-            #define sType long long int 
-            #if defined( sCType )
-                #undef sCType
-            #endif
-            #define sCType ( long long int  )
-            #if defined( DEBUG )
-                printf( "64-bit :: %016lx :: %016lx \n" , mVal , fVal );
-            #endif
-        }
+    // // `_` flag for signed/unsigned. `_` = 0 == unsigned
+    // unsigned long long int __R( unsigned char *__ , unsigned int _ , unsigned int b ) {
+    //     unsigned int b__ = b;
+    //     if ( !b ) {
+    //         #if defined( xType )
+    //             #undef xType
+    //         #endif
+    //         #define xType unsigned int
+    //         #if defined( cType )
+    //             #undef cType
+    //         #endif
+    //         #define cType ( unsigned int )
+    //         #if defined( mVal )
+    //             #undef mVal
+    //         #endif
+    //         #define mVal 0x7fffu
+    //         #if defined( fVal )
+    //             #undef fVal
+    //         #endif
+    //         #define fVal 0xffffu
+    //         #if defined( sType )
+    //             #undef sType
+    //         #endif
+    //         #define sType int
+    //         #if defined( sCType )
+    //             #undef sCType
+    //         #endif
+    //         #define sCType ( int )
+    //         #if defined( DEBUG )
+    //             printf( "16-bit :: %04lx :: %04lx\n" , mVal , fVal );
+    //         #endif
+    //     }
+    //     else if ( b == 2 ) {
+    //         #if defined( xType )
+    //             #undef xType
+    //         #endif
+    //         #define xType unsigned long int 
+    //         #if defined( cType )
+    //             #undef cType
+    //         #endif
+    //         #define cType ( unsigned long int  )
+    //         #if defined( mVal )
+    //             #undef mVal
+    //         #endif
+    //         #define mVal 0x7fffffffu
+    //         #if defined( fVal )
+    //             #undef fVal
+    //         #endif
+    //         #define fVal 0xffffffffu
+    //         #if defined( sType )
+    //             #undef sType
+    //         #endif
+    //         #define sType long int 
+    //         #if defined( sCType )
+    //             #undef sCType
+    //         #endif
+    //         #define sCType ( long int  )
+    //         #if defined( DEBUG )
+    //            printf( "32-bit :: %08lx :: %08lx\n" , mVal , fVal );
+    //         #endif
+    //     }
+    //     else if ( b == 6 ) {
+    //         #if defined( xType )
+    //             #undef xType
+    //         #endif
+    //         #define xType unsigned long long int 
+    //         #if defined( cType )
+    //             #undef cType
+    //         #endif
+    //         #define cType ( unsigned long long int  )
+    //         #if defined( mVal )
+    //             #undef mVal
+    //         #endif
+    //         #define mVal 0x7fffffffffffffffu
+    //         #if defined( fVal )
+    //             #undef fVal
+    //         #endif
+    //         #define fVal 0xffffffffffffffffu
+    //         #if defined( sType )
+    //             #undef sType
+    //         #endif
+    //         #define sType long long int 
+    //         #if defined( sCType )
+    //             #undef sCType
+    //         #endif
+    //         #define sCType ( long long int  )
+    //         #if defined( DEBUG )
+    //             printf( "64-bit :: %016lx :: %016lx \n" , mVal , fVal );
+    //         #endif
+    //     }
 
-        xType temp = ( xType ) __[0]<<( b + 1 )* 8 , last = ( xType ) __[( b + 1 )];
-        if ( b == 0 ) {
-            return temp | last;
-        }
-        while ( b > 0 ) {
-            b--;
-            temp |= ( ( xType )__[ b__ - b ] <<( b + 1 )* 8 );
-        }
-        temp |= last;
-        if ( !_ ) {
-            return temp; 
-        }
+    //     xType temp = ( xType ) __[0]<<( b + 1 )* 8 , last = ( xType ) __[( b + 1 )];
+    //     if ( b == 0 ) {
+    //         return temp | last;
+    //     }
+    //     while ( b > 0 ) {
+    //         b--;
+    //         temp |= ( ( xType )__[ b__ - b ] <<( b + 1 )* 8 );
+    //     }
+    //     temp |= last;
+    //     if ( !_ ) {
+    //         return temp; 
+    //     }
 
-        sType final;
-        if ( temp <= mVal ) {
-            final = temp;
-        } 
-        else {
-            final = - 1 - sCType ( fVal - temp );;
-        }
-        return final;
-    }
+    //     sType final;
+    //     if ( temp <= mVal ) {
+    //         final = temp;
+    //     } 
+    //     else {
+    //         final = - 1 - sCType ( fVal - temp );;
+    //     }
+    //     return final;
+    // }
 
     int __T( unsigned char *__ , unsigned long long int _ , unsigned int b ) {
     }
@@ -746,23 +733,6 @@
 
 
 
-
-
-    void *__ip( char *str , struct sockaddr *_ ) {
-        if ( _ -> sa_family == A_INET ) {
-            struct sockaddr_in *ipv4 = ( struct sockaddr_in * )_;
-            if ( inet_ntop( AF_INET , &( ipv4 -> sin_addr ) , str , INET_ADDRSTRLEN ) != NULL ) {
-                return &( ipv4 -> sin_addr );
-            }
-            return X_NODEF;
-        }
-        struct sockaddr_in6 *ipv6 = ( struct sockaddr_in6 * )_;
-        if ( inet_ntop( AF_INET , &( ipv6 -> sin6_addr ) , str , INET6_ADDRSTRLEN ) != NULL ) {
-            return &( ipv6 -> sin6_addr );
-        }
-        return X_NODEF;
-    }
-
     //addr==path
     #ifndef va_list
         #include <stdarg.h>
@@ -807,7 +777,7 @@
                 struct addrinfo *_;
                 for ( _ = __ -> res__; _ != NULL; _ = _ -> ai_next ) {
                     void *addr;
-                    if ( ( addr = __ip( __ -> at__ , _ -> ai_addr ) ) != X_NODEF ) {
+                    if ( ( addr = ( __ -> at__ , _ -> ai_addr ) ) != X_NODEF ) {
                         __status = 0;
                     }
                 }
