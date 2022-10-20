@@ -1,118 +1,61 @@
 
 
-#include<pthread.h> //for threading , link with lpthread
+
+typedef struct
+{
+    struct sockaddr_in *s_in;
+    struct sockaddr_un *s_un;
+    char socket_path[STRING_BUFFER];
+} Les;
 
 
-void *evaluate( void *);
-int send_mor_aether( char *_aether , int len_aether , AETHER_FILE *_aether_file );
 
 
 
 int les( int argc , char *argv[] ) {
+	Les _les = {0};
 	int _socket , _temp , _c , *_new;
-	struct sockaddr_in client,server;
-	char *message , __mor[1000];
-	int num_threads = 1;
-
+	struct sockaddr_in client;
+	char *message;
 
 	_socket = socket( AF_INET , SOCK_STREAM , 0 );
 	if ( _socket == -1 ) {
-		printf( AETHER_ERROR , "les :: init" , "Socket cannot be created" );
+		printf( AETHER_ERROR , "les :: Socket" , "Cannot create socket" );
 		return 2;
 	}
 
-	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = INADDR_ANY;
-	server.sin_port = htons( 9999 );
+	_les->s_in->sin_family = AF_INET;
+	_les->s_in->sin_addr.s_addr = INADDR_ANY;
+	_les->s_in->sin_port = htons( 8888 );
 
 
-	if ( bind( _socket , ( struct sockaddr *) &server , sizeof( server ) ) < 0 ) {
-		printf( AETHER_ERROR , "les :: init" , "Socket binding failed" );
+	if ( bind( _socket , ( struct sockaddr *) &(_les->s_in) , sizeof( _les->s_in ) ) < 0 ) {
+		printf( AETHER_ERROR , "les :: Socket" , "Binding to the socket failed" );
 		return 2;
 	}
 
 	listen( _socket , 3 );
 	_c = sizeof( struct sockaddr_in );
 
-	printf( AETHER_LES );
 
 	int read_size;
-	while ( ( _temp = accept( _socket , ( struct sockaddr *) &client , (socklen_t*) &_c ) ) ) {
-		pthread_t sniffer_thread;
-		_new = malloc(1);
-		*_new = _temp;
-		if( pthread_create( &sniffer_thread , NULL ,  evaluate , ( void *) _new) < 0) {
-			printf( AETHER_ERROR , "les :: init" , "Thread cannot be created" );
-			return 2;
+	char _mor[2000];
+	while ( ( _new = accept( _socket , ( struct sockaddr *) &client , (socklen_t*) &_c ) ) ) {
+		while( ( read_size = recv( sock , _mor , 2000 , 0 ) ) > 0 ) {
+			//Send the message back to client
+			printf( "\n\t\tmor:%s\n" , _mor );
+			write( sock , "request recieved" , strlen( 20 ) );
 		}
-		num_threads += 1;
-	}
-	if ( _temp < 0 ) {
-		printf( AETHER_ERROR , "les :: init" , "Listener could not accept connection" );
-		return 2;
 	}
 	return 0;
 }
 
 
 
-void *evaluate( void *__socket ) {
-	//Get the socket descriptor
-	int _socket = *(int*)__socket;
-	int _aether_size;
-	char *message , __mor[AETHER_FILE_BUFFER];
-
-	// message = "(P)ath , (C)onnc , C(all) , ENTRY{}\n";
-	// send( _socket , message , strlen(message) , 0 );
-
-	while ( _aether_size = recv( _socket , __mor , sizeof( __mor ) , 0 ) > 0 ) {
-		int __mor_size = strlen( __mor );
-		AETHER_FILE aether_file = {0};
-		// if ( _get_attribs( &request_file ) == 0 ) {
-		// 	printf( "\n%s\n" , request_file.A_PATH );
-		// }
-
-		if ( __mor_size > 10 ) {
-			printf( AETHER_LISTEN , __mor_size , __mor  );
-			if ( send_mor_aether( __mor , __mor_size , &aether_file ) == 0 ) {
-
-				send( _socket , "request recieved\n\r\n\r" , 22 , 0 );
-			}
-			send( _socket , "request denied\n\r\n\r" , 20 , 0 );
-		}
-		else {
-			printf( AETHER_ERROR , "les :: evaluate" , ".aether too short" );
-			send( _socket , "request denied\n\r\n\r" , 20 , 0 );
-		}
-	}
-
-	if ( _aether_size == -1 ) {
-		printf( AETHER_ERROR , "les :: evaluate" , ".aether recv failed" );
-	}
-	else if ( _aether_size == 0 ) {
-		printf( AETHER_LINE , "les -> mor disconnected" );
-		fflush( stdout );
-	}
-
-	free( __socket );
-	return 0;
-}
 
 
 
-int send_mor_aether( char *_aether , int len_aether , AETHER_FILE *_aether_file ) {
-	a_file __file_raw = {0};
 
-	_aether_file->A_FILE = &__file_raw;
-	_aether_file->A_FILE->_contents = _aether;
-	int _check = _get_attribs( _aether_file );
-
-	printf( AETHER_SEND , _check  );
-
-	// printf("\n\n\n check :: %d\n\n\n" , _check );
-
-	return 0;
-}
 
 
 

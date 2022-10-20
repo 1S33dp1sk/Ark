@@ -10,52 +10,49 @@
 
 
 
-int mirror( char *_aether );
+int mirror( int _socket , char *_aether , Les _les );
 
-int mor( int argc , char *argv[] ) {
-	char message[AETHER_REPLY_MAX]; // = "\n\r\n\rPATH:=Aether\nCONNC:=\nCALL:=entry\nENTRY{ ##python3 }\n\r\n\r";
-	a_file aether_file = {0};
-	aether_file._name = _AETHER_;
-	_file_contents( &aether_file );
 
-	strcpy( message , aether_file._contents );
-	mirror( message );
-	return 0;
+int mor( int argc , char const *argv[] ) {
+
+
 }
 
 
 
 
-int mirror( char *_aether ) {
-	int _socket;
-	struct sockaddr_in server;
+int mirror( int _socket , char *_aether , Les *_les ) {
+
 	int __temp;
 	char __reply[AETHER_REPLY_MAX];
-	// char *message = "\nPATH:=\nCONNC:=\nCALL:=\nENTRY{ }\n\r\0";
 
 	_socket = socket( AF_INET , SOCK_STREAM , 0 );
 	if ( _socket < 0 ) {
-		printf( AETHER_ERROR , "mor :: mirror" , "Socket init failed" );
+		printf( AETHER_ERROR , "Socket" , "init failed" );
 		return 2;
 	}
 
-	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = inet_addr("127.0.0.1"); //16777343;
-	server.sin_port = htons( 9999 );
+	_les->sin_addr->s_addr = inet_addr("127.0.0.1"); //16777343;
+	_les->sin_family = AF_INET;
+	_les->sin_port = htons( 999 );
 
-	if ( connect( _socket , ( struct sockaddr *) &server , sizeof( server ) ) < 0 ) {
-		printf( AETHER_ERROR , "mor :: mirror" , "Socket connection failed" );
+	if ( connect( _socket , ( struct sockaddr *) &_les , sizeof( _les ) ) < 0 ) {
+		printf( AETHER_ERROR , "Socket" , "connection failed" );
 		return 2;
 	}
 
 	printf( AETHER_SIG );
 
-	if ( send( _socket , _aether , strlen( _aether ) , 0 ) > 0 ) {
-		if ( __temp = recv( _socket , __reply , AETHER_REPLY_MAX , 0 ) > 0 ) {
-			printf( AETHER_EXEC , __reply );
+	char message[AETHER_FILE_BUFFER] = _aether;
+
+	while ( __temp = recv( _socket , __reply , AETHER_REPLY_MAX , 0 ) > 0 ) {
+		if ( message != NULL ) {
+			if ( send( _socket , message , strlen( message ) , 0 ) >= 0 ) {
+				printf( AETHER_EXEC , __reply );
+			}
 		}
+		scanf( AETHER_PATH , message );
 	}
-	printf( AETHER_SIG );
 	close( _socket );
 	return 0;
 }
