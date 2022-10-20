@@ -70,3 +70,16 @@ assert_strings = {
 	9:'Multiple reflections found for the same mirror on %ss\' ABI.\nPlease specify only a single one.'
 }
 
+
+
+def _getConfWarnStr( confWarnNo : int ) -> str :
+	return configuration_warnings.get( confWarnNo , 'Configuration Warning' )
+
+def _getErrorStr( errorNo:int ) -> str :
+	return node_errors.get( errorNo , 'Error' )
+
+def _getWarningStr( warningNo:int ) -> str :
+	return node_warnings.get( warningNo , 'Warning' )
+
+def _getAssertStr( assertionNo:int ) -> str:
+	return assert_strings.get( assertionNo , 'Assertion' )
