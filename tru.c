@@ -70,8 +70,6 @@ int main( int argc , char **argv ) {
 
 	printf( "socket :: %d\n" , x );
 
-
-
 	while( 1 ) {
 		sin_size = sizeof __addr;
 
@@ -85,5 +83,4 @@ int main( int argc , char **argv ) {
 
         close( __x );
 	}
-
 }

@@ -1,12 +1,10 @@
 /*
     -----------------------------------------------------------------------------------------------------
     |Ather  ::                                                                                          |
-    |                                                                                                   |
     |                                              @                                                    |
     |                                                                                                   |
-    |                                                                                                   |
-    | the `at` is common character defined in UTF-8 under the sequence of 64. it is utilized by ather   |
-    | as the main indicator that there's ather or not.                                                  |
+    | the `at` is common character defined in UTF-8 under the sequence position of 64.                  |
+    | it is utilized by ather as the main indicator that there's ather or not.                          |
     |                                                                                                   |
     -----------------------------------------------------------------------------------------------------
 */
@@ -176,7 +174,6 @@ int file__process( FileData *filedata );
 
 
 #include "log.h"
-
 
 
 // typedef enum {

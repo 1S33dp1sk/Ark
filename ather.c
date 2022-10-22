@@ -1,26 +1,6 @@
 /***
  * Mr. Karam.J :
- * 		However, as for ather, when talking about the interfacing provided
- * it is quite simple in a sense.
- * 0 -> ather
- * 1 -> operating sys(linux,macOS,Win{32,64},POSIX-complaint) or any other
- * 2 -> Apache or any other
- * 3 -> ethereum or any other
- * Any peer on 0xather is always aware and in total control of everything that is happening
- * to the system as a whole, however the ather is i-defined; user-defined.
- * Thus, @home is different:
- *  for each 
- * 	1.	person(unique phone,ethereum address,... for example)/ 
- * 	2.	each group of people(unique LAN)/ 
- * 	3.	each collection of groups(unique sub_net)
- * 	4.  each (global ip) 
- * 	5.  each protocol type  
- * @ protocol includes the different machine processes that are
- * being run, including a fantastic signature creating mechanism.
- * that combines any or all the above to form uniqueness which is coupled by a `c struct`
- * enable the protocol to call sockets, open/close files, interrupt processes, process scripts, run shells, etc...
- * 
- ***/ 
+***/ 
 
 
 #include "common.h"
@@ -133,41 +113,6 @@ int main( int argc , char **argv ) {
 		printf("@");
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// // 1
 	// // the iota here is just the
 	// // path && the shell
@@ -182,9 +127,6 @@ int main( int argc , char **argv ) {
 	// }
 
 	// log_p1( &p1 );
-
-
-
 
 
 	// 2
@@ -214,10 +156,6 @@ int main( int argc , char **argv ) {
 	// }
 
 	// freeaddrinfo( les_info );
-
-
-
-
 
 
 	// if ( argc == 3 ) {

@@ -29,11 +29,9 @@ int aether_dir() {
    if ( getcwd( cwd , sizeof(cwd) ) != NULL ) {
    		if ( strstr( cwd , _AETHER_ ) != NULL ) {
    			if( access( _AETHER_ , F_OK ) == 0 ) {
-
    				file_t file = {0};
    				file._file->_name = _AETHER_;
    				file.key = CONNC__NAME;
-
    				if ( get_file_data( &file ) ) {
    					key_exist( &file );
    					char *value = get_value( file._file->_contents );
@@ -77,17 +75,13 @@ void _index_and_total( CONNC *connc ) {
 }
 
 void log_connc_debug( CONNC *connc ) {
-
     for( int _dir_iter=0; _dir_iter<=connc->num_dirs; _dir_iter++ ) {
         printf( AETHER_PATH , connc->_dirs[_dir_iter] );
     }
-
     printf("\n");
-
     for( int _file_iter=0; _file_iter<=connc->num_files; _file_iter++ ) {
         printf( AETHER_F_EXEC , connc->_files[_file_iter] , connc->_hashes[_file_iter] );
     }
-
 }
 
 int _check_entry( struct dirent *dir_entry , CONNC *connc ) {
@@ -156,7 +150,7 @@ void _connc_and_hash( CONNC *connc ) {
     int __total = connc->_total;
     int _iter = 0;
     uint32_t __safehash;
-    connc->_hashes = malloc( (__total)*sizeof(int) );
+    connc->_hashes = malloc( ( __total ) * sizeof( int ) );
     a_file __f = {0};
     for( ; _iter <= connc->num_files; _iter++ ) {
         __f._name = connc->_files[_iter];

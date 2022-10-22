@@ -16,11 +16,7 @@
  *
  * I place the code that I wrote into public domain, free to use. 
  *
- * I would appreciate if you give credits to this work if you used it to 
- * write or test * your code.
- *
- * ---------------------------------------------------------------------- */
-/*  Aug 2015. Andrey Jivsov. crypto@brainhub.org 
+ *  Aug 2015. Andrey Jivsov. crypto@brainhub.org 
  *
  *  'Words' here refers to uint64_t 
  */

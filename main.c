@@ -15,8 +15,17 @@
  * context created by the serve then the request then the response.
  * with it's own user, sockets, listeners, repliers, etc... . 
  * 
+ * There's two main componenets for the ather, one is to be viewed as a whole and that is the `0xather`
+ * and the other is the fundemental componenet of the system and that is the atherpoint. An atherpoint
+ * is a singular core, dynamically linked with other atherpoints. Given that they are NOT identical, they can
+ * tether to one another. Each tether represents two different atherpoints and each link represents two different
+ * tethers creating a TRI-STATE system.
  * 
- * and finally, the lbb keeps track of the default and changes. a differencing library essentially,
+ *                                      X_1 <-> A <-> X_2
+ * 
+ * 
+ * 
+ * The lbb keeps track of the default and changes. a differencing library essentially,
  * because neither 0xather nor the atherpoints care about state changes, the implementation is 100% dynamic.
  * 0xather is the name of the full interconnectivity of atherpoints
  * now the `0x`(ather) is essentially how we can differenciate between the different cores, so the basic
@@ -64,6 +73,29 @@
  * access differes based on defined iota's in the .lbb 
  * basically when accessing the .lbb, the main call is ( K , res )
  * res -> responsible for providing that context. only way for that to happen, is if K is viable.
+ * 
+ * However, as for ather, when talking about the interfacing provided
+ * it is quite simple in a sense.
+ * 0 -> ather
+ * 1 -> operating sys(linux,macOS,Win{32,64},POSIX-complaint) or any other
+ * 2 -> Apache or any other
+ * 3 -> ethereum or any other
+ * 
+ * 
+ * Any atherpoint on 0xather is always aware and in total control of everything that is happening
+ * to the system as a whole ( in&out of the atherpoint ), however each point is i-defined; user-defined.
+ * Thus, @home is different:
+ *  for each 
+ *  1.  person(unique phone,ethereum address,... for example)/ 
+ *  2.  each group of people(unique LAN)/ 
+ *  3.  each collection of groups(unique sub_net)
+ *  4.  each (global ip) 
+ *  5.  each protocol type  
+ * @ protocol includes the different machine processes that are
+ * being run, including a fantastic signature creating mechanism.
+ * that combines any or all the above to form uniqueness which is coupled by a `c struct`
+ * enable the protocol to call sockets, open/close files, interrupt processes, process scripts, run shells, etc...
+ * 
  */
 
 

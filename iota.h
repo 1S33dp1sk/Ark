@@ -88,10 +88,10 @@ iota;
 #include <stdarg.h>
 // The IOTA
 /**
- * such as with max planks constant, we can in any
- * system define a certain limit to what is the most
- * infatistimaly small amount ( IOTA )
- * But, we have to define the IOTA completely 
+ * such as with the physical universe & max planks constant; 
+ * we can in any K-system define a certain limit to what is the most
+ * infatistimaly small default ( IOTA )
+ * In order to define the default , one should define the IOTA completely 
  * which is defined under ( Input Output Transfer Ather )
  * which is whats the wrapper holding the IOTA in question 
  **/
