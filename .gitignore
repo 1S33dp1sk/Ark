@@ -1,5 +1,8 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> b020af1 (added .gitignore)
 flds
 d-cloud
 >>>>>>> fd027f3 (101+ errors at #30)
@@ -28,4 +31,10 @@ d-pts
 =======
 d-pts
 __pycache__
+<<<<<<< HEAD
 >>>>>>> 8201b72 (added gitignore)
+=======
+=======
+bin/*
+>>>>>>> 7bf50be (added .gitignore)
+>>>>>>> b020af1 (added .gitignore)
