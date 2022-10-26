@@ -40,6 +40,8 @@ all:
 	mkdir bin
 	gcc coms.c -o bin/@coms
 	gcc levels.c -o bin/@levels
+	gcc auth.c -o bin/@auth
+
 clean:
 	rm -rf bin
 >>>>>>> 13f79da (.pipes are used to communicate between sockets of different types based on @levels)
