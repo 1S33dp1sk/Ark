@@ -1,9 +1,17 @@
-#include "probe.h"
+#include "../probe.h"
 #include <sys/types.h>
 //@her specific
-#include "pipes.h"
-#include "sexec.h"
 
+int sexec() {
+
+	char __buf;
+
+	while( read( 0 , &__buf , 1 ) > 0 ) {
+		write( 0 , &__buf , 1 );
+	}
+	write( 0 , "\n" , 1 );
+	return 0;
+}
 
 
 int main( int argc , char **argv ) {
