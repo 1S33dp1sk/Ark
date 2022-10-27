@@ -1,4 +1,4 @@
-#include "probe.h"
+#include "../probe.h"
 
 int check_level( char *aname , int aname_len );
 int __check_atomic( char *aname , int aname_len );
@@ -52,7 +52,7 @@ int __check_local( char *aname , int aname_len ) {
 }
 
 int __check_global( char *aname , int aname_len ) {
-	int socket_listener = __socket_entry( aname );
+	int socket_listener = __dns_entry( aname );
 	if ( socket_listener > 0 ) {
 		return socket_listener;
 	}

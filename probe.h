@@ -1,34 +1,84 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-int __sys_entry( char *filename );
-int __path_entry( char *pathname );
-int __socket_entry( char *ipaddr );
-void sha3_init256(void *priv);
-void sha3_init384(void *priv);
-void sha3_init512(void *priv);
+void sha3_init256( void *priv );
+void sha3_init384( void *priv );
+void sha3_init512( void *priv );
 
 
+int __sys_entry( char *__ );
+int __path_entry( char *__ );
+int __socket_entry( char *__ , int __v );
+int __dns_entry( char *__ );
+int __ather_entry( char *__ , char *_ );
 
-#ifndef stat
-    #include <sys/stat.h>
-    static struct stat fifo_stat;
-    int __sys_entry( char *__filename ) {
-        if ( stat( __filename , &fifo_stat ) == 0 ) {
-            return 0;    
+#define __ather_outdir "@outa"
+#define __ather_indir "@entries"
+#define __ather_def "@"
+
+#define emp ""
+
+
+char *__unix_path( char *__path , char *__filename ) {
+    int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
+    if ( __path[path_len] != '/' ) {
+        strncat( __path , "/\0" , 2 );
+    }
+    return ( path_len + fname_len ) < 4096 ? strdup( strcat(  __path , __filename ) ) : emp;
+}
+
+
+#ifndef getcwd
+    int __ather_entry( char *__filename , char *__filedata ) {
+        #undef MAX_PATH
+        #define MAX_PATH 4096
+        char __wd[MAX_PATH];
+        int __fd = 0 , __flags = ( O_CREAT | O_RDWR ) , __mode = ( S_IRWXU | S_IRWXG | S_IRWXO );
+        memset( &__wd , 0 , sizeof( __wd ) );
+        if ( getcwd( *(&__wd) , sizeof( __wd ) ) != NULL ) {
+            __unix_path( __wd , __ather_indir );
+            __fd = open( __wd , __flags , __mode );
+            if ( write( __fd , __filedata , strlen( __filedata ) ) > 0 ) {
+                return __fd;
+            }
         }
-        return -1;
+        return 0;
     }
 #endif
 
-#ifndef access
-    #include <fcntl.h>
-    int __path_entry( char *__pathname ) {
-    	if ( access( __pathname , R_OK|W_OK|X_OK ) == 0 ) {
-            return 0;
+
+#ifndef stat
+    static struct stat fifo_stat;
+    int __sys_entry( char *__filename ) {
+        #ifdef DEBUG
+        printf( "@(sys entry)\n" );
+        printf( "\tentry :: %s\n" , __filename );
+        #endif
+        if ( stat( __filename , &fifo_stat ) == 0 ) {
+            return  __path_entry( __filename );
         }
-        return -1;
+        return 0;
+    }
+#endif
+
+
+#ifndef access
+    int __fd = 0 , __flags = ( R_OK | W_OK | X_OK );
+    int __path_entry( char *__pathname ) {
+        #ifdef DEBUG
+        printf( "@(path entry)\n" );
+        printf( "\tentry :: %s\n" , __pathname );
+        #endif
+    	if ( access( __pathname , __flags ) == 0 ) {
+            __flags = O_RDONLY;
+            __fd = open( __pathname , __flags );
+            return __fd > 0 ? __fd : 0; 
+        }
+        return 0;
     }
 #endif
 
@@ -38,14 +88,14 @@ void sha3_init512(void *priv);
     #ifndef PORT_ACCEPT
     	#define PORT_ACCEPT "9999"
     #endif
-    int __socket_entry( char *__ipaddr ) {
+    int __socket_entry( char *__ipaddr , int ipv  ) {
     	int __listener , __rv , __g2g__ = 1;
 
     	struct addrinfo as_hints , *as_info , *temp;
     	memset( &as_hints , 0 , sizeof( as_hints ) );
 
     	if ( ( __rv = getaddrinfo( __ipaddr , PORT_ACCEPT , &as_hints , &as_info ) ) != 0 ) {
-    		return -1;
+    		return 0;
     	}
 
     	for ( temp = as_info ; temp != NULL ; temp = temp -> ai_next ) {
@@ -59,7 +109,10 @@ void sha3_init512(void *priv);
     	}
 
     	freeaddrinfo( as_info );
-    	return temp == NULL ? -2 : __listener;
+    	return temp == NULL ? 0 : __listener;
+    }
+    int __dns_entry( char *__dnsname ) {
+
     }
 #endif
 

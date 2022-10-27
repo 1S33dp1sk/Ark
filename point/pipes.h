@@ -45,7 +45,4 @@ int pipes( int argc , char **argv ) {
 		wait( NULL );
 		return 0;
 	}
-
-
-
 }

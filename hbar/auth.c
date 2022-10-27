@@ -1,7 +1,12 @@
-#include "probe.h"
+#include "../probe.h"
 
 static sha3_context __sha3c;
 static const char help_message[110] = "\n@auth ( usage :: auth [level] [combo] )\n levels :\n 1 : ascii password\n 2 : auth token\n 3 : signed message\n";
+
+
+
+char *__sha3_str( char *__ );
+
 
 int main( int argc , char **argv ) { 
 
@@ -34,15 +39,22 @@ int main( int argc , char **argv ) {
 			return -3;
 	}
 
+	char *hashstr = __sha3_str( __tohash );
+	printf( "%s\n" , hashstr );
+}
 
-	char hashstr[256];
+
+char *__sha3_str( char *__ ) {
+	#define HSTR_LEN 256
+	char hashstr[HSTR_LEN];
 	memset( &hashstr , 0 , sizeof( hashstr ) );
-	
+
 	sha3_init256( &__sha3c );
 	sha3_set_flags( &__sha3c , 1 );
-	sha3_update( &__sha3c , __tohash , tohash_len );
+	sha3_update( &__sha3c , __ , strlen( __ ) );
 	uint8_t *__hash = ( uint8_t *) sha3_finalize( &__sha3c );
 
 	to_hashstr( hashstr , __hash );
-	printf( "%s\n" , hashstr );
+
+	return strdup( hashstr );
 }
