@@ -1,13 +1,38 @@
 // pipefd[0] -> read
 // pipefd[1] -> write
+#include <unistd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+#include <stdint.h>
 
 int e_out( char *e_message , int e_return , ... ) {
 	printf( "E -> %s\n" , e_message );
 	return e_return;
 }
+
+typedef struct {
+	unsigned int __rfd;
+	unsigned int __wfd;
+	uint8_t __hfd;
+} _rwd; // file descriptors
+
+typedef struct {
+	pid_t __ppd;
+	pid_t __cpd;
+} _psd; // process descriptors
+
+typedef struct {
+	_psd pr;
+#define p_pid pr.__ppd;
+#define c_pid pr.__cpd;
+	_rwd io;
+#define rfd io.__rfd;
+#define wfd io.__wfd;
+#define hash io.__hfd;
+} descriptor;
+
+
 
 
 
