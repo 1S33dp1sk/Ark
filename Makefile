@@ -40,7 +40,7 @@ all:
 	mkdir bin
 	gcc entries/comms.c -o bin/@coms
 	gcc entries/fmt.c -o bin/@fmt
-	gcc key/levels.c -o bin/@levels
+	gcc k/key.c -o bin/@key
 	gcc hbar/auth.c -o bin/@auth
 
 
