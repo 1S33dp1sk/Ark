@@ -23,12 +23,17 @@ int __ather_entry( char *__ , char *_ );
 #define emp ""
 
 
-char *__unix_path( char *__path , char *__filename ) {
+char *__path_unix( char *__path , char *__filename ) {
     int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
     if ( __path[path_len] != '/' ) {
         strncat( __path , "/\0" , 2 );
     }
-    return ( path_len + fname_len ) < 4096 ? strdup( strcat(  __path , __filename ) ) : emp;
+    return ( path_len + fname_len ) < 4096 ? strcat( strdup( __path  ) , __filename ) : emp;
+}
+
+char *__file_extention( char *ename , char *extention ) {
+    int _ = strlen( ename ) , __ = strlen( extention );
+    return _ > 0 && __ > 0 ? strncat( strdup( ename ) , extention , __ ) : emp;
 }
 
 
@@ -40,7 +45,8 @@ char *__unix_path( char *__path , char *__filename ) {
         int __fd = 0 , __flags = ( O_CREAT | O_RDWR ) , __mode = ( S_IRWXU | S_IRWXG | S_IRWXO );
         memset( &__wd , 0 , sizeof( __wd ) );
         if ( getcwd( *(&__wd) , sizeof( __wd ) ) != NULL ) {
-            __unix_path( __wd , __ather_indir );
+            // __path_unix( __wd , __ather_indir );
+            strcat( __wd , __filename );
             __fd = open( __wd , __flags , __mode );
             if ( write( __fd , __filedata , strlen( __filedata ) ) > 0 ) {
                 return __fd;
