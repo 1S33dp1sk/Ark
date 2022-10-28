@@ -10,17 +10,15 @@ static char __point_name[MAX_PNAME];
 // @point 
 int main( int argc , char **argv , char **kvargs ) {
 	if ( argc < 2 ) {
-		printf("usage :: @point [atherpoint]\n");
+		printf("usage :: @point [atherpoint] [0|1|2|3]\n");
 		return 1;
 	}
-	else {
-		strcpy( __point_name , argv[1] );
-		if ( strlen( __point_name ) > 3 ) {
-			printf( "creating @%s\n", __point_name );
-			char *temp[1] = { "nice wow\n" };
-			return pipes( 2 , temp );
-		}
-		printf( "cannot create atherpoint :: @%s\n" , __point_name );
-		return 1;
-	}
+
+	char lvl = argv[2][0];
+	int __lvl = lvl - '0';
+
+
+
+	printf( "level is :: %d\n" , __lvl );
+	
 }
