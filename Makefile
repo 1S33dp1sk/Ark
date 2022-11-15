@@ -37,28 +37,26 @@ clean:
 	rm @entry
 =======
 all:
-	mkdir bin
-	gcc entries/comms.c -o bin/@coms
-	gcc entries/fmt.c -o bin/@fmt
-	gcc k/key.c -o bin/@key
-	gcc hbar/auth.c -o bin/@auth
-	
+	cc @source/lbb/main.c -o @lbb
+	cc @source/hbar/main.c -o @hbar
+	cc @source/point/main.c -o @point
+	cc @source/entry/main.c -o @entry
 
-
-ca_point:
-	gcc point/main.c -o bin/@point
-	./bin/@point atherpoint
-
-
-
-complete:
-	@./tests/fmt_test
-	@./tests/auth_test 
-
-
-
-
+rall:
+	rm @lbb
+	rm @hbar
+	rm @point
+	rm @entry
+	rm .lbb
+	rm atherpoint
 
 clean:
+<<<<<<< HEAD
 	rm -rf bin
 >>>>>>> 13f79da (.pipes are used to communicate between sockets of different types based on @levels)
+=======
+	rm @lbb
+	rm @hbar
+	rm @point
+	rm @entry
+>>>>>>> 4947f52 (v0.01-NS)

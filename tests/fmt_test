@@ -1,6 +1,0 @@
-#!/bin/bash
-
-
-printf "@Testing fmt\n"
-
-./bin/@fmt entries/a.shebang.entry
