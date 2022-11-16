@@ -10,27 +10,18 @@
 
 =======
 
-#define DEBUG
+// #define DEBUG
 
-#include <unistd.h>
-
+#include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/sysmacros.h>
-
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <time.h>
-#include <fcntl.h>
 
 #define __AP_NAME "atherpoint"
+<<<<<<< HEAD
 static struct stat __lbb_stat;
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+
+>>>>>>> 757e790 (shared library for point)
 
 struct apio {
     unsigned __fd;
@@ -38,9 +29,12 @@ struct apio {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+>>>>>>> 757e790 (shared library for point)
 typedef struct {
     struct apio t_ap;
     struct apio e_ap;
@@ -49,6 +43,7 @@ typedef struct {
 #define ap_ok( __ ) ( (__.t_ap.__fd > 0) || (__.e_ap.__fd > 0) ? (1) : (0) )
 } ap;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 int atherpoint( char *p_path , unsigned p_level );
 int process_entry( char *_e , int _e_len );
@@ -60,11 +55,15 @@ int applier( ap *apoint );
 
 
 
+=======
+int atherpoint( char *p_path , unsigned p_level );
+>>>>>>> 757e790 (shared library for point)
 int process_entry( char *_e , int _e_len );
 int app_engine( struct apio *engint );
 int socket_execute( struct apio *sexec );
 int applier();
 
+<<<<<<< HEAD
 void log_stat( struct stat st );
 int __ap_entry( char *_e_path , int _e_type );
 int _ap_r_entry();
@@ -404,6 +403,8 @@ void log_stat( struct stat sb ) {
     printf("Last file modification:   %s", ctime(&sb.st_mtime));
 }
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+>>>>>>> 757e790 (shared library for point)
 
 
 #endif

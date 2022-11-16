@@ -1,8 +1,13 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef probe
     #define probe 
 =======
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+#ifndef probe
+    #define probe
+>>>>>>> 757e790 (shared library for point)
 /***
  * async-safe defined in POSIX 
  * _Exit(), 
@@ -141,13 +146,17 @@
 
 // VERBOSE LOGGING
 #define DEBUG
+<<<<<<< HEAD
 // #define HASH_DEBUG
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+>>>>>>> 757e790 (shared library for point)
 
 // MAX LIMITS
 #define MAX_STR 256
 #define MAX_PATH 4096
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 // STRING DEFS
 #define OXATHER "0xather"
@@ -261,296 +270,118 @@ void log_stat( struct stat sb ) {
 // MIN LIMITS
 #define MIN_PN 3 // min chars for a pointname
 
+=======
+>>>>>>> 757e790 (shared library for point)
 // STRING DEFS
-#define emp ""
 #define OXATHER "0xather"
 #define __ATDIR_DEF "@source"
 #define __LBBF_DEF ".lbb"
-#define clear_chars "\n\n\n\n\n\n\n\n\n\n\n\n"
-#define INTRO__A "\n\t\tWelcome to ather ( a.k.a @-Protocol )\n"
-#define ENTER__NN "enter( » )pointname :: @"
-#define INVALID_PN "invalid pointname\n"
 #define SYMB__NN '@'
 
-
-void sha3_init256( void *priv );
-void sha3_init384( void *priv );
-void sha3_init512( void *priv );
-
-int __sys_entry( char *__ );
-int __path_entry( char *__ );
-int __socket_entry( char *__ , int __v );
-int __ather_entry( char *__ , char *_ );
-int __fd_entry( char *__ );
-int __at_dir( char *__ );
-
-
-static char __udef_pointname[MAX_STR];
-static unsigned int __udef_pointname_len; 
-
-
-
-void __clear() {
-
-    write( 0 , clear_chars , 12 );
-}
-
-
-int __intro() {
-    #include <string.h>
-    int __ = 0;
-    char __nn[MAX_STR] = {0};
-    __nn[0] = SYMB__NN;
-    write( 0 , INTRO__A , strlen( INTRO__A ) );
-    __clear();
-    write( 0 , ENTER__NN , strlen( ENTER__NN ) );
-    __ = read( 0 , &__nn , MAX_STR - 1 );
-    if ( __ > 0 ) {
-        strcpy( __udef_pointname , __nn );
-        if ( ( __udef_pointname_len = strlen( __udef_pointname ) > MIN_PN ) && __nn[0] != '\n' ){
-            return __udef_pointname_len;
-        }
-        else {
-            write( 0 , INVALID_PN , strlen( INVALID_PN ) );
-            return 0;
-        }
-    }  
-}
-
-#if defined( yes )
-    #undef yes
-#ifndef yes
-    #define yes 1
-#endif
-
-#ifndef iszero
-int iszero( int v ) {
-
-    return v == 0;
-}
-#endif
-
-#ifndef isnull
-int isnull( char *v ) {
-
-    return v == NULL;
-}
-#endif
-
-
-#ifndef __path_unix
-char *__path_unix( char *__path , char *__filename ) {
-    int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
-    if ( __path[path_len] != '/' && __filename[0] != '/' ) {
-        strncat( __path , "/\0" , 2 );
-    }
-    return ( path_len + fname_len ) < 4096 ? strcat( __path , __filename ) : __path;
-}
-#endif
-
-#ifndef __file_extention
-char *__file_extention( char *ename , char *extention ) {
-    int _ = strlen( ename ) , __ = strlen( extention );
-    return _ > 0 && __ > 0 ? strncat( strdup( ename ) , extention , __ ) : emp;
-}
-#endif
-
+void log_stat( struct stat st );
 
 /*************************************************************/
-typedef struct {
-    char ap_name[MAX_STR];
-    char ap_path[MAX_PATH];
-    unsigned int __lbb;
-#define ap_historic ap_lbb
-    unsigned int __r;
-#define ap_read __r
-    unsigned int __w;
-#define ap_write __w
-} atherpoint;
 
 
-typedef enum {
-    __LBB_VALUE , 
-    __LBB_REFERENCE , 
-    __LBB_EXECUTE
-} lbb_lvl;
-
-
-
-
-int _ather_dir( atherpoint *ap ) {
-    // get the current dir
-    if ( __at_dir( ap -> ap_path ) ) {
-        char *atdir = strdup( ap -> ap_path );
-        __path_unix( atdir , __ATDIR_DEF );
-        if ( __path_entry( atdir ) ) {
-            // atdir avaliable
-            return 1;
-        }
-        // no /@/dir 
-        return 0;
+#ifndef _NO_DEFS
+    #define _NO_DEFS 1
+    #define emp ""
+    int isempty( char *v ) {
+        return strcmp( emp , v );
     }
-    // cannot getcwd
-    return 0;
-}
-#define check_ap_dir _ather_dir
-
-
-void ather_check( atherpoint *ap ) {
-    if ( _ather_dir( ap ) ) { 
+    int iszero( int v ) {
+        return v == 0;
     }
-}
-
-
-
-
-char *__lvl_delim( lbb_lvl __lvl ) {
-    switch ( __lvl ) {
-        case __LBB_VALUE:
-            return " : ";
-        case __LBB_REFERENCE:
-            return " = ";
-        case __LBB_EXECUTE:
-            return " := ";
-        default:
-            return " -> ";
+    int isnull( char *v ) {
+        return v == NULL;
     }
-}
-
-
-char *lbb_gress( char *key , char *val , lbb_lvl lvl ) {
-    char *klv = strdup( val );
-    char *lvl_delim = __lvl_delim( lvl );
-    strcat( klv , lvl_delim );
-    strcat( klv , key );
-    printf( "%s\n" , klv );
-    return klv;
-}
-
-
-
-
-#ifndef __lbb_dir
-int __lbb_dir() {
-    char __wd[MAX_PATH];
-    memset( &__wd , 0 , sizeof( __wd ) );
-    if ( !isnull( getcwd( *(&__wd) , sizeof( __wd ) ) ) ) {
-        __path_unix( __wd , ".lbb/" );
-    }
-}
 #endif
 
-
-#ifndef __at_dir
-int __at_dir( char *__ap_path ) {
-    #if !defined( getcwd )
-        #include <unistd.h>
-        char __wd[MAX_PATH];
-        memset( &__wd , 0 , sizeof( __wd ) );
-        if ( !isnull( getcwd( *(&__wd) , sizeof( __wd ) ) ) ) {
-            #if defined(DEBUG)
-            printf("@check [\u2713]\n");
-            #endif
-            strcpy( __ap_path , __wd );
-            return 1;
+#ifndef _UNI_PATHS
+    #define _UNI_PATHS 1
+    char *__path_unix( char *__path , char *__filename ) {
+        int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
+        if ( __path[path_len] != '/' && __filename[0] != '/' ) {
+            strncat( __path , "/\0" , 2 );
         }
-        #if defined( DEBUG )
-            printf( "@check [\u2715]\n" );
-        #endif
-        return 0;
-    #endif
-}
+        return ( path_len + fname_len ) < 4096 ? strcat( __path , __filename ) : __path;
+    }
+
+    char *__file_extention( char *ename , char *extention ) {
+        int _ = strlen( ename ) , __ = strlen( extention );
+        return _ > 0 && __ > 0 ? strncat( strdup( ename ) , extention , __ ) : emp;
+    }
 #endif
 
-#ifndef __ather_entry
-int __ather_entry( char *__filename , char *__filedata ) {
-    char __wd[MAX_PATH];
-    int __fd = 0 , __flags = ( O_CREAT | O_RDWR ) , __mode = ( S_IRWXU | S_IRWXG | S_IRWXO );
-    memset( &__wd , 0 , sizeof( __wd ) );
-    #ifndef getcwd
-        #include <unistd.h>
-    #endif
-    if ( getcwd( *(&__wd) , sizeof( __wd ) ) != NULL ) {
-        strcat( __wd , __filename );
-        if ( !strcmp( __filedata , emp ) && __path_entry( __wd ) ) {
-            __flags = O_RDONLY;
-            __fd = open( __wd , __flags );
-        }
-        else {
-            __fd = open( __wd , __flags , __mode );
-            if ( write( __fd , __filedata , strlen( __filedata ) ) <= 0 ) {
-                return 0;
-            }
+#ifndef _LBB_DELIMS
+    #define _LBB_DELIMS 1
+    #define _VAL_DELIM " : "
+    #define _REF_DELIM " = "
+    #define _ADDR_DELIM " := "
+    #define _NDEF_DELIM " =: " 
+
+    const char *__lvl_delim( unsigned __lvl ) {
+        switch ( __lvl ) {
+            case 0:
+                return _VAL_DELIM;
+            case 1:
+                return _REF_DELIM;
+            case 2:
+                return _ADDR_DELIM;
+            default:
+                return _NDEF_DELIM;
         }
     }
-    return __fd > 0 ? __fd : 0; 
-}
 #endif
 
-#ifndef __sys_entry
-static struct stat fifo_stat;
-int __sys_entry( char *__filename ) {
-    #ifdef DEBUG
-    printf( "@(sys entry)\n" );
-    printf( "\tentry :: %s\n" , __filename );
+#include <stdint.h>
+#include <time.h>
+
+void log_stat( struct stat sb ) {
+
+    #if defined( minor ) && defined( major )
+        printf("ID of containing device:  [%jx,%jx]\n",
+        (uintmax_t) major(sb.st_dev),
+        (uintmax_t) minor(sb.st_dev));
     #endif
-    #ifndef stat
-        #include <sys/stat.h>
-    if ( stat( __filename , &fifo_stat ) == 0 ) {
-        return  __path_entry( __filename );
+
+    printf("File type:                ");
+
+    switch (sb.st_mode & S_IFMT) {
+        case S_IFBLK:  printf("block device\n");            break;
+        case S_IFCHR:  printf("character device\n");        break;
+        case S_IFDIR:  printf("directory\n");               break;
+        case S_IFIFO:  printf("FIFO/pipe\n");               break;
+        case S_IFLNK:  printf("symlink\n");                 break;
+        case S_IFREG:  printf("regular file\n");            break;
+        case S_IFSOCK: printf("socket\n");                  break;
+        default:       printf("unknown?\n");                break;
     }
-    return 0;
-    #endif
+
+    printf("I-node number:            %ju\n", (uintmax_t) sb.st_ino);
+    printf("I-node number:            %ju\n", (uintmax_t) sb.st_ino);
+
+    printf("Mode:                     %jo (octal)\n",
+           (uintmax_t) sb.st_mode);
+
+    printf("Link count:               %ju\n", (uintmax_t) sb.st_nlink);
+    printf("Ownership:                UID=%ju   GID=%ju\n",
+           (uintmax_t) sb.st_uid, (uintmax_t) sb.st_gid);
+
+    printf("Preferred I/O block size: %jd bytes\n",
+           (intmax_t) sb.st_blksize);
+    printf("File size:                %jd bytes\n",
+           (intmax_t) sb.st_size);
+    printf("Blocks allocated:         %jd\n",
+           (intmax_t) sb.st_blocks);
+
+    printf("Last status change:       %s", ctime(&sb.st_ctime));
+    printf("Last file access:         %s", ctime(&sb.st_atime));
+    printf("Last file modification:   %s", ctime(&sb.st_mtime));
 }
-#endif
-
-#ifndef __path_entry
-int __path_entry( char *__pathname ) {
-    int __flags = ( R_OK | W_OK | X_OK );
-    #ifdef DEBUG
-    printf( "@path entry\n" );
-    #endif
-    #ifndef access // included in <unistd.h>
-    if ( access( __pathname , __flags ) == 0 ) {
-        #ifdef DEBUG
-            printf( "{ entry :: %s }\n" , __pathname );
-        #endif
-        return 1;
-    }
-    #ifdef DEBUG
-        printf("{ access is revoked }\n");
-    #endif
-    return 0;
-    #endif
-}
-#endif
-
-#ifndef __fd_entry
-int __fd_entry( char *__pathname ) {
-    int __fd = 0 , __flags = ( R_OK | W_OK | X_OK );
-    #ifdef DEBUG
-    printf( "@point name\n" );
-    printf( " path :: %s\n" , __pathname );
-    #endif
-    #ifndef access // included in <unistd.h>
-    if ( access( __pathname , __flags ) == 0 ) {
-        __flags = O_RDONLY;
-        __fd = open( __pathname , __flags );
-    }
-    #ifdef DEBUG
-    if ( __fd ) {
-        printf( "{ point :: %d }\n" , __fd );
-    }
-    else {
-        printf( "{ access is revoked }\n" , __fd );
-    }
-    #endif
-    return __fd > 0 ? __fd : 0; 
-    #endif
-}
-#endif
 
 
+<<<<<<< HEAD
 #ifndef __socket_entry
     #ifndef PORT_ACCEPT
         #define PORT_ACCEPT "9999"
@@ -578,6 +409,8 @@ int __socket_entry( char *__ipaddr , int ipv  ) {
     return temp == NULL ? 0 : __listener;
 }
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+>>>>>>> 757e790 (shared library for point)
 #endif
 
 

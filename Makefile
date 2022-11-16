@@ -1,5 +1,6 @@
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ca:
 	if [ ! -d shared ]; then mkdir shared; fi
 	cc -c -fpic @source/point/point.c -o shared/point.o
@@ -7,10 +8,17 @@ ca:
 	cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
 	cc -c -fpic @source/nai/nai.c -o shared/nai.o
 	cc -shared shared/*.o -o shared/libpoint.so
+=======
+ca:
+	if [ ! -d shared ]; then mkdir shared; fi
+	cc -c -fpic @source/point/point.c -o shared/point.o
+	cc -shared shared/point.o -o shared/libpoint.so
+>>>>>>> 757e790 (shared library for point)
 	cc @source/ather.c -o ather ./shared/libpoint.so
 
 rca:
 	if [ -d shared ]; then rm -rf shared; fi
+<<<<<<< HEAD
 	if [ -f ather ]; then rm ather; fi
 
 
@@ -37,10 +45,18 @@ clean:
 	rm @entry
 =======
 all:
+=======
+
+
+
+old:
+>>>>>>> 757e790 (shared library for point)
 	cc @source/lbb/main.c -o @lbb
 	cc @source/hbar/main.c -o @hbar
 	cc @source/point/main.c -o @point
 	cc @source/entry/main.c -o @entry
+
+
 
 rall:
 	rm @lbb
