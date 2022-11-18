@@ -77,6 +77,14 @@ void log_uni( struct a_inmp n_uni ) {
 	printf( "mount path::		%s\n" , n_uni.imp );
 }
 
+
+int loc_interface( struct a_isok *isok ) {
+	
+}
+
+
+
+
 int atherinterface( int level , ani __ ) {
 
 	int res = uni_interface( &__.n_uni );
