@@ -53,7 +53,6 @@ int atherpoint( char *p_path , unsigned p_level ) {
     return applier( &__ );
 }
 
-
 int process_entry( char *entry , int e_len ) {
 
     printf( "entry = %d@app_engine :: \n\t%s\n" );
@@ -130,50 +129,43 @@ int socket_execute( struct apio *sexec ) {
     return 0;
 }
 
-int applier( ap *point ){
+int applier( ap *a_point ){
 
     // get the current pid
-    ( point -> e_ap ).__pid = getpid();
+    ( a_point -> e_ap ).__pid = getpid();
     // fork the process for the new pid
-    if ( ( ( point -> t_ap ).__pid = fork() ) == -1 ) {
+    if ( ( ( a_point -> t_ap ).__pid = fork() ) == -1 ) {
         printf( "cannot start the atherpoint :: fork\n" );
         return 2;
     }
 
     // check calling process
-    if ( ( point -> t_ap ).__pid == 0 ) {
-        printf( "current pid for reading :: %d\n" , ( point -> e_ap ).__pid );
+    if ( ( a_point -> t_ap ).__pid == 0 ) {
+        printf( "current pid for reading :: %d\n" , ( a_point -> e_ap ).__pid );
         // read
-        if ( ( ( point -> e_ap ).__fd = _ap_r_entry() ) == 0 ) {
+        if ( ( ( a_point -> e_ap ).__fd = _ap_r_entry() ) == 0 ) {
             printf( "cannot open atherpoint for reading\n");
             return 3;
         }
         printf( "\n-#-#-# engine -#-#-#\n" );
-        return app_engine( &(point -> e_ap) );
+        return app_engine( &(a_point -> e_ap) );
     }
     else {
-        printf( "current pid for writing :: %d\n" , ( point -> t_ap ).__pid );
+        printf( "current pid for writing :: %d\n" , ( a_point -> t_ap ).__pid );
         // write
-        if ( ( ( point -> t_ap ).__fd = _ap_w_entry() ) == 0 ) {
+        if ( ( ( a_point -> t_ap ).__fd = _ap_w_entry() ) == 0 ) {
             printf( "cannot open atherpoint for writing\n");
             return 3;
         }
         printf( "\n#-#-# socket executive #-#-#\n" );
-        return socket_execute( &(point -> t_ap) );
+        return socket_execute( &(a_point -> t_ap) );
     }
 
     return 0;
 }
 
 
-/**
- * 
- * _e_path :: delim/os/path
- * 
- * _e_type :
- *  0 -> read
- *  1 -> write
- */
+
 #ifndef __ap_entry
 int __ap_entry( char *_e_path , int _e_type ) {
     int __ap = 0 , __flags = ( F_OK | ( _e_type == 0 ? R_OK : _e_type ) );

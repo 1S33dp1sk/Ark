@@ -1,5 +1,5 @@
 #ifndef probe
-    #define probe
+    #define probe 
 /***
  * async-safe defined in POSIX 
  * _Exit(), 
@@ -128,8 +128,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-// #include "point.h"
-
 
 // VERBOSE LOGGING
 #define DEBUG
@@ -140,8 +138,7 @@
 
 // STRING DEFS
 #define OXATHER "0xather"
-#define __ATDIR_DEF "@source"
-#define __LBBF_DEF ".lbb"
+#define __F_LBB ".lbb"
 #define SYMB__NN '@'
 
 void log_stat( struct stat st );
@@ -150,7 +147,7 @@ void log_stat( struct stat st );
 
 
 #ifndef _NO_DEFS
-    #define _NO_DEFS 1
+    #define _NO_DEFS
     #define emp ""
     int isempty( char *v ) {
         return strcmp( emp , v );
@@ -164,7 +161,7 @@ void log_stat( struct stat st );
 #endif
 
 #ifndef _UNI_PATHS
-    #define _UNI_PATHS 1
+    #define _UNI_PATHS
     char *__path_unix( char *__path , char *__filename ) {
         int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
         if ( __path[path_len] != '/' && __filename[0] != '/' ) {
@@ -180,7 +177,7 @@ void log_stat( struct stat st );
 #endif
 
 #ifndef _LBB_DELIMS
-    #define _LBB_DELIMS 1
+    #define _LBB_DELIMS
     #define _VAL_DELIM " : "
     #define _REF_DELIM " = "
     #define _ADDR_DELIM " := "

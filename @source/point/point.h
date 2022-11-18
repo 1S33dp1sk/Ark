@@ -1,9 +1,9 @@
 #ifndef point
-
-// #define DEBUG
+    #define point atherpoint
 
 #include <sys/stat.h>
 #include <sys/types.h>
+
 
 #define __AP_NAME "atherpoint"
 
@@ -25,7 +25,7 @@ int atherpoint( char *p_path , unsigned p_level );
 int process_entry( char *_e , int _e_len );
 int app_engine( struct apio *engint );
 int socket_execute( struct apio *sexec );
-int applier();
+int applier( ap *apoint );
 
 
 

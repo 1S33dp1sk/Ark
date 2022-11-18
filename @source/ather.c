@@ -1,15 +1,14 @@
 #include "probe.h"
 #include "point/point.h"
-
+#include "lbb/lbb.h"
+#include "hbar/hbar.h"
+#include "nai/nai.h"
 
 
 int main( int argc , char **argv ) {
 
-	unsigned lvl = 0;
+	union __nai __;
 
-	atherpoint( emp , lvl );
-
-
-
+	int res = nai( 0 , __ );
 
 }
