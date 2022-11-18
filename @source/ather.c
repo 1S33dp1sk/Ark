@@ -1,16 +1,23 @@
 #include "probe.h"
 #include "point/point.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "lbb/lbb.h"
 #include "hbar/hbar.h"
 #include "nai/nai.h"
 =======
 
 >>>>>>> 757e790 (shared library for point)
+=======
+#include "lbb/lbb.h"
+#include "hbar/hbar.h"
+#include "nai/nai.h"
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 
 int main( int argc , char **argv ) {
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	union __nai __;
 
@@ -23,5 +30,10 @@ int main( int argc , char **argv ) {
 
 
 >>>>>>> 757e790 (shared library for point)
+=======
+	union __nai __;
+
+	int res = nai( 0 , __ );
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 }

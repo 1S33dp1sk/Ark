@@ -1,5 +1,6 @@
 #ifndef hbar
 <<<<<<< HEAD
+<<<<<<< HEAD
     #define hbar hash_bar
 
 #include <stdint.h>
@@ -10,6 +11,12 @@
 // #define HASH_DEBUG
 
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+    #define hbar hash_bar
+
+#include <stdint.h>
+#include <string.h>
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 /**
  * 
@@ -19,6 +26,7 @@
  * for their combined efforts on the implementation of the `sha-3` hash.
  *
  */
+<<<<<<< HEAD
 <<<<<<< HEAD
 #define SHA3_KECCAK_SPONGE_WORDS \
     ( ( ( 1600 ) / 8/*bits to byte*/) / sizeof( uint64_t ) )
@@ -77,98 +85,35 @@ void __btoh( uint8_t b , char s[3] ) {
 #endif
 #define byte_to_hex __btoh
 
+=======
+#define SHA3_KECCAK_SPONGE_WORDS \
+    ( ( ( 1600 ) / 8/*bits to byte*/) / sizeof( uint64_t ) )
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
-#ifndef hash_to_string
-void __htostr( char *hashstr , uint8_t *hash ) {
-    #ifdef HASH_DEBUG
-    printf( " hashstr :: %s\n " , hashstr );
-    #endif
-    for ( int _ = 0 ; _ < 32 ; _ ++ ) {
-        char __[3];
-        __btoh( hash[_] , __ );
-        strncat( hashstr , __ , 3 );
-    }
-    #ifdef HASH_DEBUG
-    printf( " hash :: %s\n" , hashstr );
-    #endif
-}
-#endif
-#define hash_to_string __htostr
+// flag is used to configure "pure" Keccak, as opposed to NIST SHA3.
+#define SHA3_USE_KECCAK_FLAG 0x80000000
+#define SHA3_CW( x ) ( ( x ) & ( ~SHA3_USE_KECCAK_FLAG ) )
 
-#undef get16bits
-#if ( defined( __GNUC__ ) && defined( __i386__ )) || defined( __WATCOMC__ ) \
-    || defined( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __TURBOC__ )
-    #define get16bits( d ) ( * ( ( const uint16_t * ) ( d ) ) )
-#endif
-
-#if !defined ( get16bits )
-    #define get16bits( d ) ( ( ( ( uint32_t ) ( ( ( const uint8_t * )( d ) )[1] ) ) << 8 )\
-                       +( uint32_t ) ( ( ( const uint8_t * ) ( d ) )[0] ) )
-#endif
-
-uint32_t super_fast_hash ( char *data  , int len ) {
-    uint32_t hash = len, tmp;
-    int rem;
-    if (len <= 0 || data == NULL) { return 0; }
-    rem = len & 3;
-    len >>= 2;
-
-    /* Main loop */
-    for (;len > 0; len--) {
-        hash  += get16bits (data);
-        tmp    = (get16bits (data+2) << 11) ^ hash;
-        hash   = (hash << 16) ^ tmp;
-        data  += 2*sizeof (uint16_t);
-        hash  += hash >> 11;
-    }
-
-    /* Handle end cases */
-    switch (rem) {
-        case 3: hash += get16bits (data);
-                hash ^= hash << 16;
-                hash ^= ((signed char)data[sizeof (uint16_t)]) << 18;
-                hash += hash >> 11;
-                break;
-        case 2: hash += get16bits (data);
-                hash ^= hash << 11;
-                hash += hash >> 17;
-                break;
-        case 1: hash += (signed char)*data;
-                hash ^= hash << 10;
-                hash += hash >> 1;
-    }
-
-    /* Force "avalanching" of final 127 bits */
-    hash ^= hash << 3;
-    hash += hash >> 5;
-    hash ^= hash << 4;
-    hash += hash >> 17;
-    hash ^= hash << 25;
-    hash += hash >> 6;
-
-    return hash;
-}
 
 typedef struct sha3_context_ {
-    uint64_t saved;             /* the portion of the input message that we
-                                 * didn't consume yet */
-    union {                     /* Keccak's state */
+    uint64_t saved;             /* the portion of the input message that we didn't consume yet */
+    union {                     
         uint64_t s[SHA3_KECCAK_SPONGE_WORDS];
         uint8_t sb[SHA3_KECCAK_SPONGE_WORDS * 8];
-    } u;
-    unsigned byteIndex;         /* 0..7--the next byte after the set one
-                                 * (starts from 0; 0--none are buffered) */
-    unsigned wordIndex;         /* 0..24--the next word to integrate input
-                                 * (starts from 0) */
-    unsigned capacityWords;     /* the double size of the hash output in
-                                 * words (e.g. 16 for Keccak 512) */
+    } u;                        /* Keccak's state */
+    unsigned byteIndex;         /* 0..7--the next byte after the set one (starts from 0; 0--none are buffered) */
+    unsigned wordIndex;         /* 0..24--the next word to integrate input (starts from 0) */
+    unsigned capacityWords;     /* the double size of the hash output in words (e.g. 16 for Keccak 512) */
 } sha3_context;
 
+<<<<<<< HEAD
 enum SHA3_FLAGS {
     SHA3_FLAGS_NONE=0,
     SHA3_FLAGS_KECCAK=1
 };
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 enum SHA3_RETURN {
     SHA3_RETURN_OK=0,
@@ -179,11 +124,15 @@ typedef enum SHA3_RETURN sha3_return_t;
 
 /* For Init or Reset call these: */
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 sha3_return_t sha3_init( void *priv , unsigned bit_size );
 uint32_t super_fast_hash( char *data , int len );
 void byte_to_hex( uint8_t _ , char _s[3] );
 void hash_to_string( char *_hstr , uint8_t _ );
 char *hash_bar( char *_in , unsigned level );
+<<<<<<< HEAD
 
 #define sfh( _ ) \
     super_fast_hash( _ , strlen( _ ) )
@@ -467,35 +416,25 @@ void const *sha3_finalize(void *priv) {
             ctx->u.sb[i * 8 + 7] = (uint8_t) (t2 >> 24);
         }
     }
+=======
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
-    SHA3_TRACE_BUF("Hash: (first 32 bytes)", ctx->u.sb, 256 / 8);
+#define sfh( _ ) \
+    super_fast_hash( _ , strlen( _ ) )
 
-    return (ctx->u.sb);
-}
+#define sha3_init256( priv ) \
+    sha3_init( priv , 256 )
 
-sha3_return_t sha3_hash_buffer( unsigned bit_size, enum SHA3_FLAGS flags, const void *in, unsigned in_bytes, void *out, unsigned out_bytes ) {
-    
-    sha3_return_t err;
-    sha3_context c;
+#define sha3_init384( priv ) \
+    sha3_init( priv , 384 )
 
-    err = sha3_init(&c, bit_size);
-    if( err != SHA3_RETURN_OK )
-        return err;
-    if( sha3_set_flags(&c, flags) != flags ) {
-        return SHA3_RETURN_BAD_PARAMS;
-    }
-    sha3_update(&c, in, in_bytes);
-    const void *h = sha3_finalize(&c);
-
-    if(out_bytes > bit_size/8)
-        out_bytes = bit_size/8;
-    memcpy( out , h , out_bytes );
-    return SHA3_RETURN_OK;
-}
-
-static sha3_context __sha3;
+#define sha3_init512( priv ) \
+    sha3_init( priv , 512 )
 
 
+
+
+<<<<<<< HEAD
 /**
  * @dev used to hash the input from
  * @param key       : `argv[1]`
@@ -527,6 +466,8 @@ char *__s_hash( char *key , char *hashkey ) {
 #endif
 #define hbar_str __s_hash
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 
 #endif

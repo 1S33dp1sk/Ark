@@ -1,14 +1,19 @@
 #ifndef lbb
 <<<<<<< HEAD
+<<<<<<< HEAD
 	#define lbb little_black_book
 =======
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+	#define lbb little_black_book
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 // #define DEBUG
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+<<<<<<< HEAD
 <<<<<<< HEAD
 #include <stdint.h>
 =======
@@ -19,6 +24,9 @@
 #include <fcntl.h>
 #include <regex.h>
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+#include <stdint.h>
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 /*
 ***************************************************************************
 	*******************************************************************
@@ -46,9 +54,12 @@
 #define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 typedef struct {
 	int lbb_fd;
 	struct stat lbb_stat;
@@ -65,6 +76,7 @@ struct seam {
 	struct sota key;
 	struct sota wry;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	// union {
 	// 	struct sota *value;
@@ -72,6 +84,8 @@ struct seam {
 	// 	struct sota *ref;
 	// } wry;
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 };
 
 //little black book
@@ -94,6 +108,7 @@ typedef struct {
 #define status( _ ) stat( _.lbb_path , ( &_.lbb_stat ) ) == 0 ? 1 : 0
 #define size( _ ) _.lbb_stat.st_size
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 int little_black_book( char *lbb_name );
@@ -265,5 +280,13 @@ int __regex_lbb( char const *rlbb ) {
 	return 0;
 }
 >>>>>>> 4947f52 (v0.01-NS)
+=======
+
+int little_black_book( char *lbb_name );
+int lbb_append( __lbb *lil_blk_book , char *lbb_key , char *lbb_val );
+int lbb_query( __lbb *lil_blk_book , char *lbb_key );
+int compile_lbb( char const *lbb_contents , struct seam **lbb_lines );
+void log_sota( struct sota *s );
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 #endif

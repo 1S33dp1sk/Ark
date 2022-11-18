@@ -1,5 +1,6 @@
 #ifndef point
 <<<<<<< HEAD
+<<<<<<< HEAD
     #define point atherpoint
 
 #include <sys/stat.h>
@@ -11,9 +12,13 @@
 =======
 
 // #define DEBUG
+=======
+    #define point atherpoint
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 #include <sys/stat.h>
 #include <sys/types.h>
+
 
 #define __AP_NAME "atherpoint"
 <<<<<<< HEAD
@@ -61,7 +66,7 @@ int atherpoint( char *p_path , unsigned p_level );
 int process_entry( char *_e , int _e_len );
 int app_engine( struct apio *engint );
 int socket_execute( struct apio *sexec );
-int applier();
+int applier( ap *apoint );
 
 <<<<<<< HEAD
 void log_stat( struct stat st );

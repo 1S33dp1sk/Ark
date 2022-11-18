@@ -12,12 +12,20 @@ ca:
 ca:
 	if [ ! -d shared ]; then mkdir shared; fi
 	cc -c -fpic @source/point/point.c -o shared/point.o
+<<<<<<< HEAD
 	cc -shared shared/point.o -o shared/libpoint.so
 >>>>>>> 757e790 (shared library for point)
+=======
+	cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
+	cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
+	cc -c -fpic @source/nai/nai.c -o shared/nai.o
+	cc -shared shared/*.o -o shared/libpoint.so
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 	cc @source/ather.c -o ather ./shared/libpoint.so
 
 rca:
 	if [ -d shared ]; then rm -rf shared; fi
+<<<<<<< HEAD
 <<<<<<< HEAD
 	if [ -f ather ]; then rm ather; fi
 
@@ -47,6 +55,9 @@ clean:
 all:
 =======
 
+=======
+	if [ -f ather ]; then rm ather; fi
+>>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 
 old:
