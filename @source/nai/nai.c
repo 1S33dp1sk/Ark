@@ -209,7 +209,7 @@ int glo_interface( struct a_idns *idns ) {
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE; // use my IP
 
-	if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
+	if ((rv = getaddrinfo(NULL, sa_global_port, &hints, &servinfo)) != 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
 	}
@@ -250,7 +250,7 @@ int glo_interface( struct a_idns *idns ) {
 		exit(1);
 	}
 
-	if (listen(sockfd, BACKLOG) == -1) {
+	if (listen(sockfd, sa_global_queue) == -1) {
 		perror("listen");
 		exit(1);
 	}

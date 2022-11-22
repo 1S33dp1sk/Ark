@@ -55,7 +55,7 @@ int atherpoint( char *p_path , unsigned p_level ) {
 
 int process_entry( char *entry , int e_len ) {
 
-    printf( "entry = %d@app_engine :: \n\t%s\n" );
+    printf( "entry = %d@app_engine :: \n\t%s\n" , e_len , entry );
 
     return e_len > 10 ? 0 : 1;
 }
