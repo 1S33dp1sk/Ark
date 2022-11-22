@@ -33,7 +33,11 @@ int main( int argc , char **argv ) {
 =======
 	union __nai __;
 
+<<<<<<< HEAD
 	int res = nai( 0 , __ );
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+	int res = nai( argv[1][0] - '0' , __ );
+>>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 
 }

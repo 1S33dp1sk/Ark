@@ -1,6 +1,9 @@
 #ifndef nai
 	#define nai atherinterface // native ather interface
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 
 #define DEBUG
 
@@ -20,9 +23,12 @@
 #define s_local2v6 "0:0:0:0:0:0:0:1"
 
 #define s_global "0.0.0.0"
+<<<<<<< HEAD
 =======
 	
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+>>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 // supported natives < 0 , 1 , 2 , 3 >
 #define nai_max 3
 // mount path must be less than 512 bytes
@@ -54,12 +60,17 @@ struct a_isok {
 	char __imp[mpath_max]; //cis
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	unsigned isv; // socket value
 	// struct sockaddr_storage isa;
 =======
 	unsigned isv; // socket version
 	char isa[saddr_max]; // socket address
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+	unsigned isv; // socket value
+	// struct sockaddr_storage isa;
+>>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 	int isp; // socket port
 };
 
@@ -108,6 +119,9 @@ int atherinterface( int level , ani __ );
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 #endif
 
 
@@ -118,6 +132,9 @@ int atherinterface( int level , ani __ );
 		printf( "inode num::		%ju\n" , ( uintmax_t ) n_uni.inn );
 		printf( "mount path::		%s\n" , n_uni.imp );
 	}
+<<<<<<< HEAD
 =======
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+>>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 #endif
