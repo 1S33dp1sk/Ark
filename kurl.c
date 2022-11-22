@@ -1,13 +1,41 @@
 #ifndef kurl
     #define kurl
 
+/**
+ * whats a kurl?
+ * 
+ * a pre-defined k
+ * and a user-defined url
+ * will get resolved, always.
+ * 
+ * possible resolvements :: ( pointer ) | ( address )
+ * 
+ */
+
+#define __ksize 0x001
+#define __kcast 0x010 // reference
+#define __kincr 0x011
+
+#define __kaddr 0x100
+#define __kdecr 0x110
+#define __khash 0x101
 
 
+
+
+
+
+
+#include <stdio.h>
 
 
 
 int main() {
-    
+
+    printf( "size of k_l (%d) \n" , k_l );
+
+
+
 }
 
 
