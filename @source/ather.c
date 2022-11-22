@@ -9,6 +9,6 @@ int main( int argc , char **argv ) {
 
 	union __nai __;
 
-	int res = nai( 0 , __ );
+	int res = nai( argv[1][0] - '0' , __ );
 
 }

@@ -1,6 +1,24 @@
 #ifndef nai
 	#define nai atherinterface // native ather interface
-	
+
+#define DEBUG
+
+
+#include <stdio.h>
+#include <stdint.h>
+
+#define sp_network htons( 9999 )
+// can convert to network & host byte order
+// via byte definition
+
+#define s_local "127.0.0.1"
+#define s_local2 "localhost"
+#define s_local_alias s_local2
+
+#define s_localv6 "::1"
+#define s_local2v6 "0:0:0:0:0:0:0:1"
+
+#define s_global "0.0.0.0"
 // supported natives < 0 , 1 , 2 , 3 >
 #define nai_max 3
 // mount path must be less than 512 bytes
@@ -31,8 +49,8 @@ struct a_isok {
 	long __inn; // cis
 	char __imp[mpath_max]; //cis
 
-	unsigned isv; // socket version
-	char isa[saddr_max]; // socket address
+	unsigned isv; // socket value
+	// struct sockaddr_storage isa;
 	int isp; // socket port
 };
 
@@ -80,4 +98,14 @@ union __nai {
 int atherinterface( int level , ani __ );
 
 
+#endif
+
+
+#ifndef log_nai
+	void log_uni( struct a_inmp n_uni ) {
+		printf( "native ather interface\n" );
+		printf( "	universal	\n" );
+		printf( "inode num::		%ju\n" , ( uintmax_t ) n_uni.inn );
+		printf( "mount path::		%s\n" , n_uni.imp );
+	}
 #endif
