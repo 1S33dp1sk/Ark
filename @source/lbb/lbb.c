@@ -20,7 +20,7 @@ void log_sota( struct sota *__sota ) {
 	#ifdef VERBOSE_DEBUG
 	printf( " ---sota---\n " );
 	#endif
-	printf( "string : \"%.*s\"" , __sota -> tal , __sota -> sptr );
+	printf( "string : \"%.*s\"" , ( int ) __sota -> tal , __sota -> sptr );
 	printf( " :: offset = %jd; len = %jd\n" , __sota -> offset , __sota -> tal );
 }
 
@@ -365,7 +365,7 @@ int little_black_book( char *p_name ) {
 		printf( "lbb status cannot be determined\n" );
 		return 1;
 	}
-	printf( "lbb : size = %d bytes\n" , size( ud ) );	
+	printf( "lbb : size = %ld bytes\n" , size( ud ) );	
 
 	if ( ud.lbb_fd <= 0 ) {
 		printf( "lbb file cannot be accessed\n" );

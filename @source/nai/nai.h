@@ -127,6 +127,7 @@ int atherinterface( int level , ani __ );
 #endif
 
 
+<<<<<<< HEAD
 #ifndef log_nai
 	void log_uni( struct a_inmp n_uni ) {
 		printf( "native ather interface\n" );
@@ -351,3 +352,13 @@ char *native_address( int level );
 
 
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+// #ifndef log_nai
+// 	void log_nai_uni( struct a_inmp n_uni ) {
+// 		printf( "native ather interface\n" );
+// 		printf( "	universal	\n" );
+// 		printf( "inode num::		%ju\n" , ( uintmax_t ) n_uni.inn );
+// 		printf( "mount path::		%s\n" , n_uni.imp );
+// 	}
+// #endif
+>>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)

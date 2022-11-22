@@ -64,7 +64,7 @@ int atherpoint( char *p_path , unsigned p_level ) {
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 int process_entry( char *entry , int e_len ) {
 
-    printf( "entry = %d@app_engine :: \n\t%s\n" );
+    printf( "entry = %d@app_engine :: \n\t%s\n" , e_len , entry );
 
     return e_len > 10 ? 0 : 1;
 }

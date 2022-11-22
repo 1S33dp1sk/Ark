@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 
 #####################################
 #			Shell/@net				#
@@ -85,7 +86,11 @@ ca:
 	cc -c -fpic @source/nai/nai.c -o shared/nai.o
 	cc -shared shared/*.o -o shared/libpoint.so
 =======
+=======
+>>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)
 ca:
+	if [ -f athernet ]; then rm athernet; fi
+	if [ -f kurl ]; then rm kurl; fi
 	if [ ! -d shared ]; then mkdir shared; fi
 	cc -c -fpic @source/point/point.c -o shared/point.o
 <<<<<<< HEAD
@@ -95,6 +100,7 @@ ca:
 	cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
 	cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
 	cc -c -fpic @source/nai/nai.c -o shared/nai.o
+<<<<<<< HEAD
 	cc -shared shared/*.o -o shared/libpoint.so
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 	cc @source/ather.c -o ather ./shared/libpoint.so
@@ -104,6 +110,16 @@ rca:
 <<<<<<< HEAD
 <<<<<<< HEAD
 	if [ -f ather ]; then rm ather; fi
+=======
+	cc -shared shared/*.o -o shared/libather.so
+	cc net.c -o athernet ./shared/libather.so
+	cc kurl.c -o kurl
+
+rca:
+	if [ -d shared ]; then rm -rf shared; fi
+	if [ -f athernet ]; then rm athernet; fi
+	if [ -f kurl ]; then rm kurl; fi
+>>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)
 
 
 old:

@@ -422,10 +422,14 @@ int glo_interface( struct a_idns *idns ) {
 	hints.ai_flags = AI_PASSIVE; // use my IP
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
 =======
 	if ((rv = getaddrinfo(NULL, sa_global_port, &hints, &servinfo)) != 0) {
 >>>>>>> a415938 (kurls)
+=======
+	if ((rv = getaddrinfo(NULL, sa_global_port, &hints, &servinfo)) != 0) {
+>>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
 	}
@@ -475,10 +479,14 @@ int glo_interface( struct a_idns *idns ) {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (listen(sockfd, BACKLOG) == -1) {
 =======
 	if (listen(sockfd, sa_global_queue) == -1) {
 >>>>>>> a415938 (kurls)
+=======
+	if (listen(sockfd, sa_global_queue) == -1) {
+>>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)
 		perror("listen");
 		exit(1);
 	}
