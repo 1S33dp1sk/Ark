@@ -2,6 +2,13 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+/**
+ * thinking that the ather is anything other than
+ * ather is useless.
+ */
+>>>>>>> a95c3a4 (comments and usages for athernet, kurls & probe)
 #include "probe.h"
 #include "point/point.h"
 <<<<<<< HEAD
@@ -19,8 +26,24 @@
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
 
+/**
+ * < main > = 
+ *	athernet 
+ * 
+ * < level > = 
+ * 	athernet 0	|	unix	|	homenet
+ * 	athernet 1	| 	local	|	intranet
+ * 	athernet 2	| 	global	|	internet
+ * 	athernet 3	| 	block	|	chainnet
+ *
+ * 
+ */
+
+
+
 int main( int argc , char **argv ) {
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	union __nai __;
@@ -107,9 +130,14 @@ int main( int argc , char **argv ) {
 >>>>>>> cf46ec7 (athernet v0)
 =======
 	void *x;
+=======
+>>>>>>> a95c3a4 (comments and usages for athernet, kurls & probe)
 
-	int __x = builder( x );
 
+<<<<<<< HEAD
 	printf( "value of builder :: %x\n" , __x );
 }
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
+=======
+}
+>>>>>>> a95c3a4 (comments and usages for athernet, kurls & probe)
