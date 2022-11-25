@@ -5,6 +5,19 @@
 <<<<<<< HEAD
     #define point atherpoint
 
+/**
+ * atherpoint is an `FIFO`
+ * with a singular reader, that is the `lbb`
+ * 
+ * writers can connect to the atherpoint syncronously 
+ * and query real time updates on the values , operations
+ * that are used to create/modify these values.
+ * 
+ * that is done mainly by kurling the lbb between two or more
+ * points. 
+ * 
+ */
+
 #include <sys/stat.h>
 #include <sys/types.h>
 

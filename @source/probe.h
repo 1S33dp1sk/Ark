@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef probe
     #define probe 
 =======
@@ -678,10 +679,28 @@ struct level_aliases {
 
 
 // // TODO :: convert to strict bytes instead of arpa/inet
+=======
+#include "point/point.h"
+#include "lbb/lbb.h"
+#include "hbar/hbar.h"
+#include "nai/nai.h"
+
+#define __init_kurl 0x0001
+#define __kurl_probe__ ( void *__ )
+#define __at__ int
+
+
+extern __at__ builder __kurl_probe__{
+	return __init_kurl;
+}
+
+
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
 
 
 
+<<<<<<< HEAD
 // #if defined( __lbb_name )
 // 	#include <regex.h>
 // #endif
@@ -716,3 +735,8 @@ struct level_aliases {
 >>>>>>> c1e4320 (athernet V0.9)
 
 >>>>>>> cf46ec7 (athernet v0)
+=======
+
+
+
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)

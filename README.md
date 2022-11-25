@@ -39,6 +39,7 @@ Furthermore, if we consider the eagle view of such systems, we can speculate tha
 ** insert richard hendrix quote about ants **
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 /**
  * each athering device MUST
@@ -210,6 +211,10 @@ aether status
 =======
 each athering device MUST have a singular `atherpoint`.
 
+=======
+each athering device MUST have a singular `atherpoint`.
+
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 *******************************
 async-safe defined in POSIX ::
 
@@ -332,6 +337,7 @@ async-safe defined in POSIX ::
  *      waitpid(), 
  *      write()
 *******************************
+<<<<<<< HEAD
 >>>>>>> a415938 (kurls)
 =======
 
@@ -420,3 +426,5 @@ which ever ones we share
 =======
 # end ATHERNET
 >>>>>>> 52885d5 (c.*ather*)
+=======
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)

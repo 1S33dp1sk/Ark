@@ -70,6 +70,7 @@ errors
 /**
  * ERRORS 
  * 
+<<<<<<< HEAD
  * 1 :: cannot get current working dir
  * 2 :: os path too long
  * 3 :: lbb cannot be `access`ed()
@@ -124,6 +125,16 @@ char *__path_unix( char *__path , char *__filename ) {
     return ( path_len + fname_len ) < mpath_max ? strcat( __path , __filename ) : NULL;
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 =======
+=======
+ * -1 :: cannot get current working dir
+ * -2 :: os path too long
+ * -3 :: lbb cannot be `access`ed()
+ * -4 :: no atherpoint found
+ * -5 :: cannot get host details `gethostbyname` failed
+ * -6 :: cannot initiate communication socket
+ * -7 :: could not bind to network address
+ * -8 :: could not listen on socket
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
  */
 
 char *__path_unix( char *__path , char *__filename ) {
@@ -198,7 +209,7 @@ int uni_interface( struct a_inmp *inmp ) {
 	// get the current working dir
 	if ( getcwd( __path , mpath_max ) == NULL ) {
 		printf( "cannot get working dir\n" );
-		return 1;
+		return -1;
 	}
 	// re-zero the `mp`
 	memset( path , 0 , mpath_max );
@@ -229,28 +240,32 @@ int uni_interface( struct a_inmp *inmp ) {
 	if ( __path_unix( path , ".lbb" ) == NULL ) {
 <<<<<<< HEAD
 		printf( "path too long\n" );
+<<<<<<< HEAD
 		return 2;
 =======
 		printf( "cannot construct lbb path\n" );
 		return -2;
 >>>>>>> a415938 (kurls)
+=======
+		return -2;
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 	}
 	// check calling process permissions
 	// for constructed path to lbb
 	if ( access( path , F_OK|R_OK ) != 0 ) {
 <<<<<<< HEAD
 		printf( "lbb cannot be accessed\n" );
-		return 3;
+		return -3;
 	}
 	// attach `atherpoint` to the directory path
 	if ( __path_unix( __path , "atherpoint" ) == NULL ) {
 		printf( "path too long\n" );
-		return 2;
+		return -2;
 	}
 	// call the FIFO `stat` to retreive `inn`
 	if ( stat( __path , &__st ) == -1 ) {
 		printf( "atherpoint cannot be accessed\n" );
-		return 4;
+		return -4;
 	}
 	// get the inodenum from the struct `stat`
 	// and add the value to `inmp`
@@ -303,10 +318,14 @@ int loc_interface( struct a_isok *isok ) {
 			#endif
 			printf( "cannot initiate communication socket\n" );
 <<<<<<< HEAD
+<<<<<<< HEAD
 			return 6;
 =======
 			return -6;
 >>>>>>> a415938 (kurls)
+=======
+			return -6;
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 		}
 	}
 	#ifdef DEBUG
@@ -343,10 +362,14 @@ int loc_interface( struct a_isok *isok ) {
 	if ( res != 0 ) {
 		printf( "could not bind to local network address.\n" );
 <<<<<<< HEAD
+<<<<<<< HEAD
 		return 7;
 =======
 		return -7;
 >>>>>>> a415938 (kurls)
+=======
+		return -7;
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 	}
 	
 
@@ -360,10 +383,14 @@ int loc_interface( struct a_isok *isok ) {
 	if ( listen( _sok , 10 ) == -1 ) {
 		printf("cannot listen on socket.\n");
 <<<<<<< HEAD
+<<<<<<< HEAD
 		return 8;
 =======
 		return -8;
 >>>>>>> a415938 (kurls)
+=======
+		return -8;
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 	}
 
 	printf("server: waiting for connections...\n");
@@ -555,6 +582,7 @@ int blo_interface( struct a_ibna *ibna ) {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 int atherinterface( int level , ani __ ) {
 =======
 // delegate
@@ -563,6 +591,12 @@ nai native_interface( int level ) {
 	nai __;
 	memset( &__ , 0 , sizeof( __ ) );
 >>>>>>> a415938 (kurls)
+=======
+nai atherinterface( int level ) {
+
+	nai __;
+	memset( &__ , 0 , sizeof( __ ) );
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
 	int _res = -1;
 
@@ -573,6 +607,7 @@ nai native_interface( int level ) {
 		case 3: _res = blo_interface( &__.n_blo ); break;
 		default: break; 
 	}
+<<<<<<< HEAD
 <<<<<<< HEAD
 	return _res;
 =======
@@ -822,3 +857,7 @@ char *native_address( int level ) {
 }
 #endif
 >>>>>>> a415938 (kurls)
+=======
+	return __;
+}
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)

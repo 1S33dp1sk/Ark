@@ -3,7 +3,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     #define hbar hash_bar
+=======
+    #define hbar hashof
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
 #include <stdint.h>
 #include <string.h>
@@ -148,8 +152,15 @@ sha3_return_t sha3_init( void *priv , unsigned bit_size );
 uint32_t super_fast_hash( char *data , int len );
 void byte_to_hex( uint8_t _ , char _s[3] );
 void hash_to_string( char *_hstr , uint8_t _ );
+<<<<<<< HEAD
 char *hash_bar( char *_in , unsigned level );
 <<<<<<< HEAD
+=======
+char *hashof( unsigned level , void *tohash , size_t thsize );
+char *fhash( unsigned level , char *filepath );
+
+
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
 #define sfh( _ ) \
     super_fast_hash( _ , strlen( _ ) )
@@ -163,6 +174,14 @@ char *hash_bar( char *_in , unsigned level );
 #define sha3_init512( priv ) \
     sha3_init( priv , 512 )
 
+
+#define hof_size( level ) \
+    level == 0 ? 1 : \
+    level == 1 ? sizeof( int ) : \
+    sizeof( int ) * ( ( level ) * ( level ) ) 
+
+#define sof_size( level ) \
+    ( hof_size( level ) * 2  )
 
 
 

@@ -63,9 +63,13 @@
 =======
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 typedef struct {
-	int lbb_fd;
+	int lbb_fd; // main file descriptor
+				// used as an int to describe any errors 
+				// via negative correlations with the num
 	struct stat lbb_stat;
+				// checks for sizes, i-node numbers, devices etc
 	char lbb_path[MAX_PATH];
+				// the maximum build os-depenedent path for the file
 } __lbb;
 
 struct sota {
@@ -112,6 +116,8 @@ typedef struct {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+
+
 
 int little_black_book( char *lbb_name );
 int lbb_append( __lbb *lil_blk_book , char *lbb_key , char *lbb_val );

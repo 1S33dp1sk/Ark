@@ -1,13 +1,16 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 #ifndef nai
+<<<<<<< HEAD
 	#define nai atherinterface // native ather interface
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
+=======
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
-#define DEBUG
+// #define DEBUG
 
 
 #include <stdio.h>
@@ -106,19 +109,25 @@ struct a_ibna {
 };
 
 
-union __nai {
+typedef union __nai {
 	struct a_inmp n_uni; // universal ( unix )
 	struct a_isok n_loc; // local
 	struct a_idns n_glo; // global
 	struct a_ibna n_blo; // blockchain
-};
-
-#define ani union __nai
+} nai;
 
 
 
-int atherinterface( int level , ani __ );
+nai atherinterface( int level );
 
+#ifndef log_nai
+	void log_uni( struct a_inmp n_uni ) {
+		printf( "native ather interface\n" );
+		printf( "	universal	\n" );
+		printf( "inode num::		%ju\n" , ( uintmax_t ) n_uni.inn );
+		printf( "mount path::		%s\n" , n_uni.imp );
+	}
+#endif
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -351,6 +360,7 @@ char *native_address( int level );
 #endif
 
 
+<<<<<<< HEAD
 >>>>>>> c1e4320 (athernet V0.9)
 =======
 // #ifndef log_nai
@@ -362,3 +372,5 @@ char *native_address( int level );
 // 	}
 // #endif
 >>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)
+=======
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)

@@ -112,14 +112,19 @@ rca:
 	if [ -f ather ]; then rm ather; fi
 =======
 	cc -shared shared/*.o -o shared/libather.so
-	cc net.c -o athernet ./shared/libather.so
-	cc kurl.c -o kurl
+	cc @source/ather.c -o athernet ./shared/libather.so
+	cc @source/kurl.c -o kurl ./shared/libather.so
 
 rca:
 	if [ -d shared ]; then rm -rf shared; fi
+	if [ -f .lbb ]; then rm .lbb; fi
 	if [ -f athernet ]; then rm athernet; fi
 	if [ -f kurl ]; then rm kurl; fi
+<<<<<<< HEAD
 >>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)
+=======
+	# 	if [ -f atherpoint ]; then rm atherpoint; fi
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
 
 old:

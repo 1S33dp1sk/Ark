@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "probe.h"
 #include "point/point.h"
 <<<<<<< HEAD
@@ -87,10 +88,14 @@ static char __udef_nodename[MAX_STR];
 #include "hbar/hbar.h"
 #include "nai/nai.h"
 >>>>>>> cf46ec7 (athernet v0)
+=======
+#include "probe.h"
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
 
 int main( int argc , char **argv ) {
 
+<<<<<<< HEAD
 	union __nai __;
 
 	int res = nai( argv[1][0] - '0' , __ );
@@ -100,3 +105,11 @@ int main( int argc , char **argv ) {
 =======
 }
 >>>>>>> cf46ec7 (athernet v0)
+=======
+	void *x;
+
+	int __x = builder( x );
+
+	printf( "value of builder :: %x\n" , __x );
+}
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)

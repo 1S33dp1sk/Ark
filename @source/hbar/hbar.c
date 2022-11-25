@@ -2,6 +2,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <stdio.h>
 
 /**
@@ -9,6 +10,8 @@
  */
 
 
+=======
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 #define MAX_STR 256
 
 #define SHA3_ASSERT( x )
@@ -17,6 +20,7 @@
 
 #undef get16bits
 #if ( defined( __GNUC__ ) && defined( __i386__ )) || defined( __WATCOMC__ ) \
+<<<<<<< HEAD
     || defined( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __TURBOC__ )
 =======
 =======
@@ -31,6 +35,9 @@
 #if ( defined( __GNUC__ ) && defined( __i386__ )) || defined( __WATCOMC__ ) \
 || defined( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __TURBOC__ )
 >>>>>>> a415938 (kurls)
+=======
+|| defined( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __TURBOC__ )
+>>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
     #define get16bits( d ) ( * ( ( const uint16_t * ) ( d ) ) )
 #endif
 #if !defined ( get16bits )
@@ -160,6 +167,14 @@ void __btoh( uint8_t b , char s[3] ) {
 #endif
 #define byte_to_hex __btoh
 
+void h_str_tl( char *buf , uint8_t *_i_hash , unsigned il ) {
+
+    for ( int i=0; i < il ; i++ ) {
+        char __[3];
+        __btoh( _i_hash[i] , __ );
+        strncat( buf , __ , 3 );
+    }
+}
 
 #ifndef hash_to_string
 void __htostr( char *hashstr , uint8_t *hash ) {
@@ -572,44 +587,41 @@ sha3_return_t sha3_hash_buffer( unsigned bit_size, enum SHA3_FLAGS flags, const 
 }
 
 
-char *hash_bar( char *hbar_in , unsigned level )  {
+char *hashof( unsigned level , void *tohash , size_t thsize ) {
 
-    char hbar_out[MAX_STR];
-    memset( &hbar_out , 0 , sizeof( hbar_out ) );
-
-    int _ilen = strlen( hbar_in );
-    uint8_t *__hash;
+    int hash_size = 0 , k_flag = 0 , hashstr_len = 4;
 
     switch ( level ) {
-        case 0: 
-        	sprintf( hbar_out , "@%x" , super_fast_hash( hbar_in , _ilen ) ); 
-        	break;
+        case 0:
+            hash_size = 256;
+            break;
         case 1:
-            sha3_init384( &__sha3 );
-            sha3_set_flags( &__sha3 , 1 );
-            sha3_update( &__sha3 , hbar_in , _ilen );
-            __hash = ( uint8_t * ) sha3_finalize( &__sha3 );
-            __htostr( hbar_out , __hash );
+            hash_size = 384;
+            hashstr_len = 8;
             break;
         case 2:
-            sha3_init512( &__sha3 );
-            sha3_set_flags( &__sha3 , 0 );
-            sha3_update( &__sha3 , hbar_in , _ilen );
-            __hash = ( uint8_t * ) sha3_finalize( &__sha3 );
-            __htostr( hbar_out , __hash );
+            hash_size = 512;
+            hashstr_len = 16;
             break;
         case 3:
-        default:
-            sha3_init256( &__sha3 );
-            sha3_set_flags( &__sha3 , 1 );
-            sha3_update( &__sha3 , hbar_in , _ilen );
-            __hash = ( uint8_t * ) sha3_finalize( &__sha3 );
-            __htostr( hbar_out , __hash );
+            k_flag = 1;
+            hash_size = 256;
+            hashstr_len = 32;
             break;
+        default:
+            return NULL;        
     }
-    printf( "%s\n" , hbar_out );
-    
-    return strdup( hbar_out );
+
+    char __hsized[hash_size];
+    memset( &__hsized , 0 , hash_size );
+    uint8_t *__hptr;
+
+    sha3_init( &__sha3 , hash_size );
+    sha3_set_flags( &__sha3 , k_flag );
+    sha3_update( &__sha3 , tohash , thsize );
+    h_str_tl( __hsized , ( uint8_t * ) sha3_finalize( &__sha3 ) , hashstr_len );
+
+    return strdup( __hsized );
 }
 =======
 /**
@@ -993,6 +1005,40 @@ char *fhash( unsigned level , char *filepath ) {
     return hashof( level , fl_hash , b_read );
 }   
 >>>>>>> c1e4320 (athernet V0.9)
+
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+char *fhash( unsigned level , char *filepath ) {
+    struct stat __st;
+    int __fd = open( filepath , O_RDONLY );
+    char *fl_hash;
+
+    #ifdef DEBUG
+        printf( "attempting to open file :: %s :" , filepath );
+        printf( "fd: %d\n" , __fd );
+    #endif
+
+    if ( fstat( __fd , &__st ) == -1 ) {
+        printf( "cannot obtain file info\n" );
+        return NULL;
+    }
+
+    unsigned long int __size = __st.st_size;
+    fl_hash = malloc( __size );
+
+    unsigned long int b_read = read( __fd , fl_hash , __size );
+    #ifdef DEBUG
+        printf( "file size :: %d\n" , __size );
+        printf( "bytes read :: %d\n" , b_read );    
+    #endif
+
+    return hashof( level , fl_hash , b_read );
+}   
 
 
 
