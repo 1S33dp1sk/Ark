@@ -25,14 +25,11 @@ int __ap_make();
 
 int atherpoint( char *p_path , unsigned p_level ) {
 
-    // char *__path = argc >= 2 ? ( ( char * )argv[1] ) : "";
-    // int __level = argc == 3 ? argv[2][0] - '0' : 0;
-
     ap __;
     memset( &__ , 0 , sizeof( __ ) );
 
     #ifdef DEBUG
-        printf( "@point :: checking FIFO for atherpoint\n" );
+        printf( "@point :: checking for atherpoint\n" );
     #endif
 
     if ( !__ap_fifo( &__ ) ) {
@@ -43,14 +40,14 @@ int atherpoint( char *p_path , unsigned p_level ) {
 
         if ( !__ap_make() ) {
             printf( "@point :: unable to create atherpoint\n" );
-            return 2;
+            return -2;
         }
     }
 
     __.lbb_fd = __ap_entry( p_path , p_level );
 
 
-    return applier( &__ );
+    return __.lbb_fd;
 }
 
 int process_entry( char *entry , int e_len ) {

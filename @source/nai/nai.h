@@ -1,7 +1,6 @@
 #ifndef nai
-	#define nai atherinterface // native ather interface
 
-#define DEBUG
+// #define DEBUG
 
 
 #include <stdio.h>
@@ -84,28 +83,26 @@ struct a_ibna {
 };
 
 
-union __nai {
+typedef union __nai {
 	struct a_inmp n_uni; // universal ( unix )
 	struct a_isok n_loc; // local
 	struct a_idns n_glo; // global
 	struct a_ibna n_blo; // blockchain
-};
-
-#define ani union __nai
+} nai;
 
 
 
-int atherinterface( int level , ani __ );
+nai atherinterface( int level );
 
+#ifndef log_nai
+	void log_uni( struct a_inmp n_uni ) {
+		printf( "native ather interface\n" );
+		printf( "	universal	\n" );
+		printf( "inode num::		%ju\n" , ( uintmax_t ) n_uni.inn );
+		printf( "mount path::		%s\n" , n_uni.imp );
+	}
+#endif
 
 #endif
 
 
-// #ifndef log_nai
-// 	void log_nai_uni( struct a_inmp n_uni ) {
-// 		printf( "native ather interface\n" );
-// 		printf( "	universal	\n" );
-// 		printf( "inode num::		%ju\n" , ( uintmax_t ) n_uni.inn );
-// 		printf( "mount path::		%s\n" , n_uni.imp );
-// 	}
-// #endif

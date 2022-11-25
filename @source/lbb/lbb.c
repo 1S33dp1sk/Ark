@@ -149,7 +149,6 @@ int __regex_lbb( char const *rlbb ) {
 	return 0;
 }
 
-
 const char *__line( char *key , char *val , char *delim ) {
 	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
 	char __line[__len];
@@ -181,32 +180,37 @@ int little_black_book( char *p_name ) {
 	strcpy( ud.lbb_path , __LBB_NAME );
 
 	if ( exists( ud ) == -1 ) {
-		printf( "no lbb found, creating one\n" );
+		#ifdef DEBUG
+			printf( "no lbb found, creating one\n" );
+		#endif
 		create( ud );
 	}
 	else {
+		#ifdef DEBUG
 		printf( "lbb found, initializing...\n");
+		#endif
 		init( ud );
 	}
 
 	if ( !status( ud ) ) {
 		printf( "lbb status cannot be determined\n" );
-		return 1;
+		return -1;
 	}
+	#ifdef DEBUG
 	printf( "lbb : size = %ld bytes\n" , size( ud ) );	
+	#endif
 
 	if ( ud.lbb_fd <= 0 ) {
 		printf( "lbb file cannot be accessed\n" );
-		return 2;
+		return -2;
 	}
+	#ifdef DEBUG
 	printf( "lbb : fd = %d\n" , ud.lbb_fd );
-
+	#endif
 
 	int compilation_res = compile_lbb( __read( &ud ) , &lines );
-	
-	printf( "compiled : %d\n" , compilation_res );
-
 	#ifdef DEBUG
+		printf( "compiled : %d\n" , compilation_res );
 		printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
 		(lines[0].key).tal , (lines[0].key).sptr , 
 		(lines[0].wry).tal , (lines[0].wry).sptr );

@@ -7,13 +7,15 @@ ca:
 	cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
 	cc -c -fpic @source/nai/nai.c -o shared/nai.o
 	cc -shared shared/*.o -o shared/libather.so
-	cc net.c -o athernet ./shared/libather.so
-	cc kurl.c -o kurl
+	cc @source/ather.c -o athernet ./shared/libather.so
+	cc @source/kurl.c -o kurl ./shared/libather.so
 
 rca:
 	if [ -d shared ]; then rm -rf shared; fi
+	if [ -f .lbb ]; then rm .lbb; fi
 	if [ -f athernet ]; then rm athernet; fi
 	if [ -f kurl ]; then rm kurl; fi
+	# 	if [ -f atherpoint ]; then rm atherpoint; fi
 
 
 old:

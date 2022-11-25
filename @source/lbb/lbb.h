@@ -34,9 +34,13 @@
 #define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
 
 typedef struct {
-	int lbb_fd;
+	int lbb_fd; // main file descriptor
+				// used as an int to describe any errors 
+				// via negative correlations with the num
 	struct stat lbb_stat;
+				// checks for sizes, i-node numbers, devices etc
 	char lbb_path[MAX_PATH];
+				// the maximum build os-depenedent path for the file
 } __lbb;
 
 struct sota {
@@ -69,6 +73,8 @@ typedef struct {
 	do { _.lbb_fd = open( _.lbb_path , ( O_CREAT | O_RDWR ) , ( S_IRWXU | S_IRWXG | S_IRWXO ) ); } while ( 0 )
 #define status( _ ) stat( _.lbb_path , ( &_.lbb_stat ) ) == 0 ? 1 : 0
 #define size( _ ) _.lbb_stat.st_size
+
+
 
 
 int little_black_book( char *lbb_name );
