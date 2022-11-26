@@ -10,11 +10,6 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
-
-#define sa_global_port "3490"  // the global conf port
-#define sa_global_queue 10   // queue size for connections
-#define sa_size sizeof( struct in_addr )
-#define sa6_size sizeof( struct in6_addr )
 /**
  * ERRORS 
  * 
@@ -27,6 +22,14 @@
  * -7 :: could not bind to network address
  * -8 :: could not listen on socket
  */
+
+
+
+#define sp_network htons( 9999 )
+#define sa_global_port "3490"  // the global conf port
+#define sa_global_queue 10   // queue size for connections
+#define sa_size sizeof( struct in_addr )
+#define sa6_size sizeof( struct in6_addr )
 
 char *__path_unix( char *__path , char *__filename ) {
 	int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
@@ -46,13 +49,18 @@ void sigchld_handler(int s) {
 }
 
 // get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa) {
+void *get_in_addr( struct sockaddr *sa ) {
 	if (sa->sa_family == AF_INET) {
 		return &(((struct sockaddr_in*)sa)->sin_addr);
 	}
-
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
+
+/***
+ * interface calls only check and return the
+ * native structure for the interface
+ * i.e :: only ATOMIC && GET but no SET is allowed here.
+ */
 
 // node number : point
 // mount path : lbb
@@ -65,7 +73,9 @@ int uni_interface( struct a_inmp *inmp ) {
 	memset( __path , 0 , mpath_max );
 	// get the current working dir
 	if ( getcwd( __path , mpath_max ) == NULL ) {
+		#ifdef DEBUG
 		printf( "cannot get working dir\n" );
+		#endif
 		return -1;
 	}
 	// re-zero the `mp`
@@ -74,32 +84,31 @@ int uni_interface( struct a_inmp *inmp ) {
 	memcpy( path , __path , strlen( __path ) );
 	// add the `.lbb` name to the path
 	if ( __path_unix( path , ".lbb" ) == NULL ) {
-		printf( "path too long\n" );
+		printf( "cannot construct lbb path\n" );
 		return -2;
 	}
 	// check calling process permissions
 	// for constructed path to lbb
 	if ( access( path , F_OK|R_OK ) != 0 ) {
+		#ifdef DEBUG
 		printf( "lbb cannot be accessed\n" );
+		#endif
 		return -3;
 	}
 	// attach `atherpoint` to the directory path
 	if ( __path_unix( __path , "atherpoint" ) == NULL ) {
-		printf( "path too long\n" );
+		printf( "cannot construct point path\n" );
 		return -2;
 	}
 	// call the FIFO `stat` to retreive `inn`
 	if ( stat( __path , &__st ) == -1 ) {
-		printf( "atherpoint cannot be accessed\n" );
-		return -4;
+		printf("cannot initiate unix interface\n");
+		return -4;				
 	}
 	// get the inodenum from the struct `stat`
 	// and add the value to `inmp`
-	inmp -> inn = __st.st_ino;
-
 	return 0;
 }
-
 // S B L A
 int loc_interface( struct a_isok *isok ) {
 	
@@ -193,7 +202,7 @@ int loc_interface( struct a_isok *isok ) {
 		close( _newfd );  // parent doesn't need this
 	}
 }
-
+// global socket && sbla
 int glo_interface( struct a_idns *idns ) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
@@ -290,7 +299,7 @@ int glo_interface( struct a_idns *idns ) {
 
 	return 0;
 }
-
+// blockchain socket + network name + netaddr
 int blo_interface( struct a_ibna *ibna ) {
 	char *__argvs[3] = { "/home/kj/go/bin/geth" , "attach" , NULL };
 
@@ -298,7 +307,8 @@ int blo_interface( struct a_ibna *ibna ) {
 }
 
 
-nai atherinterface( int level ) {
+// delegate
+nai native_interface( int level ) {
 
 	nai __;
 	memset( &__ , 0 , sizeof( __ ) );
@@ -314,3 +324,42 @@ nai atherinterface( int level ) {
 	}
 	return __;
 }
+
+
+#ifndef native_address
+#include "../hbar/hbar.h"
+char *native_address( int level ) {
+	int res = -1;
+	nai __;
+	memset( &__ , 0 , sizeof( __ ) );
+	switch ( level ) {
+		case 0: 
+			res = uni_interface( &__.n_uni );
+			if ( res >= 0 ) {
+				return hashof( level , &__.n_uni , sizeof( struct a_inmp ) );
+			}
+			break;
+		case 1: 
+			res = loc_interface( &__.n_loc ); 
+			if ( res >= 0 ) {
+				return hashof( level , &__.n_loc , sizeof( struct a_isok ) );
+			}
+			break;
+		case 2: 
+			res = glo_interface( &__.n_glo );
+			if ( res >= 0 ) {
+				return hashof( level , &__.n_glo , sizeof( struct a_idns ) );
+			}
+			break;
+		case 3: 
+			res = blo_interface( &__.n_blo ); 
+			if ( res >= 0 ) {
+				return hashof( level , &__.n_blo , sizeof( struct a_ibna ) );
+			}
+			break;
+		default: 
+			break; 
+	}
+	return NULL;
+}
+#endif

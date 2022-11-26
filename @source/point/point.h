@@ -1,6 +1,7 @@
 #ifndef point
     #define point atherpoint
 
+
 /**
  * atherpoint is an `FIFO`
  * with a singular reader, that is the `lbb`
