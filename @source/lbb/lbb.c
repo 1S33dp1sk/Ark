@@ -11,9 +11,13 @@
 
 
 
-const char *__read( __lbb *lbb_st );
-const char *__line( char *key , char *val , char *delim );
-int __regex_lbb( char const *lbb_contents );
+
+
+#define __lbb__ const char *
+
+__lbb__ __read( struct __lbb *__st );
+__lbb__ __line( char *key , char *val , char *delim );
+int __regex_lbb( const char *contents );
 
 
 void log_sota( struct sota *__sota ) {
@@ -24,17 +28,17 @@ void log_sota( struct sota *__sota ) {
 	printf( " :: offset = %jd; len = %jd\n" , __sota -> offset , __sota -> tal );
 }
 
-int lbb_append( __lbb *lbb_st , char *key , char *val ) {
+int lbb_append( lbb *__ , char *key , char *val ) {
 	#ifdef DEBUG
 		printf( "lbb -> \n\tadding %s :: %s\n" , key , val );
 	#endif
 
-	const char *prev = __read( lbb_st );
+	const char *prev = __read( &__ -> st );
 	const char *curr = __line( key , val , ":" );
 	char total[strlen( prev ) + strlen( curr )];
 	strcpy( total , prev );
 	strcpy( total , curr );
-	int b_written = write( lbb_st -> lbb_fd , total , strlen( total ) );
+	int b_written = write( __ -> st.lbb_fd , total , strlen( total ) );
 	
 	#ifdef DEBUG
 		printf( "wrote %d bytes\n" , b_written );
@@ -43,9 +47,9 @@ int lbb_append( __lbb *lbb_st , char *key , char *val ) {
 	return b_written;
 }
 
-int lbb_query( __lbb *lbb_st , char *key ) {
+int lbb_query( lbb *__ , char *key ) {
 
-	char const *s = __read( lbb_st );
+	__lbb__ s = __read( &__ -> st );
 	printf( "lbb :: \n%s\n" , s );
 }
 
@@ -315,10 +319,14 @@ int __regex_lbb( char const *rlbb ) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 const char *__line( char *key , char *val , char *delim ) {
+=======
+__lbb__ __line( char *key , char *val , char *delim ) {
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
 	char __line[__len];
 	memset( &__line , 0 , sizeof( __line ) );
@@ -337,54 +345,64 @@ word_t __line( char *key , char *val , char *delim ) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 const char *__read( __lbb *lbb_st ) {
 	unsigned lbb_size = lbb_st -> lbb_stat.st_size;
 	char temp[lbb_size+1];
 	memset( &temp , 0 , sizeof( temp ) );
 	read( lbb_st -> lbb_fd , &temp , lbb_size );
 	strcat( temp , "\n" );
+=======
+__lbb__ __read( struct __lbb *st ) {
+
+	unsigned lbb_size = st -> lbb_stat.st_size;
+	char temp[lbb_size+1]; temp[lbb_size+1] = '\0';
+	memset( &temp , 0 , lbb_size );
+	read( st -> lbb_fd , &temp , lbb_size );
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 	return strdup( temp );
 }
 
 
-int little_black_book( char *p_name ) {
+lbb little_black_book( char *p_name ) {
 
 	struct seam *lines;
+	struct __lbb _inlbb; 
+	memset( &_inlbb , 0 , sizeof( _inlbb ) );
+	memcpy( _inlbb.lbb_path , __lbb_name , sizeof( __lbb_name ) );
 
-	__lbb ud;
-	memset( &ud , 0 , sizeof( ud ) );
-	strcpy( ud.lbb_path , __LBB_NAME );
+	struct lbb__ _outlbb = {
+		.st = _inlbb,
+	};
 
-	if ( exists( ud ) == -1 ) {
+	if ( lbb_check( _outlbb ) == -1 ) {
 		#ifdef DEBUG
 			printf( "no lbb found, creating one\n" );
 		#endif
-		create( ud );
+		lbb_make( _outlbb );
 	}
-	else {
-		#ifdef DEBUG
-		printf( "lbb found, initializing...\n");
-		#endif
-		init( ud );
-	}
+	#ifdef DEBUG
+	printf( "initializing lbb\n");
+	#endif
+	lbb_open( _outlbb );
 
-	if ( !status( ud ) ) {
+	if ( lbb_status( _outlbb ) == -1 ) {
 		printf( "lbb status cannot be determined\n" );
-		return -1;
+		// return -1;
 	}
 	#ifdef DEBUG
-	printf( "lbb : size = %ld bytes\n" , size( ud ) );	
+	printf( "lbb : size = %ld bytes\n" , size( _outlbb ) );	
 	#endif
 
-	if ( ud.lbb_fd <= 0 ) {
+	if ( lbb_descriptors( _outlbb ) == -1 ) {
 		printf( "lbb file cannot be accessed\n" );
-		return -2;
+		// return -2;
 	}
 	#ifdef DEBUG
-	printf( "lbb : fd = %d\n" , ud.lbb_fd );
+	printf( "lbb : fd = %d\n" , _outlbb.st.lbb_fd );
 	#endif
 
-	int compilation_res = compile_lbb( __read( &ud ) , &lines );
+	int compilation_res = compile_lbb( __read( &_outlbb.st ) , &lines );
 	#ifdef DEBUG
 		printf( "compiled : %d\n" , compilation_res );
 		printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
@@ -392,9 +410,7 @@ int little_black_book( char *p_name ) {
 		(lines[0].wry).tal , (lines[0].wry).sptr );
 	#endif
 
-	cleanup( ud , lines );
-
-	return compilation_res;
+	return _outlbb;
 }
 =======
 ulong little_black_book() {

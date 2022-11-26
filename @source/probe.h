@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef probe
     #define probe 
 =======
@@ -684,32 +685,39 @@ struct level_aliases {
 #include "lbb/lbb.h"
 #include "hbar/hbar.h"
 #include "nai/nai.h"
+=======
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 
 #define init_kurl 0x0001
 #define probe void *
 #define __kurl__ ( probe __ )
-static probe p_ref;
-
 #define al int 
 #define al__ ( int * )
 #define __al__( __ ) (( al2 )( __ ))
 #define al2 long
-
+static probe p_ref;
+extern al2 builder __kurl__{
+	__ = al__ init_kurl;
+	p_ref = &__;
+	return __al__( __ ) ;}
+#define nin ( ( long ) ( -1&0xf000000000000000 ) )
+#define pin ( ( long ) ( +1|0x0111111111111111 ) )
+#define url_r( u_ ) u_ > nin ? 1 : 0
+#define url_l( u_ ) u_ < pin ? 1 : 0
+#define url__( __ ) __ == nin ? -1 : __ == pin ? 1 : 0
 #define levelof( __ ) sizeof( __ ) == sizeof( int ) ? \
 	0 : sizeof( __ ) == sizeof( long ) ? \
 	1 : sizeof( __ ) == sizeof( long long ) ? \
 	2 : sizeof( __ ) > sizeof( long long ) * 2 ? \
 	3 : 0
-
-#define decode_probe( p__ ) \
-	p__>>1
-
+#define decode_probe( p__ ) p__>>1
 #define upgrade_probe( p__ ) p__ == 0x0001 ? \
 		p__|= 0x0010 : p__ == 0x0011 ? \
 		p__|= 0x0100 : p__ == 0x0111 ? \
 		p__|= 0x1000 : p__ == 0x1111 ? \
 		p__&= 0x0000 : 0
 
+<<<<<<< HEAD
 #define temp( p__ ) \
 		do { p__+=8; } while( 0 );
 
@@ -744,6 +752,8 @@ extern al2 builder __kurl__{
 
 
 
+=======
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 
 >>>>>>> a95c3a4 (comments and usages for athernet, kurls & probe)
 

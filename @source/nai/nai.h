@@ -13,10 +13,6 @@
 // #define DEBUG
 
 
-#include <stdio.h>
-#include <stdint.h>
-
-#define sp_network htons( 9999 )
 // can convert to network & host byte order
 // via byte definition
 
@@ -117,10 +113,14 @@ typedef union __nai {
 } nai;
 
 
+int uni_interface( struct a_inmp *n_uni );
 
-nai atherinterface( int level );
+nai native_interface( int level );
+char *native_address( int level );
 
 #ifndef log_nai
+#include <stdio.h>
+#include <stdint.h>
 	void log_uni( struct a_inmp n_uni ) {
 		printf( "native ather interface\n" );
 		printf( "	universal	\n" );

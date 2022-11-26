@@ -58,6 +58,7 @@ errors
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
@@ -67,6 +68,8 @@ errors
 #define sa_size sizeof( struct in_addr )
 #define sa6_size sizeof( struct in6_addr )
 >>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
+=======
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 /**
  * ERRORS 
  * 
@@ -137,6 +140,14 @@ char *__path_unix( char *__path , char *__filename ) {
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
  */
 
+
+
+#define sp_network htons( 9999 )
+#define sa_global_port "3490"  // the global conf port
+#define sa_global_queue 10   // queue size for connections
+#define sa_size sizeof( struct in_addr )
+#define sa6_size sizeof( struct in6_addr )
+
 char *__path_unix( char *__path , char *__filename ) {
 	int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
 	if ( __path[path_len] != '/' && __filename[0] != '/' ) {
@@ -155,11 +166,10 @@ void sigchld_handler(int s) {
 }
 
 // get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa) {
+void *get_in_addr( struct sockaddr *sa ) {
 	if (sa->sa_family == AF_INET) {
 		return &(((struct sockaddr_in*)sa)->sin_addr);
 	}
-
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 >>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 }
@@ -171,6 +181,7 @@ void *get_in_addr(struct sockaddr *sa) {
 >>>>>>> c1e4320 (athernet V0.9)
 }
 
+<<<<<<< HEAD
 void sigchld_handler(int s) {
     // waitpid() might overwrite errno, so we save and restore it:
     int saved_errno = errno;
@@ -188,13 +199,18 @@ void *get_in_addr( struct sockaddr *sa ) {
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
+=======
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 /***
  * interface calls only check and return the
  * native structure for the interface
  * i.e :: only ATOMIC && GET but no SET is allowed here.
  */
 
+<<<<<<< HEAD
 >>>>>>> a415938 (kurls)
+=======
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 // node number : point
 // mount path : lbb
 int uni_interface( struct a_inmp *inmp ) {
@@ -208,7 +224,9 @@ int uni_interface( struct a_inmp *inmp ) {
 	memset( __path , 0 , mpath_max );
 	// get the current working dir
 	if ( getcwd( __path , mpath_max ) == NULL ) {
+		#ifdef DEBUG
 		printf( "cannot get working dir\n" );
+		#endif
 		return -1;
 	}
 	// re-zero the `mp`
@@ -239,10 +257,13 @@ int uni_interface( struct a_inmp *inmp ) {
 	// add the `.lbb` name to the path
 	if ( __path_unix( path , ".lbb" ) == NULL ) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		printf( "path too long\n" );
 <<<<<<< HEAD
 		return 2;
 =======
+=======
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 		printf( "cannot construct lbb path\n" );
 		return -2;
 >>>>>>> a415938 (kurls)
@@ -254,25 +275,29 @@ int uni_interface( struct a_inmp *inmp ) {
 	// for constructed path to lbb
 	if ( access( path , F_OK|R_OK ) != 0 ) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+		#ifdef DEBUG
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 		printf( "lbb cannot be accessed\n" );
+		#endif
 		return -3;
 	}
 	// attach `atherpoint` to the directory path
 	if ( __path_unix( __path , "atherpoint" ) == NULL ) {
-		printf( "path too long\n" );
+		printf( "cannot construct point path\n" );
 		return -2;
 	}
 	// call the FIFO `stat` to retreive `inn`
 	if ( stat( __path , &__st ) == -1 ) {
-		printf( "atherpoint cannot be accessed\n" );
-		return -4;
+		printf("cannot initiate unix interface\n");
+		return -4;				
 	}
 	// get the inodenum from the struct `stat`
 	// and add the value to `inmp`
-	inmp -> inn = __st.st_ino;
-
 	return 0;
 }
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -299,6 +324,8 @@ int uni_interface( struct a_inmp *inmp ) {
 	return 0;
 }
 >>>>>>> a415938 (kurls)
+=======
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 // S B L A
 int loc_interface( struct a_isok *isok ) {
 	
@@ -421,10 +448,14 @@ int loc_interface( struct a_isok *isok ) {
 	}
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 // global socket && sbla
 >>>>>>> a415938 (kurls)
+=======
+// global socket && sbla
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 int glo_interface( struct a_idns *idns ) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
@@ -570,10 +601,14 @@ int glo_interface( struct a_idns *idns ) {
 	return 0;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 // blockchain socket + network name + netaddr
 >>>>>>> a415938 (kurls)
+=======
+// blockchain socket + network name + netaddr
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 int blo_interface( struct a_ibna *ibna ) {
 	char *__argvs[3] = { "/home/kj/go/bin/geth" , "attach" , NULL };
 
@@ -581,6 +616,7 @@ int blo_interface( struct a_ibna *ibna ) {
 }
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 int atherinterface( int level , ani __ ) {
@@ -593,6 +629,10 @@ nai native_interface( int level ) {
 >>>>>>> a415938 (kurls)
 =======
 nai atherinterface( int level ) {
+=======
+// delegate
+nai native_interface( int level ) {
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 
 	nai __;
 	memset( &__ , 0 , sizeof( __ ) );
@@ -855,9 +895,13 @@ char *native_address( int level ) {
 	}
 	return NULL;
 }
+<<<<<<< HEAD
 #endif
 >>>>>>> a415938 (kurls)
 =======
 	return __;
 }
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
+=======
+#endif
+>>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
