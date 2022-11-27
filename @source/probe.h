@@ -1,5 +1,3 @@
-
-
 #define init_kurl 0x0001
 #define probe void *
 #define __kurl__ ( probe __ )
@@ -35,11 +33,10 @@ extern al2 builder __kurl__{
 
 
 
-
 // #define e_set( c , c1 , c2 , c3 ) \
-	// e set are used to help add 
-	// extra security && permissions
-	// so pv :: 0x0001 ~> 0x000c 
-	// 0x0011 ~> 0x00cc1
-	// c0 is leveled obviously so
-	// c0 belongs to { 0 = c , 1 , 2 , 3 , ... }
+// e set are used to help add 
+// extra security && permissions
+// so pv :: 0x0001 ~> 0x000c 
+// 0x0011 ~> 0x00cc1
+// c0 is leveled obviously so
+// c0 belongs to { 0 = c , 1 , 2 , 3 , ... }
