@@ -54,10 +54,7 @@ void wdebug() {
 }
 
 int main( int argc , char **argv ) {
-
 	
-	unsigned __c = 0;
-
 	ap __atherpoint; 
 	lbb __pointlbb;
 
