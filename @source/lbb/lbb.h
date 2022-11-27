@@ -22,6 +22,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 #include <stdint.h>
+<<<<<<< HEAD
 =======
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,6 +34,10 @@
 =======
 #include <stdint.h>
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+#include <fcntl.h>
+
+>>>>>>> 1635bec (started athernet)
 /*
 ***************************************************************************
 	*******************************************************************
@@ -63,6 +68,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 4947f52 (v0.01-NS)
@@ -72,6 +78,9 @@ typedef struct {
 =======
 struct __lbb {
 >>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
+=======
+struct lbb_st {
+>>>>>>> 1635bec (started athernet)
 	int lbb_fd; // main file descriptor
 				// used as an int to describe any errors 
 				// via negative correlations with the num
@@ -107,47 +116,53 @@ struct seam {
 };
 
 //little black book
-struct lbb__ {
-	struct __lbb st; // universal description
+struct lbb_i {
+	struct lbb_st st; // universal description
 	struct seam **lbb_addrs;
 	unsigned addr_count;
 };
 
-typedef struct lbb__ lbb;
+typedef struct lbb_i lbb;
 
 // checkmake 
-
 #define lbb_check( __ ) __.st.lbb_fd > 0 ? \
 	__.st.lbb_fd : access( __.st.lbb_path , (F_OK|R_OK) ) == 0 ? 0 : -1
-#define lbb_make( __ ) \
-	do { \
+#define lbb_make( __ ) lbb_check( __ ) ;\
+	do { strlen( __.st.lbb_path ) <= 3 ? \
+		memmove( __.st.lbb_path , __lbb_name , sizeof( __lbb_name ) ) : 0; \
 		__.st.lbb_fd = open( __.st.lbb_path , ( O_CREAT | O_RDWR ) , \
 			( S_IRWXU | S_IRWXG | S_IRWXO ) ); \
-	} while ( 0 )
+	} while ( 0 ) 
+
+#define lbb_load( __ ) little_black_book( __lbb_name , __ )
 // when we open an lbb, use O+RDONLY
 // no need to write anything to it
 // as it should be updated atomically within 
 // *kurl that is referenced to/by it
 #define lbb_open( __ ) \
 	do { __.st.lbb_fd = open( __.st.lbb_path , O_RDONLY ); } while ( 0 )
-#define lbb_status( __ ) \
-	stat( __.st.lbb_path , ( &__.st.lbb_stat ) ) == 0 ? 1 : -1
+#define lbb_status( __ ) stat( __.st.lbb_path , &(__.st.lbb_stat) ) 
 #define lbb_size( __ ) \
 	__.st.lbb_stat.st_size
 #define lbb_iobytes( __ ) \
 	__.st.lbb_stat.st_blksize
 #define lbb_close( __ ) \
 	close( __.st.lbb_fd )
-#define lbb_descriptors( __ ) \
-	__.st.lbb_fd > 0 ? 1 : -1
+#define lbb_descriptors( __ ) __.st.lbb_fd
+#define lbb_exists() __file_exsits( __lbb_name )
 
+
+int __file_exsits( char *_name ) {
+	struct stat __st;
+	return stat( _name , &__st );	
+}
 
 <<<<<<< HEAD
 <<<<<<< HEAD
 
 
 
-lbb little_black_book( char *lbb_name );
+int little_black_book( char *lbb_name , lbb __ );
 int lbb_append( lbb *__ , char *lbb_key , char *lbb_val );
 int lbb_query( lbb *__ , char *lbb_key );
 int compile_lbb( char const *lbb_contents , struct seam **lbb_lines );
@@ -440,6 +455,9 @@ int lbb_append( struct lbb_si *__ , char *lbb_key , char *lbb_val );
 int lbb_query( struct lbb_si *__ , char *lbb_key );
 int compile_lbb( char const *lbb_contents , struct seam **lbb_lines );
 void log_sota( struct sota *s );
+
+
+
 
 #endif
 >>>>>>> c1e4320 (athernet V0.9)

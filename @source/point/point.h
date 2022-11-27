@@ -3,7 +3,11 @@
 #ifndef point
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     #define point atherpoint
+=======
+    #define point
+>>>>>>> 1635bec (started athernet)
 
 
 /**
@@ -23,7 +27,7 @@
 #include <sys/types.h>
 
 
-#define __AP_NAME "atherpoint"
+#define __ap_name "atherpoint"
 
 =======
 
@@ -57,16 +61,30 @@ struct apio {
 =======
 >>>>>>> 757e790 (shared library for point)
 typedef struct {
-    struct apio t_ap;
-    struct apio e_ap;
-    struct stat ap_stat;
+    int __k__;
     unsigned lbb_fd;
-#define ap_ok( __ ) ( (__.t_ap.__fd > 0) || (__.e_ap.__fd > 0) ? (1) : (0) )
+    struct stat ap_stat;
+    struct apio from;
+    struct apio to_point;
 } ap;
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 int atherpoint( char *p_path , unsigned p_level );
+=======
+static ap __ap;
+
+#define point_descriptors( __ ) \
+    ( __.to_point.__fd > 0 ) || ( __.from.__fd > 0 ) ? 1 : 0 
+
+#define point_exists() __file_exsits( __ap_name )
+#define make_point( __ ) atherpoint( __ap_name , &__ )
+
+
+
+int atherpoint( void *at_point , ap *__ );
+>>>>>>> 1635bec (started athernet)
 int process_entry( char *_e , int _e_len );
 int app_engine( struct apio *engint );
 int socket_execute( struct apio *sexec );

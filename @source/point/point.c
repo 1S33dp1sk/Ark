@@ -24,12 +24,9 @@ int __ap_fifo();
 int __ap_make();
 
 
+int atherpoint( void *point_name , ap *__ ) {
 
-int atherpoint( char *p_path , unsigned p_level ) {
-
-    ap __;
-    memset( &__ , 0 , sizeof( __ ) );
-
+    memset( __ , 0 , sizeof( ap ) );
     #ifdef DEBUG
         printf( "@point :: checking for atherpoint\n" );
     #endif
@@ -46,10 +43,10 @@ int atherpoint( char *p_path , unsigned p_level ) {
         }
     }
 
-    __.lbb_fd = __ap_entry( p_path , p_level );
+    __ -> lbb_fd = __ap_entry( ( char * ) point_name , __ -> __k__ );
 
 
-    return __.lbb_fd;
+    return __ -> lbb_fd;
 }
 
 <<<<<<< HEAD
@@ -259,8 +256,9 @@ int applier( ap *a_point ){
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
     // get the current pid
-    ( a_point -> e_ap ).__pid = getpid();
+    ( a_point -> from ).__pid = getpid();
     // fork the process for the new pid
+<<<<<<< HEAD
 <<<<<<< HEAD
     if ( ( ( point -> t_ap ).__pid = fork() ) == -1 ) {
 >>>>>>> 757e790 (shared library for point)
@@ -286,11 +284,15 @@ int applier( apoint *a_point ){
 =======
     if ( ( ( a_point -> to_point ).__pid = fork() ) == -1 ) {
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+    if ( ( ( a_point -> to_point ).__pid = fork() ) == -1 ) {
+>>>>>>> 1635bec (started athernet)
         printf( "cannot start the atherpoint :: fork\n" );
         return 2;
     }
 
     // check calling process
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -323,10 +325,17 @@ int applier( apoint *a_point ){
         // read
         if ( ( ( a_point -> from ).__fd = _ap_r_entry() ) == 0 ) {
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+    if ( ( a_point -> to_point ).__pid == 0 ) {
+        printf( "current pid for reading :: %d\n" , ( a_point -> from ).__pid );
+        // read
+        if ( ( ( a_point -> from ).__fd = _ap_r_entry() ) == 0 ) {
+>>>>>>> 1635bec (started athernet)
             printf( "cannot open atherpoint for reading\n");
             return 3;
         }
         printf( "\n-#-#-# engine -#-#-#\n" );
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -342,10 +351,14 @@ int applier( apoint *a_point ){
 =======
         return app_engine( &(a_point -> e_ap) );
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+        return app_engine( &(a_point -> from ) );
+>>>>>>> 1635bec (started athernet)
     }
     else {
-        printf( "current pid for writing :: %d\n" , ( a_point -> t_ap ).__pid );
+        printf( "current pid for writing :: %d\n" , ( a_point -> to_point ).__pid );
         // write
+<<<<<<< HEAD
 <<<<<<< HEAD
         if ( ( ( point -> t_ap ).__fd = _ap_w_entry() ) == 0 ) {
 >>>>>>> 757e790 (shared library for point)
@@ -367,10 +380,14 @@ int applier( apoint *a_point ){
 =======
         if ( ( ( a_point -> to_point ).__fd = _ap_w_entry() ) == 0 ) {
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+        if ( ( ( a_point -> to_point ).__fd = _ap_w_entry() ) == 0 ) {
+>>>>>>> 1635bec (started athernet)
             printf( "cannot open atherpoint for writing\n");
             return 3;
         }
         printf( "\n#-#-# socket executive #-#-#\n" );
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -388,6 +405,9 @@ int applier( apoint *a_point ){
 =======
         return socket_execute( &(a_point -> to_point) );
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+        return socket_execute( &(a_point -> to_point) );
+>>>>>>> 1635bec (started athernet)
     }
 
     return 0;
@@ -434,9 +454,9 @@ int __ap_entry( char *_e_path , int _e_type ) {
 int _ap_r_entry() {
     int __apr , __flags = ( R_OK );
 
-    if ( access( __AP_NAME , __flags ) == 0 ) {
+    if ( access( __ap_name , __flags ) == 0 ) {
         __flags = O_RDONLY;
-        __apr = open( __AP_NAME , __flags );
+        __apr = open( __ap_name , __flags );
     }
 
     return __apr > 0 ? __apr : 0;
@@ -447,9 +467,9 @@ int _ap_r_entry() {
 int _ap_w_entry() {
     int __apr , __flags = ( W_OK );
 
-    if ( access( __AP_NAME , __flags ) == 0 ) {
+    if ( access( __ap_name , __flags ) == 0 ) {
         __flags = O_WRONLY;
-        __apr = open( __AP_NAME , __flags );
+        __apr = open( __ap_name , __flags );
     }
 
     return __apr > 0 ? __apr : 0;   
@@ -457,22 +477,18 @@ int _ap_w_entry() {
 #endif
 
 #ifndef __ap_fifo
-int __ap_fifo( ap *__ ) {
-    if ( ( ( __ -> ap_stat ).st_nlink == 0 ) 
-        && 
-        stat( __AP_NAME , &( __ -> ap_stat ) ) == 0 ) {
-        #ifdef log_stat
-            log_stat( __ -> ap_stat );
-        #endif
-            return 1;
-    }
+int __ap_fifo( char *point_name , struct stat *point_st ) {
+    // kindof a mutex because after `stat`
+    // st_nlink is atleast >= 1
+    if ( ( point_st -> st_nlink == 0 ) \
+        && stat( point_name , point_st ) == 0 ) { return 1; }
     return 0;
 }
 #endif
 
 #ifndef __ap_make
 int __ap_make() {
-    if ( !mkfifo( __AP_NAME , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
+    if ( !mkfifo( __ap_name , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
         return 1;
     }
     return 0;
