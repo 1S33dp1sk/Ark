@@ -1,53 +1,68 @@
 /// what is my kurl ? \\\
 
+#define DEBUG
 /**
+definition ::
  * for any kurl to be anything useful
  * it needs to/must be in the ather. 
  * 
  * as an example to kurl *{a,any} net point 
  * there must be a running athernet instance.
  * 
- */
+**/
 #include "hbar/hbar.h"
+#include "probe.h"
 #include <stdio.h>
-//	usage :: 
-//		kurl [os/dependent/path] (level) 
-//		: example :
-//			kurl /home/kj/athernet 2
-//
-//					or
-//
-//		@[point_name] 
-//		: example :
-//			@KARAM/athernet
-//		
-//					or
-//
-//		[u_reference]
-//		#reference 
-//		: example :
-//			2x194102491959120
-//		**note :: since most shells needs an escape char for `#` i.e :: `\#`
-//					kurls support direct level calls
-//									or
-//					kurls are supported directly with the level 
-//					i.e :: `0x` , `1x` , `2x` , ... 
-//
-//
 
 
 
-int initial_kurl();		
 
 
+/**
+(k)url ::
+ * 
+ * 
+**/
+#define __net_kurl	( ( long ) 0x0 )
+#define inc_p_kurl	( ( long ) 0x0000000000000001 )
+#define inc_n_kurl	( ( long ) 0x1000000000000001 )
+#define __nmin_kurl	( ( long ) 0x1000000000000000 )
+#define __pmax_kurl	( ( long ) 0x0fffffffffffffff )
+static long genesis_kurl = __net_kurl;
+int __kurl(){
+	do { genesis_kurl|=0xf; genesis_kurl>>1; genesis_kurl|=0x1; } while( 0 );
+}
+
+/**
+usage ::
+
+	a.	kurl [path] (level) 
+		e.g:: kurl /home/kj/athernet 2
+
+	b.	@[point_name] 
+		e.g:: @KARAM/athernet
+
+	c.	[u_reference] || #reference 
+		e.g:: 2x194102491959120
+			note:: since most shells needs an escape char for `#` i.e :: `\#`
+				kurls support direct level calls :: `0x` , `1x` , `2x` , ... 
+**/
 int main( int argc , char **argv ) {
 
-	if ( argc == 0 ) {
+	return 0;
+}
 
-		return initial_kurl();
-	}
 
-	switch ( sfh( &argv[0][0] ) ) {
+
+/**
+switching mechanism ::
+ * select based on the super fast hash
+ * of the first character in the passed
+ * args :: { k , @ , # , 0 , 1 , 2 , 3 , ... }
+**/
+int usage_switch( char select_ ) {
+
+	switch ( sfh( &select_ ) ) {
 		case 0x4ea585c0: // k
 			break;
 		case 0x973fc315: // @
@@ -66,17 +81,14 @@ int main( int argc , char **argv ) {
 			printf( "returning -1\n" );
 			return -1;
 	}
-
-	printf( "returning 0\n" );
 	return 0;
 }
 
 
 
-
-int initial_kurl() {
-	return 0;
+void wdebug() {
+	#ifdef DEBUG
+		printf( "(DEBUG)	kurl :: k = %016lx\n" , genesis_kurl );
+	#endif
 }
-
-
 
