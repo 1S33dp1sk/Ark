@@ -12,7 +12,7 @@
 
 #define __lbb__ const char *
 
-__lbb__ __read( struct __lbb *__st );
+__lbb__ __read( struct lbb_st *__st );
 __lbb__ __line( char *key , char *val , char *delim );
 int __regex_lbb( const char *contents );
 
@@ -165,7 +165,7 @@ __lbb__ __line( char *key , char *val , char *delim ) {
 	return strdup( __line );
 }
 
-__lbb__ __read( struct __lbb *st ) {
+__lbb__ __read( struct lbb_st *st ) {
 
 	unsigned lbb_size = st -> lbb_stat.st_size;
 	char temp[lbb_size+1]; temp[lbb_size+1] = '\0';
@@ -175,45 +175,43 @@ __lbb__ __read( struct __lbb *st ) {
 }
 
 
-lbb little_black_book( char *p_name ) {
+int little_black_book( char *lbb_name , lbb __ ) {
 
 	struct seam *lines;
-	struct __lbb _inlbb; 
-	memset( &_inlbb , 0 , sizeof( _inlbb ) );
-	memcpy( _inlbb.lbb_path , __lbb_name , sizeof( __lbb_name ) );
+	memset( &__ , 0 , sizeof( lbb ) );
 
-	struct lbb__ _outlbb = {
-		.st = _inlbb,
-	};
+	char *__name = strlen( lbb_name ) <= 3 ? __lbb_name : lbb_name; 
+	memcpy( __.st.lbb_path , __name , sizeof( __name ) );
 
-	if ( lbb_check( _outlbb ) == -1 ) {
+	if ( lbb_check( __ ) == -1 ) {
 		#ifdef DEBUG
 			printf( "no lbb found, creating one\n" );
 		#endif
-		lbb_make( _outlbb );
+		lbb_make( __ );
 	}
 	#ifdef DEBUG
 	printf( "initializing lbb\n");
 	#endif
-	lbb_open( _outlbb );
+	lbb_open( __ );
 
-	if ( lbb_status( _outlbb ) == -1 ) {
+	if ( lbb_status( __ ) != 0 ) {
 		printf( "lbb status cannot be determined\n" );
-		// return -1;
+		return -1;
 	}
+
 	#ifdef DEBUG
-	printf( "lbb : size = %ld bytes\n" , size( _outlbb ) );	
+	printf( "lbb : size = %ld bytes\n" , size( __ ) );	
 	#endif
 
-	if ( lbb_descriptors( _outlbb ) == -1 ) {
+	if ( lbb_descriptors( __ ) <= 0 ) {
 		printf( "lbb file cannot be accessed\n" );
-		// return -2;
+		return -2;
 	}
 	#ifdef DEBUG
-	printf( "lbb : fd = %d\n" , _outlbb.st.lbb_fd );
+	printf( "lbb : fd = %d\n" , __.st.lbb_fd );
 	#endif
 
-	int compilation_res = compile_lbb( __read( &_outlbb.st ) , &lines );
+	int compilation_res = compile_lbb( __read( &__.st ) , &lines );
 	#ifdef DEBUG
 		printf( "compiled : %d\n" , compilation_res );
 		printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
@@ -221,6 +219,6 @@ lbb little_black_book( char *p_name ) {
 		(lines[0].wry).tal , (lines[0].wry).sptr );
 	#endif
 
-	return _outlbb;
+	return 0;
 }
 
