@@ -49,8 +49,11 @@ char *fhash( unsigned level , char *filepath );
 
 
 
-#define sfh( _ ) \
-    super_fast_hash( _ , strlen( _ ) )
+#define sfh( __ ) \
+    super_fast_hash( __ , strlen( __ ) )
+
+#define sc_sfh( _ ) \
+    super_fast_hash( ( (char *) _ ) , 1 )
 
 #define sha3_init256( priv ) \
     sha3_init( priv , 256 )
