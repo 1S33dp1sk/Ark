@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef probe
     #define probe 
 =======
@@ -692,6 +693,9 @@ struct level_aliases {
 
 =======
 >>>>>>> 7273958 (started documentation with proper formatting as follows)
+=======
+
+>>>>>>> a3a6de6 (combining progress)
 #define init_kurl 0x0001
 #define probe void *
 #define __kurl__ ( probe __ )
@@ -703,7 +707,8 @@ static probe p_ref;
 extern al2 builder __kurl__{
 	__ = al__ init_kurl;
 	p_ref = &__;
-	return __al__( __ ) ;}
+	return __al__( __ ) ;
+}
 #define nin ( ( long ) ( -1&0xf000000000000000 ) )
 #define pin ( ( long ) ( +1|0x0111111111111111 ) )
 #define url_r( u_ ) u_ > nin ? 1 : 0
@@ -721,6 +726,7 @@ extern al2 builder __kurl__{
 		p__|= 0x1000 : p__ == 0x1111 ? \
 		p__&= 0x0000 : 0
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 #define temp( p__ ) \
 		do { p__+=8; } while( 0 );
@@ -816,3 +822,15 @@ extern al2 builder __kurl__{
 // c0 is leveled obviously so
 // c0 belongs to { 0 = c , 1 , 2 , 3 , ... }
 >>>>>>> 7273958 (started documentation with proper formatting as follows)
+=======
+struct level_aliases {
+	unsigned lnum;
+	char *lname;
+	char *lnetname;
+} aliaslist[] = { 
+	{	0 ,	"agent"	, "hostnet"		},
+	{	1 ,	"local"	, "intranet"	},
+	{	2 ,	"globe"	, "internet"	},
+	{	3 ,	"block"	, "chainnet"	}
+};
+>>>>>>> a3a6de6 (combining progress)

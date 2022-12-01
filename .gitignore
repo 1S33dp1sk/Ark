@@ -47,5 +47,12 @@ bin/*
 shared/*
 athernet
 kurl
+<<<<<<< HEAD
 >>>>>>> 2f81dbc (updated ignore)
+<<<<<<< HEAD
 >>>>>>> d6103f1 (updated ignore)
+=======
+=======
+.lbb
+>>>>>>> a3a6de6 (combining progress)
+>>>>>>> a5fe3ac (combining progress)
