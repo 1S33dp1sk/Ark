@@ -1,11 +1,14 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> b020af1 (added .gitignore)
 =======
 >>>>>>> d6103f1 (updated ignore)
+=======
+>>>>>>> 3e18750 (sub-merge of nets)
 flds
 d-cloud
 >>>>>>> fd027f3 (101+ errors at #30)
@@ -45,6 +48,9 @@ bin/*
 =======
 =======
 shared/*
+=======
+shared
+>>>>>>> 20518f8 (sub-merge of nets)
 athernet
 kurl
 <<<<<<< HEAD
