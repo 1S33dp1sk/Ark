@@ -1,32 +1,24 @@
 /// athernet \\\
 
-#include "probe.h"
-#include "hbar/hbar.h"
-#include "point/point.h"
-#include "lbb/lbb.h"
-#include "nai/nai.h"
 
 /**
-components ::
-	athernet proper init requires:: 
- 		1. atherpoint ( ap )
- 		2. little black book ( lbb )
-**/
-static ap __ap;
-static lbb __lbb;
-/**
-usage ::
+running athernet instance :: 
+ *
+ */
+#include "kurl.h"
+//instance athernet
+static kurl_t inst; 
+// start the kurl
+#define anet( in_ , _st_ ) \
+	do { \
+		inst.__len = in_; inst.__hat = *_st_;\
+	}while( 0 )
+// lbb procedure
 
-	a.	athernet (level|alias)
-		e.g:: athernet
-			: athernet 2
-			: athernet chainnet
-			: athernet unix
-**/
-int main( int argc , char **argv ) {
 
-	little_black_book( "" , __lbb );
-	lbb_append( &__lbb , "0ai" , "2" );
+int main() {
+
+
 	
-	
+
 }
