@@ -2,33 +2,63 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+/*
+***************************************************************************
+	*******************************************************************
+		***********************************************************
+			***************************************************
+				********************************************
+					************************************
+						****************************
+							********************
+								************
+									lbb
+								************
+							********************
+						****************************
+					************************************
+				********************************************
+			***************************************************
+		***********************************************************
+	*******************************************************************
+***************************************************************************
+*/
+>>>>>>> 1b97cf4 (broke everything)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
 #include <regex.h>
+/**
+lbb : word ::
+ * an lbb word consists of 3 main parts
+ * 
+*-1.	key	]	:	[ value				( stores the associated key with value )
+		
+
+*.0.	key ]	=	[ reference			( stores the associated key with a reference )
+
+	____________________________
+*+1.	key	]	:=	[ address 			( stores the associated key as an address )
+ *
+ * 
+1.	key:value:=address 
+ * 
+2. 	key=value:=address
+ * 
+3.	key:=value:=address
+ * 
+*/
 
 
+word_t __read( struct lbb_st *__st );
+word_t __line( char *key , char *val , char *delim );
 
 
-
-#define __lbb__ const char *
-
-__lbb__ __read( struct lbb_st *__st );
-__lbb__ __line( char *key , char *val , char *delim );
-int __regex_lbb( const char *contents );
-
-
-void log_sota( struct sota *__sota ) {
-	#ifdef VERBOSE_DEBUG
-	printf( " ---sota---\n " );
-	#endif
-	printf( "string : \"%.*s\"" , ( int ) __sota -> tal , __sota -> sptr );
-	printf( " :: offset = %jd; len = %jd\n" , __sota -> offset , __sota -> tal );
-}
-
-int lbb_append( lbb *__ , char *key , char *val ) {
+int lbb_append( struct lbb_si*__ , char *key , char *val ) {
 	#ifdef DEBUG
 		printf( "lbb -> \n\tadding %s :: %s\n" , key , val );
 	#endif
@@ -47,10 +77,8 @@ int lbb_append( lbb *__ , char *key , char *val ) {
 	return b_written;
 }
 
-int lbb_query( lbb *__ , char *key ) {
+int lbb_query( struct lbb_si*__ , char *key ) {
 
-	__lbb__ s = __read( &__ -> st );
-	printf( "lbb :: \n%s\n" , s );
 }
 
 int compile_lbb( char const *rlbb , struct seam **__lines ) {
@@ -265,6 +293,7 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 int __regex_lbb( char const *rlbb ) {
 
 	char const *__s = rlbb;
@@ -336,6 +365,12 @@ word_t __line( char *key , char *val , char *delim ) {
 	char __line[__len]; memset( &__line , 0 , __len ); __line[__len] = '\0';
 
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+word_t __line( char *key , char *val , char *delim ) {
+	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
+	char __line[__len]; memset( &__line , 0 , __len ); __line[__len] = '\0';
+
+>>>>>>> 1b97cf4 (broke everything)
 	strcpy( __line , key );
 	strcat( __line , delim );
 	strcat( __line , val );
@@ -344,6 +379,7 @@ word_t __line( char *key , char *val , char *delim ) {
 	return strdup( __line );
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -358,6 +394,9 @@ __lbb__ __read( struct __lbb *st ) {
 =======
 __lbb__ __read( struct lbb_st *st ) {
 >>>>>>> 1635bec (started athernet)
+=======
+word_t __read( struct lbb_st *st ) {
+>>>>>>> 1b97cf4 (broke everything)
 
 	unsigned lbb_size = st -> lbb_stat.st_size;
 	char temp[lbb_size+1]; temp[lbb_size+1] = '\0';
@@ -367,49 +406,59 @@ __lbb__ __read( struct lbb_st *st ) {
 	return strdup( temp );
 }
 
-
-int little_black_book( char *lbb_name , lbb __ ) {
+int little_black_book( char *lbb_name ) {
 
 	struct seam *lines;
-	memset( &__ , 0 , sizeof( lbb ) );
+	memset( &book , 0 , sizeof( struct lbb_si ) );
 
-	char *__name = strlen( lbb_name ) <= 3 ? __lbb_name : lbb_name; 
-	memcpy( __.st.lbb_path , __name , sizeof( __name ) );
+	unsigned _name_len = strlen( lbb_name );
+	char *__name = _name_len <= 3 \
+		? __lbb_name : lbb_name;
+	memmove( book.st.lbb_path , __name , _name_len );
 
-	if ( lbb_check( __ ) == -1 ) {
+	printf( "struct path :: %s\n" , book.st.lbb_path );
+	if ( lbb_check( book ) == -1 ) {
 		#ifdef DEBUG
 			printf( "no lbb found, creating one\n" );
 		#endif
-		lbb_make( __ );
+		lbb_make( book );
 	}
 	#ifdef DEBUG
 	printf( "initializing lbb\n");
 	#endif
-	lbb_open( __ );
+	lbb_open( book );
 
-	if ( lbb_status( __ ) != 0 ) {
+	if ( lbb_status( book ) != 0 ) {
 		printf( "lbb status cannot be determined\n" );
 		return -1;
 	}
 
 	#ifdef DEBUG
-	printf( "lbb : size = %ld bytes\n" , size( __ ) );	
+	printf( "lbb : size = %ld bytes\n" , lbb_size( book ) );	
 	#endif
 
-	if ( lbb_descriptors( __ ) <= 0 ) {
+	if ( lbb_descriptors( book ) <= 0 ) {
 		printf( "lbb file cannot be accessed\n" );
 		return -2;
 	}
 	#ifdef DEBUG
-	printf( "lbb : fd = %d\n" , __.st.lbb_fd );
+	printf( "lbb : fd = %d\n" , book.st.lbb_fd );
 	#endif
 
-	int compilation_res = compile_lbb( __read( &__.st ) , &lines );
+	word_t _word_all = __read(  &(book.st) );
+	long _word_alen = strlen( _word_all );
+
+	printf( "read :: %ld\n" , _word_alen );
+
+	int compilation_res = compile_lbb( _word_all , &lines );
+	if ( _word_alen < 4 ) {
+		return compilation_res;
+	}
 	#ifdef DEBUG
 		printf( "compiled : %d\n" , compilation_res );
 		printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
-		(lines[0].key).tal , (lines[0].key).sptr , 
-		(lines[0].wry).tal , (lines[0].wry).sptr );
+		(int)(lines[0].key).tal , (lines[0].key).sptr , 
+		(int)(lines[0].wry).tal , (lines[0].wry).sptr );
 	#endif
 
 	return 0;

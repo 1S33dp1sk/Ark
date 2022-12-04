@@ -9,6 +9,7 @@
     #define point
 >>>>>>> 1635bec (started athernet)
 
+// #define DEBUG
 
 /**
  * atherpoint is an `FIFO`
@@ -29,6 +30,7 @@
 
 #define __ap_name "atherpoint"
 
+<<<<<<< HEAD
 =======
 
 // #define DEBUG
@@ -47,12 +49,20 @@ static struct stat __lbb_stat;
 =======
 
 >>>>>>> 757e790 (shared library for point)
+=======
+typedef enum __io_types {
+    __reader = 1,
+    __writers
+};
+>>>>>>> 1b97cf4 (broke everything)
 
-struct apio {
-    unsigned __fd;
-    pid_t __pid;
+struct pio {
+    unsigned io_pfd;
+    pid_t io_pid;
+    __io_types io_type;
 };
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -63,17 +73,29 @@ struct apio {
 typedef struct {
     int __k__;
     unsigned lbb_fd;
+=======
+struct point_st {
+>>>>>>> 1b97cf4 (broke everything)
     struct stat ap_stat;
-    struct apio from;
-    struct apio to_point;
-} ap;
+    struct pio p_from;
+    struct pio p_to;
+};
 
+struct point_si {
+    struct point_st st;
+    int level;
+    void *lai;
+};
+
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 int atherpoint( char *p_path , unsigned p_level );
 =======
 static ap __ap;
+=======
+>>>>>>> 1b97cf4 (broke everything)
 
 #define point_descriptors( __ ) \
     ( __.to_point.__fd > 0 ) || ( __.from.__fd > 0 ) ? 1 : 0 
@@ -83,6 +105,7 @@ static ap __ap;
 
 
 
+<<<<<<< HEAD
 int atherpoint( void *at_point , ap *__ );
 >>>>>>> 1635bec (started athernet)
 int process_entry( char *_e , int _e_len );
@@ -97,10 +120,13 @@ int applier( ap *apoint );
 =======
 int atherpoint( char *p_path , unsigned p_level );
 >>>>>>> 757e790 (shared library for point)
+=======
+int atherpoint( void *at_point , apoint* ap );
+>>>>>>> 1b97cf4 (broke everything)
 int process_entry( char *_e , int _e_len );
 int app_engine( struct apio *engint );
 int socket_execute( struct apio *sexec );
-int applier( ap *apoint );
+int applier( apoint* ap );
 
 <<<<<<< HEAD
 void log_stat( struct stat st );

@@ -4,20 +4,13 @@
 /**
 running athernet instance :: 
  *
- */
-#include "kurl.h"
-//instance athernet
-static kurl_t inst; 
-// start the kurl
-#define anet( in_ , _st_ ) \
-	do { \
-		inst.__len = in_; inst.__hat = *_st_;\
-	}while( 0 )
-// lbb procedure
+**/
+#include "kurl/the_0kurl.c"
 
 
 int main() {
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 int main( int argc , char **argv ) {
@@ -52,5 +45,9 @@ int main( int argc , char **argv ) {
 
 >>>>>>> 3e18750 (sub-merge of nets)
 	
+=======
+	unsigned long __gen = 0;
+	kurl0( &__gen );
+>>>>>>> b5baa17 (broke everything)
 
 }

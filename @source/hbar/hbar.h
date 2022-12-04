@@ -153,12 +153,17 @@ uint32_t super_fast_hash( char *data , int len );
 void byte_to_hex( uint8_t _ , char _s[3] );
 void hash_to_string( char *_hstr , uint8_t _ );
 <<<<<<< HEAD
+<<<<<<< HEAD
 char *hash_bar( char *_in , unsigned level );
 <<<<<<< HEAD
 =======
 char *hashof( unsigned level , void *tohash , size_t thsize );
 char *fhash( unsigned level , char *filepath );
 
+=======
+extern char *hashof( unsigned level , void *tohash , size_t thsize );
+extern char *fhash( unsigned level , char *filepath );
+>>>>>>> 1b97cf4 (broke everything)
 
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 

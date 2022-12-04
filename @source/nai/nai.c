@@ -71,7 +71,7 @@ errors
 =======
 >>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 /**
- * ERRORS 
+errors 
  * 
 <<<<<<< HEAD
  * 1 :: cannot get current working dir
@@ -137,10 +137,14 @@ char *__path_unix( char *__path , char *__filename ) {
  * -6 :: cannot initiate communication socket
  * -7 :: could not bind to network address
  * -8 :: could not listen on socket
+<<<<<<< HEAD
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
  */
 
 
+=======
+**/
+>>>>>>> 1b97cf4 (broke everything)
 
 #define sp_network htons( 9999 )
 #define sa_global_port "3490"  // the global conf port

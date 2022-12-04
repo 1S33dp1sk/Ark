@@ -13,6 +13,7 @@
 // #define DEBUG
 
 
+<<<<<<< HEAD
 // can convert to network & host byte order
 // via byte definition
 
@@ -43,6 +44,8 @@
 // blockchain identitfer must be 3 characters
 #define bid_max 3
 
+=======
+>>>>>>> 1b97cf4 (broke everything)
 /**
  * since `__nai` is a union we will use a concept called 
  * 	common initial sequence ( cis ) for the structs a_i*
@@ -50,6 +53,8 @@
  * any struct element is prepended with `__` if the element
  * accessed is a *cis*
  */
+
+#define __nai_name "nativeainterface"
 
 struct a_inmp {
 	long inn; // node number
@@ -63,6 +68,7 @@ struct a_isok {
 <<<<<<< HEAD
 <<<<<<< HEAD
 	unsigned isv; // socket value
+<<<<<<< HEAD
 	// struct sockaddr_storage isa;
 =======
 	unsigned isv; // socket version
@@ -72,6 +78,9 @@ struct a_isok {
 	unsigned isv; // socket value
 	// struct sockaddr_storage isa;
 >>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
+=======
+	struct sockaddr_storage isa;
+>>>>>>> 1b97cf4 (broke everything)
 	int isp; // socket port
 };
 
@@ -80,7 +89,7 @@ struct a_idns {
 	char __imp[mpath_max]; // cis
 
 	unsigned __isv; // cis
-	char __isa[saddr_max]; // cis
+	struct sockaddr_storage isa; // cis
 	int __isp; // cis
 
 	char ids[dstr_max]; // sub domain
@@ -93,7 +102,7 @@ struct a_ibna {
 	char __imp[mpath_max]; // cis
 
 	unsigned __isv; // cis
-	char __isa[saddr_max]; // cis
+	struct sockaddr_storage isa; // cis
 	int __isp; // cis
 
 	char __ids[dstr_max]; // cis
@@ -104,7 +113,6 @@ struct a_ibna {
 	char iba[baddr_max]; // blockchain address ( public key )
 };
 
-
 typedef union __nai {
 	struct a_inmp n_uni; // universal ( unix )
 	struct a_isok n_loc; // local
@@ -114,20 +122,13 @@ typedef union __nai {
 
 
 int uni_interface( struct a_inmp *n_uni );
+int loc_interface( struct a_isok *n_loc );
+int glo_interface( struct a_idns *n_glo );
+int blo_interface( struct a_ibna *n_blo );
 
 nai native_interface( int level );
 char *native_address( int level );
 
-#ifndef log_nai
-#include <stdio.h>
-#include <stdint.h>
-	void log_uni( struct a_inmp n_uni ) {
-		printf( "native ather interface\n" );
-		printf( "	universal	\n" );
-		printf( "inode num::		%ju\n" , ( uintmax_t ) n_uni.inn );
-		printf( "mount path::		%s\n" , n_uni.imp );
-	}
-#endif
 
 <<<<<<< HEAD
 <<<<<<< HEAD

@@ -134,6 +134,7 @@ rca:
 	if [ -f athernet ]; then rm athernet; fi
 	if [ -f kurl ]; then rm kurl; fi
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)
 =======
 	# 	if [ -f atherpoint ]; then rm atherpoint; fi
@@ -169,6 +170,9 @@ all:
 	if [ -f ather ]; then rm ather; fi
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 
+=======
+	rm atherpoint
+>>>>>>> 1b97cf4 (broke everything)
 
 old:
 >>>>>>> 757e790 (shared library for point)
@@ -211,10 +215,13 @@ old:
 	cc @source/entry/main.c -o @entry
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 =======
 >>>>>>> a415938 (kurls)
+=======
+>>>>>>> 1b97cf4 (broke everything)
 rall:
 	rm @lbb
 	rm @hbar

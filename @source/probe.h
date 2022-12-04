@@ -6,6 +6,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef probe
     #define probe 
 =======
@@ -426,6 +427,8 @@ int __socket_entry( char *__ipaddr , int ipv  ) {
 =======
 ///probe\\\
 =======
+=======
+>>>>>>> 1b97cf4 (broke everything)
 /**
 definitions :: <improv : add GNU|OS dependent MAX LIMITS>
 **/
@@ -433,7 +436,10 @@ definitions :: <improv : add GNU|OS dependent MAX LIMITS>
 #define max_path 4096
 #define init_kurl 0x0001
 #define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
+<<<<<<< HEAD
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+>>>>>>> 1b97cf4 (broke everything)
 
 int __file_exsits( char *_name ) {
 	struct stat __st;
@@ -492,6 +498,7 @@ extern al2 builder __kurl__{
 		// blockchain address is 256 bytes max
 #define bid_max 3
 		// blockchain identitfer must be 3 characters
+<<<<<<< HEAD
 struct level_aliases {
 	unsigned lnum;
 	char *lname;
@@ -823,6 +830,8 @@ extern al2 builder __kurl__{
 // c0 belongs to { 0 = c , 1 , 2 , 3 , ... }
 >>>>>>> 7273958 (started documentation with proper formatting as follows)
 =======
+=======
+>>>>>>> 1b97cf4 (broke everything)
 struct level_aliases {
 	unsigned lnum;
 	char *lname;
@@ -833,4 +842,24 @@ struct level_aliases {
 	{	2 ,	"globe"	, "internet"	},
 	{	3 ,	"block"	, "chainnet"	}
 };
+<<<<<<< HEAD
 >>>>>>> a3a6de6 (combining progress)
+=======
+
+#ifndef point
+	#include "point/point.h"
+#endif
+
+#ifndef hbar
+	#include "hbar/hbar.h"
+#endif
+
+#ifndef lbb
+	#include "lbb/lbb.h"
+#endif
+
+#ifndef nai
+	#include "nai/nai.h"
+#endif 
+
+>>>>>>> 1b97cf4 (broke everything)
