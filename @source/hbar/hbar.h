@@ -44,9 +44,8 @@ sha3_return_t sha3_init( void *priv , unsigned bit_size );
 uint32_t super_fast_hash( char *data , int len );
 void byte_to_hex( uint8_t _ , char _s[3] );
 void hash_to_string( char *_hstr , uint8_t _ );
-char *hashof( unsigned level , void *tohash , size_t thsize );
-char *fhash( unsigned level , char *filepath );
-
+extern char *hashof( unsigned level , void *tohash , size_t thsize );
+extern char *fhash( unsigned level , char *filepath );
 
 
 #define sfh( __ ) \

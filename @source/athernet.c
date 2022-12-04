@@ -4,21 +4,13 @@
 /**
 running athernet instance :: 
  *
- */
-#include "kurl.h"
-//instance athernet
-static kurl_t inst; 
-// start the kurl
-#define anet( in_ , _st_ ) \
-	do { \
-		inst.__len = in_; inst.__hat = *_st_;\
-	}while( 0 )
-// lbb procedure
+**/
+#include "kurl/the_0kurl.c"
 
 
 int main() {
 
-
-	
+	unsigned long __gen = 0;
+	kurl0( &__gen );
 
 }

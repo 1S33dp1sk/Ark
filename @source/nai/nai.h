@@ -3,30 +3,6 @@
 // #define DEBUG
 
 
-// can convert to network & host byte order
-// via byte definition
-
-#define s_local "127.0.0.1"
-#define s_local2 "localhost"
-#define s_local_alias s_local2
-
-#define s_localv6 "::1"
-#define s_local2v6 "0:0:0:0:0:0:0:1"
-
-#define s_global "0.0.0.0"
-// supported natives < 0 , 1 , 2 , 3 >
-#define nai_max 3
-// mount path must be less than 512 bytes
-#define mpath_max 512
-// socket address max is ipv6 which is 16 bytes
-#define saddr_max 16
-// {sub,named,toplevel} domain must be less than 128 bytes each
-#define dstr_max 128
-// blockchain address is 256 bytes max
-#define baddr_max 256
-// blockchain identitfer must be 3 characters
-#define bid_max 3
-
 /**
  * since `__nai` is a union we will use a concept called 
  * 	common initial sequence ( cis ) for the structs a_i*
@@ -34,6 +10,8 @@
  * any struct element is prepended with `__` if the element
  * accessed is a *cis*
  */
+
+#define __nai_name "nativeainterface"
 
 struct a_inmp {
 	long inn; // node number
@@ -45,7 +23,7 @@ struct a_isok {
 	char __imp[mpath_max]; //cis
 
 	unsigned isv; // socket value
-	// struct sockaddr_storage isa;
+	struct sockaddr_storage isa;
 	int isp; // socket port
 };
 
@@ -54,7 +32,7 @@ struct a_idns {
 	char __imp[mpath_max]; // cis
 
 	unsigned __isv; // cis
-	char __isa[saddr_max]; // cis
+	struct sockaddr_storage isa; // cis
 	int __isp; // cis
 
 	char ids[dstr_max]; // sub domain
@@ -67,7 +45,7 @@ struct a_ibna {
 	char __imp[mpath_max]; // cis
 
 	unsigned __isv; // cis
-	char __isa[saddr_max]; // cis
+	struct sockaddr_storage isa; // cis
 	int __isp; // cis
 
 	char __ids[dstr_max]; // cis
@@ -78,7 +56,6 @@ struct a_ibna {
 	char iba[baddr_max]; // blockchain address ( public key )
 };
 
-
 typedef union __nai {
 	struct a_inmp n_uni; // universal ( unix )
 	struct a_isok n_loc; // local
@@ -88,20 +65,13 @@ typedef union __nai {
 
 
 int uni_interface( struct a_inmp *n_uni );
+int loc_interface( struct a_isok *n_loc );
+int glo_interface( struct a_idns *n_glo );
+int blo_interface( struct a_ibna *n_blo );
 
 nai native_interface( int level );
 char *native_address( int level );
 
-#ifndef log_nai
-#include <stdio.h>
-#include <stdint.h>
-	void log_uni( struct a_inmp n_uni ) {
-		printf( "native ather interface\n" );
-		printf( "	universal	\n" );
-		printf( "inode num::		%ju\n" , ( uintmax_t ) n_uni.inn );
-		printf( "mount path::		%s\n" , n_uni.imp );
-	}
-#endif
 
 #endif
 

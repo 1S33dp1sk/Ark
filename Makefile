@@ -15,16 +15,13 @@ rca:
 	if [ -f .lbb ]; then rm .lbb; fi
 	if [ -f athernet ]; then rm athernet; fi
 	if [ -f kurl ]; then rm kurl; fi
-	# 	if [ -f atherpoint ]; then rm atherpoint; fi
-
+	rm atherpoint
 
 old:
 	cc @source/lbb/main.c -o @lbb
 	cc @source/hbar/main.c -o @hbar
 	cc @source/point/main.c -o @point
 	cc @source/entry/main.c -o @entry
-
-
 
 rall:
 	rm @lbb

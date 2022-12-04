@@ -1,6 +1,5 @@
 #ifndef lbb
 
-
 // #define DEBUG
 
 #include <sys/types.h>
@@ -9,40 +8,18 @@
 #include <stdint.h>
 #include <fcntl.h>
 
-/*
-***************************************************************************
-	*******************************************************************
-		***********************************************************
-			***************************************************
-				********************************************
-					************************************
-						****************************
-							********************
-								************
-									lbb
-								************
-							********************
-						****************************
-					************************************
-				********************************************
-			***************************************************
-		***********************************************************
-	*******************************************************************
-***************************************************************************
-*/
-#define MAX_STR 256
-#define MAX_PATH 4096
 #define __lbb_name ".lbb"
-#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
-#define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
-
+/**
+lbb strucuture
+ * 
+**/ 
 struct lbb_st {
 	int lbb_fd; // main file descriptor
 				// used as an int to describe any errors 
-				// via negative correlations with the num
+				// via negative signed ints
 	struct stat lbb_stat;
 				// checks for sizes, i-node numbers, devices etc
-	char lbb_path[MAX_PATH];
+	char lbb_path[max_path];
 				// the maximum build os-depenedent path for the file
 };
 
@@ -57,61 +34,76 @@ struct sota {
 
 struct seam {
 	struct sota key;
+				// the key for the lbb
 	struct sota wry;
+				// the { value , address , reference } of the key
 };
 
-//little black book
-struct lbb_i {
-	struct lbb_st st; // universal description
+/**
+lbb structure interface
+ *
+**/
+struct lbb_si {
+	struct lbb_st st; 
+				// universal lbb descriptor via struct
 	struct seam **lbb_addrs;
+				// the compiled and loaded lbb adddress
 	unsigned addr_count;
+				// the count of the `seam **` addresses
 };
 
-typedef struct lbb_i lbb;
+
+#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
+
+typedef const void * entry_t;
+typedef const char * word_t;
+typedef word_t* record_t;
+static struct lbb_si book;
+
+#define lbb_entry entry_t
+#define lbb_word eword_t entry_t
+#define lbb_record record_t
+
+#define init_lbb() 0x0|lbb_check( __ ) == 0 ? \
+	0x2&lbb_load( __ ) : 0x1&lbb_make( __ )
 
 // checkmake 
-#define lbb_check( __ ) __.st.lbb_fd > 0 ? \
-	__.st.lbb_fd : access( __.st.lbb_path , (F_OK|R_OK) ) == 0 ? 0 : -1
-#define lbb_make( __ ) lbb_check( __ ) ;\
-	do { strlen( __.st.lbb_path ) <= 3 ? \
-		memmove( __.st.lbb_path , __lbb_name , sizeof( __lbb_name ) ) : 0; \
-		__.st.lbb_fd = open( __.st.lbb_path , ( O_CREAT | O_RDWR ) , \
-			( S_IRWXU | S_IRWXG | S_IRWXO ) ); \
-	} while ( 0 ) 
+#define lbb_check( __ ) \
+	book.st.lbb_fd > 0 ? book.st.lbb_fd :\
+		access( book.st.lbb_path , (F_OK|R_OK) ) == 0 ?	 0 : -1
+#define lbb_make( __ )  \
+	book.st.lbb_fd > 0 ?\
+		book.st.lbb_fd :\
+			memmove( book.st.lbb_path , __lbb_name , sizeof( __lbb_name ) ); \
+			book.st.lbb_fd = open( book.st.lbb_path , ( O_CREAT | O_RDWR ) , ( S_IRWXU | S_IRWXG | S_IRWXO ) );\
+			book.st.lbb_fd;
 
-#define lbb_load( __ ) little_black_book( __lbb_name , __ )
-// when we open an lbb, use O+RDONLY
-// no need to write anything to it
-// as it should be updated atomically within 
-// *kurl that is referenced to/by it
+// generate ctx for main interface via load
+#define lbb_load( __ ) little_black_book( __lbb_name )
+/**
+LBB <O_RDONLY> on open:
+ * when we open an lbb, use O+RDONLY
+ * no need to write anything to it
+ * as it should be updated atomically within 
+ * the point through *kurl; that is referenced to/by it
+**/
 #define lbb_open( __ ) \
-	do { __.st.lbb_fd = open( __.st.lbb_path , O_RDONLY ); } while ( 0 )
-#define lbb_status( __ ) stat( __.st.lbb_path , &(__.st.lbb_stat) ) 
+	do { book.st.lbb_fd = open( book.st.lbb_path , O_RDONLY ); } while ( 0 )
+#define lbb_status( __ ) stat( book.st.lbb_path , &(book.st.lbb_stat) ) 
 #define lbb_size( __ ) \
-	__.st.lbb_stat.st_size
-#define lbb_iobytes( __ ) \
-	__.st.lbb_stat.st_blksize
+	book.st.lbb_stat.st_size
+#define lbb_siobytes( __ ) \
+	book.st.lbb_stat.st_blksize
 #define lbb_close( __ ) \
-	close( __.st.lbb_fd )
-#define lbb_descriptors( __ ) __.st.lbb_fd
-#define lbb_exists() __file_exsits( __lbb_name )
+	close( book.st.lbb_fd )
+#define lbb_descriptors( __ ) book.st.lbb_fd
+#define lbb_exists( __ ) __file_exsits( __lbb_name )
 
 
-int __file_exsits( char *_name ) {
-	struct stat __st;
-	return stat( _name , &__st );	
-}
-
-
-
-
-int little_black_book( char *lbb_name , lbb __ );
-int lbb_append( lbb *__ , char *lbb_key , char *lbb_val );
-int lbb_query( lbb *__ , char *lbb_key );
+int little_black_book( char *lbb_name );
+int lbb_append( struct lbb_si *__ , char *lbb_key , char *lbb_val );
+int lbb_query( struct lbb_si *__ , char *lbb_key );
 int compile_lbb( char const *lbb_contents , struct seam **lbb_lines );
 void log_sota( struct sota *s );
-
-
-
 
 #endif

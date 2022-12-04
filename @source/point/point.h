@@ -1,6 +1,7 @@
 #ifndef point
     #define point
 
+// #define DEBUG
 
 /**
  * atherpoint is an `FIFO`
@@ -21,21 +22,29 @@
 
 #define __ap_name "atherpoint"
 
-
-struct apio {
-    unsigned __fd;
-    pid_t __pid;
+typedef enum __io_types {
+    __reader = 1,
+    __writers
 };
 
-typedef struct {
-    int __k__;
-    unsigned lbb_fd;
-    struct stat ap_stat;
-    struct apio from;
-    struct apio to_point;
-} ap;
+struct pio {
+    unsigned io_pfd;
+    pid_t io_pid;
+    __io_types io_type;
+};
 
-static ap __ap;
+struct point_st {
+    struct stat ap_stat;
+    struct pio p_from;
+    struct pio p_to;
+};
+
+struct point_si {
+    struct point_st st;
+    int level;
+    void *lai;
+};
+
 
 #define point_descriptors( __ ) \
     ( __.to_point.__fd > 0 ) || ( __.from.__fd > 0 ) ? 1 : 0 
@@ -45,11 +54,11 @@ static ap __ap;
 
 
 
-int atherpoint( void *at_point , ap *__ );
+int atherpoint( void *at_point , apoint* ap );
 int process_entry( char *_e , int _e_len );
 int app_engine( struct apio *engint );
 int socket_execute( struct apio *sexec );
-int applier( ap *apoint );
+int applier( apoint* ap );
 
 
 

@@ -1,5 +1,16 @@
-
+/**
+definitions :: <improv : add GNU|OS dependent MAX LIMITS>
+**/
+#define max_str 256
+#define max_path 4096
 #define init_kurl 0x0001
+#define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
+
+int __file_exsits( char *_name ) {
+	struct stat __st;
+	return stat( _name , &__st ) == 0;	
+}
+
 #define probe void *
 #define __kurl__ ( probe __ )
 #define al int 
@@ -28,7 +39,30 @@ extern al2 builder __kurl__{
 		p__|= 0x0100 : p__ == 0x0111 ? \
 		p__|= 0x1000 : p__ == 0x1111 ? \
 		p__&= 0x0000 : 0
-
+// can convert to network & host byte order
+// via byte definition
+#define s_local "127.0.0.1"
+		// localhost ipv4 loopback interface address
+#define s_local_alias "localhost"
+		// localhost ipv4 loopback interface unix alias
+#define s_localv6 "::1"
+		// localhost ipv6 shorthand loopback interface  
+#define s_local2v6 "0:0:0:0:0:0:0:1"
+		// localhost ipv6 loopback interface address
+#define s_global "0.0.0.0"
+		// outgoing ipv4 interface address
+#define nai_max 3
+		// supported natives < 0 , 1 , 2 , 3 >
+#define mpath_max 512
+		// mount path must be less than 512 bytes
+#define saddr_max 16
+		// socket address max is ipv6 which is 16 bytes
+#define dstr_max 128
+		// {sub,named,toplevel} domain must be less than 128 bytes each
+#define baddr_max 256
+		// blockchain address is 256 bytes max
+#define bid_max 3
+		// blockchain identitfer must be 3 characters
 struct level_aliases {
 	unsigned lnum;
 	char *lname;
@@ -39,3 +73,20 @@ struct level_aliases {
 	{	2 ,	"globe"	, "internet"	},
 	{	3 ,	"block"	, "chainnet"	}
 };
+
+#ifndef point
+	#include "point/point.h"
+#endif
+
+#ifndef hbar
+	#include "hbar/hbar.h"
+#endif
+
+#ifndef lbb
+	#include "lbb/lbb.h"
+#endif
+
+#ifndef nai
+	#include "nai/nai.h"
+#endif 
+

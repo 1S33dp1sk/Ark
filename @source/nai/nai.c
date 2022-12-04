@@ -11,7 +11,7 @@
 #include <signal.h>
 #include <errno.h>
 /**
- * ERRORS 
+errors 
  * 
  * -1 :: cannot get current working dir
  * -2 :: os path too long
@@ -21,9 +21,7 @@
  * -6 :: cannot initiate communication socket
  * -7 :: could not bind to network address
  * -8 :: could not listen on socket
- */
-
-
+**/
 
 #define sp_network htons( 9999 )
 #define sa_global_port "3490"  // the global conf port

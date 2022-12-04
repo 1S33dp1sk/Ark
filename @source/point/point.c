@@ -22,9 +22,9 @@ int __ap_fifo();
 int __ap_make();
 
 
-int atherpoint( void *point_name , ap *__ ) {
+int atherpoint( void *point_name , apoint *__ ) {
 
-    memset( __ , 0 , sizeof( ap ) );
+    memset( __ , 0 , sizeof( apoint ) );
     #ifdef DEBUG
         printf( "@point :: checking for atherpoint\n" );
     #endif
@@ -123,7 +123,7 @@ int socket_execute( struct apio *sexec ) {
     return 0;
 }
 
-int applier( ap *a_point ){
+int applier( apoint *a_point ){
 
     // get the current pid
     ( a_point -> from ).__pid = getpid();
