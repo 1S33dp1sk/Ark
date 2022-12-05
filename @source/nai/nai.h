@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef nai
 <<<<<<< HEAD
 	#define nai atherinterface // native ather interface
@@ -156,22 +157,32 @@ by mrKJ
 =======
 #ifndef nai
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+/// nai ? \\\
+by mrKJ
+>>>>>>> 46ba237 (broke everything pt.2)
 
 // #define DEBUG
 
-
 /**
- * since `__nai` is a union we will use a concept called 
- * 	common initial sequence ( cis ) for the structs a_i*
+ * nai is a union of structs to indicate which current
+ * level is provided, since `__nai` is a union we will
+ * use a concept called common initial sequence ( cis )
+ * for the structs a_i*, 
  * 
- * any struct element is prepended with `__` if the element
- * accessed is a *cis*
+cis :: prepend : `__`
+ * 
  */
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 #ifndef nai
     #define __nai_name "native_ather_interface"
 
+=======
+#ifndef nai
+    #define __nai_name "native_ather_interface"
+>>>>>>> 46ba237 (broke everything pt.2)
     /**
     iterable( node & mount path )
     `a_inmp` :: struct i-nodenum,mountpath
@@ -179,7 +190,11 @@ by mrKJ
         struct a_inmp {
             long inn; 
                     // node number
+<<<<<<< HEAD
             char imp[max_path]; 
+=======
+            char imp[mpath_max]; 
+>>>>>>> 46ba237 (broke everything pt.2)
                     // mount path
         };
     /**
@@ -188,7 +203,11 @@ by mrKJ
         struct a_isok {
             long __inn; 
                     // cis
+<<<<<<< HEAD
             char __imp[max_path]; 
+=======
+            char __imp[mpath_max]; 
+>>>>>>> 46ba237 (broke everything pt.2)
                     // cis
 
             unsigned isv; 
@@ -205,7 +224,11 @@ by mrKJ
         struct a_idns {
             long __inn; 
                     // cis
+<<<<<<< HEAD
             char __imp[max_path]; 
+=======
+            char __imp[mpath_max]; 
+>>>>>>> 46ba237 (broke everything pt.2)
                     // cis
 
             unsigned __isv; 
@@ -215,11 +238,19 @@ by mrKJ
             int __isp; 
                     // cis
 
+<<<<<<< HEAD
             char ids[max_str]; 
                     // sub domain
             char idn[max_str]; 
                     // domain name
             char idt[max_str]; 
+=======
+            char ids[dstr_max]; 
+                    // sub domain
+            char idn[dstr_max]; 
+                    // domain name
+            char idt[dstr_max]; 
+>>>>>>> 46ba237 (broke everything pt.2)
                     // top level domain
         };
     /**
@@ -238,7 +269,11 @@ by mrKJ
         struct a_ibna {
             long __inn; 
                     // cis
+<<<<<<< HEAD
             char __imp[max_path]; 
+=======
+            char __imp[mpath_max]; 
+>>>>>>> 46ba237 (broke everything pt.2)
                     // cis
 
             unsigned __isv; 
@@ -248,6 +283,7 @@ by mrKJ
             int __isp; 
                     // cis
 
+<<<<<<< HEAD
             char __ids[max_str];
                      // cis
             char __idn[max_str];
@@ -258,6 +294,18 @@ by mrKJ
             char ibi[max_str]; 
                     // blockchain identifier
             char iba[max_str];
+=======
+            char __ids[dstr_max];
+                     // cis
+            char __idn[dstr_max];
+                     // cis
+            char __idt[dstr_max];
+                     // cis
+
+            char ibi[bid_max]; 
+                    // blockchain identifier
+            char iba[baddr_max];
+>>>>>>> 46ba237 (broke everything pt.2)
                     // blockchain address ( public key )
         };
     /**
@@ -274,13 +322,20 @@ by mrKJ
             struct a_ibna n_blo; 
                     // blockchain
         } nai;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 46ba237 (broke everything pt.2)
     /**
     `l-addr` :: a *level* based char pointer
      * depending on the current attached level
      **/
         char *native_address( int level );
+<<<<<<< HEAD
             #ifdef __level
+=======
+            #ifdef( __level )
+>>>>>>> 46ba237 (broke everything pt.2)
                 static ( char * ) stdptr laddr;
             #endif
 
@@ -293,6 +348,7 @@ by mrKJ
             int loc_interface( struct a_isok *n_loc );
             int glo_interface( struct a_idns *n_glo );
             int blo_interface( struct a_ibna *n_blo );
+<<<<<<< HEAD
 >>>>>>> a415938 (kurls)
 #endif
 =======
@@ -375,3 +431,6 @@ char *native_address( int level );
 >>>>>>> 63a71f0 (added kurl && added simplified final overview to athernet)
 =======
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
+=======
+#endif
+>>>>>>> 46ba237 (broke everything pt.2)

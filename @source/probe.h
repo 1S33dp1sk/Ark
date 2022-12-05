@@ -846,6 +846,7 @@ struct level_aliases {
 >>>>>>> a3a6de6 (combining progress)
 =======
 
+<<<<<<< HEAD
 #ifndef point
 	#include "point/point.h"
 #endif
@@ -863,3 +864,5 @@ struct level_aliases {
 #endif 
 
 >>>>>>> 1b97cf4 (broke everything)
+=======
+>>>>>>> 46ba237 (broke everything pt.2)

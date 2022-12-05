@@ -117,26 +117,7 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 #include <string.h>
 #include <fcntl.h>
 #include <regex.h>
-/**
-lbb : word ::
- * an lbb word consists of 3 main parts
- * 
-*-1.	key	]	:	[ value				( stores the associated key with value )
-		
 
-*.0.	key ]	=	[ reference			( stores the associated key with a reference )
-
-	____________________________
-*+1.	key	]	:=	[ address 			( stores the associated key as an address )
- *
- * 
-1.	key:value:=address 
- * 
-2. 	key=value:=address
- * 
-3.	key:=value:=address
- * 
-*/
 
 
 word_t __read( struct lbb_st *__st );
@@ -421,7 +402,7 @@ int little_black_book( char *lbb_name ) {
 		#ifdef DEBUG
 			printf( "no lbb found, creating one\n" );
 		#endif
-		lbb_make( book );
+		lbb_make();
 	}
 	#ifdef DEBUG
 	printf( "initializing lbb\n");
