@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 /*
@@ -91,6 +92,10 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 
 =======
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+
+
+>>>>>>> 4317814 (started anet.h)
 /*
 ***************************************************************************
 	*******************************************************************
@@ -112,13 +117,6 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 	*******************************************************************
 ***************************************************************************
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <regex.h>
-
-
 
 word_t __read( struct lbb_st *__st );
 word_t __line( char *key , char *val , char *delim );

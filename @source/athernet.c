@@ -5,11 +5,10 @@
 running athernet instance :: 
  *
 **/
-#include "kurl/the_0kurl.c"
-
 
 int main() {
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -49,5 +48,8 @@ int main( int argc , char **argv ) {
 	unsigned long __gen = 0;
 	kurl0( &__gen );
 >>>>>>> b5baa17 (broke everything)
+=======
+
+>>>>>>> bfde0aa (started anet.h)
 
 }

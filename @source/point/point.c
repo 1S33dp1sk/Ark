@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "point.h"
 
 
@@ -6,15 +7,15 @@
 #include <unistd.h>
 
 #include <sys/wait.h>
+=======
+>>>>>>> 4317814 (started anet.h)
 #include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/sysmacros.h>
-
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
 #include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdio.h>
+#include "point.h"
+
 
 
 #ifndef __ap_entry

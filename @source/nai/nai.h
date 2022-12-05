@@ -164,6 +164,7 @@ by mrKJ
 
 // #define DEBUG
 
+
 /**
  * nai is a union of structs to indicate which current
  * level is provided, since `__nai` is a union we will
@@ -174,6 +175,7 @@ cis :: prepend : `__`
  * 
  */
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 #ifndef nai
@@ -183,6 +185,12 @@ cis :: prepend : `__`
 #ifndef nai
     #define __nai_name "native_ather_interface"
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+
+#ifndef nai
+    #define __nai_name "native_ather_interface"
+    #include "../anet.h"
+>>>>>>> 4317814 (started anet.h)
     /**
     iterable( node & mount path )
     `a_inmp` :: struct i-nodenum,mountpath
@@ -191,10 +199,14 @@ cis :: prepend : `__`
             long inn; 
                     // node number
 <<<<<<< HEAD
+<<<<<<< HEAD
             char imp[max_path]; 
 =======
             char imp[mpath_max]; 
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+            char imp[max_path]; 
+>>>>>>> 4317814 (started anet.h)
                     // mount path
         };
     /**
@@ -204,10 +216,14 @@ cis :: prepend : `__`
             long __inn; 
                     // cis
 <<<<<<< HEAD
+<<<<<<< HEAD
             char __imp[max_path]; 
 =======
             char __imp[mpath_max]; 
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+            char __imp[max_path]; 
+>>>>>>> 4317814 (started anet.h)
                     // cis
 
             unsigned isv; 
@@ -225,10 +241,14 @@ cis :: prepend : `__`
             long __inn; 
                     // cis
 <<<<<<< HEAD
+<<<<<<< HEAD
             char __imp[max_path]; 
 =======
             char __imp[mpath_max]; 
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+            char __imp[max_path]; 
+>>>>>>> 4317814 (started anet.h)
                     // cis
 
             unsigned __isv; 
@@ -239,6 +259,7 @@ cis :: prepend : `__`
                     // cis
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             char ids[max_str]; 
                     // sub domain
             char idn[max_str]; 
@@ -246,11 +267,18 @@ cis :: prepend : `__`
             char idt[max_str]; 
 =======
             char ids[dstr_max]; 
+=======
+            char ids[max_str]; 
+>>>>>>> 4317814 (started anet.h)
                     // sub domain
-            char idn[dstr_max]; 
+            char idn[max_str]; 
                     // domain name
+<<<<<<< HEAD
             char idt[dstr_max]; 
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+            char idt[max_str]; 
+>>>>>>> 4317814 (started anet.h)
                     // top level domain
         };
     /**
@@ -270,10 +298,14 @@ cis :: prepend : `__`
             long __inn; 
                     // cis
 <<<<<<< HEAD
+<<<<<<< HEAD
             char __imp[max_path]; 
 =======
             char __imp[mpath_max]; 
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+            char __imp[max_path]; 
+>>>>>>> 4317814 (started anet.h)
                     // cis
 
             unsigned __isv; 
@@ -283,6 +315,7 @@ cis :: prepend : `__`
             int __isp; 
                     // cis
 
+<<<<<<< HEAD
 <<<<<<< HEAD
             char __ids[max_str];
                      // cis
@@ -296,16 +329,23 @@ cis :: prepend : `__`
             char iba[max_str];
 =======
             char __ids[dstr_max];
+=======
+            char __ids[max_str];
+>>>>>>> 4317814 (started anet.h)
                      // cis
-            char __idn[dstr_max];
+            char __idn[max_str];
                      // cis
-            char __idt[dstr_max];
+            char __idt[max_str];
                      // cis
 
-            char ibi[bid_max]; 
+            char ibi[max_str]; 
                     // blockchain identifier
+<<<<<<< HEAD
             char iba[baddr_max];
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+            char iba[max_str];
+>>>>>>> 4317814 (started anet.h)
                     // blockchain address ( public key )
         };
     /**
@@ -323,19 +363,27 @@ cis :: prepend : `__`
                     // blockchain
         } nai;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+
+>>>>>>> 4317814 (started anet.h)
     /**
     `l-addr` :: a *level* based char pointer
      * depending on the current attached level
      **/
         char *native_address( int level );
 <<<<<<< HEAD
+<<<<<<< HEAD
             #ifdef __level
 =======
             #ifdef( __level )
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+            #ifdef __level
+>>>>>>> 4317814 (started anet.h)
                 static ( char * ) stdptr laddr;
             #endif
 

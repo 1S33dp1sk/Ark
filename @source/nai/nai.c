@@ -1,6 +1,7 @@
 #include "nai.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -70,6 +71,9 @@ errors
 >>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 =======
 >>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
+=======
+
+>>>>>>> 4317814 (started anet.h)
 /**
 errors 
  * 
@@ -157,17 +161,17 @@ char *__path_unix( char *__path , char *__filename ) {
 	if ( __path[path_len] != '/' && __filename[0] != '/' ) {
 		strncat( __path , "/\0" , 2 );
 	}
-	return ( path_len + fname_len ) < mpath_max ? strcat( __path , __filename ) : NULL;
+	return ( path_len + fname_len ) < max_path ? strcat( __path , __filename ) : NULL;
 }
 
-void sigchld_handler(int s) {
-    // waitpid() might overwrite errno, so we save and restore it:
-    int saved_errno = errno;
+// void sigchld_handler(int s) {
+//     // waitpid() might overwrite errno, so we save and restore it:
+//     int saved_errno = errno;
 
-    while(waitpid(-1, NULL, WNOHANG) > 0);
+//     while(waitpid(-1, NULL, WNOHANG) > 0);
 
-    errno = saved_errno;
-}
+//     errno = saved_errno;
+// }
 
 // get sockaddr, IPv4 or IPv6:
 void *get_in_addr( struct sockaddr *sa ) {
@@ -224,6 +228,7 @@ int uni_interface( struct a_inmp *inmp ) {
 	// zero the initial path
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	char __path[mpath_max];
 	memset( __path , 0 , mpath_max );
 	// get the current working dir
@@ -242,8 +247,12 @@ int uni_interface( struct a_inmp *inmp ) {
 	char __path[mpath_max];
 	memset( __path , 0 , mpath_max );
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+	char __path[max_path];
+	memset( __path , 0 , max_path );
+>>>>>>> 4317814 (started anet.h)
 	// get the current working dir
-	if ( getcwd( __path , mpath_max ) == NULL ) {
+	if ( getcwd( __path , max_path ) == NULL ) {
 		#ifdef DEBUG
 		printf( "cannot get working dir\n" );
 		#endif
@@ -251,11 +260,15 @@ int uni_interface( struct a_inmp *inmp ) {
 	}
 	// re-zero the `mp`
 <<<<<<< HEAD
+<<<<<<< HEAD
 	memset( path , 0 , max_path );
 >>>>>>> a415938 (kurls)
 =======
 	memset( path , 0 , mpath_max );
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+	memset( path , 0 , max_path );
+>>>>>>> 4317814 (started anet.h)
 	// copy the path to struct element
 	memcpy( path , __path , strlen( __path ) );
 	// add the `.lbb` name to the path
@@ -467,6 +480,7 @@ int glo_interface( struct a_idns *idns ) {
 	socklen_t sin_size;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	struct sigaction sa;
 =======
 	// struct sigaction sa;
@@ -474,6 +488,9 @@ int glo_interface( struct a_idns *idns ) {
 =======
 	struct sigaction sa;
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+	// struct sigaction sa;
+>>>>>>> 4317814 (started anet.h)
 	int yes=1;
 	char s[INET6_ADDRSTRLEN];
 	int rv;
@@ -555,6 +572,7 @@ int glo_interface( struct a_idns *idns ) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> c1e4320 (athernet V0.9)
 	sa.sa_handler = sigchld_handler; // reap all dead processes
@@ -566,6 +584,8 @@ int glo_interface( struct a_idns *idns ) {
 	}
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> 4317814 (started anet.h)
 	// sa.sa_handler = sigchld_handler; // reap all dead processes
 	// sigemptyset(&sa.sa_mask);
 	// sa.sa_flags = SA_RESTART;
@@ -573,9 +593,12 @@ int glo_interface( struct a_idns *idns ) {
 	// 	perror("sigaction");
 	// 	exit(1);
 	// }
+<<<<<<< HEAD
 >>>>>>> a415938 (kurls)
 =======
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+>>>>>>> 4317814 (started anet.h)
 
 	printf("server: waiting for connections...\n");
 

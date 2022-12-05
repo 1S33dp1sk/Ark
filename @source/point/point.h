@@ -484,6 +484,7 @@ void log_stat( struct stat sb ) {
 // #define DEBUG
 
 
+ 
 
 /**
  * atherpoint is an `FIFO`
@@ -497,10 +498,6 @@ void log_stat( struct stat sb ) {
  * points. 
  * 
  */
-
-#include <sys/stat.h>
-#include <sys/types.h>
-
 #ifndef point
     #define __ap_name "atherpoint"
 
@@ -509,14 +506,12 @@ void log_stat( struct stat sb ) {
         __writers
     };
 
-    typedef enum __io_types ap_type;
-
     struct p_io {
         unsigned io_pfd;
                 // a paticular file descriptor
-        pid_t io_pid;
+        signed long io_pid;
                 // the initating process id
-        ap_type io_type;
+        enum __io_types io_type;
                 // the IO type, mainly will be writers
     };
     #define __size_p_io sizeof( struct p_io )
@@ -540,6 +535,7 @@ void log_stat( struct stat sb ) {
                 // can && should be casted to a { nai } reference
     };
     #define __size_p_si sizeof( struct point_si )
+    #define __size_p __size_p_si
 
     typedef struct point_si point;
 
