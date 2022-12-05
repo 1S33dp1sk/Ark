@@ -74,19 +74,3 @@ struct level_aliases {
 	{	3 ,	"block"	, "chainnet"	}
 };
 
-#ifndef point
-	#include "point/point.h"
-#endif
-
-#ifndef hbar
-	#include "hbar/hbar.h"
-#endif
-
-#ifndef lbb
-	#include "lbb/lbb.h"
-#endif
-
-#ifndef nai
-	#include "nai/nai.h"
-#endif 
-
