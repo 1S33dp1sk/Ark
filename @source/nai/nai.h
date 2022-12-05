@@ -3,6 +3,7 @@ by mrKJ
 
 // #define DEBUG
 
+
 /**
  * nai is a union of structs to indicate which current
  * level is provided, since `__nai` is a union we will
@@ -12,8 +13,10 @@ by mrKJ
 cis :: prepend : `__`
  * 
  */
+
 #ifndef nai
     #define __nai_name "native_ather_interface"
+    #include "../anet.h"
     /**
     iterable( node & mount path )
     `a_inmp` :: struct i-nodenum,mountpath
@@ -21,7 +24,7 @@ cis :: prepend : `__`
         struct a_inmp {
             long inn; 
                     // node number
-            char imp[mpath_max]; 
+            char imp[max_path]; 
                     // mount path
         };
     /**
@@ -30,7 +33,7 @@ cis :: prepend : `__`
         struct a_isok {
             long __inn; 
                     // cis
-            char __imp[mpath_max]; 
+            char __imp[max_path]; 
                     // cis
 
             unsigned isv; 
@@ -47,7 +50,7 @@ cis :: prepend : `__`
         struct a_idns {
             long __inn; 
                     // cis
-            char __imp[mpath_max]; 
+            char __imp[max_path]; 
                     // cis
 
             unsigned __isv; 
@@ -57,11 +60,11 @@ cis :: prepend : `__`
             int __isp; 
                     // cis
 
-            char ids[dstr_max]; 
+            char ids[max_str]; 
                     // sub domain
-            char idn[dstr_max]; 
+            char idn[max_str]; 
                     // domain name
-            char idt[dstr_max]; 
+            char idt[max_str]; 
                     // top level domain
         };
     /**
@@ -80,7 +83,7 @@ cis :: prepend : `__`
         struct a_ibna {
             long __inn; 
                     // cis
-            char __imp[mpath_max]; 
+            char __imp[max_path]; 
                     // cis
 
             unsigned __isv; 
@@ -90,16 +93,16 @@ cis :: prepend : `__`
             int __isp; 
                     // cis
 
-            char __ids[dstr_max];
+            char __ids[max_str];
                      // cis
-            char __idn[dstr_max];
+            char __idn[max_str];
                      // cis
-            char __idt[dstr_max];
+            char __idt[max_str];
                      // cis
 
-            char ibi[bid_max]; 
+            char ibi[max_str]; 
                     // blockchain identifier
-            char iba[baddr_max];
+            char iba[max_str];
                     // blockchain address ( public key )
         };
     /**
@@ -116,12 +119,13 @@ cis :: prepend : `__`
             struct a_ibna n_blo; 
                     // blockchain
         } nai;
+
     /**
     `l-addr` :: a *level* based char pointer
      * depending on the current attached level
      **/
         char *native_address( int level );
-            #ifdef( __level )
+            #ifdef __level
                 static ( char * ) stdptr laddr;
             #endif
 
