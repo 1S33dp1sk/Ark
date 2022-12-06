@@ -1,41 +1,21 @@
 #ifndef probe
 	#define probe void *
 
-#ifndef point
-    #include "point/point.h"
-#endif
 
-#ifndef hbar
-    #include "hbar/hbar.h"
-#endif
-
-#ifndef lbb
-    #include "lbb/lbb.h"
-#endif
-
-#ifndef nai
-    #include "nai/nai.h"
-#endif 
 /**
 definitions :: <improv : add GNU|OS dependent MAX LIMITS>
 **/
-#ifndef __anet_constants
-	#define __anet_constants__ 1
-	#define init_kurl 0x0001
-	#define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
+#ifndef __anet_h__
+	#include "anet.h"
 #endif
-#define __anet_constants __anet_constants__
 
-#if ( !defined( __file_exsits ) && !defined( check_file ) )
-	#include <sys/stat.h>
-	#ifndef check_file
-		extern int check_file( char *_name ) {
-			struct stat __st;
-			return stat( _name , &__st ) == 0;	
-		}
-	#endif
+#if !defined( check_file )
+	extern int __file_exsits( char *_name ) {
+		struct stat __st;
+		return stat( _name , &__st ) == 0;	
+	}
 #endif
-#define __file_exsits check_file
+#define check_file __file_exsits
 
 #ifndef __kurl_probe__
 	#define __kurl_probe__
@@ -57,7 +37,7 @@ definitions :: <improv : add GNU|OS dependent MAX LIMITS>
 
 
 #if ( !defined( aliaslist ) && !defined( lvl_st )  )
-	#define lvl_st level_aliases
+	#define lvl_st struct level_aliases
 	struct level_aliases {
 		unsigned lnum;
 		char *lname;
@@ -69,7 +49,7 @@ definitions :: <improv : add GNU|OS dependent MAX LIMITS>
 		{	3 ,	"block"	, "chainnet"	}
 	};
 #endif
-#define __aliaslist aliaslist
+#define aliaslist __aliaslist
 
 
 // #define __kurl__( __ ) \
@@ -107,4 +87,20 @@ definitions :: <improv : add GNU|OS dependent MAX LIMITS>
 #include <netdb.h>
 // TODO :: convert to strict bytes instead of arpa/inet
 #include <arpa/inet.h>
+
+#ifndef point
+    #include "point/point.h"
+#endif
+
+#ifndef hbar
+    #include "hbar/hbar.h"
+#endif
+
+#ifndef lbb
+    #include "lbb/lbb.h"
+#endif
+
+#ifndef nai
+    #include "nai/nai.h"
+#endif 
 #endif

@@ -1,6 +1,8 @@
 #ifndef hbar
+    #define __hbar_name "hash_bar"
     #define hbar hashof
 
+#include "../anet.h"
 /**
  * 
  * Thanks for the all the contributions and good work from 
@@ -56,7 +58,7 @@ sha3_config_t sha3_set_flags(
     sha3_config_t 
 );
 sha3_return_t sha3_init( 
-    void *priv, 
+    void *p, 
     unsigned bit_size 
 );
 sha3_return_t sha3_hash_buffer( 

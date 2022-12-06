@@ -133,7 +133,7 @@ int little_black_book( char *lbb_name ) {
 	memmove( book.st.lbb_path , __name , _name_len );
 
 	printf( "struct path :: %s\n" , book.st.lbb_path );
-	if ( lbb_check( book ) == -1 ) {
+	if ( lbb_check() == -1 ) {
 		#ifdef DEBUG
 			printf( "no lbb found, creating one\n" );
 		#endif
@@ -142,18 +142,18 @@ int little_black_book( char *lbb_name ) {
 	#ifdef DEBUG
 	printf( "initializing lbb\n");
 	#endif
-	lbb_open( book );
+	lbb_open();
 
-	if ( lbb_status( book ) != 0 ) {
+	if ( lbb_status() != 0 ) {
 		printf( "lbb status cannot be determined\n" );
 		return -1;
 	}
 
 	#ifdef DEBUG
-	printf( "lbb : size = %ld bytes\n" , lbb_size( book ) );	
+	printf( "lbb : size = %ld bytes\n" , lbb_size() );	
 	#endif
 
-	if ( lbb_descriptors( book ) <= 0 ) {
+	if ( lbb_descriptors() <= 0 ) {
 		printf( "lbb file cannot be accessed\n" );
 		return -2;
 	}
@@ -177,6 +177,6 @@ int little_black_book( char *lbb_name ) {
 		(int)(lines[0].wry).tal , (lines[0].wry).sptr );
 	#endif
 
-	return 0;
+	return 3;
 }
 

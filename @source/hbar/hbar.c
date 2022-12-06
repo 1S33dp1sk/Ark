@@ -69,14 +69,12 @@ static const unsigned keccakf_piln[24] = {
         s[2] = '\0';
         while( b ) {
             uint32_t t = b & 0x0f;
-            
             if( t < 10 ) {
                 s[i] = '0' + t;
             } 
             else {
                 s[i] = 'a' + t - 10;
             }
-            
             i--;
             b >>= 4;
         }
@@ -479,7 +477,7 @@ hashof str based on level
     }
 
 /**
-hashof bytes in file
+hashof file
  *
 **/
     char *fhash( unsigned level , char *filepath ) {
