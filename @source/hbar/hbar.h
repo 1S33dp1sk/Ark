@@ -4,8 +4,12 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     #define hbar hash_bar
 =======
+=======
+    #define __hbar_name "hash_bar"
+>>>>>>> b3b1c06 (started the_*kurl)
     #define hbar hashof
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
@@ -31,6 +35,7 @@
     #define hbar hashof
 >>>>>>> a415938 (kurls)
 
+#include "../anet.h"
 /**
  * 
  * Thanks for the all the contributions and good work from 
@@ -524,7 +529,7 @@ sha3_config_t sha3_set_flags(
     sha3_config_t 
 );
 sha3_return_t sha3_init( 
-    void *priv, 
+    void *p, 
     unsigned bit_size 
 );
 sha3_return_t sha3_hash_buffer( 

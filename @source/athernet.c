@@ -1,12 +1,16 @@
 /// athernet \\\
 
-
 /**
-running athernet instance :: 
+athernet points can be specified using ::
+ *  1.  net point       // static point_si __ap;
+ *  2.  address book    // static lbb_si __lbb; 
  *
 **/
 
-int main() {
+
+#include "hbar/hbar.h"
+
+int main( int argc , char **argv ) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -14,6 +18,7 @@ int main() {
 <<<<<<< HEAD
 int main( int argc , char **argv ) {
 
+<<<<<<< HEAD
 	
 	unsigned __c = 0;
 
@@ -51,5 +56,8 @@ int main( int argc , char **argv ) {
 =======
 
 >>>>>>> bfde0aa (started anet.h)
+=======
+    printf( "hashof :: %s : %x\n" , argv[1], sfh( argv[1] ) );
+>>>>>>> c0f8193 (started the_*kurl)
 
 }

@@ -12,11 +12,13 @@
 	#include <fcntl.h>
 
 	#ifdef __anet_cs__
+// can convert to network & host byte order via byte definition
 		#define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
+				// get the size of array. does not support char *s, but can be easily extended to match '\0'
 		#define max_path 4096
+				// maximum consumable length for os-path string 
 		#define max_str 256
-		// can convert to network & host byte order
-		// via byte definition
+				// maximum consumable length for a misc string 
 		#define s_local "127.0.0.1"
 				// localhost ipv4 loopback interface address
 		#define s_local_alias "localhost"
@@ -41,7 +43,7 @@
 				// blockchain identitfer must be 3 characters
 	#endif
 	
-	#if defined( lbb )
+	#if defined( __lbb_name )
 		#include <regex.h>
 	#endif
 
@@ -51,6 +53,25 @@
 		#include <netdb.h>
 		#include <arpa/inet.h>
 	#endif
+
+	#if defined( __kurl_name )
+	    #if ( !defined( kurl0 ) && defined( __kurl_version ) )
+	        #include "kurl/the_0kurl.h"
+	    #endif
+	    #if ( defined( kurl0 ) && !defined( kurl1 ) )
+	        #include "kurl/the_1kurl.h"
+	    #endif
+	    #if ( defined( kurl1 ) && !defined( kurl2 ) )
+	        #include "kurl/the_2kurl.h"
+	    #endif
+	    #if ( defined( kurl2 ) && !defined( kurl3 ) )
+	        #include "kurl/the_3kurl.h"
+	    #endif
+	    #if !defined( __hat__ )
+	        #include "kurl/hat.h"
+	    #endif	
+	#endif
+
 
 
 #endif
