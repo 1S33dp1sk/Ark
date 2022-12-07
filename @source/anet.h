@@ -12,7 +12,7 @@
 	#include <fcntl.h>
 
 	#ifdef __anet_cs__
-// can convert to network & host byte order via byte definition
+	// can convert to network & host byte order via byte definition
 		#define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
 				// get the size of array. does not support char *s, but can be easily extended to match '\0'
 		#define max_path 4096
@@ -54,23 +54,11 @@
 		#include <arpa/inet.h>
 	#endif
 
-	#if defined( __kurl_name )
-	    #if ( !defined( kurl0 ) && defined( __kurl_version ) )
-	        #include "kurl/the_0kurl.h"
-	    #endif
-	    #if ( defined( kurl0 ) && !defined( kurl1 ) )
-	        #include "kurl/the_1kurl.h"
-	    #endif
-	    #if ( defined( kurl1 ) && !defined( kurl2 ) )
-	        #include "kurl/the_2kurl.h"
-	    #endif
-	    #if ( defined( kurl2 ) && !defined( kurl3 ) )
-	        #include "kurl/the_3kurl.h"
-	    #endif
-	    #if !defined( __hat__ )
-	        #include "kurl/hat.h"
-	    #endif	
-	#endif
+	// #if !defined( __hat__ )
+	// 	#include "kurl/kurl.h"
+	// #endif
+
+
 
 
 

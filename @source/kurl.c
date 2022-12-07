@@ -1,10 +1,7 @@
 /// what is my kurl ? \\\
 
 
-#include "kurl/kurl.h"
 
-extern kurl_t kurl; // each kurl has a different `stdptr` 
-#define kurl_seed &kurl // each kurl has a unique seed
 
 /**
 usage ::
@@ -21,13 +18,15 @@ usage ::
 				kurls support direct level calls :: `0x` , `1x` , `2x` , ... 
 **/
 
-
-int main( int argc , char **argv ) {
-
-
-	kurl0();
-
-
-
-	return 0;
+#if defined( __hat__ ) 
+void main( int argc , char const *argv[] ) {
+	__kurl__( &argv[0] );
 }
+#else
+#include "kurl/kurl.h"
+extern kurl_t kurl; // each kurl has a different `stdptr` 
+#define __kurl_seed &kurl // each kurl has a unique seed
+void main( int argc , char const argv[] ) {
+	printf("(*cool very cool )\n");
+}
+#endif
