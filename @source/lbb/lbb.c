@@ -1,7 +1,10 @@
 #include "lbb.h"
 
-word_t __read( struct lbb_st *__st );
-word_t __line( char *key , char *val , char *delim );
+#define DEBUG
+
+
+
+
 
 /*
 ***************************************************************************
@@ -36,6 +39,7 @@ char *__record(
 }
 
 int __write_record() {
+
 	return 0;
 }
 
@@ -62,16 +66,37 @@ word_t __read( struct lbb_st *st ) {
 int __lbb_record( entry_t *ent ) {	
 }
 
-int __hallmark( hallmark *__ ) {
+char *__hallmark( hallmark *__ ) {
 	char __hal[max_str];
+	int __ = 0;
 	memset( &__hal , 0 , max_str*sizeof( char ) );
-	__hal[0] = __ -> __l;
-
-	printf( "%c:%d\t@%s\t=%x\n" , \
+	__hal[__] = __ -> __l;
+	__+=1;
+	__hal[__] = ':';
+	__+=1;
+	unsigned int *__hal[__] = __->__n;
+	__+=sizeof( unsigned int );
+	__hal[__] = __kurl_version; 
+	__+=1;
+	unsigned int *__hal[__] = strlen( __ -> __n );
+	__+=sizeof( unsigned int );
+	__hal[__] = '@';
+	__+=1;
+	unsigned _a_addr = strlen( __ -> __a ); 
+	memcpy( *__hal[__] , __ -> __a , _a_addr*sizeof( char ) );
+	__+=_a_addr;
+	__hal[__] = __kurl_version;
+	__+=1;
+	unsigned long *__hal[__] = __ -> __k;
+	__+=sizeof( unsigned long );
+	__hal[__] = 0xa;
+	__+=1;
+	printf( "%c:%d\t@%s\t=%lx\n" , \
 	__ -> __l ,\
 	__ -> __n ,\
 	__ -> __a ,\
 	__ -> __k );
+	return strdup( __hal );
 }
 
 int lbb_append( struct lbb_si*__ , char *key , char *val ) {
@@ -103,12 +128,15 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 	regmatch_t  pmatch[3];
 	regoff_t    k_off, v_off , k_len , v_len;
 
+	#ifdef DEBUG
+		printf("lbb>compiling\n");
+	#endif
 	if ( regcomp( &regex , __lbb_regex , REG_NEWLINE ) ) {
 		return 1;
 	}
 
 	#ifdef DEBUG
-		printf("lbb>compiling\n");
+		printf("lbb>compiled\n");
 	#endif
 
 	struct sota _k , _w;
@@ -132,12 +160,12 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 
 		#ifdef DEBUG
 			printf( "-------->#%d:\n", __iter );
-			log_sota( &_k );
-			log_sota( &_w );
+			printf( "k :: %s\n" , _k.sptr );
+			printf( "w :: %s\n" , _w.sptr );
 		#endif
 
-		( *__lines + __iter ) -> key = _k;
-		( *__lines + __iter ) -> wry = _w;
+		// ( *__lines + __iter ) -> key = _k;
+		// ( *__lines + __iter ) -> wry = _w;
 
 		__s += pmatch[0].rm_eo;
 	}
@@ -179,7 +207,7 @@ int little_black_book() {
 	}
 
 	#ifdef DEBUG
-		printf( "current level is :: %d\n" , level );
+		printf( "current level is :: %ld\n" , level );
 		printf( "-1) initializing lbb\n");
 	#endif
 
@@ -209,12 +237,12 @@ int little_black_book() {
 
 
 	int compilation_res = compile_lbb( __data , &lines );
-	#ifdef DEBUG
-		printf( "compiled : %d\n" , compilation_res );
-		printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
-		(int)(lines[0].key).tal , (lines[0].key).sptr , 
-		(int)(lines[0].wry).tal , (lines[0].wry).sptr );
-	#endif
+	// #ifdef DEBUG
+	// 	printf( "compiled : %d\n" , compilation_res );
+	// 	printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
+	// 	(int)(lines[0].key).tal , (lines[0].key).sptr , 
+	// 	(int)(lines[0].wry).tal , (lines[0].wry).sptr );
+	// #endif
 
 	lbb_close();
 	return 0;

@@ -14,13 +14,19 @@ athernet points can be specified using ::
 
 #include <stdio.h>
 
-#ifdef __lbb__h
+
+#ifdef xxxx
+void *lbb_entry( char const*_ );
 int main( int argc , char const **argv ) {
-    printf( "\n" , level );
+    printf( "%ld\n" , level );
     lbb_entry( argv[1] );
 }
 #else
+char *__line( char *k , char *v , char *d );
+
 int main() {
+    char *x = __line( "kurlv." , "9" , ":" );
+    printf( "string is :: %s\n" , x );
     printf( "no lbb header found\n" );
 }
 #endif

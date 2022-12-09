@@ -32,7 +32,7 @@ lbb { a.k.a little black book }
 	#define __lbb_name "little_black_book"
 	#include "../probe.h"
 	// #define __lbb__h kurl > 0x7000 ? kurl&=0x0100 : kurl|=0x1111 
-	#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
+	#define __lbb_regex "\\(^[a-zA-Z0-9]\\)*\n"
 	#define __lbb_ext ".lbb"
 	#define entry_t const void *
 	#define t_entry ( entry_t _ )
@@ -50,8 +50,6 @@ lbb { a.k.a little black book }
 	static struct lbb_si book;
 
 	#define lbb &book
-
-
 	/**
 	lbb entry results 
 	 *
@@ -62,20 +60,59 @@ lbb { a.k.a little black book }
 			__liy
 		};
 		#define laddr enum lbb_e_res
-
 	/**
 	lbb hallmark structure
 	 *
 	**/
 		struct lbb_hallmark {
-			char __l;
-			unsigned int __n;
-			char *__a;
-			size_t __k;
+			unsigned char __l; // left 
+					// level ( character )
+			unsigned long __i; // iter
+					// iteration ( seperator )
+			unsigned char _y_; // -Y- 
+					// y bytes ( count )
+			unsigned char *_a; // at
+					// address ( @string )
+			unsigned int  __n; // new
+					// address! ( # == # )
 		};
 		#define hallmark struct lbb_hallmark
 		#define __size_lbb_hallmark sizeof( struct lbb_hallmark )
-		
+	/**
+	lbb entry structure
+	 * 
+	**/
+		struct lbb_kei {
+			char *k; 
+						// ptr
+			intmax_t e__set; 
+						// file  offset from descriptor
+			intmax_t i__size;
+						// iter_size
+						// total array length
+		};
+		#define __size_kei sizeof( struct lbb_kei )
+	/**
+	lbb line structure
+	 * 
+	**/  
+		struct lbb_word { // word
+			struct sota v;
+						// the key for the lbb
+			struct sota a;
+						// the { value , address , reference } of the key
+			struct sota l;
+		};
+		#define __size_word sizeof( struct lbb_word )
+	/**
+	lbb paragraph structure
+	 *
+	**/
+		struct lbb_record {
+			struct hallmark al;
+			struct *lbb_word words;
+		};
+		#define __size_record sizeof( struct lbb_record );
 	/**
 	lbb main strucutre
 	 * 
@@ -90,30 +127,6 @@ lbb { a.k.a little black book }
 						// the maximum build os-depenedent path for the fifo
 		};
 		#define __size_lbb_st sizeof( struct lbb_st )
-	/**
-	lbb entry structure
-	 * 
-	**/
-		struct sota {
-			char *sptr; 
-						// string ptr
-			intmax_t offset; 
-						// offset from file descriptor
-			intmax_t tal; 
-						// total array length
-		};
-		#define __size_sota sizeof( struct sota )
-	/**
-	lbb line structure
-	 * 
-	**/  
-		struct seam {
-			struct sota key;
-						// the key for the lbb
-			struct sota wry;
-						// the { value , address , reference } of the key
-		};
-		#define __size_seam sizeof( struct seam )
 	/**
 	lbb interface structure
 	 *
