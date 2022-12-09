@@ -95,8 +95,8 @@
 #endif
 =======
 	void *__gen_ptr( size_t __size ) {
-#define __kurl_size __size
 		if ( ( __size % 4 ) == 0 ) {
+#define __kurl_size __size
 			return malloc( __size );
 		}
 	}
