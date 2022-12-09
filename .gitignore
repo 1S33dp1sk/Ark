@@ -52,6 +52,7 @@ shared/*
 shared
 >>>>>>> 20518f8 (sub-merge of nets)
 athernet
+<<<<<<< HEAD
 kurl
 <<<<<<< HEAD
 >>>>>>> 2f81dbc (updated ignore)
@@ -61,4 +62,10 @@ kurl
 =======
 .lbb
 >>>>>>> a3a6de6 (combining progress)
+<<<<<<< HEAD
 >>>>>>> a5fe3ac (combining progress)
+=======
+=======
+.lbb
+>>>>>>> d369e4b (alignments)
+>>>>>>> 5c2d5f4 (alignments)

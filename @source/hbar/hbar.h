@@ -9,7 +9,11 @@
 =======
 =======
     #define __hbar_name "hash_bar"
+<<<<<<< HEAD
 >>>>>>> b3b1c06 (started the_*kurl)
+=======
+    #include "../probe.h"
+>>>>>>> d369e4b (alignments)
     #define hbar hashof
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
 
@@ -35,7 +39,6 @@
     #define hbar hashof
 >>>>>>> a415938 (kurls)
 
-#include "../anet.h"
 /**
  * 
  * Thanks for the all the contributions and good work from 

@@ -432,7 +432,7 @@ int applier( point *ap ){
 >>>>>>> 1635bec (started athernet)
 =======
     if ( point_writer.io_pid == 0 ) {
-        printf( "current pid for reading :: %d\n" , lbb_reader.io_pid );
+        printf( "current pid for reading :: %ld\n" , lbb_reader.io_pid );
         // read
         if ( ( lbb_reader.io_pid = _ap_r_entry() ) == 0 ) {
 >>>>>>> 46ba237 (broke everything pt.2)
@@ -481,7 +481,7 @@ int applier( point *ap ){
 >>>>>>> 46ba237 (broke everything pt.2)
     }
     else {
-        printf( "current pid for writing :: %d\n" , point_writer.io_pid );
+        printf( "current pid for writing :: %ld\n" , point_writer.io_pid );
         // write
 <<<<<<< HEAD
 <<<<<<< HEAD

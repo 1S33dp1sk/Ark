@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 
+<<<<<<< HEAD
 =======
 /*
 ***************************************************************************
@@ -79,6 +80,10 @@ int lbb_append( struct lbb_si*__ , char *key , char *val ) {
 }
 
 int lbb_query( struct lbb_si*__ , char *key ) {
+=======
+word_t __read( struct lbb_st *__st );
+word_t __line( char *key , char *val , char *delim );
+>>>>>>> d369e4b (alignments)
 
 }
 
@@ -106,7 +111,9 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 						****************************
 							********************
 								************
+								  *******
 									lbb
+								  *******
 								************
 							********************
 						****************************
@@ -118,9 +125,52 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 ***************************************************************************
 */
 
-word_t __read( struct lbb_st *__st );
-word_t __line( char *key , char *val , char *delim );
+char *__record( 
+	int __rlevel , // record level
+	char *__raddr , // record address
+	char *__rencorh , // record encryption|hash
+	unsigned __rcount ) { // record lines count 
+	return NULL;
+}
 
+int __write_record() {
+	return 0;
+}
+
+word_t __line( char *key , char *val , char *delim ) {
+	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
+	char __line[__len]; memset( &__line , 0 , __len ); __line[__len] = '\0';
+
+	strcpy( __line , key );
+	strcat( __line , delim );
+	strcat( __line , val );
+	strcat( __line , "\n" );
+
+	return strdup( __line );
+}
+
+word_t __read( struct lbb_st *st ) {
+	unsigned lbb_size = st -> lbb_stat.st_size;
+	char temp[lbb_size+1]; temp[lbb_size+1] = '\0';
+	memset( &temp , 0 , lbb_size );
+	read( st -> lbb_fd , &temp , lbb_size );
+	return strdup( temp );
+}
+
+int __lbb_record( entry_t *ent ) {	
+}
+
+int __hallmark( hallmark *__ ) {
+	char __hal[max_str];
+	memset( &__hal , 0 , max_str*sizeof( char ) );
+	__hal[0] = __ -> __l;
+
+	printf( "%c:%d\t@%s\t=%x\n" , \
+	__ -> __l ,\
+	__ -> __n ,\
+	__ -> __a ,\
+	__ -> __k );
+}
 
 int lbb_append( struct lbb_si*__ , char *key , char *val ) {
 	#ifdef DEBUG
@@ -142,7 +192,6 @@ int lbb_append( struct lbb_si*__ , char *key , char *val ) {
 }
 
 int lbb_query( struct lbb_si*__ , char *key ) {
-
 }
 
 <<<<<<< HEAD
@@ -328,6 +377,7 @@ int __regex_lbb( char const *rlbb ) {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
@@ -386,53 +436,70 @@ word_t __read( struct lbb_st *st ) {
 }
 
 int little_black_book( char *lbb_name ) {
+=======
+int little_black_book() {
+	printf( "current level is :: %ld\n" , level );
+>>>>>>> d369e4b (alignments)
 
 	struct seam *lines;
 	memset( &book , 0 , sizeof( struct lbb_si ) );
 
-	unsigned _name_len = strlen( lbb_name );
-	char *__name = _name_len <= 3 \
-		? __lbb_name : lbb_name;
+	unsigned _name_len = strlen( __lbb_ext );
+	char const *__name = *&__lbb_ext;
 	memmove( book.st.lbb_path , __name , _name_len );
 
+
 	printf( "struct path :: %s\n" , book.st.lbb_path );
-	if ( lbb_check() == -1 ) {
-		#ifdef DEBUG
-			printf( "no lbb found, creating one\n" );
-		#endif
-		lbb_make();
+	switch ( lbb_check() ) {
+		case 0x2:	
+			#ifdef DEBUG
+				printf( "-2) no lbb found, making one.\n" );
+			#endif
+			lbb_make();
+			___next();
+			break;
+		case 0x1:
+			#ifdef DEBUG
+				printf( "-2) lbb found, loading.\n" );
+			#endif
+			lbb_open();
+			___next();
+			break;
+		default:
+			break;
 	}
+
 	#ifdef DEBUG
-	printf( "initializing lbb\n");
+		printf( "current level is :: %d\n" , level );
+		printf( "-1) initializing lbb\n");
 	#endif
-	lbb_open();
 
 	if ( lbb_status() != 0 ) {
-		printf( "lbb status cannot be determined\n" );
+		#ifdef DEBUG
+			printf( "not zero on a zero kurl\n" );
+		#endif
+			printf( "lbb status cannot be determined\n" );
 		return -1;
 	}
 
-	#ifdef DEBUG
-	printf( "lbb : size = %ld bytes\n" , lbb_size() );	
-	#endif
-
 	if ( lbb_descriptors() <= 0 ) {
 		printf( "lbb file cannot be accessed\n" );
-		return -2;
+		return 0;
 	}
+
+	size_t t_size = lbb_size(); // total size
 	#ifdef DEBUG
-	printf( "lbb : fd = %d\n" , book.st.lbb_fd );
+		printf( "lbb : size = %ld bytes\n" , t_size );	
+		printf( "lbb : fd = %d\n" , book.st.lbb_fd );
 	#endif
 
-	word_t _word_all = __read(  &(book.st) );
-	long _word_alen = strlen( _word_all );
+	const char *__data = __read( &book.st );
+	unsigned long __len = strlen( __data );
+	printf( "read :: %ld bytes\n" , __len );
+	___next();
 
-	printf( "read :: %ld\n" , _word_alen );
 
-	int compilation_res = compile_lbb( _word_all , &lines );
-	if ( _word_alen < 4 ) {
-		return compilation_res;
-	}
+	int compilation_res = compile_lbb( __data , &lines );
 	#ifdef DEBUG
 		printf( "compiled : %d\n" , compilation_res );
 		printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
@@ -440,7 +507,8 @@ int little_black_book( char *lbb_name ) {
 		(int)(lines[0].wry).tal , (lines[0].wry).sptr );
 	#endif
 
-	return 3;
+	lbb_close();
+	return 0;
 }
 =======
 ulong little_black_book() {
@@ -520,5 +588,28 @@ int little_black_book( char *lbb_name ) {
 <<<<<<< HEAD
 >>>>>>> a415938 (kurls)
 
+<<<<<<< HEAD
 =======
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+laddr lbb_entry t_entry {
+
+	int tmp = little_black_book();
+	printf( "res lbb :: %d\n" , tmp );
+
+	char const *argv0 = ( char * ) _;
+
+	hallmark hm = {
+		.__l = 'k',
+		.__n = 2491,
+		.__a = "athernet\0",
+		.__k = 0x4ea585c0
+	};
+
+	__hallmark( &hm );
+
+	return __val;
+}
+
+
+>>>>>>> d369e4b (alignments)

@@ -8,10 +8,13 @@ athernet points can be specified using ::
 **/
 
 
-#include "hbar/hbar.h"
+#ifndef __kurl_version
+    #include "anet.h"
+#endif
 
-int main( int argc , char **argv ) {
+#include <stdio.h>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -61,3 +64,15 @@ int main( int argc , char **argv ) {
 >>>>>>> c0f8193 (started the_*kurl)
 
 }
+=======
+#ifdef __lbb__h
+int main( int argc , char const **argv ) {
+    printf( "\n" , level );
+    lbb_entry( argv[1] );
+}
+#else
+int main() {
+    printf( "no lbb header found\n" );
+}
+#endif
+>>>>>>> 5c2d5f4 (alignments)

@@ -1,12 +1,3 @@
-#include <stdint.h>
-#include <stddef.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <fcntl.h>
 #include "hbar.h"
 
 <<<<<<< HEAD

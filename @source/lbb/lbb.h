@@ -387,8 +387,10 @@ void log_sota( struct sota *s );
 >>>>>>> 46ba237 (broke everything pt.2)
 
 // #define DEBUG
+	
 
-
+// #define the_lbb "__lbb" 
+// possiblities : { al , a- , @ , # , ... }
 
 /**
 lbb { a.k.a little black book }
@@ -481,23 +483,56 @@ void log_sota( struct sota *s );
  *	key:=value:=address	( stores the associated key as an address )
  * 
 */
-#ifndef lbb
+
+
+#ifndef __lbb__h
 	#define __lbb_name "little_black_book"
+	#include "../probe.h"
+	// #define __lbb__h kurl > 0x7000 ? kurl&=0x0100 : kurl|=0x1111 
 	#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
 	#define __lbb_ext ".lbb"
+	#define entry_t const void *
+	#define t_entry ( entry_t _ )
+		// an entry is any 1 of { ref , value , addr }
+	#define word_t 	const char *
+	#define t_word ( word_t __ )
+		// a word is raw form of key[:|=|:=]entry
+	#define record_t const char **
+	#define t_record ( record_t ___ )
 
-	typedef const void * entry_t;
-	typedef const char * word_t;
-	typedef word_t* record_t;
-
-	#define lbb_entry entry_t
 	#define lbb_word word_t entry_t
 	#define lbb_record record_t
 
+	extern unsigned long level;
 	static struct lbb_si book;
-	#define lbb &book
-	#include "../anet.h"
 
+	#define lbb &book
+
+
+	/**
+	lbb entry results 
+	 *
+	**/
+		enum lbb_e_res {
+			__ref,
+			__val,
+			__liy
+		};
+		#define laddr enum lbb_e_res
+
+	/**
+	lbb hallmark structure
+	 *
+	**/
+		struct lbb_hallmark {
+			char __l;
+			unsigned int __n;
+			char *__a;
+			size_t __k;
+		};
+		#define hallmark struct lbb_hallmark
+		#define __size_lbb_hallmark sizeof( struct lbb_hallmark )
+		
 	/**
 	lbb main strucutre
 	 * 
@@ -561,7 +596,7 @@ void log_sota( struct sota *s );
 				} while( 0 )
 					// copy the named path and create an lbb file
 			#define lbb_check() \
-				book.st.lbb_fd > 0 ? 0x0 : access( book.st.lbb_path , (F_OK|R_OK|W_OK) ) == 0 ? 0x0 : 0xF 
+				book.st.lbb_fd > 0 ? 0x0 : access( book.st.lbb_path , (F_OK|R_OK|W_OK) ) == 0 ? 0x1 : 0x2 
 					// check for access on the file path for lbb
 			#define lbb_load() little_black_book( __lbb_ext )
 					// generate ctx for main interface via load
@@ -573,7 +608,7 @@ void log_sota( struct sota *s );
 	 * the point through *kurl; that is referenced to/by it
 	**/
 	#define lbb_open() \
-		do { book.st.lbb_fd = open( book.st.lbb_path , O_RDONLY ); } while ( 0 )
+		do { book.st.lbb_fd = open( book.st.lbb_path , O_RDWR ); } while ( 0 )
 	#define lbb_status() \
 		stat( book.st.lbb_path , &(book.st.lbb_stat) ) 
 	#define lbb_size() \
@@ -584,17 +619,21 @@ void log_sota( struct sota *s );
 		close( book.st.lbb_fd )
 	#define lbb_descriptors() \
 		book.st.lbb_fd
-	#define lbb_exists() \
-		__file_exsits( __lbb_ext )
 
 
-
-	int little_black_book( char *lbb_name );
+	int little_black_book();
 		int lbb_append( struct lbb_si *__ , char *lbb_key , char *lbb_val );
 		int lbb_query( struct lbb_si *__ , char *lbb_key );
+		extern laddr lbb_entry t_entry;
 	int compile_lbb( char const *lbb_contents , struct seam **lbb_lines );
 		void log_sota( struct sota *s );
 
+	
+
 #endif
 
+<<<<<<< HEAD
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+
+>>>>>>> d369e4b (alignments)
