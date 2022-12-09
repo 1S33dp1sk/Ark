@@ -1,14 +1,20 @@
+lbb_test:
+	@if [ -f athernet ]; then rm athernet; fi
+	@cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
+	@cc -shared shared/*.o -o shared/libather.so
+	@cc @source/athernet.c -o athernet ./shared/libather.so
+	./athernet someVar
 ca:
 	@if [ -f athernet ]; then rm athernet; fi
 	@if [ -f kurl ]; then rm kurl; fi
 	@if [ ! -d shared ]; then mkdir shared; fi
-	@cc -c -fpic @source/point/point.c -o shared/point.o
+	#@cc -c -fpic @source/point/point.c -o shared/point.o
 	@cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
-	@cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
-	@cc -c -fpic @source/nai/nai.c -o shared/nai.o
+	#@cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
+	#@cc -c -fpic @source/nai/nai.c -o shared/nai.o
 	@cc -shared shared/*.o -o shared/libather.so
 	@cc @source/athernet.c -o athernet ./shared/libather.so
-	@cc @source/kurl.c -o kurl ./shared/libather.so
+	#@cc @source/krul/kurl.c -o kurl ./shared/libather.so
 
 rca:
 	if [ -d shared ]; then rm -rf shared; fi

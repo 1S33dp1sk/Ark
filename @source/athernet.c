@@ -8,11 +8,19 @@ athernet points can be specified using ::
 **/
 
 
-#include "hbar/hbar.h"
+#ifndef __kurl_version
+    #include "anet.h"
+#endif
 
-int main( int argc , char **argv ) {
+#include <stdio.h>
 
-
-    printf( "hashof :: %s : %x\n" , argv[1], sfh( argv[1] ) );
-
+#ifdef __lbb__h
+int main( int argc , char const **argv ) {
+    printf( "\n" , level );
+    lbb_entry( argv[1] );
 }
+#else
+int main() {
+    printf( "no lbb header found\n" );
+}
+#endif

@@ -3,7 +3,6 @@ by mrKJ
 
 // #define DEBUG
 
-
 /**
  * nai is a union of structs to indicate which current
  * level is provided, since `__nai` is a union we will
@@ -16,7 +15,7 @@ cis :: prepend : `__`
 
 #ifndef nai
     #define __nai_name "native_ather_interface"
-    #include "../anet.h"
+
     /**
     iterable( node & mount path )
     `a_inmp` :: struct i-nodenum,mountpath

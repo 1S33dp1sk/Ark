@@ -189,7 +189,7 @@ int applier( point *ap ){
 
     // check calling process
     if ( point_writer.io_pid == 0 ) {
-        printf( "current pid for reading :: %d\n" , lbb_reader.io_pid );
+        printf( "current pid for reading :: %ld\n" , lbb_reader.io_pid );
         // read
         if ( ( lbb_reader.io_pid = _ap_r_entry() ) == 0 ) {
             printf( "cannot open atherpoint for reading\n");
@@ -199,7 +199,7 @@ int applier( point *ap ){
         return app_engine( &lbb_reader );
     }
     else {
-        printf( "current pid for writing :: %d\n" , point_writer.io_pid );
+        printf( "current pid for writing :: %ld\n" , point_writer.io_pid );
         // write
         if ( ( point_writer.io_pfd = _ap_w_entry() ) == 0 ) {
             printf( "cannot open atherpoint for writing\n");

@@ -1,8 +1,8 @@
 #ifndef hbar
     #define __hbar_name "hash_bar"
+    #include "../probe.h"
     #define hbar hashof
 
-#include "../anet.h"
 /**
  * 
  * Thanks for the all the contributions and good work from 
