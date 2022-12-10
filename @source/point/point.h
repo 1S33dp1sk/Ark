@@ -484,8 +484,6 @@ void log_stat( struct stat sb ) {
 // #define DEBUG
 
 
- 
-
 /**
  * atherpoint is an `FIFO`
  * with a singular reader, that is the `lbb`
@@ -538,8 +536,6 @@ void log_stat( struct stat sb ) {
     #define __size_p __size_p_si
 
     typedef struct point_si point;
-
-
 
     #define point_descriptors( __ ) \
         ( __.p_lbb.io_pfd > 0 ) || ( __.p_annon.io_pfd > 0 ) ? 1 : 0 
