@@ -14,7 +14,6 @@ athernet points can be specified using ::
 
 #include <stdio.h>
 
-
 #ifdef xxxx
 void *lbb_entry( char const*_ );
 int main( int argc , char const **argv ) {
@@ -23,7 +22,6 @@ int main( int argc , char const **argv ) {
 }
 #else
 char *__line( char *k , char *v , char *d );
-
 int main() {
     char *x = __line( "kurlv." , "9" , ":" );
     printf( "string is :: %s\n" , x );
