@@ -33,13 +33,14 @@
 #endif
 
 #if !defined( __ascii_point_name )
+	#include <string.h>
 	char *__ascii_name( char *a_name ) {
 
 		char point_name[256];
 		memset( &point_name , 0 , sizeof( point_name ) );
 
 		if ( a_name[0] != '@' ) {
-			printf( "malformed point name\n" );
+			// printf( "malformed point name\n" );
 			return NULL;
 		}
 		*a_name++;
@@ -50,7 +51,7 @@
 		}
 		point_name[count] = '\0';
 
-		printf( "ap name in ascii : %s : length :: %d\n" , point_name , count );
+		// printf( "ap name in ascii : %s : length :: %d\n" , point_name , count );
 		return strdup( point_name );
 	}
 #define __ascii_point_name __ascii_name
