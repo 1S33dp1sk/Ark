@@ -16,18 +16,17 @@ usage ::
 				kurls support direct level calls :: `0x` , `1x` , `2x` , ... 
 **/
 
-// #if defined( __hat__ ) 
-#include <stdio.h>
-void main( int argc , char const *argv[] ) {
-	printf( "%s" , argv[0] );
-}
-// #else
-// #include "kurl/kurl.h"
-// extern kurl_t kurl; // each kurl has a different `stdptr` 
-// #define __kurl_seed &kurl // each kurl has a unique seed
-// void main( int argc , char const argv[] ) {
 
-// 	printf( " level :: %d\n" , level );	
-// 	printf("(*cool very cool )\n");
-// }
-// #endif
+
+#if defined( __hat__ ) 
+void main( int argc , char const *argv[] ) {
+	__kurl__( &argv[0] );
+}
+#else
+#include "kurl/kurl.h"
+extern kurl_t kurl; // each kurl has a different `stdptr` 
+#define __kurl_seed &kurl // each kurl has a unique seed
+void main( int argc , char const argv[] ) {
+	printf("(*cool very cool )\n");
+}
+#endif

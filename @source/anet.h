@@ -32,6 +32,30 @@
 #define stdptr __gen_ptr
 #endif
 
+#if !defined( __ascii_point_name )
+	char *__ascii_name( char *a_name ) {
+
+		char point_name[256];
+		memset( &point_name , 0 , sizeof( point_name ) );
+
+		if ( a_name[0] != '@' ) {
+			printf( "malformed point name\n" );
+			return NULL;
+		}
+		*a_name++;
+		unsigned count = 0;
+		while ( count < 255 && ( *a_name != '\0' && a_name[count] != 0 ) ){
+			point_name[count] = a_name[count];
+			count+=1;
+		}
+		point_name[count] = '\0';
+
+		printf( "ap name in ascii : %s : length :: %d\n" , point_name , count );
+		return strdup( point_name );
+	}
+#define __ascii_point_name __ascii_name
+#endif
+
 #if !defined( __kurl_version )
 	#include "kurl/kurl.h"
 #endif

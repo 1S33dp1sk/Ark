@@ -6,7 +6,7 @@ lbb_test:
 	@cc -shared shared/*.o -o shared/libather.so
 	@cc @source/athernet.c -o athernet ./shared/libather.so
 	@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
-	./athernet someVar
+	./kurl someVar
 ca:
 	@if [ -f athernet ]; then rm athernet; fi
 	@if [ -f kurl ]; then rm kurl; fi
