@@ -1,8 +1,3 @@
-make_misc:
-	@if [ -f misc ]; then rm misc; fi
-	cc mis.c -o misc
-	./misc
-
 lbb_test:
 	@if [ -f athernet ]; then rm athernet; fi
 	@if [ ! -d shared ]; then mkdir shared; fi

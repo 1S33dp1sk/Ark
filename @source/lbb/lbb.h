@@ -32,7 +32,7 @@ lbb { a.k.a little black book }
 	#define __lbb_name "little_black_book"
 	#include "../probe.h"
 	// #define __lbb__h kurl > 0x7000 ? kurl&=0x0100 : kurl|=0x1111 
-	#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
+	#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
 	#define __lbb_ext ".lbb"
 
 	#define entry_t const void *

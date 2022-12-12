@@ -9,9 +9,10 @@
 		struct stat __st;
 		return stat( _name , &__st ) == 0;	
 	}
-#endif
+#endif	
 #define check_file __file_exsits
-#if !defined( stdptr )
+
+#if ( !defined( stdptr ) || !defined( __kurl_size ) )
 	#include <stddef.h>
     size_t __size_ptr( unsigned _lvl ) {
     	unsigned long quant_bc = 1 , __level = ( int ) _lvl;
@@ -28,14 +29,20 @@
 			return malloc( __size );
 		}
 	}
-#endif
 #define stdptr __gen_ptr
+#endif
+
 #if !defined( __kurl_version )
 	#include "kurl/kurl.h"
 #endif
+
 #if !defined( __lbb_name )
 	#define lbb_init 1
 	#include "lbb/lbb.h"
+#endif
+
+#if !defined( __yx__h )
+	#include "yx/yx.h"
 #endif
 
 

@@ -69,8 +69,10 @@ entry_t __read( struct lbb_st *st ) {
 	return strdup( temp );
 }
 
-char *__hallmark( hallmark *__ ) {
+entry_t __hallmark( hallmark *__ ) {
 	char __hal[max_str];
+
+
 	return strdup( __hal );
 }
 
@@ -125,7 +127,7 @@ int compile_lbb( char const *rlbb , word **__words ) {
 		_k.i__size = ( intmax_t ) ( pmatch[1].rm_eo - pmatch[1].rm_so );
 		_k.k = ( char * ) __s + pmatch[1].rm_so;
 
-		printf( "key -> \"%.*s\"\n", _k.i__size , _k.k + pmatch[1].rm_so );
+		// printf( "key -> \"%.*s\"\n", _k.i__size , _k.k + pmatch[1].rm_so );
 
 		_w.e__set = ( intmax_t ) ( pmatch[2].rm_so + ( __s - rlbb ) );
 		_w.i__size = ( intmax_t ) ( pmatch[2].rm_eo - pmatch[2].rm_so );
@@ -133,12 +135,13 @@ int compile_lbb( char const *rlbb , word **__words ) {
 
 		#ifdef DEBUG
 			printf( "-------->#%d:\n", __iter );
-			printf( "k :: %s\n" , _k.k );
-			printf( "w :: %s\n" , _w.k );
+			printf( "offset @ :: %ld\n" , _k.e__set );
+			printf( "key :: %.*s\n" , ( int ) _k.i__size, _k.k );
+			printf( "val :: %.*s\n" , ( int ) _w.i__size , _w.k );
 		#endif
 
-		( *__words + __iter ) -> v = _k;
-		( *__words + __iter ) -> a = _w;
+		// ( *__words + __iter ) -> v = _k;
+		// ( *__words + __iter ) -> a = _w;
 
 		__s += pmatch[0].rm_eo;
 	}
@@ -251,7 +254,7 @@ int lbb_add_hallmark(){
 		._a = at_name,
 		.n = 0,
 	};
-	printf( "\n%c%c%c%s%d\n" , \
+	printf( "\n%c%ld%c%s%d\n" , \
 		hm.__k,
 		hm.__a,
 		hm._y_,

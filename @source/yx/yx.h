@@ -1,5 +1,5 @@
 #ifndef __yx__h
-	#define __yx_types 1
+	#define __yx__h 1
 
 	#define __up unsigned char *
 	#define __sp char *
@@ -9,19 +9,21 @@
 
 	// unpack
 	#ifndef __y__h
-		__si y16i( __up __ ) { // signed 16-bit
+		#define __y__h 1
+		extern __si y16i( __up __ ) { // signed 16-bit
 			__ui ui = ( ( __ui )__[0]<<8 ) | __[1];
 			if ( ui <= 0x7fffu ) { return ui; }
 			return ( -1-( __ui )( 0xffffu - ui ) );
 		}
-		__ui y16u( __up __ ) { // unsigned 16-bit
+		extern __ui y16u( __up __ ) { // unsigned 16-bit
 			return ( ( __ui )__[0]<<8 ) | __[1];
 		}
 	#endif
 
 	// pack
 	#ifndef __x__h
-		void x16i( __up __ , __ui i ) {
+		#define __x__h 1
+		extern void x16i( __up __ , __ui i ) {
 			*__++ = i>>8;	*__++ = i;
 		}
 	#endif
