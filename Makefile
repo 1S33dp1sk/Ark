@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # 
 #####################################
 #			Shell/@net				#
@@ -185,6 +186,8 @@ old:
 =======
 
 >>>>>>> e950094 (pre-merge)
+=======
+>>>>>>> e163db1 (headers)
 lbb_test:
 	@if [ -f athernet ]; then rm athernet; fi
 	@if [ ! -d shared ]; then mkdir shared; fi

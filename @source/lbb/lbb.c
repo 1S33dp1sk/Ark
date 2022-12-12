@@ -184,8 +184,10 @@ entry_t __read( struct lbb_st *st ) {
 	return strdup( temp );
 }
 
-char *__hallmark( hallmark *__ ) {
+entry_t __hallmark( hallmark *__ ) {
 	char __hal[max_str];
+
+
 	return strdup( __hal );
 }
 
@@ -293,7 +295,7 @@ int compile_lbb( char const *rlbb , word **__words ) {
 		_k.k = ( char * ) __s + pmatch[1].rm_so;
 >>>>>>> 9a88ac4 (xy header file for packing&unpacking)
 
-		printf( "key -> \"%.*s\"\n", _k.i__size , _k.k + pmatch[1].rm_so );
+		// printf( "key -> \"%.*s\"\n", _k.i__size , _k.k + pmatch[1].rm_so );
 
 		_w.e__set = ( intmax_t ) ( pmatch[2].rm_so + ( __s - rlbb ) );
 		_w.i__size = ( intmax_t ) ( pmatch[2].rm_eo - pmatch[2].rm_so );
@@ -301,10 +303,12 @@ int compile_lbb( char const *rlbb , word **__words ) {
 
 		#ifdef DEBUG
 			printf( "-------->#%d:\n", __iter );
-			printf( "k :: %s\n" , _k.k );
-			printf( "w :: %s\n" , _w.k );
+			printf( "offset @ :: %ld\n" , _k.e__set );
+			printf( "key :: %.*s\n" , ( int ) _k.i__size, _k.k );
+			printf( "val :: %.*s\n" , ( int ) _w.i__size , _w.k );
 		#endif
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		( *__lines + __iter ) -> key = _k;
@@ -345,6 +349,10 @@ int compile_lbb( char const *rlbb , word **__words ) {
 		( *__lines + __iter ) -> key = _k;
 		( *__lines + __iter ) -> wry = _w;
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+		// ( *__words + __iter ) -> v = _k;
+		// ( *__words + __iter ) -> a = _w;
+>>>>>>> e163db1 (headers)
 
 		__s += pmatch[0].rm_eo;
 	}
@@ -679,7 +687,7 @@ int lbb_add_hallmark(){
 		._a = at_name,
 		.n = 0,
 	};
-	printf( "\n%c%c%c%s%d\n" , \
+	printf( "\n%c%ld%c%s%d\n" , \
 		hm.__k,
 		hm.__a,
 		hm._y_,

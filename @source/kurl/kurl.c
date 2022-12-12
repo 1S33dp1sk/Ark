@@ -19,7 +19,7 @@ usage ::
 // #if defined( __hat__ ) 
 #include <stdio.h>
 void main( int argc , char const *argv[] ) {
-	printf( argv[0] );
+	printf( "%s" , argv[0] );
 }
 // #else
 // #include "kurl/kurl.h"
