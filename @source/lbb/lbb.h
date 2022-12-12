@@ -489,19 +489,11 @@ void log_sota( struct sota *s );
 	#define __lbb_name "little_black_book"
 	#include "../probe.h"
 	// #define __lbb__h kurl > 0x7000 ? kurl&=0x0100 : kurl|=0x1111 
-	#define __lbb_regex "\\(^[a-zA-Z0-9]\\)*$"
+	#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
 	#define __lbb_ext ".lbb"
 
 	#define entry_t const void *
 	#define t_entry ( entry_t _ )
-		// an entry is any 1 of { ref , value , addr }
-	#define word_t  char const*
-	#define t_word ( word_t __ )
-		// a word is raw form of key[:|=|:=]entry { a.k.a line }
-	#define record_t char const**
-	#define t_record ( record_t ___ )
-		// a record is a collection of words + a hallmark
-
 
 	extern unsigned long level;
 	static struct lbb_si book;
@@ -521,17 +513,17 @@ void log_sota( struct sota *s );
 	lbb hallmark structure
 	 *
 	**/
-		struct lbb_hallmark { // liyan
-			unsigned char __l; // L
-			// ( character )
-			unsigned long __i; // I
-			// ( seperator )
-			unsigned char _y_; // Y 
-			// ( count )
-			unsigned char *_a; // A
-			// ( @string )
-			unsigned int  __n; // N
-			// ( # == # )
+		struct lbb_hallmark {
+			unsigned char __k; 
+						// ( character )
+			unsigned long __a; 
+						// ( seperator )
+			unsigned char _y_;  
+						// ( count )
+			unsigned char*_a; 
+						// ( @string )
+			unsigned int  n; 
+						// ( # == # )
 		};
 		#define hallmark struct lbb_hallmark
 		#define __size_lbb_hallmark sizeof( struct lbb_hallmark )
@@ -543,10 +535,9 @@ void log_sota( struct sota *s );
 			char *k; 
 						// ptr
 			intmax_t e__set; 
-						// file  offset from descriptor
+						// file offset from descriptor
 			intmax_t i__size;
-						// iter_size
-						// total array length
+						// iter_size total array length
 		};
 		#define kei struct lbb_kei
 		#define __size_kei sizeof( struct lbb_kei )
@@ -559,11 +550,26 @@ void log_sota( struct sota *s );
 						// the key for the lbb
 			kei a;
 						// the { value , address , reference } of the key
-			kei l;
-						// #of( a )
+			char l[2];
+						// delimiter
 		};
 		#define word struct lbb_word
 		#define __size_word sizeof( struct lbb_word )
+
+	/**
+	lbb line structure
+	 *
+	**/
+		struct lbb_line {
+			word a;
+						// identification word
+			kei b;
+						// unique key
+			char c[2];
+						// delimiter
+		};
+		#define line struct lbb_line
+		#define __size_line sizeof( struct lbb_line )
 	/**
 	lbb paragraph structure
 	 *
@@ -573,7 +579,7 @@ void log_sota( struct sota *s );
 			word *words;
 		};
 		#define record struct lbb_record
-		#define __size_record sizeof( struct lbb_record );
+		#define __size_record sizeof( struct lbb_record )
 	/**
 	lbb main strucutre
 	 * 
@@ -643,14 +649,13 @@ void log_sota( struct sota *s );
 	 *
 	**/
 	int little_black_book();
-		int compile_lbb( char const *lbb_contents , struct seam **lbb_lines );
-		extern laddr lbb_entry t_entry;
+		int compile_lbb( char const *lbb_contents , word **words );
 
 	/**
 	ops on book
 	 * 
 	**/
-	laddr lbb_entry t_entry;
+	extern laddr lbb_entry t_entry;
 		int lbb_append( struct lbb_si *__ , char *lbb_key , char *lbb_val );
 		int lbb_query( struct lbb_si *__ , char *lbb_key );
 #endif

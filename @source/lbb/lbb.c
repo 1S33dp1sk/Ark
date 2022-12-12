@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -94,6 +95,9 @@ word_t __line( char *key , char *val , char *delim );
 =======
 // #define DEBUG
 >>>>>>> 9a88ac4 (xy header file for packing&unpacking)
+=======
+#define DEBUG
+>>>>>>> e950094 (pre-merge)
 
 >>>>>>> facbf6d (starting encoding&decoding for lbb words,records,hallmark, and book)
 
@@ -137,9 +141,30 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 ***************************************************************************
 */
 
+#ifndef __lbb_raw__
+	#define __lbb_raw__ "KW"
+	char *_raw_kei( kei __kei ) {
+		if( ( __kei.k != NULL ) && ( __kei.i__size != 0 ) ) {
+			char __raw[__kei.i__size];
+			memset( &__raw , 0 , sizeof( __kei.i__size )*sizeof( char ) );
+			memcpy( __raw , __kei.k , __kei.i__size );
+			return strdup( __raw );
+		}
+		return NULL;
+	}
+	char *_raw_word( word __word ) {
+		unsigned __len_v = __word.v.i__size, __len_a = __word.a.i__size;
+		unsigned __len_total = __len_v + __len_a + 3; 
+		char __raw[__len_total];
+		__raw[__len_total] = '\0';
+		memcpy( __raw , _raw_kei( __word.v ) , __word.v.i__size );
+		memcpy( __raw , __word.l , 2 );
+		memcpy( __raw , _raw_kei( __word.a ) , __word.a.i__size );
+		return strdup( __raw );
+	}
+#endif
 
-
-word_t __line( char *key , char *val , char *delim ) {
+entry_t __word( char *key , char *val , char *delim ) {
 	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
 	char __line[__len]; memset( &__line , 0 , __len ); __line[__len] = '\0';
 
@@ -151,7 +176,7 @@ word_t __line( char *key , char *val , char *delim ) {
 	return strdup( __line );
 }
 
-word_t __read( struct lbb_st *st ) {
+entry_t __read( struct lbb_st *st ) {
 	unsigned lbb_size = st -> lbb_stat.st_size;
 	char temp[lbb_size+1]; temp[lbb_size+1] = '\0';
 	memset( &temp , 0 , lbb_size );
@@ -159,39 +184,8 @@ word_t __read( struct lbb_st *st ) {
 	return strdup( temp );
 }
 
-int __lbb_record( entry_t *ent ) {	
-}
-
 char *__hallmark( hallmark *__ ) {
 	char __hal[max_str];
-	// int __ = 0;
-	// memset( &__hal , 0 , max_str*sizeof( char ) );
-	// __hal[__] = __ -> __l;
-	// __+=1;
-	// __hal[__] = ':';
-	// __+=1;
-	// unsigned int *__hal[__] = __->__n;
-	// __+=sizeof( unsigned int );
-	// __hal[__] = __kurl_version; 
-	// __+=1;
-	// unsigned int *__hal[__] = strlen( __ -> __n );
-	// __+=sizeof( unsigned int );
-	// __hal[__] = '@';
-	// __+=1;
-	// unsigned _a_addr = strlen( __ -> __a ); 
-	// memcpy( *__hal[__] , __ -> __a , _a_addr*sizeof( char ) );
-	// __+=_a_addr;
-	// __hal[__] = __kurl_version;
-	// __+=1;
-	// unsigned long *__hal[__] = __ -> __k;
-	// __+=sizeof( unsigned long );
-	// __hal[__] = 0xa;
-	// __+=1;
-	// printf( "%c:%d\t@%s\t=%lx\n" , \
-	// __ -> __l ,\
-	// __ -> __n ,\
-	// __ -> __a ,\
-	// __ -> __k );
 	return strdup( __hal );
 }
 
@@ -201,7 +195,7 @@ int lbb_append( struct lbb_si*__ , char *key , char *val ) {
 	#endif
 
 	const char *prev = __read( &__ -> st );
-	const char *curr = __line( key , val , ":" );
+	const char *curr = __word( key , val , ":" );
 	char total[strlen( prev ) + strlen( curr )];
 	strcpy( total , prev );
 	strcpy( total , curr );
@@ -218,11 +212,15 @@ int lbb_query( struct lbb_si*__ , char *key ) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 int compile_lbb( char const *rlbb , word **__words ) {
 >>>>>>> a415938 (kurls)
 =======
 int compile_lbb( char const *rlbb , struct seam **__lines ) {
 >>>>>>> c1e4320 (athernet V0.9)
+=======
+int compile_lbb( char const *rlbb , word **__words ) {
+>>>>>>> e950094 (pre-merge)
 
 	char const *__s = rlbb;
 	regex_t     regex;
@@ -241,6 +239,7 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 		return 1;
 	}
 
+<<<<<<< HEAD
 	#ifdef DEBUG
 		printf("lbb>compiled\n");
 	#endif
@@ -268,6 +267,8 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 	struct sota _k , _w;
 >>>>>>> c1e4320 (athernet V0.9)
 =======
+=======
+>>>>>>> e950094 (pre-merge)
 	kei _k , _w;
 >>>>>>> 9a88ac4 (xy header file for packing&unpacking)
 	int __iter = 0;
@@ -292,16 +293,19 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 		_k.k = ( char * ) __s + pmatch[1].rm_so;
 >>>>>>> 9a88ac4 (xy header file for packing&unpacking)
 
+		printf( "key -> \"%.*s\"\n", _k.i__size , _k.k + pmatch[1].rm_so );
+
 		_w.e__set = ( intmax_t ) ( pmatch[2].rm_so + ( __s - rlbb ) );
 		_w.i__size = ( intmax_t ) ( pmatch[2].rm_eo - pmatch[2].rm_so );
 		_w.k = ( char * ) __s + pmatch[2].rm_so;
 
 		#ifdef DEBUG
 			printf( "-------->#%d:\n", __iter );
-			printf( "k :: %s\n" , _k.sptr );
-			printf( "w :: %s\n" , _w.sptr );
+			printf( "k :: %s\n" , _k.k );
+			printf( "w :: %s\n" , _w.k );
 		#endif
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 		( *__lines + __iter ) -> key = _k;
 		( *__lines + __iter ) -> wry = _w;
@@ -409,11 +413,18 @@ int __regex_lbb( char const *rlbb ) {
 		// ( *__lines + __iter ) -> key = _k;
 		// ( *__lines + __iter ) -> wry = _w;
 >>>>>>> facbf6d (starting encoding&decoding for lbb words,records,hallmark, and book)
+=======
+		( *__words + __iter ) -> v = _k;
+		( *__words + __iter ) -> a = _w;
+>>>>>>> e950094 (pre-merge)
 
 		__s += pmatch[0].rm_eo;
 	}
 
 	regfree( &regex );
+	#ifdef DEBUG
+		printf("lbb>compiled\n");
+	#endif
 
 	return 0;
 }
@@ -483,11 +494,15 @@ int little_black_book( char *lbb_name ) {
 =======
 int little_black_book() {
 	printf( "current level is :: %ld\n" , level );
+<<<<<<< HEAD
 >>>>>>> d369e4b (alignments)
 
 	struct seam *lines;
+=======
+>>>>>>> e950094 (pre-merge)
 	memset( &book , 0 , sizeof( struct lbb_si ) );
 
+	word *words;
 	unsigned _name_len = strlen( __lbb_ext );
 	char const *__name = *&__lbb_ext;
 	memmove( book.st.lbb_path , __name , _name_len );
@@ -543,12 +558,12 @@ int little_black_book() {
 	___next();
 
 
-	int compilation_res = compile_lbb( __data , &lines );
+	int compilation_res = compile_lbb( __data , &words );
 	// #ifdef DEBUG
 	// 	printf( "compiled : %d\n" , compilation_res );
-	// 	printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
-	// 	(int)(lines[0].key).tal , (lines[0].key).sptr , 
-	// 	(int)(lines[0].wry).tal , (lines[0].wry).sptr );
+	// 	printf( "\n words = \n k :: %.*s\n v :: %.*s\n" , 
+	// 	(int)(words[0].v).i__size , (words[0].v).k , 
+	// 	(int)(words[0].a).i__size , (words[0].a).k );
 	// #endif
 
 	lbb_close();
@@ -643,16 +658,35 @@ laddr lbb_entry t_entry {
 
 	char const *argv0 = ( char * ) _;
 
-	// hallmark hm = {
-	// 	.__l = 'k',
-	// 	.__n = 2491,
-	// 	.__a = "athernet\0",
-	// 	.__k = 0x4ea585c0
-	// };
-
-	// __hallmark( &hm );
-
 	return __val;
+}
+
+int lbb_add_line( entry_t _l ) {
+	int x = -1;
+	if ( book.st.lbb_fd > 0 ) {
+		int x = write( book.st.lbb_fd , _l , strlen( _l )*sizeof( char ) );
+		printf( "fd : %d : wrote x :: %d bytes\n" , book.st.lbb_fd , x );
+	}
+	return x;
+}
+
+int lbb_add_hallmark(){
+	unsigned char *at_name = "@karam";
+	hallmark hm = {
+		.__k = '@',
+		.__a = ':',
+		._y_ = '0',
+		._a = at_name,
+		.n = 0,
+	};
+	printf( "\n%c%c%c%s%d\n" , \
+		hm.__k,
+		hm.__a,
+		hm._y_,
+		hm._a,
+		hm.n
+	);
+	// memset( &hm , 0 , sizeof( hallmark ) );
 }
 
 

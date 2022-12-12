@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # 
 #####################################
 #			Shell/@net				#
@@ -39,10 +40,13 @@ charms:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+=======
+>>>>>>> e950094 (pre-merge)
 make_misc:
 	@if [ -f misc ]; then rm misc; fi
 	cc mis.c -o misc
 	./misc
+<<<<<<< HEAD
 =======
 #ather processor := _u_charm 
 a:=att#address
@@ -178,6 +182,9 @@ all:
 old:
 >>>>>>> 757e790 (shared library for point)
 =======
+=======
+
+>>>>>>> e950094 (pre-merge)
 lbb_test:
 	@if [ -f athernet ]; then rm athernet; fi
 	@if [ ! -d shared ]; then mkdir shared; fi
@@ -207,7 +214,7 @@ ca:
 	#@cc -c -fpic @source/nai/nai.c -o shared/nai.o
 	@cc -shared shared/*.o -o shared/libather.so
 	@cc @source/athernet.c -o athernet ./shared/libather.so
-	#@cc @source/krul/kurl.c -o kurl ./shared/libather.so
+	#@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
 
 rca:
 	if [ -d shared ]; then rm -rf shared; fi

@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 /**
  * thinking that the ather is anything other than
@@ -105,24 +106,33 @@ static char __udef_nodename[MAX_STR];
 #include "iota.h"
 #include "lbb/little_black_book.h"
 =======
+=======
+>>>>>>> e950094 (pre-merge)
 #include "kurl/probe.h"
 #include "point/point.h"
 #include "lbb/lbb.h"
 #include "hbar/hbar.h"
 #include "nai/nai.h"
+<<<<<<< HEAD
 >>>>>>> cf46ec7 (athernet v0)
 =======
 #include "probe.h"
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
+=======
+>>>>>>> e950094 (pre-merge)
 
 
 int main( int argc , char **argv ) {
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> e950094 (pre-merge)
 	union __nai __;
 
 	int res = nai( argv[1][0] - '0' , __ );
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> eb99d6a (0xather)
 =======
@@ -141,3 +151,6 @@ int main( int argc , char **argv ) {
 =======
 }
 >>>>>>> a95c3a4 (comments and usages for athernet, kurls & probe)
+=======
+}
+>>>>>>> e950094 (pre-merge)
