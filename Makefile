@@ -1,8 +1,16 @@
+make_misc:
+	@if [ -f misc ]; then rm misc; fi
+	cc mis.c -o misc
+	./misc
+
 lbb_test:
 	@if [ -f athernet ]; then rm athernet; fi
+	@if [ ! -d shared ]; then mkdir shared; fi
+	@cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
 	@cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
 	@cc -shared shared/*.o -o shared/libather.so
 	@cc @source/athernet.c -o athernet ./shared/libather.so
+	@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
 	./athernet someVar
 ca:
 	@if [ -f athernet ]; then rm athernet; fi
@@ -14,7 +22,7 @@ ca:
 	#@cc -c -fpic @source/nai/nai.c -o shared/nai.o
 	@cc -shared shared/*.o -o shared/libather.so
 	@cc @source/athernet.c -o athernet ./shared/libather.so
-	#@cc @source/krul/kurl.c -o kurl ./shared/libather.so
+	#@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
 
 rca:
 	if [ -d shared ]; then rm -rf shared; fi

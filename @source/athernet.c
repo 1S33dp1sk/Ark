@@ -1,4 +1,6 @@
-/// athernet \\\
+/// what is my kurl ? \\\
+
+
 
 /**
 athernet points can be specified using ::
@@ -7,13 +9,12 @@ athernet points can be specified using ::
  *
 **/
 
+// #define xxxx
 
 #ifndef __kurl_version
     #include "anet.h"
 #endif
-
 #include <stdio.h>
-
 #ifdef xxxx
 void *lbb_entry( char const*_ );
 int main( int argc , char const **argv ) {
@@ -21,10 +22,15 @@ int main( int argc , char const **argv ) {
     lbb_entry( argv[1] );
 }
 #else
-char *__line( char *k , char *v , char *d );
+char *__word( char *k , char *v , char *d );
+int lbb_add_line( char *line );
+int little_black_book();
+int lbb_add_hallmark();
 int main() {
-    char *x = __line( "kurlv." , "9" , ":" );
+    little_black_book();
+    lbb_add_hallmark();
+    char *x = __word( "kurlv." , "9" , ":" );
+    int lbb_x = lbb_add_line( x );
     printf( "string is :: %s\n" , x );
-    printf( "no lbb header found\n" );
 }
 #endif

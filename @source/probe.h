@@ -47,6 +47,11 @@ static char ___next () {\
 	#endif
 #endif
 
+#ifndef __yx__h
+	#define __yx__h 1
+	#include "yx/yx.h"
+#endif
+
 #ifndef __hbar__h
 	#define __hbar__h 1
 	#include <stdint.h>
