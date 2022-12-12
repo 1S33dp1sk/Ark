@@ -17,6 +17,7 @@ athernet points can be specified using ::
 #include <stdio.h>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -81,16 +82,14 @@ int main( int argc , char **argv ) {
 =======
 void x16i( unsigned char *__ , unsigned int _ );
 >>>>>>> b930c08 (headers)
+=======
+>>>>>>> bae77f0 (version0.2 ATHERNET)
 #ifdef xxxx
 void *lbb_entry( char const*_ );
 >>>>>>> 6b310c1 (starting encoding&decoding for lbb words,records,hallmark, and book)
 int main( int argc , char const **argv ) {
     printf( "level :: %ld\n" , level );
-    unsigned int x = 20140021;
-    char __xx[100];
-    memset( &__xx , 0 , sizeof( __xx ) );
-    x16i( __xx , x );
-    // lbb_entry( argv[1] );
+    return 0;
 }
 #else
 char *__word( char *k , char *v , char *d );

@@ -196,6 +196,7 @@ lbb_test:
 	@cc -shared shared/*.o -o shared/libather.so
 	@cc @source/athernet.c -o athernet ./shared/libather.so
 	@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
+<<<<<<< HEAD
 	./athernet someVar
 =======
 >>>>>>> c1e4320 (athernet V0.9)
@@ -207,6 +208,9 @@ lbb_test:
 	@cc @source/athernet.c -o athernet ./shared/libather.so
 	./athernet someVar
 >>>>>>> d369e4b (alignments)
+=======
+	./kurl someVar
+>>>>>>> d8857c4 (version0.2 ATHERNET)
 ca:
 	@if [ -f athernet ]; then rm athernet; fi
 	@if [ -f kurl ]; then rm kurl; fi
