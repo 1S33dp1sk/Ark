@@ -15,7 +15,7 @@ cis :: prepend : `__`
 
 #ifndef nai
     #define __nai_name "native_ather_interface"
-
+    #include "../probe.h"
     /**
     iterable( node & mount path )
     `a_inmp` :: struct i-nodenum,mountpath
@@ -108,7 +108,7 @@ cis :: prepend : `__`
     `__nai` :: union that defines different interfaces
      * for the different levels & { 0...3 } web types
     **/
-        typedef union __nai {
+        union __nai {
             struct a_inmp n_uni; 
                     // universal
             struct a_isok n_loc; 
@@ -117,13 +117,14 @@ cis :: prepend : `__`
                     // network
             struct a_ibna n_blo; 
                     // blockchain
-        } nai;
+        };
+        #define nai union __nai
 
     /**
     `l-addr` :: a *level* based char pointer
      * depending on the current attached level
      **/
-        char *native_address( int level );
+        char const *native_address( int level );
             #ifdef __level
                 static ( char * ) stdptr laddr;
             #endif

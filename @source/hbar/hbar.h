@@ -91,14 +91,15 @@ void hash_to_string(
     char *_hstr , 
     uint8_t _ 
 );
-extern char *hashof( 
+extern char const *hashof( 
     unsigned level , 
-    void *tohash , 
+    void const *tohash , 
     size_t thsize 
 );
-extern char *fhash( 
+
+extern char const *fhash( 
     unsigned level, 
-    char *filepath 
+    char const *filepath 
 );
 
 

@@ -225,8 +225,6 @@ int glo_interface( struct a_idns *idns ) {
 			exit(1);
 		}
 		
-
-
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
 			close(sockfd);
 			perror("server: bind");
@@ -316,7 +314,7 @@ nai native_interface( int level ) {
 
 #ifndef native_address
 #include "../hbar/hbar.h"
-char *native_address( int level ) {
+char const *native_address( int level ) {
 	int res = -1;
 	nai __;
 	memset( &__ , 0 , sizeof( __ ) );
@@ -324,25 +322,25 @@ char *native_address( int level ) {
 		case 0: 
 			res = uni_interface( &__.n_uni );
 			if ( res >= 0 ) {
-				return hashof( level , &__.n_uni , sizeof( struct a_inmp ) );
+				return hbar( level , &__.n_uni , sizeof( struct a_inmp ) );
 			}
 			break;
 		case 1: 
 			res = loc_interface( &__.n_loc ); 
 			if ( res >= 0 ) {
-				return hashof( level , &__.n_loc , sizeof( struct a_isok ) );
+				return hbar( level , &__.n_loc , sizeof( struct a_isok ) );
 			}
 			break;
 		case 2: 
 			res = glo_interface( &__.n_glo );
 			if ( res >= 0 ) {
-				return hashof( level , &__.n_glo , sizeof( struct a_idns ) );
+				return hbar( level , &__.n_glo , sizeof( struct a_idns ) );
 			}
 			break;
 		case 3: 
 			res = blo_interface( &__.n_blo ); 
 			if ( res >= 0 ) {
-				return hashof( level , &__.n_blo , sizeof( struct a_ibna ) );
+				return hbar( level , &__.n_blo , sizeof( struct a_ibna ) );
 			}
 			break;
 		default: 

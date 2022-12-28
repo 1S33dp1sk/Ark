@@ -430,8 +430,12 @@ atomic hashing
 hashof str based on level
  *
 **/ 
-    char *hashof( unsigned level , void *tohash , size_t thsize ) {
+    char const *hashof( unsigned level , void const *tohash , size_t thsize ) {
 
+        #ifdef DEBUG
+            char const *_strhash = ( char const * ) tohash;
+            printf( "string to hash :: %s\n" , _strhash );
+        #endif
         int hash_size = 0 , k_flag = 0 , hashstr_len = 4;
 
         switch ( level ) {
@@ -471,7 +475,7 @@ hashof str based on level
 hashof file
  *
 **/
-    char *fhash( unsigned level , char *filepath ) {
+    char const *fhash( unsigned level , char const *filepath ) {
         struct stat __st;
         int __fd = open( filepath , O_RDONLY );
         char *fl_hash;

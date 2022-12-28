@@ -1,8 +1,3 @@
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
 #include "point.h"
 
 
@@ -10,9 +5,8 @@
 #ifndef __ap_entry
 int __ap_entry( char *_e_path , int _e_type ) {
     int __ap = 0 , __flags = ( F_OK | ( _e_type == 0 ? R_OK : _e_type ) );
-    char *e_path = strcat( strdup( _e_path ) , ".lbb" );
+    char *e_path = __ap_name;
     if ( access( e_path , __flags ) == 0 ) {
-        __flags = ( _e_type == 0 ? O_RDONLY : O_WRONLY );
         __ap = open( e_path , __flags );
     }
     return __ap > 0 ? __ap : 0;
@@ -22,12 +16,10 @@ int __ap_entry( char *_e_path , int _e_type ) {
 #ifndef _ap_r_entry
 int _ap_r_entry() {
     int __apr , __flags = ( R_OK );
-
     if ( access( __ap_name , __flags ) == 0 ) {
         __flags = O_RDONLY;
         __apr = open( __ap_name , __flags );
     }
-
     return __apr > 0 ? __apr : 0;
 }
 #endif
@@ -35,22 +27,21 @@ int _ap_r_entry() {
 #ifndef _ap_w_entry
 int _ap_w_entry() {
     int __apr , __flags = ( W_OK );
-
     if ( access( __ap_name , __flags ) == 0 ) {
         __flags = O_WRONLY;
         __apr = open( __ap_name , __flags );
     }
-
     return __apr > 0 ? __apr : 0;   
 }
 #endif
 
 #ifndef __ap_fifo
-int __ap_fifo( char *point_name , struct stat *point_st ) {
-    // a mutex because after `stat`
+int __ap_fifo( char *point_name , struct stat *pstat ) {
+    // a mutex.
+    // cus after `stat()`
     // st_nlink is atleast >= 1
-    if ( ( point_st -> st_nlink == 0 ) \
-        && stat( point_name , point_st ) == 0 ) { return 1; }
+    if ( ( pstat -> st_nlink == 0 ) \
+        && stat( point_name , pstat ) == 0 ) { return 1; }
     return 0;
 }
 #endif
@@ -65,29 +56,25 @@ int __ap_make() {
 #endif
 
 #ifndef atherpoint
-int atherpoint( void *point_name , point *__ ) {
-
-    memset( __ , 0 , __size_p_si );
-
+int atherpoint() {
+    memset( &ap , 0 , __size_p_si );
     #ifdef DEBUG
         printf( "@point :: checking for atherpoint\n" );
     #endif
-
-    if ( !__ap_fifo( __ap_name , &( __ -> apst.p_stat ) ) ) {
-
+    if ( !__ap_fifo( __ap_name , &ap.st.p_stat ) ) {
         #ifdef DEBUG
             printf( "@point :: no atherpoint found, attempting to create one\n" );
         #endif
-
         if ( !__ap_make() ) {
-            printf( "@point :: unable to create atherpoint\n" );
+            #ifdef DEBUG
+                printf( "@point :: unable to create atherpoint\n" );
+            #endif
             return -2;
         }
+        return -1;
     }
-
-    __ -> apst.p_lbb.io_pfd = __ap_entry( ( char * ) __ap_name , W_OK );
-
-    return 1;
+    ap.st.p_lbb.io_pfd = __ap_entry( ( char * ) __ap_name , W_OK );
+    return 0;
 }
 #endif
 
@@ -119,7 +106,7 @@ int app_engine( struct p_io *engint ) {
                 printf( "engint :: processing entry\n" );
             #endif
             if ( !process_entry( __ , c ) ) {
-                printf("entery processed\n");
+                printf("entry processed\n");
                 break;
             }
             memset( &__ , 0 , c * sizeof( char ) );
@@ -174,10 +161,10 @@ int socket_execute( struct p_io *sexec ) {
 #endif
 
 #ifndef applier
-int applier( point *ap ){
+int applier(){
 
-    struct p_io lbb_reader = ( ap -> apst ).p_lbb;
-    struct p_io point_writer = ( ap -> apst ).p_annon;
+    struct p_io lbb_reader = ap.st.p_lbb;
+    struct p_io point_writer = ap.st.p_annon;
 
     // get the current pid
     lbb_reader.io_pid = getpid();
