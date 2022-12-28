@@ -15,10 +15,15 @@ usage ::
 			note:: since most shells needs an escape char for `#` i.e :: `\#`
 				kurls support direct level calls :: `0x` , `1x` , `2x` , ... 
 **/
+#define ik 0x01
 
+#include "kurl.h"
+
+extern void __kurl__( const char **cmd_args );
 
 
 #if defined( __hat__ ) 
+<<<<<<< HEAD
 void main( int argc , char const *argv[] ) {
 	__kurl__( &argv[0] );
 }
@@ -28,5 +33,19 @@ extern kurl_t kurl; // each kurl has a different `stdptr`
 #define __kurl_seed &kurl // each kurl has a unique seed
 void main( int argc , char const argv[] ) {
 	printf("(*cool very cool )\n");
+=======
+int main( int argc , char const *argv[] ) {
+	__kurl__( &argv[1] );
+	return 0;
+}
+#else
+// extern kurl_t kurl; // each kurl has a different `stdptr` 
+// #define __kurl_seed &kurl // each kurl has a unique seed
+
+int main( int argc , char const argv[] ) {
+
+	att;
+
+>>>>>>> 1482af4 (ATHERNET v06)
 }
 #endif

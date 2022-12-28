@@ -1,6 +1,5 @@
 /// what is my kurl ? \\\
 #define DEBUG
-// #include "../hbar/hbar.h"
 
 #ifndef __kurl_version
 
@@ -13,7 +12,7 @@ overview&def ::
  * there must be a running athernet instance.
  * 
 **/
-    #define __kurl_name "k_u_r_l"    
+    #define __kurl_name "k_u_r_l"
 
 /**
 the kurl version
@@ -23,6 +22,16 @@ the kurl version
 **/
     #define __kurl_version 0x9l
 
+/**
+dependencies from probe
+**/
+    #include "../probe.h"
+
+/**
+klevels
+**/
+    #include "__k.h"
+    
 /**
 k&urls ::
  * As a concept the k in kurl essentially provides a methodical way
@@ -44,7 +53,7 @@ starting with the ( K ) we can state ::
     	__swi_hsh = 0x477c7b61 , // '#'
     	__swi_num 				  // 'n'
     }; 
-    typedef enum __k_types ktype;
+    #define ktype enum __k_types;
     #define __size_k sizeof( unsigned char ) // the size
 
 /**
@@ -57,7 +66,7 @@ secondly, we can specifiy the ( U )
     	_u_net = 0x2 , 
     	_u_pub = 0x3 
     };
-    typedef enum __u_types utype;
+    #define utype enum __u_types ;
     #define __size_u sizeof( void * )
 
 /**
@@ -74,7 +83,7 @@ last but not least the ( R )
         _lbb_bci = 0x2 , 
                 // client
     };
-    typedef enum __r_types rtype;
+    #define rtype enum __r_types;
     #define __size_r sizeof( unsigned long ) // the descriptor
 
 /**
@@ -100,10 +109,6 @@ finally, the ( L )
     };
     #define __size_l sizeof( struct __l )
 
-#include <stdlib.h>
-#include <stddef.h>
-#include <stdio.h>
-
 /**
 _urls && levels
  *
@@ -114,15 +119,14 @@ _urls && levels
         __inet = 2 ,
         __chain = 3
     };
-    typedef enum __kurl_levels levels;
+    #define levels enum __kurl_levels;
 
     struct __url {
         void *url;
         size_t __size;
         unsigned __offset; 
     };
-    typedef struct __url kurl_st;
-
+    #define kurl_st struct __url;
 
 /**
 switching mechanism ::
@@ -130,88 +134,40 @@ switching mechanism ::
  * of the first character in the passed char* as
  * args :: { k , @ , # , 0 , 1 , 2 , 3 , ... }
 **/
-    #include "../hbar/hbar.h"
-    #define k_switch( kchr ) \
-        char *_kselect = ( char * )&kchr;\
-        switch ( sc_sfh( _kselect ) ) { \
-            case 0x4ea585c0: \
-                printf( "in k\n" ); \
-                level  = ( unsigned long )  'k';\
-                break; \
-            case 0x477c7b61: \
-                printf( "in #\n" ); \
-                level = ( unsigned long )  '#';\
-                break; \
-            case 0x8288d321: \
-                printf( "in 2\n" ); \
-                level = ( unsigned long ) 2;\
-                break; \
-            case 0x973fc315: \
-                printf( "in @\n" ); \
-                level = ( unsigned long )  '@';\
-                break; \
-            case 0x9d07d8da: \
-                printf( "in 3\n" ); \
-                level = ( unsigned long ) 3;\
-                break; \
-            case 0xea1b9f56: \
-                printf( "in 1\n" ); \
-                level = ( unsigned long ) 1; \
-                break; \
-            case 0xf2475372: \
-                printf( "in 0\n" ); \
-                level = ( unsigned long ) 0; \
-                break; \
-            default : \
-                printf( "defaulting.. @(%s) \n" , ( char * )&kchr );\
-                break; \
-        }
-
 
 /**
 kurling ::
  *
 **/
-    void __kurl__( char const **__args ) {
+    extern void __kurl__( char const **__args ) {
         char __level = **__args;
-        printf( "%c\n" , __level );
-        k_switch( __level );
+        printf( "level :: %c\n" , __level );
+        switch ( sc_sfh( *__args ) ) { \
+            case 0x4ea585c0: \
+                level  = ( unsigned long )  'k';\
+                break; \
+            case 0x477c7b61: \
+                level = ( unsigned long )  '#';\
+                break; \
+            case 0x8288d321: \
+                level = ( unsigned long ) 2;\
+                break; \
+            case 0x973fc315: \
+                level = ( unsigned long )  '@';\
+                break; \
+            case 0x9d07d8da: \
+                level = ( unsigned long ) 3;\
+                break; \
+            case 0xea1b9f56: \
+                level = ( unsigned long ) 1; \
+                break; \
+            case 0xf2475372: \
+                level = ( unsigned long ) 0; \
+            default : \
+                level = ( unsigned long ) '!';
+                break; \
+        }
     }
-
-
-// #if defined( __hat__ )
-
-//     #if !defined( __kurl_seed )
-//         #include "the_0kurl.h"
-//     #else
-//         #include "kurl.h"
-//     #endif
-
-//     #if defined( __athernet__ )
-//         #if defined( kurl0 )
-//             kurl0();
-//         #elif defined( kurl1 )
-//             kurl1();
-//         #elif defined( kurl2 )
-//             kurl2();
-//         #elif defined( kurl3 )
-//             kurl3();
-//         #endif
-//     #endif
-
-//     #if !defined( kurl1 )
-//         #include "the_1kurl.h"
-//     #endif
-//     #if !defined( kurl2 )
-//         #include "the_2kurl.h"
-//     #endif
-//     #if !defined( kurl3 )
-//         #include "the_3kurl.h"
-//     #endif
-// #endif   
-
-
-
 
 #endif
 

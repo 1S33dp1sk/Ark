@@ -498,6 +498,7 @@ void log_stat( struct stat sb ) {
  */
 #ifndef point
     #define __ap_name "atherpoint"
+	#include "../probe.h"
 
     enum __io_types {
         __reader = 1,
@@ -525,7 +526,7 @@ void log_stat( struct stat sb ) {
     #define __size_p_st sizeof( struct point_st )
 
     struct point_si {
-        struct point_st apst;
+        struct point_st st;
                 // the ather point structure
         int level;
                 // the level associated with the structure
@@ -534,22 +535,29 @@ void log_stat( struct stat sb ) {
     };
     #define __size_p_si sizeof( struct point_si )
     #define __size_p __size_p_si
+    #define point struct point_si
 
-    typedef struct point_si point;
+    extern unsigned long level;
+    static struct point_si ap; 
 
-    #define point_descriptors( __ ) \
-        ( __.p_lbb.io_pfd > 0 ) || ( __.p_annon.io_pfd > 0 ) ? 1 : 0 
+    #define point_descriptors() \
+        ( ap.st.p_lbb.io_pfd > 0 ) || ( ap.st.p_annon.io_pfd > 0 ) ? 1 : 0 
 
     #define point_exists() __file_exsits( __ap_name )
-    #define make_point( __ ) atherpoint( __ap_name , &__ )
+    #define make_point atherpoint
 
 
 
-    int atherpoint( void *at_point , point* ap );
+    extern int atherpoint();
     int process_entry( char *_e , int _e_len );
     int app_engine( struct p_io *engint );
     int socket_execute( struct p_io *sexec );
-    int applier( point* ap );
+    extern int applier();
+
+
+
+
+    
 
 >>>>>>> a415938 (kurls)
 

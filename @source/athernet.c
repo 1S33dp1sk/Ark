@@ -1,18 +1,21 @@
-/// what is my kurl ? \\\
 
 
 
-/**
-athernet points can be specified using ::
- *  1.  net point       // static point_si __ap;
- *  2.  address book    // static lbb_si __lbb; 
- *
-**/
+#include "anet.h"
 
-#ifndef __kurl_version
-    #include "anet.h"
-#endif
 
+
+int main( int argc , char const *argv[] ) {
+
+	void *ulbb , *point;
+
+	ulbb = seed();
+
+	printf( "ulbb : %x :: %ld = %p :: %s \n" , &ulbb , sizeof( &ulbb ) , ulbb , ulbb );
+
+
+
+<<<<<<< HEAD
 #define xxxx 1
 #include <stdio.h>
 <<<<<<< HEAD
@@ -105,3 +108,7 @@ int main() {
 }
 #endif
 >>>>>>> 5c2d5f4 (alignments)
+=======
+    return 0;
+}
+>>>>>>> 1482af4 (ATHERNET v06)

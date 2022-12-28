@@ -449,11 +449,6 @@ definitions :: <improv : add GNU|OS dependent MAX LIMITS>
 ///probe\\\
 >>>>>>> d369e4b (alignments)
 
-static unsigned long level = 1;
-static char ___next () {\
-	level+=1;\
-};
-
 #ifndef __probe__h
 	#define __probe__h "p0x0001"
 	#define __probe_h "@hernet"
@@ -477,8 +472,6 @@ static char ___next () {\
 				// blockchain address is 256 bytes max
 		#define dstr_max max_str
 				// {sub,named,toplevel} domain must be less than 128 bytes each
-		#define saddr_max 0x10
-				// socket address max is ipv6 which is 16 bytes
 		#define s_local "127.0.0.1"
 				// localhost ipv4 loopback interface address
 		#define s_local_alias "localhost"
@@ -490,42 +483,96 @@ static char ___next () {\
 		#define s_global "0.0.0.0"
 				// outgoing ipv4 interface address
 	#endif
-	
-	#ifndef __hat__
-		#include "kurl/hat.h"
+	static unsigned long level = 0;
+	static char ___next () {\
+		level+=1;\
+	};
+#endif
+
+#if defined( __kurl_name )
+	#ifndef __kurl__h
+		#ifndef __ap_name
+			#include "point/point.h"
+		#endif
+		#ifndef __lbb_name
+			#include "lbb/lbb.h"
+		#endif
+		#ifndef __hbar_name
+			#include "hbar/hbar.h"
+		#endif
+		#ifndef __nai_name
+			#include "nai/nai.h"
+		#endif
+		#define __kurl__h 1
 	#endif
 #endif
 
-#ifndef __yx__h
-	#define __yx__h 1
-	#include "yx/yx.h"
+#if defined( __anet_name )
+	#ifndef __anet__h
+		#include <sys/stat.h>
+		#include <stddef.h>
+		#include <stdlib.h>
+		#include <string.h>
+		#include <stdio.h>
+		#include <unistd.h>
+		#define __anet__h 1
+	#endif
 #endif
 
-#ifndef __hbar__h
-	#define __hbar__h 1
-	#include <stdint.h>
-	#include <stddef.h>
-	#include <string.h>
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <unistd.h>
-	#include <stdlib.h>
-	#include <stdio.h>
-	#include <fcntl.h>
+#if defined( __nai_name )
+	#ifndef __nai__h
+		#include <netdb.h>
+		#include <string.h>
+		#include <unistd.h>
+		#include <stdlib.h>
+		#include <stdio.h>
+		#include <sys/stat.h>
+		#include <arpa/inet.h>
+		#define __nai__h 1
+	#endif
 #endif
 
-#ifndef __lbb__h
-	#define __lbb__h 1
-	#include <string.h>	
-	#include <unistd.h>
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <stdio.h>
-	#include <regex.h>
-	#include <fcntl.h>
-	#include <stdint.h>
+#if defined( __ap_name )
+	#ifndef __point__h
+		#include <sys/stat.h>
+		#include <fcntl.h>
+		#include <string.h>
+		#include <unistd.h>
+		#include <stdio.h>
+		#define __point__h 1
+	#endif
 #endif
 
+#if defined( __hbar_name )
+	#ifndef __hbar__h
+		#include <stdint.h>
+		#include <stddef.h>
+		#include <string.h>
+		#include <sys/types.h>
+		#include <sys/stat.h>
+		#include <unistd.h>
+		#include <stdlib.h>
+		#include <stdio.h>
+		#include <fcntl.h>
+		#define __hbar__h 1
+	#endif
+#endif
+
+#if defined( __lbb_name )
+	#ifndef __lbb__h
+		#include <string.h>	
+		#include <unistd.h>
+		#include <sys/types.h>
+		#include <sys/stat.h>
+		#include <stdio.h>
+		#include <regex.h>
+		#include <fcntl.h>
+		#include <stdint.h>
+		#define __lbb__h 1
+	#endif
+#endif
+
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 #if ( !defined( aliaslist ) && !defined( lvl_st )  )
@@ -639,26 +686,17 @@ struct level_aliases {
 	#endif
 >>>>>>> a415938 (kurls)
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 =======
-#define aliaslist __aliaslist
->>>>>>> b3b1c06 (started the_*kurl)
+
+
+
+
+>>>>>>> 6cc80fe (ATHERNET v06)
+
+
+
+
+
 
 
 
@@ -673,11 +711,32 @@ struct level_aliases {
 
 <<<<<<< HEAD
 =======
+#define aliaslist __aliaslist
+>>>>>>> b3b1c06 (started the_*kurl)
+=======
+>>>>>>> 6cc80fe (ATHERNET v06)
 
 
 
 
 
+
+
+
+
+
+
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+
+
+
+
+=======
+>>>>>>> 6cc80fe (ATHERNET v06)
 
 
 
@@ -748,8 +807,11 @@ struct level_aliases {
 
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> 4317814 (started anet.h)
+=======
+>>>>>>> 6cc80fe (ATHERNET v06)
 // #define __kurl__( __ ) \
 	// 		do {\
 	// 			__ = al__ init_kurl;\
@@ -772,6 +834,9 @@ struct level_aliases {
 	// 	#define nin ( ( long ) ( -1&0xf000000000000000 ) )
 	// 	#define pin ( ( long ) ( +1|0x0111111111111111 ) )
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6cc80fe (ATHERNET v06)
 
 
 // #ifndef __kurl_probe__
@@ -796,6 +861,7 @@ struct level_aliases {
 
 
 // // TODO :: convert to strict bytes instead of arpa/inet
+<<<<<<< HEAD
 =======
 #include "point/point.h"
 #include "lbb/lbb.h"
@@ -880,6 +946,15 @@ extern al2 builder __kurl__{
 >>>>>>> c8122db (better structures & easier #inc_trace for hbar mainly in secondary and front-end modules)
 
 >>>>>>> a95c3a4 (comments and usages for athernet, kurls & probe)
+=======
+
+
+
+
+// #if defined( __lbb_name )
+// 	#include <regex.h>
+// #endif
+>>>>>>> 6cc80fe (ATHERNET v06)
 
 // #if defined( __nai_name )
 // 	#include <netinet/in.h>
@@ -891,6 +966,7 @@ extern al2 builder __kurl__{
 // #if !defined( __hat__ )
 // 	#include "kurl/kurl.h"
 // #endif
+<<<<<<< HEAD
 >>>>>>> a415938 (kurls)
 =======
 #ifndef __lbb__h
@@ -1008,3 +1084,5 @@ struct level_aliases {
 >>>>>>> 4317814 (started anet.h)
 =======
 >>>>>>> d369e4b (alignments)
+=======
+>>>>>>> 6cc80fe (ATHERNET v06)

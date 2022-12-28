@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -100,6 +101,11 @@ word_t __line( char *key , char *val , char *delim );
 >>>>>>> e950094 (pre-merge)
 
 >>>>>>> facbf6d (starting encoding&decoding for lbb words,records,hallmark, and book)
+=======
+// #define DEBUG
+
+char const *hashof( unsigned l , void const *t , size_t s );
+>>>>>>> 6cc80fe (ATHERNET v06)
 
 }
 
@@ -141,30 +147,36 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 ***************************************************************************
 */
 
-#ifndef __lbb_raw__
-	#define __lbb_raw__ "KW"
-	char *_raw_kei( kei __kei ) {
-		if( ( __kei.k != NULL ) && ( __kei.i__size != 0 ) ) {
-			char __raw[__kei.i__size];
-			memset( &__raw , 0 , sizeof( __kei.i__size )*sizeof( char ) );
-			memcpy( __raw , __kei.k , __kei.i__size );
-			return strdup( __raw );
-		}
-		return NULL;
-	}
-	char *_raw_word( word __word ) {
-		unsigned __len_v = __word.v.i__size, __len_a = __word.a.i__size;
-		unsigned __len_total = __len_v + __len_a + 3; 
-		char __raw[__len_total];
-		__raw[__len_total] = '\0';
-		memcpy( __raw , _raw_kei( __word.v ) , __word.v.i__size );
-		memcpy( __raw , __word.l , 2 );
-		memcpy( __raw , _raw_kei( __word.a ) , __word.a.i__size );
-		return strdup( __raw );
-	}
-#endif
 
-entry_t __word( char *key , char *val , char *delim ) {
+
+
+const char *__anet_name() {
+	char __[8];
+	sprintf( __ , "%ld" , lbb_inodenum() );
+	const char *__hnet_name = hashof( 0 , __ , 8 );
+	printf( "inodenum : %ld :: %s\n" , lbb_inodenum() , __hnet_name );
+	return __hnet_name;
+}
+
+const char *__hallmark( hallmark hm ) {
+	unsigned __len = 3 + sizeof( unsigned char ) + sizeof( unsigned long ) \
+						+ ( strlen( hm.__address )*sizeof( unsigned char ) ) \
+						+ ( strlen( hm.__keyhash )*sizeof( unsigned char ) );
+
+	char __hm[__len]; __hm[__len] = '\0';
+	
+	sprintf( __hm , "%c:%ld@%s=%s" , \
+		hm.__level, \
+		hm.__num_records, \
+		hm.__address, \
+		hm.__keyhash );
+
+	printf( "hallmark :: %s\n" , __hm );
+
+	return strdup( __hm );
+}
+
+const char *__word( char *key , char *val , char *delim ) {
 	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
 	char __line[__len]; memset( &__line , 0 , __len ); __line[__len] = '\0';
 
@@ -176,41 +188,31 @@ entry_t __word( char *key , char *val , char *delim ) {
 	return strdup( __line );
 }
 
-entry_t __read( struct lbb_st *st ) {
-	unsigned lbb_size = st -> lbb_stat.st_size;
+const char *__read() {
+	unsigned lbb_size = lbb_size();
 	char temp[lbb_size+1]; temp[lbb_size+1] = '\0';
 	memset( &temp , 0 , lbb_size );
-	read( st -> lbb_fd , &temp , lbb_size );
+	read( book.st.lbb_fd , &temp , lbb_size );
 	return strdup( temp );
 }
 
-entry_t __hallmark( hallmark *__ ) {
-	char __hal[max_str];
+int __write( char const *strlbb ) {
+	if ( book.st.lbb_fd <= 0 ) {
+		printf( "no lbb file descriptor found\n" );
+		return -1;
+	}
+	int __bytes_written = 0;
+	const char *__prev = __read();
+	unsigned _plen = strlen( __prev ), _slen = strlen( strlbb );
 
+	unsigned __len = _plen + _slen + 1;
+	char __full_lbb[__len]; __full_lbb[__len] = '\0';
+	strncpy( __full_lbb , __prev , _plen );
+	strncpy( __full_lbb , strlbb , _slen );
 
-	return strdup( __hal );
-}
+	__bytes_written = write( book.st.lbb_fd , __full_lbb , __len );
 
-int lbb_append( struct lbb_si*__ , char *key , char *val ) {
-	#ifdef DEBUG
-		printf( "lbb -> \n\tadding %s :: %s\n" , key , val );
-	#endif
-
-	const char *prev = __read( &__ -> st );
-	const char *curr = __word( key , val , ":" );
-	char total[strlen( prev ) + strlen( curr )];
-	strcpy( total , prev );
-	strcpy( total , curr );
-	int b_written = write( __ -> st.lbb_fd , total , strlen( total ) );
-	
-	#ifdef DEBUG
-		printf( "wrote %d bytes\n" , b_written );
-	#endif
-
-	return b_written;
-}
-
-int lbb_query( struct lbb_si*__ , char *key ) {
+	return __bytes_written;
 }
 
 <<<<<<< HEAD
@@ -311,6 +313,7 @@ int compile_lbb( char const *rlbb , word **__words ) {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		( *__lines + __iter ) -> key = _k;
 		( *__lines + __iter ) -> wry = _w;
 =======
@@ -350,6 +353,9 @@ int compile_lbb( char const *rlbb , word **__words ) {
 		( *__lines + __iter ) -> wry = _w;
 >>>>>>> c1e4320 (athernet V0.9)
 =======
+=======
+
+>>>>>>> 6cc80fe (ATHERNET v06)
 		// ( *__words + __iter ) -> v = _k;
 		// ( *__words + __iter ) -> a = _w;
 >>>>>>> e163db1 (headers)
@@ -517,6 +523,7 @@ int little_black_book() {
 
 
 	printf( "struct path :: %s\n" , book.st.lbb_path );
+
 	switch ( lbb_check() ) {
 		case 0x2:	
 			#ifdef DEBUG
@@ -543,7 +550,7 @@ int little_black_book() {
 
 	if ( lbb_status() != 0 ) {
 		#ifdef DEBUG
-			printf( "not zero on a zero kurl\n" );
+			printf( "zero on a zero kurl\n" );
 		#endif
 			printf( "lbb status cannot be determined\n" );
 		return -1;
@@ -560,7 +567,7 @@ int little_black_book() {
 		printf( "lbb : fd = %d\n" , book.st.lbb_fd );
 	#endif
 
-	const char *__data = __read( &book.st );
+	const char *__data = __read();
 	unsigned long __len = strlen( __data );
 	printf( "read :: %ld bytes\n" , __len );
 	___next();
@@ -574,7 +581,6 @@ int little_black_book() {
 	// 	(int)(words[0].a).i__size , (words[0].a).k );
 	// #endif
 
-	lbb_close();
 	return 0;
 }
 =======
@@ -656,46 +662,33 @@ int little_black_book( char *lbb_name ) {
 >>>>>>> a415938 (kurls)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> c1e4320 (athernet V0.9)
 =======
 laddr lbb_entry t_entry {
+=======
+laddr lbb_entry (void const *_) {
+>>>>>>> 6cc80fe (ATHERNET v06)
 
-	int tmp = little_black_book();
-	printf( "res lbb :: %d\n" , tmp );
+	lbb_load();
+	
+	int __lbb_size = lbb_size();
 
-	char const *argv0 = ( char * ) _;
+	printf( "lbb size ::%d\n" , __lbb_size );
 
-	return __val;
-}
-
-int lbb_add_line( entry_t _l ) {
-	int x = -1;
-	if ( book.st.lbb_fd > 0 ) {
-		int x = write( book.st.lbb_fd , _l , strlen( _l )*sizeof( char ) );
-		printf( "fd : %d : wrote x :: %d bytes\n" , book.st.lbb_fd , x );
-	}
-	return x;
-}
-
-int lbb_add_hallmark(){
-	unsigned char *at_name = "@karam";
-	hallmark hm = {
-		.__k = '@',
-		.__a = ':',
-		._y_ = '0',
-		._a = at_name,
-		.n = 0,
-	};
-	printf( "\n%c%ld%c%s%d\n" , \
-		hm.__k,
-		hm.__a,
-		hm._y_,
-		hm._a,
-		hm.n
-	);
-	// memset( &hm , 0 , sizeof( hallmark ) );
+	return __lbb_size;
 }
 
 
+int lbb_prompt() {
+	printf( "little black book v.1\n" );
+	return 0;
+}
+
+
+<<<<<<< HEAD
 >>>>>>> d369e4b (alignments)
+=======
+
+>>>>>>> 6cc80fe (ATHERNET v06)

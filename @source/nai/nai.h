@@ -189,11 +189,15 @@ cis :: prepend : `__`
 #ifndef nai
     #define __nai_name "native_ather_interface"
 <<<<<<< HEAD
+<<<<<<< HEAD
     #include "../anet.h"
 >>>>>>> 4317814 (started anet.h)
 =======
 
 >>>>>>> d369e4b (alignments)
+=======
+    #include "../probe.h"
+>>>>>>> 6cc80fe (ATHERNET v06)
     /**
     iterable( node & mount path )
     `a_inmp` :: struct i-nodenum,mountpath
@@ -355,7 +359,7 @@ cis :: prepend : `__`
     `__nai` :: union that defines different interfaces
      * for the different levels & { 0...3 } web types
     **/
-        typedef union __nai {
+        union __nai {
             struct a_inmp n_uni; 
                     // universal
             struct a_isok n_loc; 
@@ -364,6 +368,7 @@ cis :: prepend : `__`
                     // network
             struct a_ibna n_blo; 
                     // blockchain
+<<<<<<< HEAD
         } nai;
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -371,15 +376,23 @@ cis :: prepend : `__`
 =======
 >>>>>>> 46ba237 (broke everything pt.2)
 =======
+=======
+        };
+        #define nai union __nai
+>>>>>>> 6cc80fe (ATHERNET v06)
 
 >>>>>>> 4317814 (started anet.h)
     /**
     `l-addr` :: a *level* based char pointer
      * depending on the current attached level
      **/
+<<<<<<< HEAD
         char *native_address( int level );
 <<<<<<< HEAD
 <<<<<<< HEAD
+=======
+        char const *native_address( int level );
+>>>>>>> 6cc80fe (ATHERNET v06)
             #ifdef __level
 =======
             #ifdef( __level )
