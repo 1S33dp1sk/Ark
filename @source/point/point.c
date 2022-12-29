@@ -2,80 +2,98 @@
 
 
 
-#ifndef __ap_entry
-int __ap_entry( char *_e_path , int _e_type ) {
-    int __ap = 0 , __flags = ( F_OK | ( _e_type == 0 ? R_OK : _e_type ) );
-    char *e_path = __ap_name;
-    if ( access( e_path , __flags ) == 0 ) {
-        __ap = open( e_path , __flags );
+#ifndef ap_entry
+    #define _ap_entry __ap_entry
+    #define ap_entry __ap_entry( ap_name , F_OK )
+    int __ap_entry( char *_e_path , int _e_type ) {
+        int __ap = 0 , __flags = ( F_OK | ( _e_type == 0 ? R_OK : _e_type ) );
+        if ( access( _e_path , __flags ) == 0 ) {
+            __ap = open( _e_path , __flags );
+        }
+        return __ap > 0 ? __ap : 0;
     }
-    return __ap > 0 ? __ap : 0;
-}
+    #ifndef _ap_r_entry
+        #define _ap_r_entry() __ap_entry( ap_name , R_OK )
+    #endif
+    #ifndef _ap_w_entry
+        #define _ap_w_entry() __ap_entry( ap_name , W_OK )
+    #endif
+    #ifndef _ap_l_entry    
+        #define _ap_l_entry() __ap_entry( ap_name , ( R_OK | W_OK ) )
+    #endif
+#else
+    #ifndef ap_r_entry
+        #define ap_r_entry _ap_r_entry
+        int _ap_r_entry() {
+            int __apr , __flags = ( R_OK );
+            if ( access( ap_name , __flags ) == 0 ) {
+                __flags = O_RDONLY;
+                __apr = open( ap_name , __flags );
+            }
+            return __apr > 0 ? __apr : 0;
+        }
+    #endif
+    #ifndef ap_w_entry
+        #define ap_w_entry _ap_w_entry
+        int _ap_w_entry() {
+            int __apr , __flags = ( W_OK );
+            if ( access( ap_name , __flags ) == 0 ) {
+                __flags = O_WRONLY;
+                __apr = open( ap_name , __flags );
+            }
+            return __apr > 0 ? __apr : 0;   
+        }
+    #endif
 #endif
 
-#ifndef _ap_r_entry
-int _ap_r_entry() {
-    int __apr , __flags = ( R_OK );
-    if ( access( __ap_name , __flags ) == 0 ) {
-        __flags = O_RDONLY;
-        __apr = open( __ap_name , __flags );
+#ifndef ap_check
+    #define ap_check __ap_fifo
+    int __ap_fifo( char *point_name , struct stat *pstat ) {
+        /**
+         * mutex
+         * because after `stat()`
+         * st_nlink is atleast >= 1
+        **/
+        if ( ( pstat -> st_nlink == 0 ) \
+            && stat( point_name , pstat ) == 0 ) { return 1; }
+        return 0;
     }
-    return __apr > 0 ? __apr : 0;
-}
 #endif
 
-#ifndef _ap_w_entry
-int _ap_w_entry() {
-    int __apr , __flags = ( W_OK );
-    if ( access( __ap_name , __flags ) == 0 ) {
-        __flags = O_WRONLY;
-        __apr = open( __ap_name , __flags );
+#ifndef ap_make
+    #define ap_make __ap_make
+    int __ap_make() {
+        if ( !mkfifo( ap_name , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
+            return 1;
+        }
+        return 0;
     }
-    return __apr > 0 ? __apr : 0;   
-}
-#endif
-
-#ifndef __ap_fifo
-int __ap_fifo( char *point_name , struct stat *pstat ) {
-    // a mutex.
-    // cus after `stat()`
-    // st_nlink is atleast >= 1
-    if ( ( pstat -> st_nlink == 0 ) \
-        && stat( point_name , pstat ) == 0 ) { return 1; }
-    return 0;
-}
-#endif
-
-#ifndef __ap_make
-int __ap_make() {
-    if ( !mkfifo( __ap_name , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
-        return 1;
-    }
-    return 0;
-}
 #endif
 
 #ifndef atherpoint
-int atherpoint() {
-    memset( &ap , 0 , __size_p_si );
-    #ifdef DEBUG
-        printf( "@point :: checking for atherpoint\n" );
-    #endif
-    if ( !__ap_fifo( __ap_name , &ap.st.p_stat ) ) {
+    int atherpoint( char ap_ref[8] ) {
+        memmove( ap_name , ap_ref , 8 );
         #ifdef DEBUG
-            printf( "@point :: no atherpoint found, attempting to create one\n" );
+            printf( "@point :: ref = %s\n" , ap_name );
         #endif
-        if ( !__ap_make() ) {
+        memset( &ap , 0 , __size_p_si );
+        #ifdef DEBUG
+            printf( "@point :: checking for atherpoint\n" );
+        #endif
+        if ( !__ap_fifo( ap_name , &ap.st.p_stat ) ) {
             #ifdef DEBUG
-                printf( "@point :: unable to create atherpoint\n" );
+                printf( "@point :: no atherpoint found, attempting to create one\n" );
             #endif
-            return -2;
+            if ( !__ap_make() ) {
+                #ifdef DEBUG
+                    printf( "@point :: unable to create atherpoint\n" );
+                #endif
+                return -2;
+            }
+            return -1;
         }
-        return -1;
+        return ( ap.st.p_lbb.io_pfd = ( __ap_entry( ( char * ) ap_name , W_OK )  ) );
     }
-    ap.st.p_lbb.io_pfd = __ap_entry( ( char * ) __ap_name , W_OK );
-    return 0;
-}
 #endif
 
 #ifndef process_entry

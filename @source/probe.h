@@ -38,6 +38,7 @@
 	static char ___next () {\
 		level+=1;\
 	};
+	
 #endif
 
 #if defined( __kurl_name )

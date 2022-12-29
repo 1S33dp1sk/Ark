@@ -20,18 +20,14 @@ the kurl version
  * the starting point of any kurl is always the version
  * 
 **/
-    #define __kurl_version 0x9l
+    #define __kurl_version 0x2
 
 /**
 dependencies from probe
 **/
     #include "../probe.h"
 
-/**
-klevels
-**/
-    #include "__k.h"
-    
+
 /**
 k&urls ::
  * As a concept the k in kurl essentially provides a methodical way

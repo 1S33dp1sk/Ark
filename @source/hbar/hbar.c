@@ -1,7 +1,6 @@
 #include "hbar.h"
 
 
-
 #define __sha3_assert( x )
 #define __sha3_trace( fmt , ... )
 #define __sha3_trace_buf( format , buf , l )

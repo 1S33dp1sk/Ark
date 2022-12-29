@@ -128,7 +128,7 @@ cis :: prepend : `__`
             #ifdef __level
                 static ( char * ) stdptr laddr;
             #endif
-
+        
     /**
     returns ( indicator ) { fills struct `n_*interface` }
      *

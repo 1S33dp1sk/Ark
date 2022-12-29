@@ -1,7 +1,10 @@
 #include "lbb.h"
 // #define DEBUG
 
+
 char const *hashof( unsigned l , void const *t , size_t s );
+
+char const *fhash( unsigned level, char const *filepath );
 
 /*
 ***************************************************************************
@@ -26,7 +29,6 @@ char const *hashof( unsigned l , void const *t , size_t s );
 	*******************************************************************
 ***************************************************************************
 */
-
 
 
 
@@ -95,6 +97,24 @@ int __write( char const *strlbb ) {
 	return __bytes_written;
 }
 
+char *book_key() {
+	ulong lbb_inn = lbb_inodenum();
+	void const *__ = &lbb_inn; 
+	return ( char * ) hashof( 0 , __ , 16 );	
+}
+
+char *book_point() {
+	
+	
+	return ( char * ) fhash( 0 , __lbb_ext );	
+}
+
+char *book_reference() {
+	ulong lbb_inn = lbb_inodenum();
+	void const *__ = &lbb_inn; 
+	return ( char * ) hashof( 0 , __ , 4 );	
+}
+
 int compile_lbb( char const *rlbb , word **__words ) {
 
 	char const *__s = rlbb;
@@ -152,7 +172,7 @@ int compile_lbb( char const *rlbb , word **__words ) {
 	return 0;
 }
 
-int little_black_book() {
+ulong little_black_book() {
 	printf( "current level is :: %ld\n" , level );
 	memset( &book , 0 , sizeof( struct lbb_si ) );
 
@@ -160,7 +180,6 @@ int little_black_book() {
 	unsigned _name_len = strlen( __lbb_ext );
 	char const *__name = *&__lbb_ext;
 	memmove( book.st.lbb_path , __name , _name_len );
-
 
 	printf( "struct path :: %s\n" , book.st.lbb_path );
 
@@ -221,7 +240,7 @@ int little_black_book() {
 	// 	(int)(words[0].a).i__size , (words[0].a).k );
 	// #endif
 
-	return 0;
+	return lbb_inodenum();
 }
 
 laddr lbb_entry (void const *_) {
@@ -240,6 +259,7 @@ int lbb_prompt() {
 	printf( "little black book v.1\n" );
 	return 0;
 }
+
 
 
 
