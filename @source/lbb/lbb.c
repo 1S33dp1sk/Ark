@@ -104,6 +104,7 @@ word_t __line( char *key , char *val , char *delim );
 =======
 // #define DEBUG
 
+
 char const *hashof( unsigned l , void const *t , size_t s );
 >>>>>>> 6cc80fe (ATHERNET v06)
 
@@ -117,12 +118,17 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 >>>>>>> cf46ec7 (athernet v0)
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> c1e4320 (athernet V0.9)
 =======
 
 
 >>>>>>> 4317814 (started anet.h)
+=======
+char const *fhash( unsigned level, char const *filepath );
+
+>>>>>>> e8f70cc (flight merge)
 /*
 ***************************************************************************
 	*******************************************************************
@@ -146,7 +152,6 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 	*******************************************************************
 ***************************************************************************
 */
-
 
 
 
@@ -217,12 +222,33 @@ int __write( char const *strlbb ) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 int compile_lbb( char const *rlbb , word **__words ) {
 >>>>>>> a415938 (kurls)
 =======
 int compile_lbb( char const *rlbb , struct seam **__lines ) {
 >>>>>>> c1e4320 (athernet V0.9)
 =======
+=======
+char *book_key() {
+	ulong lbb_inn = lbb_inodenum();
+	void const *__ = &lbb_inn; 
+	return ( char * ) hashof( 0 , __ , 16 );	
+}
+
+char *book_point() {
+	
+	
+	return ( char * ) fhash( 0 , __lbb_ext );	
+}
+
+char *book_reference() {
+	ulong lbb_inn = lbb_inodenum();
+	void const *__ = &lbb_inn; 
+	return ( char * ) hashof( 0 , __ , 4 );	
+}
+
+>>>>>>> e8f70cc (flight merge)
 int compile_lbb( char const *rlbb , word **__words ) {
 >>>>>>> e950094 (pre-merge)
 
@@ -380,6 +406,7 @@ int compile_lbb( char const *rlbb , word **__words ) {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 int __regex_lbb( char const *rlbb ) {
 
 	char const *__s = rlbb;
@@ -507,6 +534,9 @@ word_t __read( struct lbb_st *st ) {
 int little_black_book( char *lbb_name ) {
 =======
 int little_black_book() {
+=======
+ulong little_black_book() {
+>>>>>>> e8f70cc (flight merge)
 	printf( "current level is :: %ld\n" , level );
 <<<<<<< HEAD
 >>>>>>> d369e4b (alignments)
@@ -520,7 +550,6 @@ int little_black_book() {
 	unsigned _name_len = strlen( __lbb_ext );
 	char const *__name = *&__lbb_ext;
 	memmove( book.st.lbb_path , __name , _name_len );
-
 
 	printf( "struct path :: %s\n" , book.st.lbb_path );
 
@@ -581,7 +610,7 @@ int little_black_book() {
 	// 	(int)(words[0].a).i__size , (words[0].a).k );
 	// #endif
 
-	return 0;
+	return lbb_inodenum();
 }
 =======
 ulong little_black_book() {
@@ -691,4 +720,8 @@ int lbb_prompt() {
 >>>>>>> d369e4b (alignments)
 =======
 
+<<<<<<< HEAD
 >>>>>>> 6cc80fe (ATHERNET v06)
+=======
+
+>>>>>>> e8f70cc (flight merge)

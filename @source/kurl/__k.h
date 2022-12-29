@@ -1,3 +1,6 @@
+/// klevels \\\
+till now
+
 #ifndef klevels
 	#define klevels 7
 
@@ -10,51 +13,22 @@
 	#define __kvii 256
 #endif
 
-#if defined( ik ) && !defined( __ik )
-	#define __ik ik
-	#ifndef kurl_at
-		#define kurl_at __kurl_at
-		int __kurl_at() {
-			printf( "kurl @ %d\n" , __ik );
-			return __ik;
-		}
-	#endif
-
-#if ( __ik <= 4 )
-	#ifdef att
-		#undef att
-	#endif
-	#define att ( ( int ) ( atherpoint() ) )
+#ifndef __hat_name
+	#define __hat_name "hash_ather_token"
 #endif
 
+#if defined( ik )
 
-
-
+	#if ( ik == __kii )
+		// can define kurl as { px , px1 , ... }
+		// apply kurl = for p in kurl : ()
+		#define p0 little_black_book()
+		#define att book_reference()
+		#define hat book_key()
+		#define pat book_point()
+		#define p1 atherpoint( pat )
 	
-#elif ( __ik <= 8 )
-	#ifdef att
-		#undef att
 	#endif
-	#define att ( ( int ) (  ) )
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

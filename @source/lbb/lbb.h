@@ -495,9 +495,9 @@ void log_sota( struct sota *s );
 	 *
 	**/
 		enum lbb_e_res {
-			__ref,
-			__val,
-			__liy
+			_r_ref,
+			_r_val,
+			_r_liy
 		};
 		#define laddr enum lbb_e_res
 	/**
@@ -606,8 +606,12 @@ void log_sota( struct sota *s );
 	static struct lbb_si book;
 	static void *book_ref = &book;
 	#define lbb &book
-	int little_black_book();
+	#define create_lbb little_black_book
+	ulong little_black_book();
 		int compile_lbb( char const *lbb_contents , word **words );
+	char *book_reference();
+	char *book_key();
+	char *book_point();
 
 	/**
 	ops on book
@@ -634,7 +638,7 @@ void log_sota( struct sota *s );
 				} while( 0 )
 					// copy the named path and create an lbb file
 					// check for access on the file path for lbb
-			#define lbb_load() little_black_book( __lbb_ext )
+			#define lbb_load() little_black_book()
 					// generate ctx for main interface via load
 			/**
 			LBB <O_RDONLY> on open:
@@ -657,7 +661,6 @@ void log_sota( struct sota *s );
 				book.st.lbb_fd
 			#define lbb_inodenum() \
 				book.st.lbb_stat.st_ino
-
 
 
 #endif

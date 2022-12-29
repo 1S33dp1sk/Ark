@@ -402,7 +402,7 @@ cis :: prepend : `__`
 >>>>>>> 4317814 (started anet.h)
                 static ( char * ) stdptr laddr;
             #endif
-
+        
     /**
     returns ( indicator ) { fills struct `n_*interface` }
      *

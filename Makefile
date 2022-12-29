@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # 
 #####################################
 #			Shell/@net				#
@@ -188,6 +189,20 @@ old:
 >>>>>>> e950094 (pre-merge)
 =======
 >>>>>>> e163db1 (headers)
+=======
+kurl_test:
+	@if [ -f athernet ]; then rm athernet; fi
+	@if [ ! -d shared ]; then mkdir shared; fi
+	@cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
+	@cc -c -fpic @source/nai/nai.c -o shared/nai.o
+	@cc -c -fpic @source/point/point.c -o shared/point.o
+	@cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
+	@cc -shared shared/*.o -o shared/libather.so
+	@cc @source/athernet.c -o athernet ./shared/libather.so
+	@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
+	./kurl
+
+>>>>>>> e8f70cc (flight merge)
 lbb_test:
 	@if [ -f athernet ]; then rm athernet; fi
 	@if [ ! -d shared ]; then mkdir shared; fi
@@ -198,6 +213,7 @@ lbb_test:
 	@cc -shared shared/*.o -o shared/libather.so
 	@cc @source/athernet.c -o athernet ./shared/libather.so
 	@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	./athernet someVar
@@ -217,6 +233,9 @@ lbb_test:
 =======
 	./athernet && ./kurl
 >>>>>>> 6cc80fe (ATHERNET v06)
+=======
+	./athernet
+>>>>>>> e8f70cc (flight merge)
 ca:
 	@if [ -f athernet ]; then rm athernet; fi
 	@if [ -f kurl ]; then rm kurl; fi

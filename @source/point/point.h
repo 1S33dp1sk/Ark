@@ -538,6 +538,7 @@ void log_stat( struct stat sb ) {
     #define point struct point_si
 
     extern unsigned long level;
+    static char ap_name[8];
     static struct point_si ap; 
 
     #define point_descriptors() \
@@ -548,7 +549,7 @@ void log_stat( struct stat sb ) {
 
 
 
-    extern int atherpoint();
+    extern int atherpoint( char ap_ref[8] );
     int process_entry( char *_e , int _e_len );
     int app_engine( struct p_io *engint );
     int socket_execute( struct p_io *sexec );
