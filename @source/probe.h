@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef probe
     #define probe 
 =======
@@ -420,72 +421,97 @@ int __socket_entry( char *__ipaddr , int ipv  ) {
 >>>>>>> 757e790 (shared library for point)
 =======
 ///probe\\\
+=======
+/**
+definitions :: <improv : add GNU|OS dependent MAX LIMITS>
+**/
+#define max_str 256
+#define max_path 4096
+#define init_kurl 0x0001
+#define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
+>>>>>>> c1e4320 (athernet V0.9)
 
-static unsigned long level = 1;
-static char ___next () {\
-	level+=1;\
+int __file_exsits( char *_name ) {
+	struct stat __st;
+	return stat( _name , &__st ) == 0;	
+}
+
+#define probe void *
+#define __kurl__ ( probe __ )
+#define al int 
+#define al__ ( int * )
+#define __al__( __ ) (( al2 )( __ ))
+#define al2 long
+static probe p_ref;
+extern al2 builder __kurl__{
+	__ = al__ init_kurl;
+	p_ref = &__;
+	return __al__( __ ) ;
+}
+#define nin ( ( long ) ( -1&0xf000000000000000 ) )
+#define pin ( ( long ) ( +1|0x0111111111111111 ) )
+#define url_r( u_ ) u_ > nin ? 1 : 0
+#define url_l( u_ ) u_ < pin ? 1 : 0
+#define url__( __ ) __ == nin ? -1 : __ == pin ? 1 : 0
+#define levelof( __ ) sizeof( __ ) == sizeof( int ) ? \
+	0 : sizeof( __ ) == sizeof( long ) ? \
+	1 : sizeof( __ ) == sizeof( long long ) ? \
+	2 : sizeof( __ ) > sizeof( long long ) * 2 ? \
+	3 : 0
+#define decode_probe( p__ ) p__>>1
+#define upgrade_probe( p__ ) p__ == 0x0001 ? \
+		p__|= 0x0010 : p__ == 0x0011 ? \
+		p__|= 0x0100 : p__ == 0x0111 ? \
+		p__|= 0x1000 : p__ == 0x1111 ? \
+		p__&= 0x0000 : 0
+// can convert to network & host byte order
+// via byte definition
+#define s_local "127.0.0.1"
+		// localhost ipv4 loopback interface address
+#define s_local_alias "localhost"
+		// localhost ipv4 loopback interface unix alias
+#define s_localv6 "::1"
+		// localhost ipv6 shorthand loopback interface  
+#define s_local2v6 "0:0:0:0:0:0:0:1"
+		// localhost ipv6 loopback interface address
+#define s_global "0.0.0.0"
+		// outgoing ipv4 interface address
+#define nai_max 3
+		// supported natives < 0 , 1 , 2 , 3 >
+#define mpath_max 512
+		// mount path must be less than 512 bytes
+#define saddr_max 16
+		// socket address max is ipv6 which is 16 bytes
+#define dstr_max 128
+		// {sub,named,toplevel} domain must be less than 128 bytes each
+#define baddr_max 256
+		// blockchain address is 256 bytes max
+#define bid_max 3
+		// blockchain identitfer must be 3 characters
+struct level_aliases {
+	unsigned lnum;
+	char *lname;
+	char *lnetname;
+} aliaslist[] = { 
+	{	0 ,	"agent"	, "hostnet"		},
+	{	1 ,	"local"	, "intranet"	},
+	{	2 ,	"globe"	, "internet"	},
+	{	3 ,	"block"	, "chainnet"	}
 };
 
-#ifndef __probe__h
-	#define __probe__h "p0x0001"
-	#define __probe_h "@hernet"
-	#define __probe_version 0x0001
-	#define __probe_cs__ 0x0700
-	#ifdef __probe_cs__
-		// can convert to network & host byte order via byte definition
-		#define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
-				// get the size of array. does not support char *s, but can be easily extended to match '\0'
-		#define nai_max 0x3
-				// supported natives < 0 , 1 , 2 , 3 >
-		#define bid_max nai_max
-				// blockchain identitfer must be 3 characters
-		#define max_path 0x1000
-				// maximum for os dependent path is 4096 bytes 
-		#define mpath_max 0x200
-				// mount path must be less than 512 bytes
-		#define max_str 0x100
-				// maximum consumable length for a misc string 
-		#define baddr_max max_str
-				// blockchain address is 256 bytes max
-		#define dstr_max max_str
-				// {sub,named,toplevel} domain must be less than 128 bytes each
-		#define saddr_max 0x10
-				// socket address max is ipv6 which is 16 bytes
-		#define s_local "127.0.0.1"
-				// localhost ipv4 loopback interface address
-		#define s_local_alias "localhost"
-				// localhost ipv4 loopback interface unix alias
-		#define s_localv6 "::1"
-				// localhost ipv6 shorthand loopback interface  
-		#define s_local2v6 "0:0:0:0:0:0:0:1"
-				// localhost ipv6 loopback interface address
-		#define s_global "0.0.0.0"
-				// outgoing ipv4 interface address
-	#endif
-	
-	#ifndef __hat__
-		#include "kurl/hat.h"
-	#endif
+#ifndef point
+	#include "point/point.h"
 #endif
 
-#ifndef __yx__h
-	#define __yx__h 1
-	#include "yx/yx.h"
+#ifndef hbar
+	#include "hbar/hbar.h"
 #endif
 
-#ifndef __hbar__h
-	#define __hbar__h 1
-	#include <stdint.h>
-	#include <stddef.h>
-	#include <string.h>
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <unistd.h>
-	#include <stdlib.h>
-	#include <stdio.h>
-	#include <fcntl.h>
+#ifndef lbb
+	#include "lbb/lbb.h"
 #endif
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 #if defined( __lbb_name )
 	#ifndef __lbb__h
@@ -683,5 +709,10 @@ static char ___next () {\
 	#include <fcntl.h>
 	#include <stdint.h>
 #endif
+=======
+#ifndef nai
+	#include "nai/nai.h"
+#endif 
+>>>>>>> c1e4320 (athernet V0.9)
 
 >>>>>>> cf46ec7 (athernet v0)

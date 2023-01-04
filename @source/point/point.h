@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef point
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -413,9 +414,12 @@ void log_stat( struct stat sb ) {
 >>>>>>> 757e790 (shared library for point)
 =======
 /// atherpoint \\\
+=======
+#ifndef point
+    #define point
+>>>>>>> c1e4320 (athernet V0.9)
 
 // #define DEBUG
-
 
 /**
  * atherpoint is an `FIFO`
@@ -429,60 +433,50 @@ void log_stat( struct stat sb ) {
  * points. 
  * 
  */
-#ifndef point
-    #define __ap_name "atherpoint"
 
-    enum __io_types {
-        __reader = 1,
-        __writers
-    };
+#include <sys/stat.h>
+#include <sys/types.h>
 
-    struct p_io {
-        unsigned io_pfd;
-                // a paticular file descriptor
-        signed long io_pid;
-                // the initating process id
-        enum __io_types io_type;
-                // the IO type, mainly will be writers
-    };
-    #define __size_p_io sizeof( struct p_io )
 
-    struct point_st {
-        struct stat p_stat;
-                // the FIFO stat in the filesystem
-        struct p_io p_lbb;
-                // the point reader&executor
-        struct p_io p_annon;
-                  // annonymus point request
-    };
-    #define __size_p_st sizeof( struct point_st )
+#define __ap_name "atherpoint"
 
-    struct point_si {
-        struct point_st apst;
-                // the ather point structure
-        int level;
-                // the level associated with the structure
-        void *lai;
-                // can && should be casted to a { nai } reference
-    };
-    #define __size_p_si sizeof( struct point_si )
-    #define __size_p __size_p_si
+typedef enum __io_types {
+    __reader = 1,
+    __writers
+};
 
-    typedef struct point_si point;
+struct pio {
+    unsigned io_pfd;
+    pid_t io_pid;
+    __io_types io_type;
+};
 
-    #define point_descriptors( __ ) \
-        ( __.p_lbb.io_pfd > 0 ) || ( __.p_annon.io_pfd > 0 ) ? 1 : 0 
+struct point_st {
+    struct stat ap_stat;
+    struct pio p_from;
+    struct pio p_to;
+};
 
-    #define point_exists() __file_exsits( __ap_name )
-    #define make_point( __ ) atherpoint( __ap_name , &__ )
+struct point_si {
+    struct point_st st;
+    int level;
+    void *lai;
+};
+
+
+#define point_descriptors( __ ) \
+    ( __.to_point.__fd > 0 ) || ( __.from.__fd > 0 ) ? 1 : 0 
+
+#define point_exists() __file_exsits( __ap_name )
+#define make_point( __ ) atherpoint( __ap_name , &__ )
 
 
 
-    int atherpoint( void *at_point , point* ap );
-    int process_entry( char *_e , int _e_len );
-    int app_engine( struct p_io *engint );
-    int socket_execute( struct p_io *sexec );
-    int applier( point* ap );
+int atherpoint( void *at_point , apoint* ap );
+int process_entry( char *_e , int _e_len );
+int app_engine( struct apio *engint );
+int socket_execute( struct apio *sexec );
+int applier( apoint* ap );
 
 >>>>>>> a415938 (kurls)
 

@@ -22,8 +22,6 @@ static struct zk_st kz;
 #define __zkurl__ ( hat e )
 #define zkurl kurl0
 
-
-
 extern hat kurl0 __zkurl__{
 	unsigned long res = ksig__;
 	res = ksig( e );
@@ -33,14 +31,5 @@ extern hat kurl0 __zkurl__{
 
 	return e;
 }
-
-
-
-
-
-
-
-
-
 
 #endif

@@ -1,36 +1,16 @@
-/// what is my kurl ? \\\
-
+/// athernet \\\
 
 
 /**
-athernet points can be specified using ::
- *  1.  net point       // static point_si __ap;
- *  2.  address book    // static lbb_si __lbb; 
+running athernet instance :: 
  *
 **/
+#include "kurl/the_0kurl.c"
 
-// #define xxxx
 
-#ifndef __kurl_version
-    #include "anet.h"
-#endif
-#include <stdio.h>
-#ifdef xxxx
-void *lbb_entry( char const*_ );
-int main( int argc , char const **argv ) {
-    printf( "%ld\n" , level );
-    lbb_entry( argv[1] );
-}
-#else
-char *__word( char *k , char *v , char *d );
-int lbb_add_line( char *line );
-int little_black_book();
-int lbb_add_hallmark();
 int main() {
-    little_black_book();
-    lbb_add_hallmark();
-    char *x = __word( "kurlv." , "9" , ":" );
-    int lbb_x = lbb_add_line( x );
-    printf( "string is :: %s\n" , x );
+
+	unsigned long __gen = 0;
+	kurl0( &__gen );
+
 }
-#endif

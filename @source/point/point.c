@@ -1,11 +1,7 @@
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
 #include "point.h"
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 #include <unistd.h>
 
@@ -75,74 +71,37 @@ int process_entry( char *entry , int e_len ) {
 
 int app_engine( struct apio *engint ) {
 =======
+=======
+#include <unistd.h>
+>>>>>>> c1e4320 (athernet V0.9)
 
-#ifndef __ap_entry
-int __ap_entry( char *_e_path , int _e_type ) {
-    int __ap = 0 , __flags = ( F_OK | ( _e_type == 0 ? R_OK : _e_type ) );
-    char *e_path = strcat( strdup( _e_path ) , ".lbb" );
-    if ( access( e_path , __flags ) == 0 ) {
-        __flags = ( _e_type == 0 ? O_RDONLY : O_WRONLY );
-        __ap = open( e_path , __flags );
-    }
-    return __ap > 0 ? __ap : 0;
-}
-#endif
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <sys/sysmacros.h>
 
-#ifndef _ap_r_entry
-int _ap_r_entry() {
-    int __apr , __flags = ( R_OK );
+#include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+#include <fcntl.h>
 
-    if ( access( __ap_name , __flags ) == 0 ) {
-        __flags = O_RDONLY;
-        __apr = open( __ap_name , __flags );
-    }
 
-    return __apr > 0 ? __apr : 0;
-}
-#endif
+int __ap_entry( char *_e_path , int _e_type );
+int _ap_r_entry();
+int _ap_w_entry();
+int __ap_fifo();
+int __ap_make();
 
-#ifndef _ap_w_entry
-int _ap_w_entry() {
-    int __apr , __flags = ( W_OK );
 
-    if ( access( __ap_name , __flags ) == 0 ) {
-        __flags = O_WRONLY;
-        __apr = open( __ap_name , __flags );
-    }
+int atherpoint( void *point_name , apoint *__ ) {
 
-    return __apr > 0 ? __apr : 0;   
-}
-#endif
-
-#ifndef __ap_fifo
-int __ap_fifo( char *point_name , struct stat *point_st ) {
-    // a mutex because after `stat`
-    // st_nlink is atleast >= 1
-    if ( ( point_st -> st_nlink == 0 ) \
-        && stat( point_name , point_st ) == 0 ) { return 1; }
-    return 0;
-}
-#endif
-
-#ifndef __ap_make
-int __ap_make() {
-    if ( !mkfifo( __ap_name , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
-        return 1;
-    }
-    return 0;
-}
-#endif
-
-#ifndef atherpoint
-int atherpoint( void *point_name , point *__ ) {
-
-    memset( __ , 0 , __size_p_si );
-
+    memset( __ , 0 , sizeof( apoint ) );
     #ifdef DEBUG
         printf( "@point :: checking for atherpoint\n" );
     #endif
 
-    if ( !__ap_fifo( __ap_name , &( __ -> apst.p_stat ) ) ) {
+    if ( !__ap_fifo( &__ ) ) {
 
         #ifdef DEBUG
             printf( "@point :: no atherpoint found, attempting to create one\n" );
@@ -154,24 +113,26 @@ int atherpoint( void *point_name , point *__ ) {
         }
     }
 
-    __ -> apst.p_lbb.io_pfd = __ap_entry( ( char * ) __ap_name , W_OK );
+    __ -> lbb_fd = __ap_entry( ( char * ) point_name , __ -> __k__ );
 
-    return 1;
+
+    return __ -> lbb_fd;
 }
-#endif
 
-#ifndef process_entry
 int process_entry( char *entry , int e_len ) {
 
     printf( "entry = %d@app_engine :: \n\t%s\n" , e_len , entry );
 
     return e_len > 10 ? 0 : 1;
 }
-#endif
 
+<<<<<<< HEAD
 #ifndef app_engine
 int app_engine( struct p_io *engint ) {
 >>>>>>> a415938 (kurls)
+=======
+int app_engine( struct apio *engint ) {
+>>>>>>> c1e4320 (athernet V0.9)
     int c = 0, r_bytes;
     char _ , __[4096];
     memset( &__ , 0 , sizeof( __ ) );
@@ -182,10 +143,14 @@ int app_engine( struct p_io *engint ) {
     #endif
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     while ( ( r_bytes = read( engint -> __fd , &__ , 4096 ) ) > 0 ) {
 =======
     while ( ( r_bytes = read( engint -> io_pfd , &__ , 4096 ) ) > 0 ) {
 >>>>>>> a415938 (kurls)
+=======
+    while ( ( r_bytes = read( engint -> __fd , &__ , 4096 ) ) > 0 ) {
+>>>>>>> c1e4320 (athernet V0.9)
         c += r_bytes;
         _ = __[c-1];
         if ( _ == 10 ) {
@@ -212,6 +177,7 @@ int app_engine( struct p_io *engint ) {
     }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 int socket_execute( struct apio *sexec ) {
 =======
@@ -220,6 +186,10 @@ int socket_execute( struct apio *sexec ) {
 #ifndef socket_execute
 int socket_execute( struct p_io *sexec ) {
 >>>>>>> a415938 (kurls)
+=======
+
+int socket_execute( struct apio *sexec ) {
+>>>>>>> c1e4320 (athernet V0.9)
 
     int count = 0, r_bytes = 0;
     char _ , __[4096];
@@ -227,10 +197,14 @@ int socket_execute( struct p_io *sexec ) {
 
     #ifdef DEBUG
 <<<<<<< HEAD
+<<<<<<< HEAD
         printf( "sexec : FIFO fd : %d \n" , sexec -> __fd );
 =======
         printf( "sexec : FIFO fd : %d \n" , sexec -> io_pfd );
 >>>>>>> a415938 (kurls)
+=======
+        printf( "sexec : FIFO fd : %d \n" , sexec -> __fd );
+>>>>>>> c1e4320 (athernet V0.9)
         printf( "sexec :: reading from stdin\n" );
     #endif
 
@@ -247,10 +221,14 @@ int socket_execute( struct p_io *sexec ) {
                 printf( "sexec :: writing to FIFO : len = %d, buf = %s\n" , count , __ );
             #endif
 <<<<<<< HEAD
+<<<<<<< HEAD
             if ( write( sexec -> __fd , __ , 4096 ) > 0 ) {
 =======
             if ( write( sexec -> io_pfd , __ , 4096 ) > 0 ) {
 >>>>>>> a415938 (kurls)
+=======
+            if ( write( sexec -> __fd , __ , 4096 ) > 0 ) {
+>>>>>>> c1e4320 (athernet V0.9)
                 memset( &__ , 0 , count );
                 count = 0 , r_bytes = 0;
                 continue;
@@ -266,6 +244,7 @@ int socket_execute( struct p_io *sexec ) {
     printf( "sexec :: execution ended\n" );
     return 0;
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 <<<<<<< HEAD
@@ -296,20 +275,26 @@ int applier( ap *a_point ){
 
 #ifndef applier
 int applier( point *ap ){
+=======
+>>>>>>> c1e4320 (athernet V0.9)
 
-    struct p_io lbb_reader = ( ap -> apst ).p_lbb;
-    struct p_io point_writer = ( ap -> apst ).p_annon;
+int applier( apoint *a_point ){
 
     // get the current pid
-    lbb_reader.io_pid = getpid();
+    ( a_point -> from ).__pid = getpid();
     // fork the process for the new pid
+<<<<<<< HEAD
     if ( ( point_writer.io_pid = fork() ) == -1 ) {
 >>>>>>> a415938 (kurls)
+=======
+    if ( ( ( a_point -> to_point ).__pid = fork() ) == -1 ) {
+>>>>>>> c1e4320 (athernet V0.9)
         printf( "cannot start the atherpoint :: fork\n" );
         return 2;
     }
 
     // check calling process
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -335,10 +320,17 @@ int applier( point *ap ){
         // read
         if ( ( lbb_reader.io_pid = _ap_r_entry() ) == 0 ) {
 >>>>>>> a415938 (kurls)
+=======
+    if ( ( a_point -> to_point ).__pid == 0 ) {
+        printf( "current pid for reading :: %d\n" , ( a_point -> from ).__pid );
+        // read
+        if ( ( ( a_point -> from ).__fd = _ap_r_entry() ) == 0 ) {
+>>>>>>> c1e4320 (athernet V0.9)
             printf( "cannot open atherpoint for reading\n");
             return 3;
         }
         printf( "\n-#-#-# engine -#-#-#\n" );
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -365,16 +357,24 @@ int applier( point *ap ){
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
 =======
         return app_engine( &lbb_reader );
+=======
+        return app_engine( &(a_point -> from ) );
+>>>>>>> c1e4320 (athernet V0.9)
     }
     else {
-        printf( "current pid for writing :: %ld\n" , point_writer.io_pid );
+        printf( "current pid for writing :: %d\n" , ( a_point -> to_point ).__pid );
         // write
+<<<<<<< HEAD
         if ( ( point_writer.io_pfd = _ap_w_entry() ) == 0 ) {
 >>>>>>> a415938 (kurls)
+=======
+        if ( ( ( a_point -> to_point ).__fd = _ap_w_entry() ) == 0 ) {
+>>>>>>> c1e4320 (athernet V0.9)
             printf( "cannot open atherpoint for writing\n");
             return 3;
         }
         printf( "\n#-#-# socket executive #-#-#\n" );
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -388,10 +388,14 @@ int applier( point *ap ){
 =======
         return socket_execute( &point_writer );
 >>>>>>> a415938 (kurls)
+=======
+        return socket_execute( &(a_point -> to_point) );
+>>>>>>> c1e4320 (athernet V0.9)
     }
 
     return 0;
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 
@@ -411,6 +415,11 @@ int applier( point *ap ){
 =======
 
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+
+
+
+>>>>>>> c1e4320 (athernet V0.9)
 #ifndef __ap_entry
 int __ap_entry( char *_e_path , int _e_type ) {
     int __ap = 0 , __flags = ( F_OK | ( _e_type == 0 ? R_OK : _e_type ) );
@@ -421,6 +430,7 @@ int __ap_entry( char *_e_path , int _e_type ) {
     }
     return __ap > 0 ? __ap : 0;
 }
+<<<<<<< HEAD
 #endif
 
 #ifndef _ap_r_entry
@@ -472,8 +482,56 @@ int __ap_make() {
 }
 #endif
 =======
+=======
+>>>>>>> c1e4320 (athernet V0.9)
 #endif
 
+#ifndef _ap_r_entry
+int _ap_r_entry() {
+    int __apr , __flags = ( R_OK );
 
+    if ( access( __ap_name , __flags ) == 0 ) {
+        __flags = O_RDONLY;
+        __apr = open( __ap_name , __flags );
+    }
+
+    return __apr > 0 ? __apr : 0;
+}
+#endif
+
+<<<<<<< HEAD
 >>>>>>> a415938 (kurls)
+=======
+#ifndef _ap_w_entry
+int _ap_w_entry() {
+    int __apr , __flags = ( W_OK );
+
+    if ( access( __ap_name , __flags ) == 0 ) {
+        __flags = O_WRONLY;
+        __apr = open( __ap_name , __flags );
+    }
+
+    return __apr > 0 ? __apr : 0;   
+}
+#endif
+
+#ifndef __ap_fifo
+int __ap_fifo( char *point_name , struct stat *point_st ) {
+    // kindof a mutex because after `stat`
+    // st_nlink is atleast >= 1
+    if ( ( point_st -> st_nlink == 0 ) \
+        && stat( point_name , point_st ) == 0 ) { return 1; }
+    return 0;
+}
+#endif
+
+#ifndef __ap_make
+int __ap_make() {
+    if ( !mkfifo( __ap_name , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
+        return 1;
+    }
+    return 0;
+}
+#endif
+>>>>>>> c1e4320 (athernet V0.9)
 
