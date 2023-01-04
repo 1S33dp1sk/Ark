@@ -1,4 +1,5 @@
 #include "nai.h"
+<<<<<<< HEAD
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -13,10 +14,28 @@
 #include <signal.h>
 #include <errno.h>
 
+=======
+
+/**
+errors 
+ * 
+ * -1 :: cannot get current working dir
+ * -2 :: os path too long
+ * -3 :: lbb cannot be `access`ed()
+ * -4 :: no atherpoint found
+ * -5 :: cannot get host details `gethostbyname` failed
+ * -6 :: cannot initiate communication socket
+ * -7 :: could not bind to network address
+ * -8 :: could not listen on socket
+**/
+
+#define sp_network htons( 9999 )
+>>>>>>> a415938 (kurls)
 #define sa_global_port "3490"  // the global conf port
 #define sa_global_queue 10   // queue size for connections
 #define sa_size sizeof( struct in_addr )
 #define sa6_size sizeof( struct in6_addr )
+<<<<<<< HEAD
 =======
 #include <stdio.h>
 #include <stdint.h>
@@ -56,12 +75,15 @@
  * 8 :: could not listen on socket
 <<<<<<< HEAD
  */
+=======
+>>>>>>> a415938 (kurls)
 
 char *__path_unix( char *__path , char *__filename ) {
 	int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
 	if ( __path[path_len] != '/' && __filename[0] != '/' ) {
 		strncat( __path , "/\0" , 2 );
 	}
+<<<<<<< HEAD
 	return ( path_len + fname_len ) < mpath_max ? strcat( __path , __filename ) : NULL;
 }
 
@@ -121,6 +143,39 @@ void *get_in_addr(struct sockaddr *sa) {
 >>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 }
 
+=======
+	return ( path_len + fname_len ) < max_path ? strcat( __path , __filename ) : NULL;
+}
+
+#ifdef __signals
+	#include <errno.h>
+	#include <sys/wait.h>
+	void sigchld_handler( int s ) {
+		// save errorno & restore
+	    // as `waitpid` might overwrite
+	    int saved_errno = errno;
+
+	    while( waitpid( -1 , NULL , WNOHANG ) > 0 );
+
+	    errno = saved_errno;
+	}
+#endif
+
+// get sockaddr, IPv4 or IPv6:
+void *get_in_addr( struct sockaddr *sa ) {
+	if ( sa->sa_family == AF_INET ) {
+		return &( ( ( struct sockaddr_in* ) sa )-> sin_addr );
+	}
+	return &( ( ( struct sockaddr_in6* ) sa )-> sin6_addr );
+}
+
+/***
+ * interface calls only check and return the
+ * native structure for the interface
+ * i.e :: only ATOMIC && GET but no SET is allowed here.
+ */
+
+>>>>>>> a415938 (kurls)
 // node number : point
 // mount path : lbb
 int uni_interface( struct a_inmp *inmp ) {
@@ -128,6 +183,7 @@ int uni_interface( struct a_inmp *inmp ) {
 	struct stat __st;
 	char *path = inmp -> imp;
 	// zero the initial path
+<<<<<<< HEAD
 	char __path[mpath_max];
 	memset( __path , 0 , mpath_max );
 	// get the current working dir
@@ -137,16 +193,35 @@ int uni_interface( struct a_inmp *inmp ) {
 	}
 	// re-zero the `mp`
 	memset( path , 0 , mpath_max );
+=======
+	char __path[max_path];
+	memset( __path , 0 , max_path );
+	// get the current working dir
+	if ( getcwd( __path , max_path ) == NULL ) {
+		#ifdef DEBUG
+		printf( "cannot get working dir\n" );
+		#endif
+		return -1;
+	}
+	// re-zero the `mp`
+	memset( path , 0 , max_path );
+>>>>>>> a415938 (kurls)
 	// copy the path to struct element
 	memcpy( path , __path , strlen( __path ) );
 	// add the `.lbb` name to the path
 	if ( __path_unix( path , ".lbb" ) == NULL ) {
+<<<<<<< HEAD
 		printf( "path too long\n" );
 		return 2;
+=======
+		printf( "cannot construct lbb path\n" );
+		return -2;
+>>>>>>> a415938 (kurls)
 	}
 	// check calling process permissions
 	// for constructed path to lbb
 	if ( access( path , F_OK|R_OK ) != 0 ) {
+<<<<<<< HEAD
 		printf( "lbb cannot be accessed\n" );
 		return 3;
 	}
@@ -171,6 +246,27 @@ int uni_interface( struct a_inmp *inmp ) {
 <<<<<<< HEAD
 =======
 >>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
+=======
+		#ifdef DEBUG
+		printf( "lbb cannot be accessed\n" );
+		#endif
+		return -3;
+	}
+	// attach `atherpoint` to the directory path
+	if ( __path_unix( __path , "atherpoint" ) == NULL ) {
+		printf( "cannot construct point path\n" );
+		return -2;
+	}
+	// call the FIFO `stat` to retreive `inn`
+	if ( stat( __path , &__st ) == -1 ) {
+		printf("cannot initiate unix interface\n");
+		return -4;				
+	}
+	// get the inodenum from the struct `stat`
+	// and add the value to `inmp`
+	return 0;
+}
+>>>>>>> a415938 (kurls)
 // S B L A
 int loc_interface( struct a_isok *isok ) {
 	
@@ -189,13 +285,20 @@ int loc_interface( struct a_isok *isok ) {
 				printf( "failed.\n exiting.\n" );
 			#endif
 			printf( "cannot initiate communication socket\n" );
+<<<<<<< HEAD
 			return 6;
+=======
+			return -6;
+>>>>>>> a415938 (kurls)
 		}
 	}
 	#ifdef DEBUG
 		printf( "success\n" );
 	#endif
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a415938 (kurls)
 
 	printf( "socket result :: %d\n" , _sok );
 
@@ -222,7 +325,11 @@ int loc_interface( struct a_isok *isok ) {
 
 	if ( res != 0 ) {
 		printf( "could not bind to local network address.\n" );
+<<<<<<< HEAD
 		return 7;
+=======
+		return -7;
+>>>>>>> a415938 (kurls)
 	}
 	
 
@@ -235,7 +342,11 @@ int loc_interface( struct a_isok *isok ) {
 
 	if ( listen( _sok , 10 ) == -1 ) {
 		printf("cannot listen on socket.\n");
+<<<<<<< HEAD
 		return 8;
+=======
+		return -8;
+>>>>>>> a415938 (kurls)
 	}
 
 	printf("server: waiting for connections...\n");
@@ -265,13 +376,21 @@ int loc_interface( struct a_isok *isok ) {
 		close( _newfd );  // parent doesn't need this
 	}
 }
+<<<<<<< HEAD
 
+=======
+// global socket && sbla
+>>>>>>> a415938 (kurls)
 int glo_interface( struct a_idns *idns ) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
 	struct sockaddr_storage their_addr; // connector's address information
 	socklen_t sin_size;
+<<<<<<< HEAD
 	struct sigaction sa;
+=======
+	// struct sigaction sa;
+>>>>>>> a415938 (kurls)
 	int yes=1;
 	char s[INET6_ADDRSTRLEN];
 	int rv;
@@ -281,7 +400,11 @@ int glo_interface( struct a_idns *idns ) {
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE; // use my IP
 
+<<<<<<< HEAD
 	if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
+=======
+	if ((rv = getaddrinfo(NULL, sa_global_port, &hints, &servinfo)) != 0) {
+>>>>>>> a415938 (kurls)
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
 	}
@@ -300,8 +423,11 @@ int glo_interface( struct a_idns *idns ) {
 			exit(1);
 		}
 		
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> a415938 (kurls)
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
 			close(sockfd);
 			perror("server: bind");
@@ -322,11 +448,16 @@ int glo_interface( struct a_idns *idns ) {
 		exit(1);
 	}
 
+<<<<<<< HEAD
 	if (listen(sockfd, BACKLOG) == -1) {
+=======
+	if (listen(sockfd, sa_global_queue) == -1) {
+>>>>>>> a415938 (kurls)
 		perror("listen");
 		exit(1);
 	}
 
+<<<<<<< HEAD
 	sa.sa_handler = sigchld_handler; // reap all dead processes
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
@@ -334,6 +465,15 @@ int glo_interface( struct a_idns *idns ) {
 		perror("sigaction");
 		exit(1);
 	}
+=======
+	// sa.sa_handler = sigchld_handler; // reap all dead processes
+	// sigemptyset(&sa.sa_mask);
+	// sa.sa_flags = SA_RESTART;
+	// if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+	// 	perror("sigaction");
+	// 	exit(1);
+	// }
+>>>>>>> a415938 (kurls)
 
 	printf("server: waiting for connections...\n");
 
@@ -362,7 +502,11 @@ int glo_interface( struct a_idns *idns ) {
 
 	return 0;
 }
+<<<<<<< HEAD
 
+=======
+// blockchain socket + network name + netaddr
+>>>>>>> a415938 (kurls)
 int blo_interface( struct a_ibna *ibna ) {
 	char *__argvs[3] = { "/home/kj/go/bin/geth" , "attach" , NULL };
 
@@ -370,7 +514,15 @@ int blo_interface( struct a_ibna *ibna ) {
 }
 
 
+<<<<<<< HEAD
 int atherinterface( int level , ani __ ) {
+=======
+// delegate
+nai native_interface( int level ) {
+
+	nai __;
+	memset( &__ , 0 , sizeof( __ ) );
+>>>>>>> a415938 (kurls)
 
 	int _res = -1;
 
@@ -381,6 +533,7 @@ int atherinterface( int level , ani __ ) {
 		case 3: _res = blo_interface( &__.n_blo ); break;
 		default: break; 
 	}
+<<<<<<< HEAD
 	return _res;
 =======
 void log_uni( struct a_inmp n_uni ) {
@@ -586,3 +739,46 @@ int atherinterface( int level , ani __ ) {
 	return _res;
 >>>>>>> bb7010d (added sockets for nai=1,2 && added execve for nai=3)
 }
+=======
+	return __;
+}
+
+
+#ifndef native_address
+#include "../hbar/hbar.h"
+char const *native_address( int level ) {
+	int res = -1;
+	nai __;
+	memset( &__ , 0 , sizeof( __ ) );
+	switch ( level ) {
+		case 0: 
+			res = uni_interface( &__.n_uni );
+			if ( res >= 0 ) {
+				return hbar( level , &__.n_uni , sizeof( struct a_inmp ) );
+			}
+			break;
+		case 1: 
+			res = loc_interface( &__.n_loc ); 
+			if ( res >= 0 ) {
+				return hbar( level , &__.n_loc , sizeof( struct a_isok ) );
+			}
+			break;
+		case 2: 
+			res = glo_interface( &__.n_glo );
+			if ( res >= 0 ) {
+				return hbar( level , &__.n_glo , sizeof( struct a_idns ) );
+			}
+			break;
+		case 3: 
+			res = blo_interface( &__.n_blo ); 
+			if ( res >= 0 ) {
+				return hbar( level , &__.n_blo , sizeof( struct a_ibna ) );
+			}
+			break;
+		default: 
+			break; 
+	}
+	return NULL;
+}
+#endif
+>>>>>>> a415938 (kurls)

@@ -1,4 +1,16 @@
+kurl_test:
+	@if [ -f athernet ]; then rm athernet; fi
+	@if [ ! -d shared ]; then mkdir shared; fi
+	@cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
+	@cc -c -fpic @source/nai/nai.c -o shared/nai.o
+	@cc -c -fpic @source/point/point.c -o shared/point.o
+	@cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
+	@cc -shared shared/*.o -o shared/libather.so
+	@cc @source/athernet.c -o athernet ./shared/libather.so
+	@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
+	./kurl
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -64,13 +76,49 @@ all:
 
 old:
 >>>>>>> 757e790 (shared library for point)
+=======
+lbb_test:
+	@if [ -f athernet ]; then rm athernet; fi
+	@if [ ! -d shared ]; then mkdir shared; fi
+	@cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
+	@cc -c -fpic @source/nai/nai.c -o shared/nai.o
+	@cc -c -fpic @source/point/point.c -o shared/point.o
+	@cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
+	@cc -shared shared/*.o -o shared/libather.so
+	@cc @source/athernet.c -o athernet ./shared/libather.so
+	@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
+	./athernet
+ca:
+	@if [ -f athernet ]; then rm athernet; fi
+	@if [ -f kurl ]; then rm kurl; fi
+	@if [ ! -d shared ]; then mkdir shared; fi
+	#@cc -c -fpic @source/point/point.c -o shared/point.o
+	@cc -c -fpic @source/lbb/lbb.c -o shared/lbb.o
+	#@cc -c -fpic @source/hbar/hbar.c -o shared/hbar.o
+	#@cc -c -fpic @source/nai/nai.c -o shared/nai.o
+	@cc -shared shared/*.o -o shared/libather.so
+	@cc @source/athernet.c -o athernet ./shared/libather.so
+	#@cc @source/kurl/kurl.c -o kurl ./shared/libather.so
+
+rca:
+	if [ -d shared ]; then rm -rf shared; fi
+	if [ -f .lbb ]; then rm .lbb; fi
+	if [ -f athernet ]; then rm athernet; fi
+	if [ -f kurl ]; then rm kurl; fi
+	rm atherpoint
+
+old:
+>>>>>>> a415938 (kurls)
 	cc @source/lbb/main.c -o @lbb
 	cc @source/hbar/main.c -o @hbar
 	cc @source/point/main.c -o @point
 	cc @source/entry/main.c -o @entry
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> a415938 (kurls)
 rall:
 	rm @lbb
 	rm @hbar
@@ -78,6 +126,7 @@ rall:
 	rm @entry
 	rm .lbb
 	rm atherpoint
+<<<<<<< HEAD
 
 clean:
 <<<<<<< HEAD
@@ -98,6 +147,8 @@ all:
 	./@
 	gcc @source/compiler.c -o compiler
 	./compiler
+=======
+>>>>>>> a415938 (kurls)
 
 <<<<<<< HEAD
 	
@@ -106,6 +157,13 @@ purge:
 >>>>>>> eb99d6a (0xather)
 =======
 clean:
+<<<<<<< HEAD
 	@rm @
 	@rm compiler
 >>>>>>> b78d224 (@)
+=======
+	rm @lbb
+	rm @hbar
+	rm @point
+	rm @entry
+>>>>>>> a415938 (kurls)

@@ -1,6 +1,7 @@
 #include "point.h"
 
 
+<<<<<<< HEAD
 #include <unistd.h>
 
 #include <sys/wait.h>
@@ -68,6 +69,114 @@ int process_entry( char *entry , int e_len ) {
 }
 
 int app_engine( struct apio *engint ) {
+=======
+
+#ifndef ap_entry
+    #define _ap_entry __ap_entry
+    #define ap_entry __ap_entry( ap_name , F_OK )
+    int __ap_entry( char *_e_path , int _e_type ) {
+        int __ap = 0 , __flags = ( F_OK | ( _e_type == 0 ? R_OK : _e_type ) );
+        if ( access( _e_path , __flags ) == 0 ) {
+            __ap = open( _e_path , __flags );
+        }
+        return __ap > 0 ? __ap : 0;
+    }
+    #ifndef _ap_r_entry
+        #define _ap_r_entry() __ap_entry( ap_name , R_OK )
+    #endif
+    #ifndef _ap_w_entry
+        #define _ap_w_entry() __ap_entry( ap_name , W_OK )
+    #endif
+    #ifndef _ap_l_entry    
+        #define _ap_l_entry() __ap_entry( ap_name , ( R_OK | W_OK ) )
+    #endif
+#else
+    #ifndef ap_r_entry
+        #define ap_r_entry _ap_r_entry
+        int _ap_r_entry() {
+            int __apr , __flags = ( R_OK );
+            if ( access( ap_name , __flags ) == 0 ) {
+                __flags = O_RDONLY;
+                __apr = open( ap_name , __flags );
+            }
+            return __apr > 0 ? __apr : 0;
+        }
+    #endif
+    #ifndef ap_w_entry
+        #define ap_w_entry _ap_w_entry
+        int _ap_w_entry() {
+            int __apr , __flags = ( W_OK );
+            if ( access( ap_name , __flags ) == 0 ) {
+                __flags = O_WRONLY;
+                __apr = open( ap_name , __flags );
+            }
+            return __apr > 0 ? __apr : 0;   
+        }
+    #endif
+#endif
+
+#ifndef ap_check
+    #define ap_check __ap_fifo
+    int __ap_fifo( char *point_name , struct stat *pstat ) {
+        /**
+         * mutex
+         * because after `stat()`
+         * st_nlink is atleast >= 1
+        **/
+        if ( ( pstat -> st_nlink == 0 ) \
+            && stat( point_name , pstat ) == 0 ) { return 1; }
+        return 0;
+    }
+#endif
+
+#ifndef ap_make
+    #define ap_make __ap_make
+    int __ap_make() {
+        if ( !mkfifo( ap_name , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
+            return 1;
+        }
+        return 0;
+    }
+#endif
+
+#ifndef atherpoint
+    int atherpoint( char ap_ref[8] ) {
+        memmove( ap_name , ap_ref , 8 );
+        #ifdef DEBUG
+            printf( "@point :: ref = %s\n" , ap_name );
+        #endif
+        memset( &ap , 0 , __size_p_si );
+        #ifdef DEBUG
+            printf( "@point :: checking for atherpoint\n" );
+        #endif
+        if ( !__ap_fifo( ap_name , &ap.st.p_stat ) ) {
+            #ifdef DEBUG
+                printf( "@point :: no atherpoint found, attempting to create one\n" );
+            #endif
+            if ( !__ap_make() ) {
+                #ifdef DEBUG
+                    printf( "@point :: unable to create atherpoint\n" );
+                #endif
+                return -2;
+            }
+            return -1;
+        }
+        return ( ap.st.p_lbb.io_pfd = ( __ap_entry( ( char * ) ap_name , W_OK )  ) );
+    }
+#endif
+
+#ifndef process_entry
+int process_entry( char *entry , int e_len ) {
+
+    printf( "entry = %d@app_engine :: \n\t%s\n" , e_len , entry );
+
+    return e_len > 10 ? 0 : 1;
+}
+#endif
+
+#ifndef app_engine
+int app_engine( struct p_io *engint ) {
+>>>>>>> a415938 (kurls)
     int c = 0, r_bytes;
     char _ , __[4096];
     memset( &__ , 0 , sizeof( __ ) );
@@ -77,7 +186,11 @@ int app_engine( struct apio *engint ) {
         printf( "engint :: reading from fifo\n" );
     #endif
 
+<<<<<<< HEAD
     while ( ( r_bytes = read( engint -> __fd , &__ , 4096 ) ) > 0 ) {
+=======
+    while ( ( r_bytes = read( engint -> io_pfd , &__ , 4096 ) ) > 0 ) {
+>>>>>>> a415938 (kurls)
         c += r_bytes;
         _ = __[c-1];
         if ( _ == 10 ) {
@@ -85,7 +198,11 @@ int app_engine( struct apio *engint ) {
                 printf( "engint :: processing entry\n" );
             #endif
             if ( !process_entry( __ , c ) ) {
+<<<<<<< HEAD
                 printf("entery processed\n");
+=======
+                printf("entry processed\n");
+>>>>>>> a415938 (kurls)
                 break;
             }
             memset( &__ , 0 , c * sizeof( char ) );
@@ -95,15 +212,26 @@ int app_engine( struct apio *engint ) {
         r_bytes = 0;
     }
 }
+<<<<<<< HEAD
 
 int socket_execute( struct apio *sexec ) {
+=======
+#endif
+
+#ifndef socket_execute
+int socket_execute( struct p_io *sexec ) {
+>>>>>>> a415938 (kurls)
 
     int count = 0, r_bytes = 0;
     char _ , __[4096];
     memset( &__ , 0 , sizeof( __ ) );
 
     #ifdef DEBUG
+<<<<<<< HEAD
         printf( "sexec : FIFO fd : %d \n" , sexec -> __fd );
+=======
+        printf( "sexec : FIFO fd : %d \n" , sexec -> io_pfd );
+>>>>>>> a415938 (kurls)
         printf( "sexec :: reading from stdin\n" );
     #endif
 
@@ -119,7 +247,11 @@ int socket_execute( struct apio *sexec ) {
             #ifdef DEBUG
                 printf( "sexec :: writing to FIFO : len = %d, buf = %s\n" , count , __ );
             #endif
+<<<<<<< HEAD
             if ( write( sexec -> __fd , __ , 4096 ) > 0 ) {
+=======
+            if ( write( sexec -> io_pfd , __ , 4096 ) > 0 ) {
+>>>>>>> a415938 (kurls)
                 memset( &__ , 0 , count );
                 count = 0 , r_bytes = 0;
                 continue;
@@ -135,6 +267,7 @@ int socket_execute( struct apio *sexec ) {
     printf( "sexec :: execution ended\n" );
     return 0;
 }
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -159,11 +292,26 @@ int applier( ap *a_point ){
 =======
     if ( ( ( a_point -> t_ap ).__pid = fork() ) == -1 ) {
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+#endif
+
+#ifndef applier
+int applier(){
+
+    struct p_io lbb_reader = ap.st.p_lbb;
+    struct p_io point_writer = ap.st.p_annon;
+
+    // get the current pid
+    lbb_reader.io_pid = getpid();
+    // fork the process for the new pid
+    if ( ( point_writer.io_pid = fork() ) == -1 ) {
+>>>>>>> a415938 (kurls)
         printf( "cannot start the atherpoint :: fork\n" );
         return 2;
     }
 
     // check calling process
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     if ( ( a_point -> t_ap ).__pid == 0 ) {
@@ -182,10 +330,17 @@ int applier( ap *a_point ){
         // read
         if ( ( ( a_point -> e_ap ).__fd = _ap_r_entry() ) == 0 ) {
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+    if ( point_writer.io_pid == 0 ) {
+        printf( "current pid for reading :: %ld\n" , lbb_reader.io_pid );
+        // read
+        if ( ( lbb_reader.io_pid = _ap_r_entry() ) == 0 ) {
+>>>>>>> a415938 (kurls)
             printf( "cannot open atherpoint for reading\n");
             return 3;
         }
         printf( "\n-#-#-# engine -#-#-#\n" );
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         return app_engine( &(a_point -> e_ap) );
@@ -209,10 +364,19 @@ int applier( ap *a_point ){
 =======
         if ( ( ( a_point -> t_ap ).__fd = _ap_w_entry() ) == 0 ) {
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+        return app_engine( &lbb_reader );
+    }
+    else {
+        printf( "current pid for writing :: %ld\n" , point_writer.io_pid );
+        // write
+        if ( ( point_writer.io_pfd = _ap_w_entry() ) == 0 ) {
+>>>>>>> a415938 (kurls)
             printf( "cannot open atherpoint for writing\n");
             return 3;
         }
         printf( "\n#-#-# socket executive #-#-#\n" );
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         return socket_execute( &(a_point -> t_ap) );
@@ -222,10 +386,14 @@ int applier( ap *a_point ){
 =======
         return socket_execute( &(a_point -> t_ap) );
 >>>>>>> 96d62a9 (created a dynamic shared library resulting in ./shared/* .o files)
+=======
+        return socket_execute( &point_writer );
+>>>>>>> a415938 (kurls)
     }
 
     return 0;
 }
+<<<<<<< HEAD
 
 
 <<<<<<< HEAD
@@ -304,4 +472,9 @@ int __ap_make() {
     return 0;
 }
 #endif
+=======
+#endif
+
+
+>>>>>>> a415938 (kurls)
 
