@@ -352,8 +352,7 @@ int ather_les( char *__nodename ) {
 	                        fdmax = newfd;
 	                    }
 	                    printf("AtherLes :: selected new connection from %s on %d\n\n" 
-	                        , inet_ntop( remoteaddr.ss_family , 
-	                        	((struct sockaddr *)&remoteaddr)
+	                        , inet_ntop( remoteaddr.ss_family , get_in_addr((struct sockaddr *)&remoteaddr)
 	                            , remoteIP , INET6_ADDRSTRLEN),
 	                                newfd);
 	                }
@@ -444,18 +443,18 @@ int __reg( sx_ctx *_ctx , sx_reg *_reg ) {
 	return -3;
 }
 
-// void *__ip( char *str , struct sockaddr *_ ) {
-//     if ( _ -> sa_family == AF_INET ) {
-//         struct sockaddr_in *ipv4 = ( struct sockaddr_in * )_;
-//         if ( inet_ntop( AF_INET , &( ipv4 -> sin_addr ) , str , INET_ADDRSTRLEN ) != NULL ) {
-//             return &( ipv4 -> sin_addr );
-//         }
-//     }
-//     struct sockaddr_in6 *ipv6 = ( struct sockaddr_in6 * )_;
-//     if ( inet_ntop( AF_INET , &( ipv6 -> sin6_addr ) , str , INET6_ADDRSTRLEN ) != NULL ) {
-//         return &( ipv6 -> sin6_addr );
-//     }
-// }
+void *__ip( char *str , struct sockaddr *_ ) {
+    if ( _ -> sa_family == AF_INET ) {
+        struct sockaddr_in *ipv4 = ( struct sockaddr_in * )_;
+        if ( inet_ntop( AF_INET , &( ipv4 -> sin_addr ) , str , INET_ADDRSTRLEN ) != NULL ) {
+            return &( ipv4 -> sin_addr );
+        }
+    }
+    struct sockaddr_in6 *ipv6 = ( struct sockaddr_in6 * )_;
+    if ( inet_ntop( AF_INET , &( ipv6 -> sin6_addr ) , str , INET6_ADDRSTRLEN ) != NULL ) {
+        return &( ipv6 -> sin6_addr );
+    }
+}
 
 void log_ip( char *cur_ip ) {
     

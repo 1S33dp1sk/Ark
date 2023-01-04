@@ -26,7 +26,7 @@
 #include <ifaddrs.h>
 #include <stdarg.h>
 
-#define X_NODEF &"\0"
+
 #define PORT_ACCEPT "9999"
 #define AtherDot ".ather"
 #define AtherHelpers "@helpers"
@@ -304,127 +304,7 @@ void display_a_info( a_info *__ ) {
     printf( "\ta_ip : %s\n", __ -> a_ip );
     printf( "\ta_str : %s\n" , __ -> a_str );
 }
-int __I( unsigned char *__ , unsigned long long int _ , unsigned int b ) {
-    while ( b > 0 ) {
-        *__++ = _>>(b+1)*8;
-        b--;
-    }
-    *__++ = _>>8; *__++ = _;
-    return 0;
-}
-    // `_` flag for signed/unsigned. `_` = 0 == unsigned
-    unsigned long long int __R( unsigned char *__ , unsigned int _ , unsigned int b ) {
-        unsigned int b__ = b;
-        if ( !b ) {
-            #if defined( xType )
-                #undef xType
-            #endif
-            #define xType unsigned int
-            #if defined( cType )
-                #undef cType
-            #endif
-            #define cType ( unsigned int )
-            #if defined( mVal )
-                #undef mVal
-            #endif
-            #define mVal 0x7fffu
-            #if defined( fVal )
-                #undef fVal
-            #endif
-            #define fVal 0xffffu
-            #if defined( sType )
-                #undef sType
-            #endif
-            #define sType int
-            #if defined( sCType )
-                #undef sCType
-            #endif
-            #define sCType ( int )
-            #if defined( DEBUG )
-                printf( "16-bit :: %04lx :: %04lx\n" , mVal , fVal );
-            #endif
-        }
-        else if ( b == 2 ) {
-            #if defined( xType )
-                #undef xType
-            #endif
-            #define xType unsigned long int 
-            #if defined( cType )
-                #undef cType
-            #endif
-            #define cType ( unsigned long int  )
-            #if defined( mVal )
-                #undef mVal
-            #endif
-            #define mVal 0x7fffffffu
-            #if defined( fVal )
-                #undef fVal
-            #endif
-            #define fVal 0xffffffffu
-            #if defined( sType )
-                #undef sType
-            #endif
-            #define sType long int 
-            #if defined( sCType )
-                #undef sCType
-            #endif
-            #define sCType ( long int  )
-            #if defined( DEBUG )
-               printf( "32-bit :: %08lx :: %08lx\n" , mVal , fVal );
-            #endif
-        }
-        else if ( b == 6 ) {
-            #if defined( xType )
-                #undef xType
-            #endif
-            #define xType unsigned long long int 
-            #if defined( cType )
-                #undef cType
-            #endif
-            #define cType ( unsigned long long int  )
-            #if defined( mVal )
-                #undef mVal
-            #endif
-            #define mVal 0x7fffffffffffffffu
-            #if defined( fVal )
-                #undef fVal
-            #endif
-            #define fVal 0xffffffffffffffffu
-            #if defined( sType )
-                #undef sType
-            #endif
-            #define sType long long int 
-            #if defined( sCType )
-                #undef sCType
-            #endif
-            #define sCType ( long long int  )
-            #if defined( DEBUG )
-                printf( "64-bit :: %016lx :: %016lx \n" , mVal , fVal );
-            #endif
-        }
 
-        xType temp = ( xType ) __[0]<<( b + 1 )* 8 , last = ( xType ) __[( b + 1 )];
-        if ( b == 0 ) {
-            return temp | last;
-        }
-        while ( b > 0 ) {
-            b--;
-            temp |= ( ( xType )__[ b__ - b ] <<( b + 1 )* 8 );
-        }
-        temp |= last;
-        if ( !_ ) {
-            return temp; 
-        }
-
-        sType final;
-        if ( temp <= mVal ) {
-            final = temp;
-        } 
-        else {
-            final = - 1 - sCType ( fVal - temp );;
-        }
-        return final;
-    }
 #undef get16bits
 #if ( defined( __GNUC__ ) && defined( __i386__ )) || defined( __WATCOMC__ ) \
   || defined( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __TURBOC__ )
@@ -567,21 +447,6 @@ int __entries( char *base_path , a_info *path_entry ) {
 }
 
 
-void *__ip( char *str , struct sockaddr *_ ) {
-    if ( _ -> sa_family == A_INET ) {
-        struct sockaddr_in *ipv4 = ( struct sockaddr_in * )_;
-        if ( inet_ntop( AF_INET , &( ipv4 -> sin_addr ) , str , INET_ADDRSTRLEN ) != NULL ) {
-            return &( ipv4 -> sin_addr );
-        }
-        return X_NODEF;
-    }
-    struct sockaddr_in6 *ipv6 = ( struct sockaddr_in6 * )_;
-    if ( inet_ntop( AF_INET , &( ipv6 -> sin6_addr ) , str , INET6_ADDRSTRLEN ) != NULL ) {
-        return &( ipv6 -> sin6_addr );
-    }
-    return X_NODEF;
-}
-
 
     const char __delims[2] = { ':' , '=' };
     const int ascii_entry[] = { 69, 78, 84, 82, 89, 123, 32 };
@@ -710,7 +575,7 @@ typedef enum {PATH = 0x97e82973 , CALL = 0x47622221 , CONNC = 0xa7155072 , ENTRY
                     connc -> num__dirs += 1;
                     return 0;
                 default:
-                    printf( "unknown :: %s : %d\n" , __name , dir_entry -> d_type );
+                    printf( "unknown :: %d : %s\n" , __name , dir_entry -> d_type );
                     return 1;
             }
             return 0;        
@@ -871,13 +736,13 @@ typedef enum {PATH = 0x97e82973 , CALL = 0x47622221 , CONNC = 0xa7155072 , ENTRY
                     // _log_file_data( filedata );
                     return 0;
                 }
-                printf( DEF_NO , ".ather" , "cannot verify" );
+                printf( NO_DEF , ".ather" , "cannot verify" );
                 return 1;
             }
-            printf( DEF_NO , ".ather" , "malformed contents" );
+            printf( NO_DEF , ".ather" , "malformed contents" );
             return 1;
         }
-        printf( DEF_NO , ".ather" , "no configurations found" );
+        printf( NO_DEF , ".ather" , "no configurations found" );
         return 2;
     }
     int _validate_value( char *__temp , Elems *elems ) {
@@ -973,7 +838,7 @@ typedef enum {PATH = 0x97e82973 , CALL = 0x47622221 , CONNC = 0xa7155072 , ENTRY
     // todo :: add a warning if a file cannot be read
     int _file_contents( FileData *filedata ) {
         if ( access( filedata -> __name , R_OK ) != 0 ) {
-            printf( DEF_NO , "op" , "no access." );
+            printf( NO_DEF , "op" , "no access." );
             return 2;
         }
         FILE *f__ = fopen( filedata -> __name , "r" );
@@ -1017,7 +882,7 @@ typedef enum {PATH = 0x97e82973 , CALL = 0x47622221 , CONNC = 0xa7155072 , ENTRY
     //             return _pathify( _ );
     //         }
     //         else {
-    //             printf( DEF_NO , __HFILE , path -> __main );
+    //             printf( NO_DEF , __HFILE , path -> __main );
     //             _ -> _vecf -> flagged = 1;
     //             return 1;
     //         }
