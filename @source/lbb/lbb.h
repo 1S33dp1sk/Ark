@@ -294,6 +294,12 @@ void log_sota( struct sota *s );
 =======
 /// the little black book \\\
 
+// #define DEBUG
+	
+
+// #define the_lbb "__lbb" 
+// possiblities : { al , a- , @ , # , ... }
+
 /**
 lbb { a.k.a little black book }
  * each consists of 3 words & they are categorized 
@@ -317,24 +323,27 @@ lbb { a.k.a little black book }
 
 
 #ifndef __lbb__h
-	/**
-	header file name&properties
-	 *
-	**/
 	#define __lbb_name "little_black_book"
 	#include "../probe.h"
 	// #define __lbb__h kurl > 0x7000 ? kurl&=0x0100 : kurl|=0x1111 
-	#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
+	#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*$\\)"
 	#define __lbb_ext ".lbb"
-	
+
+	#define entry_t const void *
+	#define t_entry ( entry_t _ )
+
+	extern unsigned long level;
+	static struct lbb_si book;
+
+	#define lbb &book
 	/**
 	lbb entry results 
 	 *
 	**/
 		enum lbb_e_res {
-			_r_ref,
-			_r_val,
-			_r_liy
+			__ref,
+			__val,
+			__liy
 		};
 		#define laddr enum lbb_e_res
 	/**
@@ -342,10 +351,16 @@ lbb { a.k.a little black book }
 	 *
 	**/
 		struct lbb_hallmark {
-			unsigned char __level;
-			unsigned long __num_records;
-			unsigned char *__address;
-			unsigned char *__keyhash;
+			unsigned char __k; 
+						// ( character )
+			unsigned long __a; 
+						// ( seperator )
+			unsigned char _y_;  
+						// ( count )
+			unsigned char*_a; 
+						// ( @string )
+			unsigned int  n; 
+						// ( # == # )
 		};
 		#define hallmark struct lbb_hallmark
 		#define __size_lbb_hallmark sizeof( struct lbb_hallmark )
@@ -356,9 +371,9 @@ lbb { a.k.a little black book }
 		struct lbb_kei {
 			char *k; 
 						// ptr
-			unsigned long e__set; 
-						// data offset from descriptor
-			unsigned long i__size;
+			intmax_t e__set; 
+						// file offset from descriptor
+			intmax_t i__size;
 						// iter_size total array length
 		};
 		#define kei struct lbb_kei
@@ -407,10 +422,7 @@ lbb { a.k.a little black book }
 	 * 
 	**/
 		struct lbb_st {
-			unsigned lbb_level;
-						// the k-level identifier  
-			int lbb_fd; 
-						// main file descriptor
+			int lbb_fd; // main file descriptor
 						// used as an int to describe any errors 
 						// via negative signed ints
 			struct stat lbb_stat;
@@ -418,7 +430,7 @@ lbb { a.k.a little black book }
 			char lbb_path[max_path];
 						// the maximum build os-depenedent path for the fifo
 		};
-		#define lbb_structure struct lbb_st
+		#define __st struct lbb_st
 		#define __size_lbb_st sizeof( struct lbb_st )
 	/**
 	lbb interface structure
@@ -432,50 +444,23 @@ lbb { a.k.a little black book }
 			unsigned addr_count;
 						// the count of the `seam **` addresses
 		};
-		#define lbb_interface struct lbb_si
+		#define __interface struct lbb_si
 		#define __size_lbb_si sizeof( struct lbb_si )
-
-	/**
-	initialize book
-	 *
-	**/
-	extern unsigned long level;
-	static struct lbb_si book;
-	static void *book_ref = &book;
-	#define lbb &book
-	#define create_lbb little_black_book
-	ulong little_black_book();
-		int compile_lbb( char const *lbb_contents , word **words );
-	char *book_reference();
-	char *book_key();
-	char *book_point();
-
-	/**
-	ops on book
-	 * 
-	**/
-	extern laddr lbb_entry (const void *_);
-	extern const char *__hallmark( hallmark __ );
-	extern const char *__word( char *k , char *v , char *d );
-	extern const char *__read();
-	extern int __write( char const *__ );
-	extern int lbb_prompt();
-
 	/**
 	checkmake for lbb
 	 * 
 	**/  
 		#define lbb_checkmake() 0x0^lbb_check() == 0x0 ? 0x0002&lbb_load() : 0x0001|lbb_make()
-			#define lbb_check() \
-				book.st.lbb_fd > 0 ? 0x0 : access( __lbb_ext , F_OK ) == 0 ? 0x1 : 0x2 
 			#define lbb_make() 0x2; \
 				do { \
 					memmove( book.st.lbb_path , __lbb_ext , sizeof( __lbb_ext ) ); \
 					book.st.lbb_fd = open( book.st.lbb_path , ( O_CREAT | O_RDWR ) , ( S_IRWXU | S_IRWXG | S_IRWXO ) ); \
 				} while( 0 )
 					// copy the named path and create an lbb file
+			#define lbb_check() \
+				book.st.lbb_fd > 0 ? 0x0 : access( book.st.lbb_path , (F_OK|R_OK|W_OK) ) == 0 ? 0x1 : 0x2 
 					// check for access on the file path for lbb
-			#define lbb_load() little_black_book()
+			#define lbb_load() little_black_book( __lbb_ext )
 					// generate ctx for main interface via load
 			/**
 			LBB <O_RDONLY> on open:
@@ -485,7 +470,7 @@ lbb { a.k.a little black book }
 			 * the point through *kurl; that is referenced to/by it
 			**/
 			#define lbb_open() \
-				do { book.st.lbb_fd = open( book.st.lbb_path , O_RDONLY ); } while ( 0 )
+				do { book.st.lbb_fd = open( book.st.lbb_path , O_RDWR ); } while ( 0 )
 			#define lbb_status() \
 				stat( book.st.lbb_path , &(book.st.lbb_stat) ) 
 			#define lbb_size() \
@@ -496,10 +481,20 @@ lbb { a.k.a little black book }
 				close( book.st.lbb_fd )
 			#define lbb_descriptors() \
 				book.st.lbb_fd
-			#define lbb_inodenum() \
-				book.st.lbb_stat.st_ino
+	/**
+	initialize book
+	 *
+	**/
+	int little_black_book();
+		int compile_lbb( char const *lbb_contents , word **words );
 
-
+	/**
+	ops on book
+	 * 
+	**/
+	extern laddr lbb_entry t_entry;
+		int lbb_append( struct lbb_si *__ , char *lbb_key , char *lbb_val );
+		int lbb_query( struct lbb_si *__ , char *lbb_key );
 #endif
 
 

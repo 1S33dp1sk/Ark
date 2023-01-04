@@ -509,15 +509,14 @@ void hash_to_string(
     char *_hstr , 
     uint8_t _ 
 );
-extern char const *hashof( 
+extern char *hashof( 
     unsigned level , 
-    void const *tohash , 
+    void *tohash , 
     size_t thsize 
 );
-
-extern char const *fhash( 
+extern char *fhash( 
     unsigned level, 
-    char const *filepath 
+    char *filepath 
 );
 
 
