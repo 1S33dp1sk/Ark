@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ca:
 	if [ ! -d shared ]; then mkdir shared; fi
 	cc -c -fpic @source/point/point.c -o shared/point.o
@@ -90,17 +91,21 @@ clean:
 >>>>>>> 4947f52 (v0.01-NS)
 =======
 
+=======
+>>>>>>> b78d224 (@)
 all:
-# 	gcc main.c -o @
-# 	./@ peer
-# 	gcc tru.c -o tru
-# 	./tru 2 peer
-# 	gcc @source/ather.c -o ather
-# 	./ather
-	gcc acom.c -o acom
-	./acom test.ath
+	gcc @source/main.c -o @
+	./@
+	gcc @source/compiler.c -o compiler
+	./compiler
 
+<<<<<<< HEAD
 	
 purge:
 	rm -rf @
 >>>>>>> eb99d6a (0xather)
+=======
+clean:
+	@rm @
+	@rm compiler
+>>>>>>> b78d224 (@)

@@ -30,7 +30,7 @@ typedef enum { NO_DEF, /* not defined */ DEF, /* defined == default */ VAR /* de
     void varlog( v_def vtype , char *argname , char *__arg ) {
         switch ( vtype ) {
             case NO_DEF:
-                printf( DEF_NO , argname , __arg ); // argerr
+                printf( NO_DEF , argname , __arg ); // argerr
                 break;
             case DEF:
                 printf( DEF_DEF , argname , __arg ); // argdef
@@ -83,7 +83,7 @@ typedef enum { NO_DEF, /* not defined */ DEF, /* defined == default */ VAR /* de
 
     void log_path_debug( Path *path ) {
         printf("\nAther :: PATH :: \n");
-        printf(" __node -> %s\n" , path->__node );
+        printf(" __node -> %x\n" , path->__node );
         printf(" __main -> %s\n" , path->__main );
         printf(" __pub -> %s\n" , path->__pub );
         printf(" __name -> %s\n" , path->__name );
@@ -122,14 +122,11 @@ typedef enum { NO_DEF, /* not defined */ DEF, /* defined == default */ VAR /* de
         printf( "\tsize      :: %d\n" , p -> _size );
         printf( "\tdiff      :: %c\n" , p -> _diff );
         printf( "\ttype      :: %s\n" , p -> _type );
-        printf( "\tselector :: 0x%04llx\n" , p -> _selector );
+        printf( "\tselector :: 0x%04lx\n" , p -> _selector );
         printf( "\tbin   :: %s\n" , p -> _bin );
     }
 
-void *__ip( char *str , struct sockaddr *_ );
     void log_addrinfo_debug( struct addrinfo *__ ) {
-        char ipstr[INET6_ADDRSTRLEN];
-        __ip( ipstr , __ -> ai_addr );
         printf( " ATHER :: ADDRINFO :: \n" );
         printf( "flags :: %d\n" , __ -> ai_flags );
         printf( "family :: %d\n" , __ -> ai_family );
@@ -137,7 +134,7 @@ void *__ip( char *str , struct sockaddr *_ );
         printf( "protocol :: %d\n" , __ -> ai_protocol );
         printf( "socket : <type> : %d\n" , __ -> ai_socktype );
         printf( "socket : <len> : %d\n" , __ -> ai_addrlen );
-        printf( "socket : <addr> : %s\n", ipstr );
+        printf( "socket : <addr> : %d\n", __ -> ai_addr );
         printf( "\t>> %c\t\n\n" , __ -> ai_next == NULL ? '#' : '!' );  
     }
 
@@ -163,9 +160,9 @@ void *__ip( char *str , struct sockaddr *_ );
     }
 
     void log_file_data( FileData *filedata ) {
-        // printf( "Ather :: File ::\n" , filedata -> __name , filedata -> __size , strlen( filedata -> __contents ) > 100 ? "too long" : filedata -> __contents );
+        printf( "Ather :: File ::\n" , filedata -> __name , filedata -> __size , strlen( filedata -> __contents ) > 100 ? "too long" : filedata -> __contents );
         printf( " __name : %s\n" , filedata -> __name );
-        printf( " __registery : %s\n" , filedata -> __registery );
+        printf( " __registery : %x\n" , filedata -> __registery );
         printf( " __size : %d\n" , filedata -> __size );
         printf( " __hash : %x\n" , filedata -> __hash );
         printf( " __contents {\n\033[38;2;111;112;131m%s\033[0;37m\n}\n" , strlen( filedata -> __contents ) > 50 ? "call to display" : filedata -> __contents );

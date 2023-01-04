@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "probe.h"
 #include "point/point.h"
 <<<<<<< HEAD
@@ -68,8 +69,9 @@ int main( int argc , char **argv ) {
  ***/ 
 
 
+=======
+>>>>>>> b78d224 (@)
 #include "common.h"
-#include "morles/protocol.h"
 #define INTRO__A "\n\tWelcome to ather ( a.k.a @-Protocol )\n"
 #define SYMB__NN '@'
 #define ENTER__NN "enter( » )nodename :: @"
@@ -77,40 +79,6 @@ int main( int argc , char **argv ) {
 static char __udef_nodename[MAX_STR];
 #include "iota.h"
 #include "lbb/little_black_book.h"
-
-
-
-
-
-
-// int main( int argc , char *argv[] ) {
-// /**
-//  * mrkj, 2022 Sept.27
-//  * lbb full implementation with sha3, thanks to the 
-//  * good people at crypto@brainhub.org for their work
-//  * on the sha3 implementation that is used here.
-//  */
-// 	sx_lbb lbb;
-// 	memset( &lbb , 0 , sizeof( lbb ) );
-// 	unsigned int __ = __lbb__( &lbb );
-// 	if ( __ > 0 ) {
-// 		if ( argc > 1 && check_lbb( &lbb , argv[1] ) != 0 ) {
-// 			if ( argc == 3 ) {
-// 				if ( lbb_add( &lbb , argv[2] ) == 0 ) {
-// 					//
-// 				}
-// 			}
-// 			else if ( argc > 1 ) {
-// 				lbb_query( &lbb );
-// 			}
-// 		}
-// 		__cleanup( &lbb );
-// 		return 0;
-// 	}
-// 	write( 0 , "cannot create •lbb\n" , 21 );
-// 	return 1;
-// }
-
 
 void __intro( char *__nodename ) {
 	int __ = 0;
@@ -181,6 +149,33 @@ int main( int argc , char **argv ) {
 
 
 
+// int main( int argc , char *argv[] ) {
+// /**
+//  * mrkj, 2022 Sept.27
+//  * lbb full implementation with sha3, thanks to the 
+//  * good people at crypto@brainhub.org for their work
+//  * on the sha3 implementation that is used here.
+//  */
+// 	sx_lbb lbb;
+// 	memset( &lbb , 0 , sizeof( lbb ) );
+// 	unsigned int __ = __lbb__( &lbb );
+// 	if ( __ > 0 ) {
+// 		if ( argc > 1 && check_lbb( &lbb , argv[1] ) != 0 ) {
+// 			if ( argc == 3 ) {
+// 				if ( lbb_add( &lbb , argv[2] ) == 0 ) {
+// 					//
+// 				}
+// 			}
+// 			else if ( argc > 1 ) {
+// 				lbb_query( &lbb );
+// 			}
+// 		}
+// 		__cleanup( &lbb );
+// 		return 0;
+// 	}
+// 	write( 0 , "cannot create •lbb\n" , 21 );
+// 	return 1;
+// }
 
 
 
