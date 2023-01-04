@@ -1,4 +1,6 @@
+/// what is my kurl ? \\\
 
+#include "kurl/kurl.h"
 /**
 usage ::
 
@@ -13,18 +15,108 @@ usage ::
 			note:: since most shells needs an escape char for `#` i.e :: `\#`
 				kurls support direct level calls :: `0x` , `1x` , `2x` , ... 
 **/
+int main( int argc , char **argv ) {
+	if ( argc < 3 ){
+		printf( "usage :: lbb [key] [value]\n" );
+		return 1;
+	}
+	init_lbb();
 
 
-
-#if defined( __hat__ ) 
-void main( int argc , char const *argv[] ) {
-	__kurl__( &argv[0] );
+	return 0;
 }
-#else
-#include "kurl/kurl.h"
-extern kurl_t kurl; // each kurl has a different `stdptr` 
-#define __kurl_seed &kurl // each kurl has a unique seed
-void main( int argc , char const argv[] ) {
-	printf("(*cool very cool )\n");
-}
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// #define __ik unsigned char // cfg
+// #define __iu void * // exc
+// #define __ir unsigned long // fd
+// #define __il char * // hbar
+
+
+
+
+
+// typedef struct k___ {
+// 	void *url;
+// 	size_t __size;
+// 	unsigned __offset; 
+// }__kurl;
+// #define stdptr malloc( level ) 
+// #define __k( __ ) \
+// 	int qbc = 1 , __level = ( int ) __; \
+// 	__level <= 0 ? 4 : \
+// 	do { qbc *= 4; \
+// 		--__level; \
+// 	} while ( __level > 0 ) 
+// 	#define level __level
+// 	#define quatc qbc
+// 	#define poset ( (int) (quatc/4) )
+// #define k_( qc ) \
+// 	__kurl __ = { \
+// 		.__size=qbc			,\
+// 		.__offset=poset		,\
+// 		.url=stdptr			,\
+// 	}
+		
+
+
+
+
+
+

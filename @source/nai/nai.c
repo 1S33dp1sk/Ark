@@ -1,5 +1,15 @@
 #include "nai.h"
-
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <string.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <errno.h>
 /**
 errors 
  * 
@@ -24,17 +34,17 @@ char *__path_unix( char *__path , char *__filename ) {
 	if ( __path[path_len] != '/' && __filename[0] != '/' ) {
 		strncat( __path , "/\0" , 2 );
 	}
-	return ( path_len + fname_len ) < max_path ? strcat( __path , __filename ) : NULL;
+	return ( path_len + fname_len ) < mpath_max ? strcat( __path , __filename ) : NULL;
 }
 
-// void sigchld_handler(int s) {
-//     // waitpid() might overwrite errno, so we save and restore it:
-//     int saved_errno = errno;
+void sigchld_handler(int s) {
+    // waitpid() might overwrite errno, so we save and restore it:
+    int saved_errno = errno;
 
-//     while(waitpid(-1, NULL, WNOHANG) > 0);
+    while(waitpid(-1, NULL, WNOHANG) > 0);
 
-//     errno = saved_errno;
-// }
+    errno = saved_errno;
+}
 
 // get sockaddr, IPv4 or IPv6:
 void *get_in_addr( struct sockaddr *sa ) {
@@ -57,17 +67,17 @@ int uni_interface( struct a_inmp *inmp ) {
 	struct stat __st;
 	char *path = inmp -> imp;
 	// zero the initial path
-	char __path[max_path];
-	memset( __path , 0 , max_path );
+	char __path[mpath_max];
+	memset( __path , 0 , mpath_max );
 	// get the current working dir
-	if ( getcwd( __path , max_path ) == NULL ) {
+	if ( getcwd( __path , mpath_max ) == NULL ) {
 		#ifdef DEBUG
 		printf( "cannot get working dir\n" );
 		#endif
 		return -1;
 	}
 	// re-zero the `mp`
-	memset( path , 0 , max_path );
+	memset( path , 0 , mpath_max );
 	// copy the path to struct element
 	memcpy( path , __path , strlen( __path ) );
 	// add the `.lbb` name to the path
@@ -196,7 +206,7 @@ int glo_interface( struct a_idns *idns ) {
 	struct addrinfo hints, *servinfo, *p;
 	struct sockaddr_storage their_addr; // connector's address information
 	socklen_t sin_size;
-	// struct sigaction sa;
+	struct sigaction sa;
 	int yes=1;
 	char s[INET6_ADDRSTRLEN];
 	int rv;
@@ -252,13 +262,13 @@ int glo_interface( struct a_idns *idns ) {
 		exit(1);
 	}
 
-	// sa.sa_handler = sigchld_handler; // reap all dead processes
-	// sigemptyset(&sa.sa_mask);
-	// sa.sa_flags = SA_RESTART;
-	// if (sigaction(SIGCHLD, &sa, NULL) == -1) {
-	// 	perror("sigaction");
-	// 	exit(1);
-	// }
+	sa.sa_handler = sigchld_handler; // reap all dead processes
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_RESTART;
+	if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+		perror("sigaction");
+		exit(1);
+	}
 
 	printf("server: waiting for connections...\n");
 
