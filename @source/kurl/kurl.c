@@ -1,0 +1,39 @@
+/// what is my kurl ? \\\
+
+
+/**
+usage ::
+
+	a.	kurl [path] (level) 
+		e.g:: kurl /home/kj/athernet 2
+
+	b.	@[point_name] 
+		e.g:: @KARAM/athernet
+
+	c.	[u_reference] || #reference 
+		e.g:: 2x194102491959120
+			note:: since most shells needs an escape char for `#` i.e :: `\#`
+				kurls support direct level calls :: `0x` , `1x` , `2x` , ... 
+**/
+#include "kurl.h"
+
+void lbb_test() {
+	printf( "book ref :: %x\n" , lbb );
+}
+
+int main( int argc ) {
+	if ( argc == 1 ) {
+		#define ik 8
+	}
+    #include "__k.h"
+	ulong lbb_inn = p0;
+	printf( "lbb inodenum :: %ld\n" , lbb_inn );
+	char *lbb_ref = att;
+	printf( "lbb current ref :: %s\n" , lbb_ref );
+	char *lbb_key = hat;
+	printf( "lbb current key :: %s\n" , lbb_key );
+	char *lbb_des = pat;
+	printf( "lbb current point :: %s\n" , lbb_des );
+	int ap_lbb = p1;
+	printf( "ather point reader :: %ld\n" , ap_lbb );
+}
