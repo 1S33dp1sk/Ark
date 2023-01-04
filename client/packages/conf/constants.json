@@ -1,0 +1,44 @@
+{
+    "PACKAGE_CONTROL": "https://endpoint.aetherlabs.io/packages/aether/latest",
+    "PACKAGE_VERSION": "v1.31",
+    "PACKAGE_STATS":"https://endpoint.aetherlabs.io/stats/nodes",
+    "CHAINS_IDS": [
+        1,
+        56,
+        137,
+        250,
+        43114,
+        1234,
+        4321
+    ],
+    "CHAINS_ASCII": [
+        [
+            "ETH",
+            "ETHEREUM "
+        ],
+        [
+            "BNB",
+            "BINANCE"
+        ],
+        [
+            "MATIC",
+            "POLYGON"
+        ],
+        [
+            "FTM",
+            "FANTOM"
+        ],
+        [
+            "AVAX",
+            "AVALANCE"
+        ],
+        [
+            "TN1",
+            "TestNet1234"
+        ],
+        [
+            "TN4",
+            "TestNet4321"
+        ]
+    ]
+}

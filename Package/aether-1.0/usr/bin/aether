@@ -1,0 +1,675 @@
+#!/bin/bash
+
+
+#constants
+#
+# define the base dir for conf files
+AETHER_CONFIGS=/etc/aether/configs
+DEFAULT_ENV_CONFIG=${AETHER_CONFIGS}/env.conf
+DEFAULT_RPC_CONFIG=${AETHER_CONFIGS}/rpc.conf
+DEFAULT_ABIS_PATH=${AETHER_CONFIGS}/ABIS.json
+
+# define the base dir for sol contracts
+AETHER_CONTRACTS=/etc/aether/contracts
+
+# define the base for log files
+AETHER_LOGS=/var/log/aether
+LOGS_PERFORMANCE=${AETHER_LOGS}/performance.log
+LOGS_TRANSACTIONS=${AETHER_LOGS}/transactions.log
+LOGS_STATUS=${AETHER_LOGS}/status.log
+
+AETHER_HOME="/home/$(whoami)/.aether"
+
+# define commands installed 
+CMD_READER='aether-reader'
+CMD_JSONIFY='aether-jsonifier'
+CMD_WRAPPER='aether-wrapper'
+CMD_CONFIGURATOR='aether-configurator'
+CMD_AETHER='aether'
+
+# define specific node paths
+NODE_DIR_PATH="${AETHER_HOME}/${NODE_NAME}.node"
+NODE_EXEC_PATH="${NODE_DIR_PATH}/_${NODE_NAME}_"
+NODE_CONTRACTS_PATH="${NODE_DIR_PATH}/contracts"
+NODE_CONF_PATH="${NODE_DIR_PATH}/conf"
+NODE_CONFIG_PATH="${NODE_DIR_PATH}/config.json"
+
+
+# define colors for a cool ux
+NO_COLOR='\033[0m'
+PURPLE='\033[1;94m'
+PINK='\033[1;35m'
+LIGHT_BLUE='\033[1;36m'
+WHITE='\033[1;37m'
+DARK_GREY='\033[0;37m'
+GREEN='\033[1;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+
+
+# define unicode chars
+CHECK_MARK='\u2714'
+CROSS_MARK='\u2716'
+
+
+# define the current aether action
+MAIN_FLAG=$1
+PARTIAL_FLAG=$2
+
+# shortcut for $(shift 1) before iterating using `getopts`
+shift 
+
+
+
+# check if the ~/.aether exists
+_CHECK_HOME_DIR() {
+    if [ ! -d ${AETHER_HOME} ]; then
+        printf "${PURPLE}Aether${NO_COLOR} -> ${WHITE}No aether found. Run \` aether init \` for this user.${NO_COLOR}.\n"
+        exit
+    fi
+}
+
+# check if node js exists
+# for running `aether evm`
+_CHECK_NODE_JS() {
+    _NODE_JS_VERSION=$(node -v | head -n 1) # node -v 2>&1 | head -n 1 
+    if [ ! -z ${_NODE_JS_VERSION} ]; then
+         read -p "${PURPLE}Aether${NO_COLOR} ::-> ${WHITE}Node JS is not installed, would you like to install it ? ${NO_COLOR}.\n" _INSTALL_NODEJS
+        case "$_INSTALL_NODEJS" in
+            [yY][eE][sS]|[yY]) 
+                sudo apt install nodejs npm
+                ;;
+            *)
+                exit
+                ;;
+        esac
+}
+
+# check if all the `CMD_` exists in 
+# /usr/bin/
+_CHECK_EXECUTABLES() {
+    if [ -f "/usr/bin/${CMD_READER}" -a -f "/usr/bin/${CMD_JSONIFY}" -a -f "/usr/bin/${CMD_WRAPPER}" -a -f "/usr/bin/${CMD_AETHER}" -a -f "/usr/bin/${CMD_CONFIGURATOR}" ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${GREEN}SUCCESS${NO_COLOR} -> ${WHITE}Executables ${CHECK_MARK}${NO_COLOR}.\n"    
+    else
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}No excutables files found ${CROSS_MARK}${NO_COLOR}.\n"
+        exit
+    fi
+}
+
+# check all /etc/ for configuration dirs
+_CHECK_CONFIGURATIONS(){
+    if [ -d "${AETHER_LOGS}" -a -d "${AETHER_CONFIGS}" ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${GREEN}SUCCESS${NO_COLOR} -> ${WHITE}Configurations ${CHECK_MARK}${NO_COLOR}${NO_COLOR}.\n"    
+    else 
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}Configuration files malformed ${CROSS_MARK}${NO_COLOR}.\n"
+        exit
+    fi
+}
+
+# check if node name and node dir
+# exists in .aether
+_CHECK_NODE() {
+    if [[ -z ${NODE_NAME} ]] ||  [[ ! -d ${AETHER_HOME}/${NODE_NAME}.node  ]]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}Node name cannot be determined ${CROSS_MARK}${NO_COLOR}"
+    fi
+}
+
+# create node directories
+_MAKE_NODE_DIRS() {
+    
+    mkdir -p ${AETHER_HOME}/${NODE_NAME}.node/{contracts,configs}
+}
+
+# fill the node file and dirs
+_FILL_NODE() {
+    cat ${_NODE_EXEC} > ${NODE_EXEC_PATH}
+    cp -r ${_NODE_CONTRACTS}/* ${NODE_CONTRACTS_PATH}
+    cp -r ${_NODE_CONFIGS}/* ${NODE_CONF_PATH}
+}
+
+# check if `config.json` exists
+_CHECK_CONFIG_FILE() {
+    if [ ! -f "${BASE_PATH}/config.json" ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${YELLOW}WARNING${NO_COLOR} -> ${WHITE}config.json does not exist${NO_COLOR}.\n"
+    fi
+}
+
+# get $NODE_NAME from the 
+# current path
+_EXTRACT_NODE_NAME() {
+    _DIRNAME=$(pwd)
+    while [[ ${_DIRNAME} != / ]] && [[ -z ${NODE_NAME} ]]; do
+        _NODE_NAME=$(basename "${_DIRNAME}")
+        _DIRNAME=$(dirname "${_DIRNAME}")
+        if [[ ${_DIRNAME} == *.node ]]; then
+            NODE_NAME=${_DIRNAME}
+        elif [[ ${_NODE_NAME} == *.node ]]; then
+            NODE_NAME=${_NODE_NAME}
+        else
+            continue
+        fi
+    done
+    NODE_NAME=$(basename ${NODE_NAME})
+}
+
+# get node name from entry point
+_ENTRY_POINT_NODE_NAME() {
+    for FILE_NAME in ./*; do
+        _FILE_NAME=$(basename ${FILE_NAME})
+        if [[ ${_FILE_NAME} == _*_ ]] || [[ ${_FILE_NAME} == *.les ]]; then
+            LES_NAME=${_FILE_NAME}
+        fi
+    done
+}
+
+# initialize aether
+INIT() {
+    _CHECK_EXECUTABLES
+    _CHECK_CONFIGURATIONS
+    if [ ! -d ${AETHER_HOME} ]; then
+        mkdir ${AETHER_HOME}
+        NODE_NAME="DEFAULT"
+        _MAKE_NODE_DIRS
+        _NODE_EXEC="#!/usr/bin/aether-wrapper"
+        _NODE_CONTRACTS=${AETHER_CONTRACTS}
+        _NODE_CONFIGS=${AETHER_CONFIGS}
+        _FILL_NODE
+        printf "${PURPLE}Aether${NO_COLOR} :: ${GREEN}SUCCESS${NO_COLOR} -> ${WHITE}Aether initialized ${CHECK_MARK}${NO_COLOR}.\n"
+    else
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}Aether already initialized ${CHECK_MARK}${NO_COLOR}.\n"
+        exit
+    fi        
+}
+
+# check initialization status
+CHECK_INIT() {
+    _CHECK_HOME_DIR
+    _CHECK_EXECUTABLES
+    _CHECK_CONFIGURATIONS
+}
+
+# change the configs
+# based on the path supplied
+CHANGE_CONFIG() {
+    if [ ! -z ${BASE_PATH} ]; then
+        if [[ -f ${BASE_PATH}/env.conf ]] || [[ -f ${BASE_PATH}/rpc.conf ]] || [[ -f ${BASE_PATH}/ABIS.json ]]; then
+            cp ${BASE_PATH}/* ${AETHER_BASE}
+            exit
+        fi
+    else
+        if [[ ! -z ${ENV_PATH} ]]; then
+            if [[ -f ${ENV_PATH} ]] || [[ -f ${ENV_PATH}/env.conf ]]; then
+                cp ${ENV_PATH} ${AETHER_CONFIGS}
+            fi
+        fi
+        if [[ ! -z ${RPC_PATH} ]]; then
+            if [[ -f ${RPC_PATH} ]] || [[ -f ${RPC_PATH}/rpc.conf ]]; then
+                cp ${RPC_PATH} ${AETHER_CONFIGS}
+            fi
+        fi
+        if [[ ! -z ${ABIS_PATH} ]]; then
+            if [[ -f ${ABIS_PATH} ]] || [[ -f ${ABIS_PATH}/abis.json ]]; then
+                cp ${ABIS_PATH} ${AETHER_CONFIGS}
+            fi
+        fi
+    fi
+}
+
+# dump the current configs
+# as files in the current path
+DUMP_CONFIG() {
+    ENV_DATA=$(cat ${DEFAULT_ENV_CONFIG})
+    RPC_DATA=$(cat ${DEFAULT_RPC_CONFIG})
+    ABIS_DATA=$(cat ${DEFAULT_ABIS_PATH})
+
+    BASE_PATH=$(pwd)
+
+    printf "${ENV_DATA}" > ${BASE_PATH}/env.conf
+    printf "${RPC_DATA}" > ${BASE_PATH}/rpc.conf
+    printf "${ABIS_DATA}" > ${BASE_PATH}/ABIS.json
+}
+
+# display the current
+# default configs
+READ_CONFIG() {
+    ENV_DATA=$(cat ${DEFAULT_ENV_CONFIG})
+    RPC_DATA=$(cat ${DEFAULT_RPC_CONFIG})
+    printf "${PURPLE}Aether${NO_COLOR} :: ${LIGHT_BLUE}Enviroment${NO_COLOR} -> \n${ENV_DATA}\n\n\n"
+    printf "${PURPLE}Aether${NO_COLOR} :: ${LIGHT_BLUE}RPC${NO_COLOR} -> \n${RPC_DATA}\n\n\n"
+}
+
+
+# create a new node
+# with default configurations
+MAKE_NODE() {
+    
+    
+
+}
+
+
+
+
+
+
+# remove the node and it's 
+# directory in ${AETHER_HOME}
+PURGE_NODE() {
+    _CHECK_NODE
+    rm -rf ${AETHER_HOME}/${NODE_NAME}.node
+    printf "${PURPLE}Aether${NO_COLOR} :: ${GREEN}SUCCESS${NO_COLOR} -> ${WHITE}Node purged ${CHECK_MARK}${CHECK_MARK}${NO_COLOR}.\n"
+}
+
+# create the basis needed for 
+# the node 
+NODE_BASIS(){
+    if [ ! -f "${BASE_PATH}/config.json" ]; then
+
+        if [ ! -f "${BASE_PATH}/env.json" ]; then
+
+            if [[ -z "${ENV_PATH}" ]] || [[ ! -f "${ENV_PATH}" ]]; then
+                printf "${PURPLE}Aether${NO_COLOR} :: ${YELLOW}WARNING${NO_COLOR} -> ${WHITE}Default Enviroment is used${NO_COLOR}.\n"
+                ENV_PATH=${DEFAULT_ENV_CONFIG}
+            fi
+            cp ${ENV_PATH} .
+            cmd="${CMD_JSONIFY} env.conf"
+            eval "${cmd}" &>/dev/null & disown;
+            mv "env.conf.json" ${BASE_PATH}/conf.json
+            rm env.conf
+        fi
+        if [ ! -f "${BASE_PATH}/rpc.json" ]; then
+
+            if [[ -z "${RPC_PATH}" ]] || [[ ! -f "${RPC_PATH}" ]]; then
+                printf "${PURPLE}Aether${NO_COLOR} :: ${YELLOW}WARNING${NO_COLOR} -> ${WHITE}Default RPC is used${NO_COLOR}.\n"
+                RPC_PATH=${DEFAULT_RPC_CONFIG}
+            fi
+            cp ${RPC_PATH} .
+            cmd="${CMD_JSONIFY} rpc.conf"
+            eval "${cmd}" &>/dev/null & disown;
+            mv "rpc.conf.json" ${BASE_PATH}/rpc.json
+            rm rpc.conf
+        fi
+        if [ ! -f "${BASE_PATH}/abis.json" ]; then
+            if [[ -z "${ABIS_PATH}" ]] || [[ ! -f "${ABIS_PATH}" ]]; then
+                printf "${PURPLE}Aether${NO_COLOR} :: ${YELLOW}WARNING${NO_COLOR} -> ${WHITE}Default ABIS are used${NO_COLOR}.\n"
+                ABIS_PATH=${DEFAULT_ABIS_PATH}
+            fi
+            cp ${ABIS_PATH} .
+        fi
+    fi
+    cp -r ${BASE_PATH}/* ${AETHER_HOME}/${NODE_NAME}.node
+    rm conf.json && rm rpc.json && rm ABIS.json
+    mv ${AETHER_HOME}/${NODE_NAME}.node/${NODE_NAME}.py ${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_
+    echo '#!/usr/bin/aether-wrapper' | cat - ${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_ > temp && mv temp ${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_
+    chmod u+x ${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_
+}
+
+# create configurations files
+# for ${NODE_NAME}
+NODE_CONFIG(){
+    if [ -z "${NODE_NAME}" ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}Node name not specified ${CROSS_MARK}${NO_COLOR}.\n"
+        exit
+    elif [ -d "${AETHER_HOME}/${NODE_NAME}.node" ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}Node exists ${CHECK_MARK}${NO_COLOR}.\n"
+        exit
+    else
+        mkdir -p ${AETHER_HOME}/${NODE_NAME}.node
+        NODE_BASIS
+        cmd="${CMD_WRAPPER} ${CMD_CONFIGURATOR} ${AETHER_HOME}/${NODE_NAME}.node"
+        eval "${cmd}" &>/dev/null & disown;
+    fi
+}
+
+# create a new node with conf files
+# using ${NODE_NAME}
+CREATE_NODE() {
+    if [ -z "${NODE_NAME}" ]; then
+        _EXTRACT_NODE_NAME
+        count=0
+        for PY_FILE in $(find *.py); do 
+            count+=1
+        done
+        if [ "${count}" != "01" ]; then
+            printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}Please specify entry file name${NO_COLOR}.\n"
+            exit
+        fi
+        NODE_NAME=$(basename ${PY_FILE%.*})
+        printf "${PURPLE}Aether${NO_COLOR} :: ${GREEN}SUCCESS${NO_COLOR} -> ${WHITE}Creating a new node : ${LIGHT_BLUE}${NODE_NAME}${NO_COLOR}.\n"
+    fi
+    NODE_CONFIG
+}
+
+# get status of ${NODE_NAME}
+STATUS_NODE(){
+    if [[ -z "${NODE_NAME}" ]] || [[ ! -d "${AETHER_HOME}/${NODE_NAME}.node/" ]]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}Specify a valid node name${NO_COLOR}.\n"
+        exit
+    fi
+    NODE_STATUS=".OFFLINE"
+    PVAR=$(pgrep -f _${NODE_NAME}_)
+    if [ -z "$PVAR" ]; then
+        printf ".OFFLINE" > ${AETHER_HOME}/${NODE_NAME}.node/.status
+        printf "${PURPLE}Aether${NO_COLOR} :: ${LIGHT_BLUE}${NODE_NAME}${NO_COLOR} : ${WHITE}OFFLINE${NO_COLOR}.\n"
+    else
+        printf ".ONLINE" > ${AETHER_HOME}/${NODE_NAME}.node/.status
+        printf "${PURPLE}Aether${NO_COLOR} :: ${LIGHT_BLUE}${NODE_NAME}${NO_COLOR} : ${GREEN}ONLINE${NO_COLOR}.\n"
+    fi
+}
+
+# list all available nodes
+LIST_NODES() {
+    dirs=(${AETHER_HOME}/*/)
+    for s in "${dirs[@]}"
+    do
+        NODE_NAME=$(basename "$s" .node)
+        if [ "$NODE_NAME" != "DEFAULT" ]; then
+            STATUS
+        else
+            continue
+        fi
+    done
+}
+
+# show the last 5 lines of all log files
+SHOW_LOG_TAIL(){
+    if [ -z "${LOG_LENGTH}" ]; then
+        LOG_LENGTH=5
+    fi
+
+    P_LOGS=$(tail -${LOG_LENGTH} "${LOGS_PERFORMANCE}")
+    T_LOGS=$(tail -${LOG_LENGTH} "${LOGS_TRANSACTIONS}")
+    L_LOGS=$(tail -${LOG_LENGTH} "${LOGS_STATUS}")
+
+    printf "${PURPLE}Aether${NO_COLOR} :: ${LIGHT_BLUE}Performance${NO_COLOR} -> \n${P_LOGS}\n\n\n"
+    printf "${PURPLE}Aether${NO_COLOR} :: ${LIGHT_BLUE}Transactions${NO_COLOR} -> \n${T_LOGS}\n\n\n"
+    printf "${PURPLE}Aether${NO_COLOR} :: ${LIGHT_BLUE}Status${NO_COLOR} -> \n${L_LOGS}\n\n\n"
+}
+
+# show content of the log file
+SHOW_LOG() {
+    if [ -z ${LOG_TYPE} ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${YELLOW}WARNING${NO_COLOR} -> ${WHITE}Log type not specified${NO_COLOR}.\n"
+        SHOW_LOG_TAIL
+    fi
+    case $LOG_TYPE in
+        p|performance|PERFORMANCE)
+            cat "${LOGS_PERFORMANCE}"
+            ;;
+        t|txn|transaction|transactions|TRANSACTION|TRANSACTIONS)
+            cat "${LOGS_TRANSACTIONS}"
+            ;;
+        o|online)
+            cat "${LOGS_STATUS}"
+            ;;
+    esac
+}
+
+# run the node
+RUN_NODE() {
+    if [ -z ${NODE_NAME} ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}No node name specified${NO_COLOR}.\n"
+        exit
+    elif [ ! -f {AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_ ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}No node name specified${NO_COLOR}.\n"
+        exit
+    else
+        cmd="${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_"
+        if [ ${QUIET} ]; then
+            eval "${cmd}"
+        else
+            eval "${cmd}" &>/dev/null & disown;
+        fi
+    fi
+}
+
+# stop the node
+STOP_NODE() {
+    if [ -z ${NODE_NAME} ]; then
+        printf "${PURPLE}Aether${NO_COLOR} :: ${RED}ERROR${NO_COLOR} -> ${WHITE}No node name specified${NO_COLOR}.\n"
+        exit
+    fi  
+    PVAR=$(pgrep -f _${NODE_NAME}_)
+    kill -9 ${PVAR} &>/dev/null
+    printf ".OFFLINE" > ${AETHER_HOME}/${NODE_NAME}.node/.status
+    printf "${PURPLE}Aether${NO_COLOR} :: ${LIGHT_BLUE}${NODE_NAME}${NO_COLOR} -> ${WHITE}Stopped${NO_COLOR}.\n"
+}
+
+
+
+
+
+
+# display help message
+HELP() {
+    printf "The ${PURPLE}Aether${NO_COLOR} Blockchain Connection, simply ${PURPLE}0xAether${NO_COLOR}|${PURPLE}0xA${NO_COLOR} \n"
+    printf "Syntax: run a command [${PURPLE}aether${NO_COLOR} <${WHITE}command(s)${NO_COLOR}> ${LIGHT_BLUE}-option(s)${NO_COLOR} ]\n"
+    printf "Command(s) avaliable :\n"
+
+    printf "\n${WHITE}init${NO_COLOR} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}init${NO_COLOR}"
+    printf "\n\t Description : Initiates aether from the original package and default configurations."
+
+    printf "\n${WHITE}config${NO_COLOR} :"
+    printf "\n\t${WHITE}config read${NO_COLOR}"
+    printf "\n\t\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}config read${NO_COLOR}"
+    printf "\n\t\t Options : ${LIGHT_BLUE} -b${NO_COLOR}(ase path for directory containing .conf files)"
+    printf "\n\t\t Description : reads the current system-wide or path specific configurations for aether."
+
+    printf "\n\t${WHITE}config change${NO_COLOR}"
+    printf "\n\t\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}config change${NO_COLOR}"
+    printf "\n\t\t Option(s) :"
+    printf " ${LIGHT_BLUE} -b${NO_COLOR}(ase path for directory containing .conf files)"
+    printf " ${LIGHT_BLUE} -e${NO_COLOR}(nviroment .conf file path)"
+    printf " ${LIGHT_BLUE} -r${NO_COLOR}(pc .conf file path)"
+    printf "\n\t\t Description : changes the current system-wide configurations for aether."
+
+    printf "\n\t${WHITE}config dump${NO_COLOR}"
+    printf "\n\t\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}config dump${NO_COLOR}"
+    printf "\n\t\t Options : "
+    printf "\n\t\t Description : dumps the current system-wide configurations for aether in .conf files in the current directory."
+
+    printf "\n${WHITE}node${NO_COLOR} :"
+    printf "\n\t Note : Applies on the current working directory unless ${LIGHT_BLUE}-n${NO_COLOR} is specified."
+    printf "\n\t${WHITE}node make${NO_COLOR}"
+    printf "\n\t\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}node make${NO_COLOR} ${LIGHT_BLUE}"
+    printf "\n\t\t Option(s) : ${LIGHT_BLUE} -n${NO_COLOR}(ode name)"
+    printf "\n\t\t Description : creates a fresh node using name from the current working directory or ${LIGHT_BLUE}-n${NO_COLOR}"
+
+    printf "\n\t${WHITE}node purge${NO_COLOR} :"
+    printf "\n\t\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}node purge${NO_COLOR}"
+    printf "\n\t\t Option(s) : ${LIGHT_BLUE} -n${NO_COLOR}(ode name)"
+    printf "\n\t\t Description : removes the node files and directories associated with the node"
+
+    printf "\n\t${WHITE}node update${NO_COLOR} :"
+    printf "\n\t\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}node update${NO_COLOR}"
+    printf "\n\t\t Option(s) : ${LIGHT_BLUE} -n${NO_COLOR}(ode name)"
+    printf "\n\t\t Description : removes the node files and directories associated with the node"
+
+    printf "\n\t${WHITE}node run${NO_COLOR} :"
+    printf "\n\t\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}node run${NO_COLOR}"
+    printf "\n\t\t Option(s) :"
+    printf "${LIGHT_BLUE} -n${NO_COLOR}(ode name)"
+    printf "${LIGHT_BLUE} -q${NO_COLOR}(uiet)"
+    printf "\n\t\t Description : runs the node executable state with verbose logging or quiet."
+
+    printf "\n\t${WHITE}node stop${NO_COLOR} :"
+    printf "\n\t\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}node stop${NO_COLOR}"
+    printf "\n\t\t Description : stops the node executable state, if applicable."
+
+    printf "\n${WHITE}log${NO_COLOR} :" 
+    printf "\n\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}log${NO_COLOR} ${LIGHT_BLUE}-t${NO_COLOR} LOG_TYPE"
+    printf "\n\t Options : ${LIGHT_BLUE} -t${NO_COLOR}(type of log) : < performance , transactions , status >"
+    printf "\n\t Description : writes to stdout the output of LOG_TYPE."
+
+    printf "\n${WHITE}log-tail${NO_COLOR} :" 
+    printf "\n\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}log-tail${NO_COLOR}"
+    printf "\n\t Options : ${LIGHT_BLUE} -L${NO_COLOR}(ength of lines per each)"
+    printf "\n\t Description : writes to stdout the last L lines of all aether logs."
+
+    printf "\n${WHITE}status${NO_COLOR} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}status${NO_COLOR} ${LIGHT_BLUE}-n${NO_COLOR} NODE_NAME"
+    printf "\n\t Description : query the current execution status for the node name specified"
+
+    printf "\n${WHITE}list${NO_COLOR} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}list${NO_COLOR}"
+    printf "\n\t Description : lists all the nodes created with aether"
+
+    printf "\n${WHITE}help${NO_COLOR} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NO_COLOR} ${WHITE}help${NO_COLOR}"
+    printf "\n\t Description : display this help message and quit."
+
+    printf "\n\nOption(s) avaliable :\n\n"
+
+    printf -- "${LIGHT_BLUE}-b${NO_COLOR}\t( conf|base ) -> Specify the path for the base directory containing .conf files.\n"
+    printf -- "${LIGHT_BLUE}-e${NO_COLOR}\t( conf|enviroment ) -> Specify the enviroment .conf file.\n"
+    printf -- "${LIGHT_BLUE}-r${NO_COLOR}\t( conf|rpc ) -> Specify the rpc WSS endpoints in .conf file \n"
+    printf -- "${LIGHT_BLUE}-c${NO_COLOR}\t( conf|contract ) -> Specify the contracts in .sol file \n"
+    printf -- "${LIGHT_BLUE}-n${NO_COLOR}\t( node|name ) -> Specify the node name\n"
+    printf -- "${LIGHT_BLUE}-a${NO_COLOR}\t( node|address ) -> Specify the node address\n"
+    printf -- "${LIGHT_BLUE}-t${NO_COLOR}\t( log|type ) -> Specify the LOG TYPE : < performance , transactions , status >\n"
+    printf -- "${LIGHT_BLUE}-l${NO_COLOR}\t( log|length ) -> Specify the length of the logs to output\n"
+    printf -- "${LIGHT_BLUE}-q${NO_COLOR}\t( log|quiet ) -> Specify the state of logging while executing\n"
+}
+
+# upcoming feature
+UPCMING_OPRTIN() {
+    printf "${PURPLE}Aether${NO_COLOR} -> ${WHITE}Operation not avaliable yet${NO_COLOR}\n"
+    exit
+}
+
+# unknown operation
+UNKNWN_OPRTIN() {
+    printf "${PURPLE}Aether${NO_COLOR} -> ${WHITE}Unknown Operation${NO_COLOR} \n"
+    exit
+}
+
+# unknown option
+UNKNWN_OPTIN() {
+    printf "${PURPLE}Aether${NO_COLOR} -> ${WHITE}Unknown Option${NO_COLOR} \n"
+    exit
+}
+
+# iterate over the options provided and attach to vars
+# will be used inside functions depending on ${MAIN_FLAG}
+while getopts :b:e:n:r:c:t:l:q:h: option; do
+    case "${option}" in
+        b)
+            BASE_PATH=${OPTARG}
+            ;;
+        e)
+            ENV_PATH=${OPTARG}
+            ;;
+        n)
+            NODE_NAME=${OPTARG}
+            ;;
+        r)
+            RPC_PATH=${OPTARG}
+            ;;
+        c)
+            CONTRACT_ABIS_PATH=${OPTARG}
+            ;;
+        t)
+            LOG_TYPE=${OPTARG}
+            ;;
+        l)
+            LOG_LENGTH=${OPTARG}
+            ;;
+        q)
+            QUIET=true
+            ;;
+        h)
+            HELP
+            ;;
+        *)
+            UNKNWN_OPTIN
+            ;;
+    esac
+done
+
+CHECK_HOME
+
+# exec any command gotten via the shell on `$1`
+case $MAIN_FLAG in
+    init)
+        # initiate the aether home
+        INIT
+        ;;
+    check)
+        # checks for conf files and dirs
+        CHECK_INIT
+        ;;
+    config)
+        # check which command for configs
+        # via the partial flag
+        case $PARTIAL_FLAG in
+            change)
+                CHANGE_CONFIG
+                ;;
+            dump)
+                DUMP_CONFIG
+                ;;
+            read)
+                READ_CONFIG
+                ;;
+            *)
+                UNKNWN_OPRTIN
+                ;;
+            esac
+        ;;
+    node)
+        # check what to do with the node
+        # via the partial flag
+        case $PARTIAL_FLAG in
+            make)
+                MAKE_NODE
+                ;;
+            purge)
+                PURGE_NODE
+                ;;
+            retrieve)
+                RETRIEVE_NODE
+                ;;
+            update)
+                UPDATE_NODE
+                ;;
+            run)
+                RUN_NODE
+                ;;
+            stop)
+                STOP_NODE
+                ;;
+            status)
+                STATUS_NODE
+                ;;
+            *)
+                UNKNWN_OPRTIN
+                ;;
+            esac
+            ;;
+    log-tail)
+        # shows the last n|5 lines of all the log files
+        SHOW_LOG_TAIL
+        ;;
+    log)
+        # outputs the complete log of choice
+        SHOW_LOG
+        ;;
+    status)
+        # checks the logs for the node 
+        STATUS
+        ;;
+    list)
+        # list all nodes defined in `Aether/nodes/` except default.
+        LIST_NODES
+        ;;
+    help)
+        # show help and quit
+        HELP
+        ;;
+    *)
+        # unknown operation
+        UNKNWN_OPRTIN
+        ;;
+esac
+
