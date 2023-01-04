@@ -1,0 +1,112 @@
+{
+    "CALLER":
+    {
+        "pvtKey": "****************************************************************",
+        "pubKey": "0x753e46f7e8F48d9Ac44609415E6905AF7C1872Aa"
+    },
+    "CHAINS":
+    {
+        "chainIds":
+        [
+            1,
+            56,
+            137,
+            250,
+            43114,
+        ],
+        "1":
+        {
+            "wss": "wss://",
+            "balance": 10000000000000000000,
+            "chainId": "1",
+            "chainName": "ETHEREUM",
+            "chainSymbol": "ETH",
+            "contracts":
+            {
+                "AETHER_PROXY": "",
+                "AETHER_FACTORY": "",
+                "AETHER_DAO": "",
+                "AETHER_TOKEN": "",
+                "AETHER_HUB": "",
+                "AETHER_KEEPER": ""
+            }
+        },
+        "56":
+        {
+            "wss": "wss://",
+            "balance": 10000000000000000000,
+            "chainId": "56",
+            "chainName": "BINANCE",
+            "chainSymbol": "BNB",
+            "contracts":
+            {
+                "AETHER_PROXY": "",
+                "AETHER_FACTORY": "",
+                "AETHER_DAO": "",
+                "AETHER_TOKEN": "",
+                "AETHER_HUB": "",
+                "AETHER_KEEPER": ""
+            }
+        },
+        "137":
+        {
+            "wss": "wss://",
+            "balance": 10000000000000000000,
+            "chainId": "137",
+            "chainName": "POLYGON",
+            "chainSymbol": "MATIC",
+            "contracts":
+            {
+                "AETHER_PROXY": "",
+                "AETHER_FACTORY": "",
+                "AETHER_DAO": "",
+                "AETHER_TOKEN": "",
+                "AETHER_HUB": "",
+                "AETHER_KEEPER": ""
+            }
+        },
+        "250":
+        {
+            "wss": "wss://",
+            "balance": 10000000000000000000,
+            "chainId": "250",
+            "chainName": "FANTOM",
+            "chainSymbol": "FTM",
+            "contracts":
+            {
+                "AETHER_PROXY": "",
+                "AETHER_FACTORY": "",
+                "AETHER_DAO": "",
+                "AETHER_TOKEN": "",
+                "AETHER_HUB": "",
+                "AETHER_KEEPER": ""
+            }
+        },
+        "43114":
+        {
+            "wss": "wss://",
+            "balance": 10000000000000000000,
+            "chainId": "43114",
+            "chainName": "AVALANCHE",
+            "chainSymbol": "AVAX",
+            "contracts":
+            {
+                "AETHER_PROXY": "",
+                "AETHER_FACTORY": "",
+                "AETHER_DAO": "",
+                "AETHER_TOKEN": "",
+                "AETHER_HUB": "",
+                "AETHER_KEEPER": ""
+            }
+        }
+    },
+    "ABIS":
+    {
+        "AETHER_PROXY": [],
+        "AETHER_FACTORY": [],
+        "AETHER_DAO": [],
+        "AETHER_TOKEN": [],
+        "AETHER_HUB":[],
+        "AETHER_KEEPER":[]
+    }
+}
