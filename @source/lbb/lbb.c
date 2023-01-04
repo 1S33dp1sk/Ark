@@ -1,10 +1,6 @@
 #include "lbb.h"
-// #define DEBUG
+#define DEBUG
 
-
-char const *hashof( unsigned l , void const *t , size_t s );
-
-char const *fhash( unsigned level, char const *filepath );
 
 /*
 ***************************************************************************
@@ -30,35 +26,30 @@ char const *fhash( unsigned level, char const *filepath );
 ***************************************************************************
 */
 
+#ifndef __lbb_raw__
+	#define __lbb_raw__ "KW"
+	char *_raw_kei( kei __kei ) {
+		if( ( __kei.k != NULL ) && ( __kei.i__size != 0 ) ) {
+			char __raw[__kei.i__size];
+			memset( &__raw , 0 , sizeof( __kei.i__size )*sizeof( char ) );
+			memcpy( __raw , __kei.k , __kei.i__size );
+			return strdup( __raw );
+		}
+		return NULL;
+	}
+	char *_raw_word( word __word ) {
+		unsigned __len_v = __word.v.i__size, __len_a = __word.a.i__size;
+		unsigned __len_total = __len_v + __len_a + 3; 
+		char __raw[__len_total];
+		__raw[__len_total] = '\0';
+		memcpy( __raw , _raw_kei( __word.v ) , __word.v.i__size );
+		memcpy( __raw , __word.l , 2 );
+		memcpy( __raw , _raw_kei( __word.a ) , __word.a.i__size );
+		return strdup( __raw );
+	}
+#endif
 
-
-const char *__anet_name() {
-	char __[8];
-	sprintf( __ , "%ld" , lbb_inodenum() );
-	const char *__hnet_name = hashof( 0 , __ , 8 );
-	printf( "inodenum : %ld :: %s\n" , lbb_inodenum() , __hnet_name );
-	return __hnet_name;
-}
-
-const char *__hallmark( hallmark hm ) {
-	unsigned __len = 3 + sizeof( unsigned char ) + sizeof( unsigned long ) \
-						+ ( strlen( hm.__address )*sizeof( unsigned char ) ) \
-						+ ( strlen( hm.__keyhash )*sizeof( unsigned char ) );
-
-	char __hm[__len]; __hm[__len] = '\0';
-	
-	sprintf( __hm , "%c:%ld@%s=%s" , \
-		hm.__level, \
-		hm.__num_records, \
-		hm.__address, \
-		hm.__keyhash );
-
-	printf( "hallmark :: %s\n" , __hm );
-
-	return strdup( __hm );
-}
-
-const char *__word( char *key , char *val , char *delim ) {
+entry_t __word( char *key , char *val , char *delim ) {
 	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
 	char __line[__len]; memset( &__line , 0 , __len ); __line[__len] = '\0';
 
@@ -70,49 +61,39 @@ const char *__word( char *key , char *val , char *delim ) {
 	return strdup( __line );
 }
 
-const char *__read() {
-	unsigned lbb_size = lbb_size();
+entry_t __read( struct lbb_st *st ) {
+	unsigned lbb_size = st -> lbb_stat.st_size;
 	char temp[lbb_size+1]; temp[lbb_size+1] = '\0';
 	memset( &temp , 0 , lbb_size );
-	read( book.st.lbb_fd , &temp , lbb_size );
+	read( st -> lbb_fd , &temp , lbb_size );
 	return strdup( temp );
 }
 
-int __write( char const *strlbb ) {
-	if ( book.st.lbb_fd <= 0 ) {
-		printf( "no lbb file descriptor found\n" );
-		return -1;
-	}
-	int __bytes_written = 0;
-	const char *__prev = __read();
-	unsigned _plen = strlen( __prev ), _slen = strlen( strlbb );
-
-	unsigned __len = _plen + _slen + 1;
-	char __full_lbb[__len]; __full_lbb[__len] = '\0';
-	strncpy( __full_lbb , __prev , _plen );
-	strncpy( __full_lbb , strlbb , _slen );
-
-	__bytes_written = write( book.st.lbb_fd , __full_lbb , __len );
-
-	return __bytes_written;
+char *__hallmark( hallmark *__ ) {
+	char __hal[max_str];
+	return strdup( __hal );
 }
 
-char *book_key() {
-	ulong lbb_inn = lbb_inodenum();
-	void const *__ = &lbb_inn; 
-	return ( char * ) hashof( 0 , __ , 16 );	
-}
+int lbb_append( struct lbb_si*__ , char *key , char *val ) {
+	#ifdef DEBUG
+		printf( "lbb -> \n\tadding %s :: %s\n" , key , val );
+	#endif
 
-char *book_point() {
+	const char *prev = __read( &__ -> st );
+	const char *curr = __word( key , val , ":" );
+	char total[strlen( prev ) + strlen( curr )];
+	strcpy( total , prev );
+	strcpy( total , curr );
+	int b_written = write( __ -> st.lbb_fd , total , strlen( total ) );
 	
-	
-	return ( char * ) fhash( 0 , __lbb_ext );	
+	#ifdef DEBUG
+		printf( "wrote %d bytes\n" , b_written );
+	#endif
+
+	return b_written;
 }
 
-char *book_reference() {
-	ulong lbb_inn = lbb_inodenum();
-	void const *__ = &lbb_inn; 
-	return ( char * ) hashof( 0 , __ , 4 );	
+int lbb_query( struct lbb_si*__ , char *key ) {
 }
 
 int compile_lbb( char const *rlbb , word **__words ) {
@@ -144,7 +125,7 @@ int compile_lbb( char const *rlbb , word **__words ) {
 		_k.i__size = ( intmax_t ) ( pmatch[1].rm_eo - pmatch[1].rm_so );
 		_k.k = ( char * ) __s + pmatch[1].rm_so;
 
-		// printf( "key -> \"%.*s\"\n", _k.i__size , _k.k + pmatch[1].rm_so );
+		printf( "key -> \"%.*s\"\n", _k.i__size , _k.k + pmatch[1].rm_so );
 
 		_w.e__set = ( intmax_t ) ( pmatch[2].rm_so + ( __s - rlbb ) );
 		_w.i__size = ( intmax_t ) ( pmatch[2].rm_eo - pmatch[2].rm_so );
@@ -152,14 +133,12 @@ int compile_lbb( char const *rlbb , word **__words ) {
 
 		#ifdef DEBUG
 			printf( "-------->#%d:\n", __iter );
-			printf( "offset @ :: %ld\n" , _k.e__set );
-			printf( "key :: %.*s\n" , ( int ) _k.i__size, _k.k );
-			printf( "val :: %.*s\n" , ( int ) _w.i__size , _w.k );
+			printf( "k :: %s\n" , _k.k );
+			printf( "w :: %s\n" , _w.k );
 		#endif
 
-
-		// ( *__words + __iter ) -> v = _k;
-		// ( *__words + __iter ) -> a = _w;
+		( *__words + __iter ) -> v = _k;
+		( *__words + __iter ) -> a = _w;
 
 		__s += pmatch[0].rm_eo;
 	}
@@ -172,7 +151,7 @@ int compile_lbb( char const *rlbb , word **__words ) {
 	return 0;
 }
 
-ulong little_black_book() {
+int little_black_book() {
 	printf( "current level is :: %ld\n" , level );
 	memset( &book , 0 , sizeof( struct lbb_si ) );
 
@@ -181,8 +160,8 @@ ulong little_black_book() {
 	char const *__name = *&__lbb_ext;
 	memmove( book.st.lbb_path , __name , _name_len );
 
-	printf( "struct path :: %s\n" , book.st.lbb_path );
 
+	printf( "struct path :: %s\n" , book.st.lbb_path );
 	switch ( lbb_check() ) {
 		case 0x2:	
 			#ifdef DEBUG
@@ -209,7 +188,7 @@ ulong little_black_book() {
 
 	if ( lbb_status() != 0 ) {
 		#ifdef DEBUG
-			printf( "zero on a zero kurl\n" );
+			printf( "not zero on a zero kurl\n" );
 		#endif
 			printf( "lbb status cannot be determined\n" );
 		return -1;
@@ -226,7 +205,7 @@ ulong little_black_book() {
 		printf( "lbb : fd = %d\n" , book.st.lbb_fd );
 	#endif
 
-	const char *__data = __read();
+	const char *__data = __read( &book.st );
 	unsigned long __len = strlen( __data );
 	printf( "read :: %ld bytes\n" , __len );
 	___next();
@@ -240,26 +219,46 @@ ulong little_black_book() {
 	// 	(int)(words[0].a).i__size , (words[0].a).k );
 	// #endif
 
-	return lbb_inodenum();
-}
-
-laddr lbb_entry (void const *_) {
-
-	lbb_load();
-	
-	int __lbb_size = lbb_size();
-
-	printf( "lbb size ::%d\n" , __lbb_size );
-
-	return __lbb_size;
-}
-
-
-int lbb_prompt() {
-	printf( "little black book v.1\n" );
+	lbb_close();
 	return 0;
 }
 
+laddr lbb_entry t_entry {
 
+	int tmp = little_black_book();
+	printf( "res lbb :: %d\n" , tmp );
+
+	char const *argv0 = ( char * ) _;
+
+	return __val;
+}
+
+int lbb_add_line( entry_t _l ) {
+	int x = -1;
+	if ( book.st.lbb_fd > 0 ) {
+		int x = write( book.st.lbb_fd , _l , strlen( _l )*sizeof( char ) );
+		printf( "fd : %d : wrote x :: %d bytes\n" , book.st.lbb_fd , x );
+	}
+	return x;
+}
+
+int lbb_add_hallmark(){
+	unsigned char *at_name = "@karam";
+	hallmark hm = {
+		.__k = '@',
+		.__a = ':',
+		._y_ = '0',
+		._a = at_name,
+		.n = 0,
+	};
+	printf( "\n%c%c%c%s%d\n" , \
+		hm.__k,
+		hm.__a,
+		hm._y_,
+		hm._a,
+		hm.n
+	);
+	// memset( &hm , 0 , sizeof( hallmark ) );
+}
 
 

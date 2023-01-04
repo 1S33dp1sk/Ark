@@ -27,26 +27,21 @@ char *__path_unix( char *__path , char *__filename ) {
 	return ( path_len + fname_len ) < max_path ? strcat( __path , __filename ) : NULL;
 }
 
-#ifdef __signals
-	#include <errno.h>
-	#include <sys/wait.h>
-	void sigchld_handler( int s ) {
-		// save errorno & restore
-	    // as `waitpid` might overwrite
-	    int saved_errno = errno;
+// void sigchld_handler(int s) {
+//     // waitpid() might overwrite errno, so we save and restore it:
+//     int saved_errno = errno;
 
-	    while( waitpid( -1 , NULL , WNOHANG ) > 0 );
+//     while(waitpid(-1, NULL, WNOHANG) > 0);
 
-	    errno = saved_errno;
-	}
-#endif
+//     errno = saved_errno;
+// }
 
 // get sockaddr, IPv4 or IPv6:
 void *get_in_addr( struct sockaddr *sa ) {
-	if ( sa->sa_family == AF_INET ) {
-		return &( ( ( struct sockaddr_in* ) sa )-> sin_addr );
+	if (sa->sa_family == AF_INET) {
+		return &(((struct sockaddr_in*)sa)->sin_addr);
 	}
-	return &( ( ( struct sockaddr_in6* ) sa )-> sin6_addr );
+	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
 /***
@@ -230,6 +225,8 @@ int glo_interface( struct a_idns *idns ) {
 			exit(1);
 		}
 		
+
+
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
 			close(sockfd);
 			perror("server: bind");
@@ -319,7 +316,7 @@ nai native_interface( int level ) {
 
 #ifndef native_address
 #include "../hbar/hbar.h"
-char const *native_address( int level ) {
+char *native_address( int level ) {
 	int res = -1;
 	nai __;
 	memset( &__ , 0 , sizeof( __ ) );
@@ -327,25 +324,25 @@ char const *native_address( int level ) {
 		case 0: 
 			res = uni_interface( &__.n_uni );
 			if ( res >= 0 ) {
-				return hbar( level , &__.n_uni , sizeof( struct a_inmp ) );
+				return hashof( level , &__.n_uni , sizeof( struct a_inmp ) );
 			}
 			break;
 		case 1: 
 			res = loc_interface( &__.n_loc ); 
 			if ( res >= 0 ) {
-				return hbar( level , &__.n_loc , sizeof( struct a_isok ) );
+				return hashof( level , &__.n_loc , sizeof( struct a_isok ) );
 			}
 			break;
 		case 2: 
 			res = glo_interface( &__.n_glo );
 			if ( res >= 0 ) {
-				return hbar( level , &__.n_glo , sizeof( struct a_idns ) );
+				return hashof( level , &__.n_glo , sizeof( struct a_idns ) );
 			}
 			break;
 		case 3: 
 			res = blo_interface( &__.n_blo ); 
 			if ( res >= 0 ) {
-				return hbar( level , &__.n_blo , sizeof( struct a_ibna ) );
+				return hashof( level , &__.n_blo , sizeof( struct a_ibna ) );
 			}
 			break;
 		default: 
