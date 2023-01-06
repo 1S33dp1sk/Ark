@@ -1,6 +1,5 @@
 /// what is my kurl ? \\\
 
-
 /**
 usage ::
 
@@ -8,7 +7,7 @@ usage ::
 		e.g:: kurl /home/kj/athernet 2
 
 	b.	@[point_name] 
-		e.g:: @KARAM/athernet
+		e.g:: athernet@KARAM
 
 	c.	[u_reference] || #reference 
 		e.g:: 2x194102491959120
@@ -18,10 +17,11 @@ usage ::
 #include "kurl.h"
 
 void lbb_test() {
-	printf( "book ref :: %x\n" , lbb );
+
+	printf( "book ref :: %p\n" , lbb );
 }
 
-int main( int argc ) {
+int main( int argc , char **argv ) {
 	if ( argc == 1 ) {
 		#define ik 8
 	}
@@ -35,5 +35,29 @@ int main( int argc ) {
 	char *lbb_des = pat;
 	printf( "lbb current point :: %s\n" , lbb_des );
 	int ap_lbb = p1;
-	printf( "ather point reader :: %ld\n" , ap_lbb );
+	printf( "ather point reader :: %d\n" , ap_lbb );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

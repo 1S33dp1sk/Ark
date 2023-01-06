@@ -30,13 +30,11 @@ char const *fhash( unsigned level, char const *filepath );
 ***************************************************************************
 */
 
-
-
 const char *__anet_name() {
 	char __[8];
-	sprintf( __ , "%ld" , lbb_inodenum() );
+	sprintf( __ , "%llu" , lbb_inodenum() );
 	const char *__hnet_name = hashof( 0 , __ , 8 );
-	printf( "inodenum : %ld :: %s\n" , lbb_inodenum() , __hnet_name );
+	printf( "inodenum : %llu :: %s\n" , lbb_inodenum() , __hnet_name );
 	return __hnet_name;
 }
 
@@ -47,7 +45,7 @@ const char *__hallmark( hallmark hm ) {
 
 	char __hm[__len]; __hm[__len] = '\0';
 	
-	sprintf( __hm , "%c:%ld@%s=%s" , \
+	sprintf( __hm , "%c:%lu@%s=%s" , \
 		hm.__level, \
 		hm.__num_records, \
 		hm.__address, \
@@ -254,11 +252,16 @@ laddr lbb_entry (void const *_) {
 	return __lbb_size;
 }
 
-
-int lbb_prompt() {
-	printf( "little black book v.1\n" );
-	return 0;
+void *fordax( char *key ) {
+	
+	return key;
 }
+
+
+
+
+
+
 
 
 

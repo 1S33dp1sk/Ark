@@ -1,6 +1,6 @@
 /// atherpoint \\\
 
-// #define DEBUG
+#define DEBUG
 
 
 /**
@@ -16,71 +16,72 @@
  * 
  */
 #ifndef point
-    #define __ap_name "atherpoint"
+	#define __ap_name "atherpoint"
 	#include "../probe.h"
 
-    enum __io_types {
-        __reader = 1,
-        __writers
-    };
+	enum __io_types {
+		__io_r = 1,
+		__io_ws
+	};
 
-    struct p_io {
-        unsigned io_pfd;
-                // a paticular file descriptor
-        signed long io_pid;
-                // the initating process id
-        enum __io_types io_type;
-                // the IO type, mainly will be writers
-    };
-    #define __size_p_io sizeof( struct p_io )
+	struct p_io {
+		unsigned io_pfd;
+				// a paticular file descriptor
+		signed long io_pid;
+				// the initating process id
+		enum __io_types io_type;
+				// the IO type, mainly will be writers
+	};
+	#define __size_p_io sizeof( struct p_io )
+	#define point_io struct p_io
 
-    struct point_st {
-        struct stat p_stat;
-                // the FIFO stat in the filesystem
-        struct p_io p_lbb;
-                // the point reader&executor
-        struct p_io p_annon;
-                  // annonymus point request
-    };
-    #define __size_p_st sizeof( struct point_st )
+	struct p_st {
+		struct stat p_stat;
+				// the FIFO stat in the filesystem
+		struct p_io p_known;
+				// the point reader&executor
+		struct p_io p_annon;
+				  // annonymus point request
+	};
+	#define __size_p_st sizeof( struct point_st )
+	#define point_st struct p_st
 
-    struct point_si {
-        struct point_st st;
-                // the ather point structure
-        int level;
-                // the level associated with the structure
-        void *lai;
-                // can && should be casted to a { nai } reference
-    };
-    #define __size_p_si sizeof( struct point_si )
-    #define __size_p __size_p_si
-    #define point struct point_si
+	struct p_si {
+		struct p_st st;
+				// the ather point structure
+		int level;
+				// the level associated with the structure
+		void *lai;
+				// can && should be casted to a { nai } reference
+	};
+	#define __size_p_si sizeof( struct p_si )
+	#define __size_p __size_p_si
+	#define point_si struct p_si
 
-    extern unsigned long level;
-    static char ap_name[8];
-    static struct point_si ap; 
+	extern unsigned long level;
+	static char ap_name[8];
+	static point_si ap; 
 
-    #define point_descriptors() \
-        ( ap.st.p_lbb.io_pfd > 0 ) || ( ap.st.p_annon.io_pfd > 0 ) ? 1 : 0 
+	#define point_descriptors() \
+		( ap.st.p_lbb.io_pfd > 0 ) || ( ap.st.p_annon.io_pfd > 0 ) ? 1 : 0 
 
-    #define point_exists() __file_exsits( __ap_name )
-    #define make_point atherpoint
+	#define point_exists() __file_exsits( __ap_name )
+	#define make_point atherpoint
 
+	#define is_reader ap.st.p_annon.io_pid == 0
+	#define is_writer ap.st.p_known.io_pid == 0
+	
+	#define p_writer() int _w_res = 0;\
+		do { ap.st.p_annon.io_pfd = _ap_w_entry(); _w_res = ( ap.st.p_annon.io_pfd != 0 )  } while( 0 )
 
+	#define p_reader() int _r_res = 0;\
+		do { ap.st.p_known.io_pfd = _ap_r_entry(); _r_res = ( ap.st.p_known.io_pfd != 0 ) } while( 0 )
 
-    extern int atherpoint( char ap_ref[8] );
-    int process_entry( char *_e , int _e_len );
-    int app_engine( struct p_io *engint );
-    int socket_execute( struct p_io *sexec );
-    extern int applier();
-
-
-
-
-    
-
-
-
+	extern int atherpoint( char ap_ref[8] );
+	int process_entry( char *_e , int _e_len );
+	int app_engine( point_io *engint );
+	int socket_execute( point_io *sexec );
+	extern int applier();
 #endif
 
 

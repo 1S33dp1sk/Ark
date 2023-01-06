@@ -35,12 +35,27 @@
 				// outgoing ipv4 interface address
 	#endif
 	static unsigned long level = 0;
-	static char ___next () {\
+	static void ___next () {\
 		level+=1;\
-	};
-	
+	}
+	#ifndef ulong
+		#define ulong unsigned long
+	#endif
 #endif
 
+#ifdef __macOS_get_sys_vars
+	#ifndef __macOS_x_byteorder
+		#define __macOS_x_byteorder "hw.byteorder"
+		#define __x_byteorder __byteorder 
+		#include <sys/sysctl.h>
+		int __byteorder;
+		size_t __len = sizeof( __byteorder );
+		sysctlbyname( __macOS_x_byteorder , &__byteorder , &__len , NULL , 0 );
+		printf( "byteorder :: %d\n" , __byteorder );
+	#endif
+#endif
+
+	
 #if defined( __kurl_name )
 	#ifndef __kurl__h
 		#ifndef __ap_name

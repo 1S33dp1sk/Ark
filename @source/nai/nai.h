@@ -1,5 +1,4 @@
-/// nai ? \\\
-by mrKJ
+/// nai \\\
 
 // #define DEBUG
 
@@ -109,17 +108,16 @@ cis :: prepend : `__`
      * for the different levels & { 0...3 } web types
     **/
         union __nai {
-            struct a_inmp n_uni; 
-                    // universal
-            struct a_isok n_loc; 
+            struct a_inmp __mach; 
+                    // machine
+            struct a_isok __loch; 
                     // local
-            struct a_idns n_glo; 
-                    // network
-            struct a_ibna n_blo; 
-                    // blockchain
+            struct a_idns __gloh; 
+                    // global
+            struct a_ibna __unih; 
+                    // universal
         };
         #define nai union __nai
-
     /**
     `l-addr` :: a *level* based char pointer
      * depending on the current attached level
@@ -128,14 +126,14 @@ cis :: prepend : `__`
             #ifdef __level
                 static ( char * ) stdptr laddr;
             #endif
-        
     /**
     returns ( indicator ) { fills struct `n_*interface` }
      *
     **/
         nai native_interface( int level );
-            int uni_interface( struct a_inmp *n_uni );
-            int loc_interface( struct a_isok *n_loc );
-            int glo_interface( struct a_idns *n_glo );
-            int blo_interface( struct a_ibna *n_blo );
+            int mac_interface( struct a_inmp n_mach );
+            int loc_interface( struct a_isok n_loch );
+            int glo_interface( struct a_idns n_gloh );
+            int uni_interface( struct a_ibna n_unih );
+    static nai net_interface;
 #endif

@@ -70,6 +70,11 @@
     }
 #endif
 
+
+
+
+
+
 #ifndef atherpoint
     int atherpoint( char ap_ref[8] ) {
         memmove( ap_name , ap_ref , 8 );
@@ -90,9 +95,8 @@
                 #endif
                 return -2;
             }
-            return -1;
         }
-        return ( ap.st.p_lbb.io_pfd = ( __ap_entry( ( char * ) ap_name , W_OK )  ) );
+        return 0;
     }
 #endif
 
@@ -112,7 +116,7 @@ int app_engine( struct p_io *engint ) {
     memset( &__ , 0 , sizeof( __ ) );
 
     #ifdef DEBUG
-        printf( "engint : FIFO FD = %d\n" , engint -> __fd );
+        printf( "engint : FIFO FD = %d\n" , engint -> io_pfd );
         printf( "engint :: reading from fifo\n" );
     #endif
 
@@ -133,6 +137,7 @@ int app_engine( struct p_io *engint ) {
         }
         r_bytes = 0;
     }
+    return 0x0;
 }
 #endif
 
@@ -178,44 +183,44 @@ int socket_execute( struct p_io *sexec ) {
 }
 #endif
 
-#ifndef applier
-int applier(){
-
-    struct p_io lbb_reader = ap.st.p_lbb;
-    struct p_io point_writer = ap.st.p_annon;
-
-    // get the current pid
-    lbb_reader.io_pid = getpid();
-    // fork the process for the new pid
-    if ( ( point_writer.io_pid = fork() ) == -1 ) {
-        printf( "cannot start the atherpoint :: fork\n" );
-        return 2;
-    }
-
-    // check calling process
-    if ( point_writer.io_pid == 0 ) {
-        printf( "current pid for reading :: %ld\n" , lbb_reader.io_pid );
-        // read
-        if ( ( lbb_reader.io_pid = _ap_r_entry() ) == 0 ) {
-            printf( "cannot open atherpoint for reading\n");
-            return 3;
+#ifndef p_reader
+    #define p_reader __init_reader
+    int __init_reader(){
+        point_io __reader , __writer;
+        memset( &__reader , 0 , __size_p_io );
+        memset( &__writer , 0 , __size_p_io );
+        ap.st.p_known = __reader;
+        ap.st.p_annon = __writer;
+        // get the current pid
+        __reader.io_pid = getpid();
+        // fork the process for the new pid
+        if ( ( __writer.io_pid = fork() ) == -1 ) {
+            printf( "cannot start the atherpoint :: fork\n" );
+            return -2;
         }
-        printf( "\n-#-#-# engine -#-#-#\n" );
-        return app_engine( &lbb_reader );
-    }
-    else {
-        printf( "current pid for writing :: %ld\n" , point_writer.io_pid );
-        // write
-        if ( ( point_writer.io_pfd = _ap_w_entry() ) == 0 ) {
-            printf( "cannot open atherpoint for writing\n");
-            return 3;
+        // check calling process
+        if ( is_reader ) {
+            printf( "current pid for reading :: %ld\n" , __reader.io_pid );
+            // read
+            if ( ( __reader.io_pfd = _ap_r_entry() ) == 0 ) {
+                printf( "cannot open atherpoint for reading\n");
+                return -3;
+            }
+            printf( "\n-#-#-# engine -#-#-#\n" );
+            return app_engine( &__reader );
         }
-        printf( "\n#-#-# socket executive #-#-#\n" );
-        return socket_execute( &point_writer );
+        else {
+            printf( "current pid for writing :: %ld\n" , __writer.io_pid );
+            // write 
+            if ( ( __writer.io_pfd = _ap_w_entry() ) == 0 ) {
+                printf( "cannot open atherpoint for writing\n");
+                return -3;
+            }
+            printf( "\n#-#-# socket executive #-#-#\n" );
+            return socket_execute( &__writer );
+        }
+        return 0;
     }
-
-    return 0;
-}
 #endif
 
 
