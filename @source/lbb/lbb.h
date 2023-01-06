@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifndef lbb
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -385,15 +386,18 @@ void log_sota( struct sota *s );
 =======
 /// the little black book \\\
 >>>>>>> 46ba237 (broke everything pt.2)
+=======
+/// lbb \\\
+>>>>>>> a981680 (ATHERNET v16)
 
 /**
-lbb { a.k.a little black book }
+lbb { a.k.a a little black book }
  * each consists of 3 words & they are categorized 
  * into 3 main genres with the possibility to add 
  * more of the ternary truth table
  * 
  * 
-*-1.	key	: value	
+fordax*-1.	key	 :  value	
  *
 <<<<<<< HEAD
 **/
@@ -468,17 +472,15 @@ void log_sota( struct sota *s );
 =======
  *	key:value:=address	( stores the associated key with value )
  * 
-*.0.	key = reference
+dercis*.0.	key  =  reference
  *
  *	key=value:=address	( stores the associated key with a reference )
  * 
-*+1.	key	:= address 
+attadr*+1.	key	:=  address 
  *
  *	key:=value:=address	( stores the associated key as an address )
  * 
 */
-
-
 #ifndef __lbb__h
 	/**
 	header file name&properties
@@ -489,7 +491,6 @@ void log_sota( struct sota *s );
 	// #define __lbb__h kurl > 0x7000 ? kurl&=0x0100 : kurl|=0x1111 
 	#define __lbb_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
 	#define __lbb_ext ".lbb"
-	
 	/**
 	lbb entry results 
 	 *
@@ -507,8 +508,8 @@ void log_sota( struct sota *s );
 		struct lbb_hallmark {
 			unsigned char __level;
 			unsigned long __num_records;
-			unsigned char *__address;
-			unsigned char *__keyhash;
+			char *__address;
+			char *__keyhash;
 		};
 		#define hallmark struct lbb_hallmark
 		#define __size_lbb_hallmark sizeof( struct lbb_hallmark )
@@ -540,7 +541,6 @@ void log_sota( struct sota *s );
 		};
 		#define word struct lbb_word
 		#define __size_word sizeof( struct lbb_word )
-
 	/**
 	lbb line structure
 	 *
@@ -590,14 +590,13 @@ void log_sota( struct sota *s );
 		struct lbb_si {
 			struct lbb_st st; 
 						// universal lbb descriptor via struct
-			struct seam **lbb_addrs;
+			word **lbb_addrs;
 						// the compiled and loaded lbb adddress
 			unsigned addr_count;
 						// the count of the `seam **` addresses
 		};
 		#define lbb_interface struct lbb_si
 		#define __size_lbb_si sizeof( struct lbb_si )
-
 	/**
 	initialize book
 	 *
@@ -612,7 +611,6 @@ void log_sota( struct sota *s );
 	char *book_reference();
 	char *book_key();
 	char *book_point();
-
 	/**
 	ops on book
 	 * 
@@ -623,7 +621,6 @@ void log_sota( struct sota *s );
 	extern const char *__read();
 	extern int __write( char const *__ );
 	extern int lbb_prompt();
-
 	/**
 	checkmake for lbb
 	 * 
@@ -661,9 +658,9 @@ void log_sota( struct sota *s );
 				book.st.lbb_fd
 			#define lbb_inodenum() \
 				book.st.lbb_stat.st_ino
-
-
 #endif
+
+
 
 <<<<<<< HEAD
 >>>>>>> 46ba237 (broke everything pt.2)

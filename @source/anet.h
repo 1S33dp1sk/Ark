@@ -176,12 +176,9 @@
 					if ( stat( uf_name , &st__ ) != 0 ) {
 						return NULL;
 					}
-					sprintf( __ , "%ld" , st__.st_ino );
+					sprintf( __ , "%llu" , st__.st_ino );
 				}
 			return strdup( __ );
-		}
-		void *__lb_(){
-
 		}
 		void *__lbb(){
 			return __l__( 0x0000 );
@@ -252,8 +249,8 @@ entity & sorting
 				memset( __ , 0 , __size );
 				return __;
 			}
+			return NULL;
 		}
-
 		void __free_ptr( void *__ ) {
 			free( __ );
 		}
@@ -274,13 +271,6 @@ entity & sorting
 			return strdup( __ );
 		}
 	#endif
-
-	#ifdef levels 
-		#ifndef lbb_add
-
-		#endif
-	#endif
-
 
 #endif
 

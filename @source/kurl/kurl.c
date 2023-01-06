@@ -1,6 +1,5 @@
 /// what is my kurl ? \\\
 
-
 /**
 usage ::
 
@@ -8,7 +7,7 @@ usage ::
 		e.g:: kurl /home/kj/athernet 2
 
 	b.	@[point_name] 
-		e.g:: @KARAM/athernet
+		e.g:: athernet@KARAM
 
 	c.	[u_reference] || #reference 
 		e.g:: 2x194102491959120
@@ -38,6 +37,7 @@ int main( int argc , char const *argv[] ) {
 	return 0;
 =======
 void lbb_test() {
+<<<<<<< HEAD
 	printf( "book ref :: %x\n" , lbb );
 >>>>>>> cbd7b5e (flight merge)
 }
@@ -46,6 +46,13 @@ void lbb_test() {
 >>>>>>> 1482af4 (ATHERNET v06)
 =======
 int main( int argc ) {
+=======
+
+	printf( "book ref :: %p\n" , lbb );
+}
+
+int main( int argc , char **argv ) {
+>>>>>>> fca5524 (ATHERNET v16)
 	if ( argc == 1 ) {
 		#define ik 8
 	}
@@ -59,6 +66,34 @@ int main( int argc ) {
 	char *lbb_des = pat;
 	printf( "lbb current point :: %s\n" , lbb_des );
 	int ap_lbb = p1;
+<<<<<<< HEAD
 	printf( "ather point reader :: %ld\n" , ap_lbb );
 >>>>>>> cbd7b5e (flight merge)
+=======
+	printf( "ather point reader :: %d\n" , ap_lbb );
+>>>>>>> fca5524 (ATHERNET v16)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
