@@ -154,7 +154,7 @@ int lbb_start() {
 		//You guys seriously don't expect me to be able to finish this by myself right?\\
 		412-J1123 athernet( version : start = 0x1 ) is finished **mrkj
 			#if _u_charm
-			/** 			@	   #	   
+			/** 			@	   #
 			 * address 		: att =uchar*		:=lbb{ [fd,inn] , path }
 			 * balance 		: bal =ulong			:=query( att )
 			 * charm 		: chm =char const*	:=charm
