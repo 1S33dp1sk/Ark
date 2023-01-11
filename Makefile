@@ -1,19 +1,67 @@
-misc:
-	cc @source/misc.c -o shared/programs/misc ./shared/libather.so
-	./shared/programs/misc
-	
-nothing:
+	#replace with encoding next instead of printf
 
-# `run()`ing compile will create a new version of whatever is getting \
-compiled because.
-running:
-	$_ run_check
+address:
+	@printf "att;" > @charms/.address
 
-run_anet:
-	./shared/programs/athernet
 
-run_kurl:
-	./shared/programs/kurl
+balance:
+	@printf "0" > @charms/.balance
+
+charms_:
+	att=$( address )
+	bal=$( balance )
+	chm=$( charm )
+
+charm__:
+	$_ _charms
+	$_ __charms
+	$_ charms_
+
+_charms:
+	rm -rf @charms
+
+__charms:
+	if [ ! -d "@charms" ]; then mkdir @charms; fi
+	touch @charms/.address
+	touch @charms/.balance
+	touch @charms/.charm
+
+charm:
+	@printf "\n@charm:0xkaram#\n" > @charms/.charm
+
+^digital:
+	@cat @charms/.charm
+
+digital:
+	#modules
+# 	so_athernet=
+#fifo coms
+
+execs:
+#execute c on socket
+
+
+
+
+formation:
+#hash( "left" , "right" )
+	$( c__ )shared/programs/kurl
+pre:
+	c=@
+	c__=./
+	c_bash=/bin/bash
+	cc=/usr/bin/cc
+	ch=#
+
+runs:
+	_anet=$( c__ )shared/programs/athernet
+	_kurl=$( c__ )shared/programs/kurl
+
+
+
+
+
+
 
 executables:
 	@cc @source/athernet.c -o shared/programs/athernet ./shared/libather.so

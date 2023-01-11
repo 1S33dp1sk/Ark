@@ -15,8 +15,11 @@
  * points. 
  * 
  */
-#ifndef point
-	#define __ap_name "atherpoint"
+#if point
+	#ifndef __ap_name
+		#define __ap_name "atherpoint"
+	#endif
+
 	#include "../probe.h"
 
 	enum __io_types {
