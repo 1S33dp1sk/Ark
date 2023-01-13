@@ -1,11 +1,3 @@
-/**
- * 
- * 
- * 
- * 
- * 
- */
-
 #ifndef hbar
     #define __hbar_name "hash_bar"
     #include "../probe.h"
@@ -27,24 +19,24 @@
 #define __sha3_cw( x ) ( ( x ) & ( ~__sha3_k_use_flag ) )
 
 
-typedef struct __sha3_context {
+struct __sha3_context {
     uint64_t saved;             
             // remainder of input string that we didn't consume yet
     union {                     
         uint64_t s[__sha3_k_sponge_w];
         uint8_t sb[__sha3_k_sponge_w * 8];
     } u;                        
-            // Keccak's state 
+            // keccak's state 
     unsigned byte_idx;         
             // 0..7--the next byte after the set one (starts from 0; 0--none are buffered) 
     unsigned word_idx;         
             // 0..24--the next word to integrate input (starts from 0)
     unsigned cap_words;
             // the double size of the hash output in words (e.g. 16 for Keccak 512)
-} sha3_context;
+};
 
-#define __size_sha3_ctx sizeof( struct __sha3_context )
-
+#define sha3_context struct __sha3_context
+#define __size_sha3_context sizeof( struct __sha3_context )
 static sha3_context __sha3;
 
 enum __sha3_return {
@@ -57,18 +49,20 @@ enum __sha3_flags {
     __sha3_flag_keccak__ = 1
 };
 
-typedef enum __sha3_flags sha3_config_t;
-typedef enum __sha3_return sha3_return_t;
-typedef uint32_t sfh_t;
+#define sha3_config_t enum __sha3_flags
+#define sha3_return_t enum __sha3_return
+#define sfh_t uint32_t
 
 sha3_config_t sha3_set_flags( 
     void *p, 
     sha3_config_t 
 );
+
 sha3_return_t sha3_init( 
     void *p, 
     unsigned bit_size 
 );
+
 sha3_return_t sha3_hash_buffer( 
     unsigned bit_size,   
             // 256, 384, 512 
@@ -79,26 +73,32 @@ sha3_return_t sha3_hash_buffer(
     void *out, unsigned out_bytes 
             // truncation OK 
 );
+
 sfh_t super_fast_hash( 
-    char *data , 
+    char const*data , 
     int len
 );
+
 void sha3_update( 
     void *p , 
     void const *buf_in , 
     size_t len 
 );
+
 void const *sha3_finalize( 
     void *p
 );
+
 void byte_to_hex( 
     uint8_t _, 
     char _s[3]
 );
+
 void hash_to_string( 
     char *_hstr , 
     uint8_t _ 
 );
+
 extern char const *hashof( 
     unsigned level , 
     void const *tohash , 
@@ -109,6 +109,7 @@ extern char const *fhash(
     unsigned level, 
     char const *filepath 
 );
+
 
 #define sfh( __ ) \
     super_fast_hash( __ , strlen( __ ) )
@@ -132,5 +133,8 @@ extern char const *fhash(
 
 #define sof_size( level ) \
     ( hof_size( level ) * 2  )
+
+
+
 
 #endif

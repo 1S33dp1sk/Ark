@@ -133,10 +133,10 @@ static const unsigned keccakf_piln[24] = {
 
 
 /**
-super fast hash : used in functions signature
+super fast hash : used in function signatures
  *
 **/  
-    sfh_t super_fast_hash ( char *data , int len ) {
+    sfh_t super_fast_hash ( char const*data , int len ) {
         uint32_t hash = len, tmp;
         int rem;
         if (len <= 0 || data == NULL) { return 0; }
@@ -181,8 +181,8 @@ super fast hash : used in functions signature
 
 /**
 XOR into state for keccak
- * generally called after `__sha3_k_sponge_w-ctx` -> cap_words words 
- * are XORed into the state s 
+ * generally called after `__sha3_k_sponge_w - ctx` -> cap_words words 
+ * are `XOR()` into the state `s` 
 **/
     static void keccakf( uint64_t s[25] ) {
         int i, j, round;
@@ -224,21 +224,20 @@ XOR into state for keccak
     }
 
 /**
-initiate|reset the sha3 context
- * to reset or init a sha3 ctx
+[initiate | reset] the sha3 context
 **/
     sha3_return_t sha3_init( void *priv , unsigned bit_size ) {
         sha3_context *ctx = (sha3_context *) priv;
         if( bit_size != 256 && bit_size != 384 && bit_size != 512 ) {
             return __sha3_u_n;
         }
-        memset( ctx , 0 , __size_sha3_ctx );
+        memset( ctx , 0 , __size_sha3_context );
         ctx->cap_words = 2 * bit_size / ( 8 * __size_u64 );
         return __sha3_u_ok;
     }
 
 /**
-keccak flag set|unset
+[set | unset] keccak flag
  *
 **/
     sha3_config_t sha3_set_flags( void *priv , sha3_config_t flags ) {
@@ -337,7 +336,7 @@ hash the buffer in ctx
     }
 
 /**
-simply the 'update' with the padding block.
+simply the `update()` with the padding.
  * The padding block is 0x01 || 0x00* || 0x80. First 0x01 and last 0x80 
  * bytes are always present, but they can be the same byte.
 **/
@@ -435,7 +434,7 @@ hashof str based on level
             char const *_strhash = ( char const * ) tohash;
             printf( "string to hash :: %s\n" , _strhash );
         #endif
-        int hash_size = 0 , k_flag = 0 , hashstr_len = 4;
+        unsigned hash_size = 0 , k_flag = 0 , hashstr_len = 4;
 
         switch ( level ) {
             case 0:
@@ -469,7 +468,45 @@ hashof str based on level
 
         return strdup( __hsized );
     }
+// raw 
+    uint8_t const *hashof_raw( unsigned level , void const *tohash , size_t thsize ) {
 
+        #ifdef DEBUG
+            char const *_strhash = ( char const * ) tohash;
+            printf( "string to hash :: %s\n" , _strhash );
+        #endif
+        unsigned hash_size = 0 , k_flag = 0 , hashstr_len = 4;
+
+        switch ( level ) {
+            case 0:
+                hash_size = 256;
+                break;
+            case 1:
+                hash_size = 384;
+                hashstr_len = 8;
+                break;
+            case 2:
+                hash_size = 512;
+                hashstr_len = 16;
+                break;
+            case 3:
+                k_flag = 1;
+                hash_size = 256;
+                hashstr_len = 32;
+                break;
+            default:
+                return NULL;        
+        }
+
+        char __hsized[hash_size];
+        memset( &__hsized , 0 , hash_size );
+        uint8_t *__hptr;
+
+        sha3_init( &__sha3 , hash_size );
+        sha3_set_flags( &__sha3 , k_flag );
+        sha3_update( &__sha3 , tohash , thsize );
+        return ( uint8_t * ) sha3_finalize( &__sha3 );
+    }
 /**
 hashof file
  *

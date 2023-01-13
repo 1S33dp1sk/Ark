@@ -20,7 +20,7 @@ attadr*+1.	key	:=  address
  *	key:=value:=address	( stores the associated key as an address )
  * 
 */
-#ifndef __lbb__h
+#ifndef lbb
 	/**
 	header file name&properties
 	 *
@@ -39,7 +39,7 @@ attadr*+1.	key	:=  address
 			_r_val,
 			_r_liy
 		};
-		#define laddr enum lbb_e_res
+		#define eres enum lbb_e_res
 	/**
 	lbb hallmark structure
 	 *
@@ -111,7 +111,7 @@ attadr*+1.	key	:=  address
 		struct lbb_st {
 			unsigned lbb_level;
 						// the k-level identifier  
-			int lbb_fd = 0; 
+			int lbb_fd; 
 						// main file descriptor
 						// used as an int to describe any errors 
 						// via negative signed ints
@@ -140,7 +140,7 @@ attadr*+1.	key	:=  address
 	initialize book
 	 *
 	**/
-	extern unsigned long level;
+	extern ulong level;
 	static struct lbb_si book;
 	static void *book_ref = &book;
 	#define lbb &book
@@ -154,7 +154,7 @@ attadr*+1.	key	:=  address
 	ops on book
 	 * 
 	**/
-	extern laddr lbb_entry (const void *_);
+	extern eres lbb_entry ( const void *__ , size_t __len );
 	extern const char *__hallmark( hallmark __ );
 	extern const char *__word( char *k , char *v , char *d );
 	extern const char *__read();
@@ -186,9 +186,7 @@ attadr*+1.	key	:=  address
 			#define lbb_open() \
 				do { book.st.lbb_fd = open( book.st.lbb_path , O_RDONLY ); } while ( 0 )
 			#define lbb_status() \
-				stat( book.st.lbb_path , &(book.st.lbb_stat) )
-			#define lbb_exists() \
-				lbb_status() == 0 ? book.st.lbb_fd : 0;
+				stat( book.st.lbb_path , &(book.st.lbb_stat) ) 
 			#define lbb_size() \
 				book.st.lbb_stat.st_size
 			#define lbb_siobytes() \
@@ -200,7 +198,5 @@ attadr*+1.	key	:=  address
 			#define lbb_inodenum() \
 				book.st.lbb_stat.st_ino
 #endif
-
-
 
 

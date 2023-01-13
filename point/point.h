@@ -15,11 +15,8 @@
  * points. 
  * 
  */
-#if point
-	#ifndef __ap_name
-		#define __ap_name "atherpoint"
-	#endif
-
+#ifndef point
+	#define __ap_name "atherpoint"
 	#include "../probe.h"
 
 	enum __io_types {
@@ -61,7 +58,6 @@
 	#define __size_p __size_p_si
 	#define point_si struct p_si
 
-	extern unsigned long level;
 	static char ap_name[8];
 	static point_si ap; 
 
@@ -81,10 +77,14 @@
 		do { ap.st.p_known.io_pfd = _ap_r_entry(); _r_res = ( ap.st.p_known.io_pfd != 0 ) } while( 0 )
 
 	extern int atherpoint( char ap_ref[8] );
-	int process_entry( char *_e , int _e_len );
+	int process_entry( char *p_entry , int pe_type );
 	int app_engine( point_io *engint );
 	int socket_execute( point_io *sexec );
 	extern int applier();
+
+
+
+
 #endif
 
 

@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> a415938 (kurls)
 # ather
@@ -368,6 +369,8 @@ by mr.kj
 # 
 
 
+=======
+>>>>>>> 52885d5 (c.*ather*)
 # start ATHERNET
 
 lets start with an on or off switch
@@ -407,9 +410,13 @@ which ever ones we share
 
 
 
+<<<<<<< HEAD
 # end ATHERNET
 
 
 
 # 
 >>>>>>> d0a499f (c.libather)
+=======
+# end ATHERNET
+>>>>>>> 52885d5 (c.*ather*)
