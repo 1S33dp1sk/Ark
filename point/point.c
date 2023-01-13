@@ -101,11 +101,9 @@
 #endif
 
 #ifndef process_entry
-int process_entry( char *entry , int e_len ) {
+int process_entry( char *p_entry , int pe_type ) {
 
-    printf( "entry = %d@app_engine :: \n\t%s\n" , e_len , entry );
-
-    return e_len > 10 ? 0 : 1;
+    return _ap_entry( p_entry , pe_type );    
 }
 #endif
 

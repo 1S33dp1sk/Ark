@@ -1,7 +1,7 @@
 /// what is my kurl ? \\\
 #define DEBUG
 
-#ifndef __kurl_version
+#ifndef kurl
 
 /**
 overview&def ::
@@ -20,13 +20,13 @@ the kurl version
  * the starting point of any kurl is always the version
  * 
 **/
-    #define __kurl_version 0x2
+    #define __kurl_version 0x3
 
 /**
 dependencies from probe
 **/
     #include "../probe.h"
-
+    #include "__k.h"
 
 /**
 k&urls ::
@@ -99,9 +99,9 @@ finally, the ( L )
     };
     #define __size_addr_st sizeof( struct addr_st )
     struct __l {
-    	struct h_at hat;
-    	struct addr_st addr; // address 
-    	long size; // left size
+    	struct h_at lhat; // left hash token
+    	struct addr_st laddr; // left address 
+    	long lsize; // left size
     };
     #define __size_l sizeof( struct __l )
 
@@ -164,6 +164,12 @@ kurling ::
                 break; \
         }
     }
+
+    extern int kurl_i( void * );
+    extern int kurl_ii( void * );
+    extern int kurl_iii( void * );
+    extern int kurl_iv( void * );
+    extern int kurl( void * );
 
 #endif
 

@@ -49,15 +49,16 @@ int _kurl_0() {
 			break;
 	}
 
+	
+
+
+	
+
+
 
 	printf( "result of check lbb :: %d\n" , __check_lbb );
 	
+	
+
 }
-
-
-
-
-
-
-
 

@@ -117,57 +117,49 @@ int compile_lbb( char const *rlbb , word **__words ) {
 
 	char const *__s = rlbb;
 	regex_t     regex;
-	regmatch_t  pmatch[3];
+	regmatch_t  pmatch[2];
 	regoff_t    k_off, v_off , k_len , v_len;
 
-	#ifdef DEBUG
-		printf("lbb>compiling\n");
-	#endif
+	printf("lbb : raw => \n------>\n%s<------\n", __s);
+
 	if ( regcomp( &regex , __lbb_regex , REG_NEWLINE ) ) {
 		return 1;
 	}
 
-	kei _k , _w;
+	printf( "regex compiled\n" );
+
 	int __iter = 0;
 
-	for ( ; ; __iter++ ) {
+	kei _at , _addr;
 
+
+	for ( ; ; __iter++ ) {
+		
 		if ( regexec( &regex, __s , arr_size( pmatch ) , pmatch , 0 ) ) {
 			break;
 		}
-		memset( &_k , 0 , sizeof( _k ) );
-		memset( &_w , 0 , sizeof( _w ) );
 
-		_k.e__set = ( intmax_t ) ( pmatch[1].rm_so + ( __s - rlbb ) ); 
-		_k.i__size = ( intmax_t ) ( pmatch[1].rm_eo - pmatch[1].rm_so );
-		_k.k = ( char * ) __s + pmatch[1].rm_so;
-
-		// printf( "key -> \"%.*s\"\n", _k.i__size , _k.k + pmatch[1].rm_so );
-
-		_w.e__set = ( intmax_t ) ( pmatch[2].rm_so + ( __s - rlbb ) );
-		_w.i__size = ( intmax_t ) ( pmatch[2].rm_eo - pmatch[2].rm_so );
-		_w.k = ( char * ) __s + pmatch[2].rm_so;
-
-		#ifdef DEBUG
-			printf( "-------->#%d:\n", __iter );
-			printf( "offset @ :: %ld\n" , _k.e__set );
-			printf( "key :: %.*s\n" , ( int ) _k.i__size, _k.k );
-			printf( "val :: %.*s\n" , ( int ) _w.i__size , _w.k );
-		#endif
+		memset( &_at , 0 , __size_kei );
+		memset( &_addr , 0 , __size_kei );
 
 
-		// ( *__words + __iter ) -> v = _k;
-		// ( *__words + __iter ) -> a = _w;
+		printf( "match (%d) >\n", __iter );
+
+		k_off = pmatch[1].rm_so + (__s - rlbb);
+		k_len = pmatch[1].rm_eo - pmatch[1].rm_so;
+
+		printf( "\tkey (offset) = %jd; key (length) = %jd\n", (intmax_t) k_off , (intmax_t) k_len);
+		printf( "\tkey -> \"%.*s\"\n", k_len , __s + pmatch[1].rm_so );
 
 		__s += pmatch[0].rm_eo;
 	}
-
 	regfree( &regex );
-	#ifdef DEBUG
-		printf("lbb>compiled\n");
-	#endif
 
-	return 0;
+	if ( !__iter ) {
+		printf( "no matches found.\n" );
+	}
+
+	return __iter;
 }
 
 ulong little_black_book() {
@@ -187,14 +179,12 @@ ulong little_black_book() {
 				printf( "-2) no lbb found, making one.\n" );
 			#endif
 			lbb_make();
-			___next();
 			break;
 		case 0x1:
 			#ifdef DEBUG
 				printf( "-2) lbb found, loading.\n" );
 			#endif
 			lbb_open();
-			___next();
 			break;
 		default:
 			break;
@@ -227,7 +217,6 @@ ulong little_black_book() {
 	const char *__data = __read();
 	unsigned long __len = strlen( __data );
 	printf( "read :: %ld bytes\n" , __len );
-	___next();
 
 
 	int compilation_res = compile_lbb( __data , &words );
@@ -241,7 +230,7 @@ ulong little_black_book() {
 	return lbb_inodenum();
 }
 
-laddr lbb_entry (void const *_) {
+eres lbb_entry ( void const *__ , size_t __len ) {
 
 	lbb_load();
 	
@@ -252,10 +241,6 @@ laddr lbb_entry (void const *_) {
 	return __lbb_size;
 }
 
-void *fordax( char *key ) {
-	
-	return key;
-}
 
 
 
