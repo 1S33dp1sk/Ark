@@ -1,8 +1,11 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #################################
 #			Base-26				#
 #################################
 =======
+=======
+>>>>>>> 3a19bfb (source alpha(bet))
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -49,6 +52,9 @@ charms:
 <<<<<<< HEAD
 
 <<<<<<< HEAD
+=======
+
+>>>>>>> 9946481 (source alpha(bet))
 #ather processor := _u_charm 
 a:=att#address
 b:=bal#balance
@@ -77,6 +83,7 @@ x:=xlv#xolve
 y:=ybs#ybase
 z:=zai#zai
 
+<<<<<<< HEAD
 =======
 misc:
 	cc @source/misc.c -o shared/programs/misc ./shared/libather.so
@@ -1318,3 +1325,5 @@ clean_bindir:
 >>>>>>> x/master
 # \
 mr. karam jaber.
+=======
+>>>>>>> 9946481 (source alpha(bet))
