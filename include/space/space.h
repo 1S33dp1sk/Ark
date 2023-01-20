@@ -1,0 +1,2 @@
+
+#define $space "./.space"
