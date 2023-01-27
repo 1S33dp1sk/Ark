@@ -1,17 +1,4 @@
 /// lenk \\\
-left-to-right encoding num(k)
-
-<<<<<<< HEAD:.@/source/in/enk.h.in
-// #include <stdio.h>
-// #include <stdarg.h>
-// #include <string.h>
-// #include <ctype.h>
-// #include <stdint.h>
-
-#ifndef __enk_name
-    #define __enk_name "encoding_number_k"
-    #include "probe.h"
-=======
 
 #ifndef lenk
 
@@ -22,7 +9,6 @@ left-to-right encoding num(k)
     #include <stdint.h>
 
     extern int pack_unpack_test();
->>>>>>> bba6d70 (including all sourcery (src_*) files):src_in/lenk.h.in
 
     #define packi16 pack_i_16
     #define packi32 pack_i_32
@@ -45,55 +31,30 @@ left-to-right encoding num(k)
     #define unpack754_32( i ) ( unpack754( ( i ) , 32 , 8 ) )
     #define unpack754_64( i ) ( unpack754( ( i ) , 64 , 11 ) )
 
+
+
+
     // 16 bit integer
-    #define packu16(ubuf,num) (enc_unum(1,ubuf,num))
     void pack_i_16( unsigned char *buf , unsigned int i ) {
 
     	*buf++ = i >> 8; *buf++ = i;
     }
     // 32 bit integer
-    #define packu32(ubuf,num) (enc_unum(3,ubuf,num))
     void pack_i_32( unsigned char *buf , unsigned long int i ) {
 
     	*buf++ = i>>24;	*buf++ = i>>16;
     	*buf++ = i>>8;	*buf++ = i;
     }
     // 64 bit integer
-    #define packu64(ubuf,num) (enc_unum(7,ubuf,num))
     void pack_i_64( unsigned char *buf , unsigned long long int i ) {
     	*buf++ = i>>56;	*buf++ = i>>48;
     	*buf++ = i>>40;	*buf++ = i>>32;
     	*buf++ = i>>24; *buf++ = i>>16;
-    	*buf++ = i>>8;  *buf++ = i;	
-    }
-
-    void enc_unum( ulong base , uchar *buf , ulong i ) {
-        while ( base > 0 ) {
-            *buf++ = i >> (8*base);
-            base--; 
-        }
-        *buf++ = i;
-    }
-
-    void enc_brnum( ulong base , ulong roof , uchar *buf , ulong *i ) {
-        for(ulong iter=0; roof-iter>0; iter++){
-            while ( base > 0 ) {
-                *buf++ = i[iter] >> (8*base);
-                base--;
-            }
-            *buf++= i[iter];
-        }
+    	*buf++ = i>>8; *buf++ = i;	
     }
 
     void pack_i_128( unsigned char *buf , unsigned long long int x[2] ) {
-        *buf++ = x[0]>>56 ; *buf++ = x[0]>>48;
-        *buf++ = x[0]>>40 ; *buf++ = x[0]>>32;
-        *buf++ = x[0]>>24  ; *buf++ = x[0]>>16;
-        *buf++ = x[0]>>8  ; *buf++ = x[0]; 
-        *buf++ = x[1]>>56  ; *buf++ = x[1]>>48;
-        *buf++ = x[1]>>40  ; *buf++ = x[1]>>32;
-        *buf++ = x[1]>>24  ; *buf++ = x[1]>>16;
-        *buf++ = x[1]>>8   ; *buf++ = x[1]; 
+        
     }
 
     // floating nums
@@ -137,7 +98,7 @@ left-to-right encoding num(k)
         **
         **  (16-bit unsigned length is automatically prepended to strings)
     */ 
-    unsigned int pack( unsigned char *buf , char const*format , ... ) {
+    unsigned int pack( unsigned char *buf , char *format , ... ) {
         va_list ap;
 
         signed char c;              // 8-bit
@@ -202,7 +163,7 @@ left-to-right encoding num(k)
             case 'L': // 32-bit unsigned
                 size += 4;
                 L = va_arg(ap, unsigned long int);
-                packu32(buf, L);
+                packi32(buf, L);
                 buf += 4;
                 break;
 
@@ -216,7 +177,7 @@ left-to-right encoding num(k)
             case 'Q': // 64-bit unsigned
                 size += 8;
                 Q = va_arg(ap, unsigned long long int);
-                packu64(buf, Q);
+                packi64(buf, Q);
                 buf += 8;
                 break;
 
@@ -369,7 +330,7 @@ left-to-right encoding num(k)
         **  (string is extracted based on its stored length, but 's' can be
         **  prepended with a max length)
     */
-    void unpack( unsigned char *buf , char const*format , ... ) {
+    void unpack( unsigned char *buf , char *format , ... ) {
         va_list ap;
 
         signed char *c;              // 8-bit
@@ -488,17 +449,4 @@ left-to-right encoding num(k)
         va_end(ap);
     }
 
-    int sendall( int s , char *buf , int *len ) {
-        int total = 0;        // how many bytes we've sent
-        int bytesleft = *len; // how many we have left to send
-        int n;
-        while( total < *len ) {
-            n = send( s , buf+total , bytesleft , 0 );
-            if ( n == -1 ) { break; }
-            total += n;
-            bytesleft -= n;
-        }
-        *len = total; // return number actually sent here
-        return n==-1?-1:0; // return -1 on failure, 0 on success
-    }
 #endif
