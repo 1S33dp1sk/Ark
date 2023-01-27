@@ -1,0 +1,39 @@
+#
+
+__get_ext() {
+	_fext=$_fname
+	__ftext=".${_fext#*.}"
+	if [ -z $__ftext ]; then __ftext="<lbb>"; fi;
+	printf "&-> $__ftext\n"
+}
+
+__general() {
+	echo "general__" > general
+	echo "wai :: $(whoami)" >> general 		# username
+	echo "pwd :: $(pwd)" >> general 		# workingdir
+	echo "run :: $_basename" >> general 	# executing script name
+	echo "att :: $_diratt" >> general		# directory pointer att
+	echo "ext :: $__ftext" >> general		# file extention is 
+	echo "__general" >> general;
+}
+
+__lbb(){
+	printf "diratt :: $_diratt\n";
+	printf "basena :: $_basename\n";
+	printf "fexten :: $__ftext\n";
+	if [ -f $_basename ] || [ -f $__ftext ]; then __general; else __basename; fi;
+}
+
+__basename(){
+	if [[ $_diratt == *"../../../"* ]]; then return 3; else
+	_diratt="../$_diratt"; __ftext="$_diratt$__ftext"
+	_basename="$_diratt$_basename"; __lbb;
+	fi;
+}
+
+_fname=$0
+__get_ext
+_diratt=""
+_basename=$(basename $_fname) # script name 
+__basename
+
