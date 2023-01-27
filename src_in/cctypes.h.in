@@ -1,0 +1,236 @@
+// TODO :: convert to strict bytes instead of arpa/inet
+
+
+
+
+/**
+ * defining some common variables based on `__sa__` valz
+**/
+#define MAX_STR @__slot_1@
+#define HASH_SIZE @__slot_0@
+#define MAX_PATH @__slot_3@
+#define MAX_FILE @__slot_4@
+#define PATH_LENGTH MAX_PATH
+#define PORT_ACCEPT "9999"
+
+// (annon structure) a_info 
+struct a_info {    
+    uchar _name[MAX_STR-1];
+    uchar af_path[MAX_PATH-1];
+    uchar *prefered_coms;
+    union _a_type {
+        uchar *__ip; // support both ipv4 && ipv6
+        uchar *__str; // whatever the name is
+        struct sockaddr_storage *__soc;
+    } a_type;
+#define a_ip a_type.__ip
+#define a_str a_type.__str
+#define a_socket a_type.__soc;
+    uchar *cur_coms;
+    uchar con_status; // e(xists) n(o_def)
+    uchar *__defcall;
+};
+
+// Call : __npr
+struct __npr {
+    uchar *__name;
+    uchar const **__args;
+    ulong __ref;
+};
+
+// FileData : b2data {base 2 data}
+struct __b2data {
+    uint32_t __hash;
+    ulong __size;
+    uchar __name[MAX_STR];
+    uchar __registery[HASH_SIZE];
+    uchar __contents[MAX_FILE];
+};
+
+// Path : __path 
+    /**
+     * in order to be able to get the full 
+     * nav system and build paths correctly 
+     * we will utilize the `PATH` structure.
+    */
+struct __path {
+    uchar __node[MAX_STR]; // connc reference
+    uchar __name[MAX_STR]; // entry
+    uchar __main[MAX_LEN]; // private current path (unix)
+    uchar __home[MAX_LEN]; // public current path (mor)
+    uchar __wd[MAX_STR]; // the name of the current dir
+    uchar __pub[MAX_LEN]; // the full path for the public `@`
+};
+
+// Entry : __entry
+struct __entry {
+    uchar __depth;
+    uchar __res;
+    uchar *__exec;
+    uchar __ctx[MAX_PATH];
+};
+
+// Elems : __elements
+struct __elements {
+    uchar __path[MAX_STR];
+    uchar __call[MAX_LEN];
+    uchar __connc[MAX_STR];
+    uchar __entry[MAX_FILE];
+};
+
+// Connc : __connc
+struct __connc {
+    struct __b2data* *filedata;
+    ulong _n_files;
+    uchar **__dirs;
+    ulong _n_dirs;
+    ulong __total;
+    ulong __hashd; // _hash(disposable) || reusable || masterhash || etx...
+};
+
+// Protocol : __protocol
+struct __protocol {
+    uchar _diff; // 1 byte
+    ulong _len , _size , _select; // 2bytes each
+    uchar *_name , *_bin , *_type; // string
+    ulong _selector; // 8 bytes
+};
+
+// Ather : __fieldlock
+struct __fieldlock {
+    struct __npr *cnpr;
+    struct __path *path;
+    struct __connc *kconnc;
+    struct __entry *rentry;
+    struct __b2data *fwrap;
+};
+
+// nameproto : __net_ac
+    // 
+    // linux - #man getaddrinfo
+    // GNU LICENSE
+    // getaddrinfo( node , serv , hints , res )
+    // struct addrinfo {
+    //    int              ai_flags;
+    //    int              ai_family;
+    //    int              ai_socktype;
+    //    int              ai_protocol;
+    //    socklen_t        ai_addrlen;
+    //    struct sockaddr *ai_addr;
+    //    char            *ai_canonname;
+    //    struct addrinfo *ai_next;
+    // };
+// `getaddrinfo` is used here.
+enum __net_ac {
+    NAC_MOR, 
+    NAC_ANY = AF_UNSPEC,
+    NAC_INET6 = AF_INET6,
+    NAC_INET = AF_INET,
+    NAC_LES
+};
+
+// typeproto : __ac_t
+struct __ac_t {
+    enum __net_ac __nac;
+    uchar __addr[INET6_ADDRSTRLEN];
+    uchar *__node;
+    uchar *__serv;
+    struct addrinfo *__hints;
+    struct addrinfo *__res;
+};
+
+// Found : _sm_found (sizeof(memory))
+enum _sm_found {
+    _A_DIR,
+    _A_DIRFILE,
+    _A_FILE,
+    _A_FILEDIR,
+};
+// Type : _np_type (network_point(type))
+enum _np_type {
+    _NP_MPUB,
+    _NP_LPUB,
+    _NP_LPVT,
+    _NP_N
+};
+
+// Commands : _fh_name (fast_hash(name))
+enum _fh_name {
+    _FH_PATH = 0x97e82973,
+    _FH_CALL = 0x47622221,
+    _FH_CONNC = 0xa7155072,
+    _FH_ENTRY = 0xd3e74f0f,
+    _FH_LES = 0x350647ed,
+    _FH_MOR = 0x9eefc5c9,
+    _FH_ADDR = 0x7ce4b62e,
+    _FH_CONF = 0x5cdac004
+};
+
+// Elements : _fl_name (fast_level(name))
+enum _fl_name {
+    _FL_PATH = 0x14e02e2c,
+    _FL_CALL = 0xb6f92096,
+    _FL_CONNC = 0x6e5dc94a,
+    _FL_ENTRY = 0x11216bb,
+    _FL_ADDR,
+    _FL_CONF,
+};
+
+// Call : ter_call (ternary(call))
+struct ter_call {
+    uchar __dis[MAX_FILE]; // display
+    ulong __at;
+    ulong __v;
+};
+
+// Vecf : _vecf_ap
+struct _vecf_ap {
+    ulong __c;
+    ulong __ver;
+    ulong __flag;
+    ulong __found;
+    ulong __execs;
+};
+
+// n_status : _ms_stat (memory_size(stat))
+enum _ms_stat {
+    _MS_NODEF, 
+    _MS_BUSY,
+    _MS_ABLE,
+    _MS_ATT
+};
+
+// a_call : _a_call
+struct _a_call {
+    ulong _ch_name;
+    ulong _ch_content;
+};
+
+// a_path : _a_path
+struct _a_path {
+    union {
+        uchar *__name;
+        uchar *__ipstr;
+    } _resolved_name;
+#define apr_name _resolved_name.__name
+#define apr_ipstr _resolved_name.__ipstr;
+};
+
+
+
+// 0 if resolved to `ip`
+// 1 if error
+ulong find_ip_address( uchar *hostname , uchar *hostipaddr );
+void *get_in_addr( struct sockaddr *_s_addr );
+ulong _check_entry_head( char *entry_name );
+void get_in_dir( char *base_path , a_info *path_dir );
+ulong _make_entry_ctx( char *_entry , struct __entry *__entry__ );
+void exec( struct __entry *__entry__ );
+uchar *entry( char *_entry , struct __entry *__entry__ );
+
+int _pathify( Ather *_ );
+int _check_dir_ft( char *base_path , struct dirent *dir_entry , struct __connc *connc );
+int connect_path( struct __path *path , struct __connc *connc );
+
+void unpack__( uchar *__ , char *__fmt , struct __protocol *p );
+ulong __pack( uchar *__ , char *__fmt , struct __protocol *p );
