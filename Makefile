@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # 
 #####################################
 #			Shell/@net				#
@@ -769,3 +770,17 @@ _check_compile:
 mr. karam jaber.
 >>>>>>> old_att/machine
 >>>>>>> c76d630 (adding aethernet @)
+=======
+aether:
+	@cp packages/aether .
+	@chmod u+x aether*
+	@./aether init -f true
+	@gcc packages/parsers/CONF/config_reader.c packages/parsers/CONF/reader.c -o Aether/bin/reader
+	@gcc packages/parsers/JSON/json_parser.c packages/parsers/JSON/parser.c -o Aether/bin/parser
+
+clean:
+	@./aether purge
+	@rm -rf aether*
+	@rm -rf reader
+	@rm -rf parser
+>>>>>>> 339b2b4 (reconfigure and arrange the structure of the dApp backend essentially. Most of these scripts and calls are client side executions && (EVM) compatible smart contracts for solidity >= 0.8.0.)

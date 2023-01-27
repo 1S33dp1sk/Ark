@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> a415938 (kurls)
 # ather
@@ -115,6 +116,9 @@ Furthermore, if we consider the grand scheme of things, we can speculate that if
 =======
 # 0xAether|0xA
 >>>>>>> d133a7a (Aether)
+=======
+# 0xAether|0xA
+>>>>>>> 339b2b4 (reconfigure and arrange the structure of the dApp backend essentially. Most of these scripts and calls are client side executions && (EVM) compatible smart contracts for solidity >= 0.8.0.)
 
 __Welcome to 0xA, the on-chains blockchain, by AetherLabs.__
 
@@ -150,8 +154,11 @@ in the instalation directory to initiate a generic version of Aether.
 #### Configure Aether
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> eb99d6a (0xather)
 =======
+=======
+>>>>>>> 339b2b4 (reconfigure and arrange the structure of the dApp backend essentially. Most of these scripts and calls are client side executions && (EVM) compatible smart contracts for solidity >= 0.8.0.)
 Configurations for Aether is customizable to fit different needs, from testing to production to node-instance running. To define the default enviroment setup, you can run:    
 ```shell
 aether setup
@@ -230,6 +237,7 @@ aether status
     run  `./aether script -s write.ts -d TN1`
 
 6.  Read the variables again using step 4
+<<<<<<< HEAD
     run `./aether script -s read.ts`
 >>>>>>> d133a7a (Aether)
 =======
@@ -462,3 +470,6 @@ which ever ones we share
 >>>>>>> 52885d5 (c.*ather*)
 =======
 >>>>>>> 4f65147 (initial athernet structure including kurling , probing & builder for simple first stage rollout)
+=======
+    run `./aether script -s read.ts`
+>>>>>>> 339b2b4 (reconfigure and arrange the structure of the dApp backend essentially. Most of these scripts and calls are client side executions && (EVM) compatible smart contracts for solidity >= 0.8.0.)
