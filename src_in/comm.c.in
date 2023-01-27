@@ -1,0 +1,46 @@
+/// \\\
+
+#include "@__ccc_header@"
+#include <unistd.h>
+#include <stdio.h>
+static int __lbb_fds[2] = {0x9999,0xf0f0};
+int super() {
+	return pipe(__lbb_fds);
+} 
+unsigned long long lbb_make(){
+	unsigned char __cwd[__sa__dsls], *_cwd=getcwd(__cwd,__sa__dsls);
+	printf("%s\n",_cwd);
+	/**
+	 * since we are using the most basic version of `unistd` 
+	 * set the initial struct fds to certain numbers as the 
+	 * behavior of `pipe()` does not modifiy the values on failure.
+	 */
+	int super_res = super();
+	printf("result of super :: %d\n",super_res);
+	unsigned long r,w;
+	r = __lbb_fds[0]; w = __lbb_fds[1];
+	if ( ( r == 0x9999 ) || ( w == 0xf0f0 ) ) {
+		return 0;
+	}
+	#define __lbb_r_fd __lbb_fds[0]
+	printf( "descriptor for reading :: %ld || %d\n",r,__lbb_r_fd);
+	#define __lbb_w_fd __lbb_fds[1]
+	printf( "descriptor for writing :: %ld || %d\n",w,__lbb_w_fd);
+	unsigned long long rw__ = 0;
+	rw__ >> __lbb_fds[0]; rw__ >> __lbb_fds[1];
+	return rw__; 
+}
+
+unsigned long lbb_files() {
+	
+}
+
+#define lbb_checkmake \
+	access( "@__lbb_fname@" , 1 ) != 0 ? lbb_make() : 1 
+
+int main( void ) {
+	lbb_checkmake;
+	close(__lbb_w_fd);
+	close(__lbb_r_fd);
+	return 0;
+}

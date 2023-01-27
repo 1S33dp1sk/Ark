@@ -1,5 +1,3 @@
-
-
 /** supposedly the window handler **/
 
 typedef enum { __white , __black , __grey , __purple } Colors;

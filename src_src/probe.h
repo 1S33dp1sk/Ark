@@ -1,42 +1,40 @@
-/// probe \\\
+///probe\\\
 
 #ifndef __probe__h
-	#define __probe__h "alph_@pkgversion@"
-	#define __probe_h "@pkgname@_mrkj"
+	#define __probe__h "p0x0001"
+	#define __probe_h "@hernet"
 	#define __probe_version 0x0001
 	#define __probe_cs__ 0x0700
 	#ifdef __probe_cs__
 		// can convert to network & host byte order via byte definition
 		#define arr_size( _ ) ( sizeof( _ ) ) / ( sizeof( ( _ )[0] ) )
-		// nai_max : __yb_max_y 
-		#define __yb_max_y @MAX_SLOTS@
-				// supported natives < 1 ... 9 >
-		#define bid_max 3
+				// get the size of array. does not support char *s, but can be easily extended to match '\0'
+		#define nai_max 0x3
+				// supported natives < 0 , 1 , 2 , 3 >
+		#define bid_max nai_max
 				// blockchain identitfer must be 3 characters
-		#define max_path @__slot_size__3@
+		#define max_path 0x1000
 				// maximum for os dependent path is 4096 bytes 
-		#define mpath_max @__slot_size__2@
+		#define mpath_max 0x200
 				// mount path must be less than 512 bytes
-		#define max_str @__slot_size__1@
+		#define max_str 0x100
 				// maximum consumable length for a misc string 
 		#define baddr_max max_str
 				// blockchain address is 256 bytes max
 		#define dstr_max max_str
 				// {sub,named,toplevel} domain must be less than 128 bytes each
-		#define __s_alias "@__addr_alias__@"
-				// localhost ipv4 loopback interface unix alias
-		#define __s_local "@__addr_loc__@"
+		#define s_local "127.0.0.1"
 				// localhost ipv4 loopback interface address
-		#define __s_localv6 "::1"
+		#define s_local_alias "localhost"
+				// localhost ipv4 loopback interface unix alias
+		#define s_localv6 "::1"
 				// localhost ipv6 shorthand loopback interface  
-		#define __s_local2v6 "0:0:0:0:0:0:0:1"
+		#define s_local2v6 "0:0:0:0:0:0:0:1"
 				// localhost ipv6 loopback interface address
-		#define __s_global "0.0.0.0"
+		#define s_global "0.0.0.0"
 				// outgoing ipv4 interface address
 	#endif
-#ifndef ulong
-	#define ulong unsigned long
-#endif
+
 	static ulong level = 0;
 #endif
 
@@ -62,7 +60,7 @@
  * arpa/inet.h
 **/
 
-#ifdef __anet_name
+#if defined( __anet_name )
 	#ifndef __anet__h
 		#include <unistd.h>
 		#include <stdlib.h>
@@ -74,7 +72,7 @@
 	#endif
 #endif
 
-#ifdef __nai_name
+#if defined( __nai_name )
 	#ifndef __nai__h
 		#include <unistd.h>
 		#include <stdlib.h>
@@ -87,25 +85,7 @@
 	#endif
 #endif
 
-#ifdef __netpoint_name
-	#ifndef __netpoint__h 
-		#include <stdio.h>
-	    #include <stdlib.h>
-	    #include <sys/wait.h>
-		#include <sys/select.h>
-		#include <sys/types.h>
-		#include <sys/socket.h>
-	    #include <signal.h>
-	    #include <netinet/in.h>
-	    #include <errno.h>
-		#include <netdb.h>
-		#include <arpa/inet.h>
-	    #include <string.h>
-		#define __netpoint__h 1
-	#endif
-#endif
-
-#ifdef __ap_name
+#if defined( __ap_name )
 	#ifndef __point__h
 		#include <unistd.h>
 		#include <stdio.h>
@@ -116,7 +96,7 @@
 	#endif
 #endif
 
-#ifdef __hbar_name
+#if defined( __hbar_name )
 	#ifndef __hbar__h
 		#include <unistd.h>
 		#include <stdlib.h>
@@ -131,7 +111,7 @@
 	#endif
 #endif
 
-#ifdef __lbb_name
+#if defined( __lbb_name )
 	#ifndef __lbb__h
 		#include <unistd.h>
 		#include <stdint.h>
@@ -139,19 +119,18 @@
 		#include <string.h>	
 		#include <regex.h>
 		#include <fcntl.h>
-		#include <ifaddrs.h>
 		#include <sys/types.h>
 		#include <sys/stat.h>
 		#define __lbb__h 1
 	#endif
 #endif
 
-#ifdef __enti_name
+#if defined( __enti_name )
 	#include <stdlib.h>
 	#include <stdio.h>
 #endif
 
-#ifdef __kurl_name
+#if defined( __kurl_name )
 	#ifndef __kurl__h
 		#ifndef __ap_name
 			#include "point/point.h"
@@ -170,22 +149,72 @@
 #endif
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// /**
 // improv : add GNU|OS dependent MAX LIMITS
-	// **/
-	// #if ( !defined( aliaslist ) && !defined( lvl_st )  )
-	// 	#define lvl_st struct level_aliases
-	// 	struct level_aliases {
-	// 		unsigned lnum;
-	// 		char *lname;
-	// 		char *lnetname;
-	// 	} __aliaslist[] = { 
-	// 		{	0 ,	"mac"		, "localhost"	},
-	// 		{	1 ,	"point"		, "athernet"	},
-	// 		{	2 ,	"global"	, "internet"	},
-	// 		{	3 ,	"blockchain", "network"	}
-	// 	};
-	// #endif
-	// #define aliaslist __aliaslist
+// **/
+// #if ( !defined( aliaslist ) && !defined( lvl_st )  )
+// 	#define lvl_st struct level_aliases
+// 	struct level_aliases {
+// 		unsigned lnum;
+// 		char *lname;
+// 		char *lnetname;
+// 	} __aliaslist[] = { 
+// 		{	0 ,	"agent"	, "hostnet"		},
+// 		{	1 ,	"local"	, "intranet"	},
+// 		{	2 ,	"globe"	, "internet"	},
+// 		{	3 ,	"block"	, "chainnet"	}
+// 	};
+// #endif
+// #define aliaslist __aliaslist
 
 // #define __kurl__( __ ) \
 	// 		do {\
@@ -209,23 +238,24 @@
 	// 	#define nin ( ( long ) ( -1&0xf000000000000000 ) )
 	// 	#define pin ( ( long ) ( +1|0x0111111111111111 ) )
 
+
 // #ifndef __kurl_probe__
-	// 	#define __kurl_probe__ upgrade_probe
-	// 	#define url_r( u_ ) u_ > nin ? 1 : 0
-	// 	#define url_l( u_ ) u_ < pin ? 1 : 0
-	// 	#define url__( __ ) __ == nin ? -1 : __ == pin ? 1 : 0
-	// 	#define levelof( __ ) sizeof( __ ) == sizeof( int ) ? \
-	// 		0 : sizeof( __ ) == sizeof( long ) ? \
-	// 		1 : sizeof( __ ) == sizeof( long long ) ? \
-	// 		2 : sizeof( __ ) > sizeof( long long ) * 2 ? \
-	// 		3 : 0
-	// 	#define decode_probe( p__ ) p__>>1
-	// 	#define upgrade_probe( p__ ) p__ == 0x0001 ? \
-	// 			p__|= 0x0010 : p__ == 0x0011 ? \
-	// 			p__|= 0x0100 : p__ == 0x0111 ? \
-	// 			p__|= 0x1000 : p__ == 0x1111 ? \
-	// 			p__&= 0x0000 : 0
-	// #endif
+// 	#define __kurl_probe__ upgrade_probe
+// 	#define url_r( u_ ) u_ > nin ? 1 : 0
+// 	#define url_l( u_ ) u_ < pin ? 1 : 0
+// 	#define url__( __ ) __ == nin ? -1 : __ == pin ? 1 : 0
+// 	#define levelof( __ ) sizeof( __ ) == sizeof( int ) ? \
+// 		0 : sizeof( __ ) == sizeof( long ) ? \
+// 		1 : sizeof( __ ) == sizeof( long long ) ? \
+// 		2 : sizeof( __ ) > sizeof( long long ) * 2 ? \
+// 		3 : 0
+// 	#define decode_probe( p__ ) p__>>1
+// 	#define upgrade_probe( p__ ) p__ == 0x0001 ? \
+// 			p__|= 0x0010 : p__ == 0x0011 ? \
+// 			p__|= 0x0100 : p__ == 0x0111 ? \
+// 			p__|= 0x1000 : p__ == 0x1111 ? \
+// 			p__&= 0x0000 : 0
+// #endif
 
 
 

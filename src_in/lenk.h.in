@@ -1,13 +1,6 @@
 /// lenk \\\
 left-to-right encoding num(k)
 
-#ifndef ulong
-    #define ulong unsigned long
-#endif
-#ifndef uchar
-    #define uchar unsigned char
-#endif
-
 
 #ifndef lenk
 
@@ -496,6 +489,4 @@ left-to-right encoding num(k)
         *len = total; // return number actually sent here
         return n==-1?-1:0; // return -1 on failure, 0 on success
     }
-
-
 #endif
