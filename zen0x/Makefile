@@ -35,7 +35,7 @@ __zen:=${_active}/${_zen}
 #endif
 
 
-Z-edp:
+Z-edpur:
 
 
 zidx: libather
