@@ -20,7 +20,7 @@
 // #define __ter_file ".lbb"
 // #define __te_read 	"/path/to/.lbb"
 
-// #define __lb_b "c@lbb"
+// #define __lb_b "c@lbb#n"
 
 // #include "utypes.h"
 // #include <stdio.h>
