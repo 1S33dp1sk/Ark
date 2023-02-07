@@ -1,27 +1,58 @@
 /// points \\\
 
-#include "utypes.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/stat.h>
+#define __AP_NAME 1
+
+#ifndef __APOINTS__H
+	#include "utypes.h"
+	#include <unistd.h>
+	#include <stdio.h>
+	#include <string.h>
+	#include <fcntl.h>
+	#include <sys/stat.h>
+	#define __APOINTS__H 1
+#endif
+
 /**
 atherpoint `FIFO`s
- * with a singular reader, that is the `lbb`
+ * by defintion FirstInFirstOut MUST have only a singular reader
+ * 
  * 
  * writers can connect to the atherpoint syncronously 
- * and query real time updates on the values , operations
- * that are used to create/modify these values.
+ * and query real time updates on values, utilize operations
+ * to create&|modify these values.
  * 
- * that is done mainly by kurling the lbb between two or more
- * points. 
  * 
+ *little black book
 **/
+
+#if __AP_NAME
+	#if __APOINTS__H	
+		#undef __AP_NAME
+		#define __NAI_NAME "native_ather_interface"
+	#elif  __ATHER_POINT__
+		#error "point is named without a header"
+	#endif
+
+	#if __NAI_NAME
+		#undef __NAI_NAME
+		#if _LBB
+			struct __nai_lbb {
+				ulong lbb_innum;
+				ulong lbb_plen;
+				char *lbb_path;
+			} lbb = {
+				.lbb_innum=
+			}
+			#include "lbb.h"
+		#elif _LOC
+			
+		#elif _GLO
+
+		#elif _UNI
+		
+	#endif
+#endif
 #ifndef __APOINTS__H
-    #define __APOINTS__H 1
-	#define __ap_name "atherpoint"
-    #define __nai_name "native_ather_interface"
 	/**
 	 * nai is a union of structs to indicate which current
 	 * level is provided, since `__nai` is a union we will

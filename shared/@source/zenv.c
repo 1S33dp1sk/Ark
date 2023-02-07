@@ -1,11 +1,16 @@
+#ifndef __ZENV__H
+#include "zenv.h"
+#endif
+
 #ifndef __ZENV__
-	#include <unistd.h>
-	#include <stdio.h>
-	#include "zenv.h"
+
 	extern const uchar *charms[];
 	extern const uchar *mods[];
 	extern const uns mods_count;
 	extern const uns __lbb_idx__;
+	ulong __env_hash(char **evar);
+	char const *__keys_hash(char **evar, uns varc);
+
 	// free after
 	char *open_ccc(char const *cc, char const *path){
 		char __ccc[256];
@@ -60,6 +65,34 @@
 
 	ulong ccc_field_offset(char *fpath,ulong f_field){
 		return f_field!=0?(ulong)fhash8(2,fpath):(ulong)f_field;
+	}
+
+	static ulong field_name(char *name,ulong csize){
+		ulong __res=0;
+		ulong _ures=0,__size=9; //(sizeof(ulong))+(5*sizeof(char))\\;
+		uchar *__=malloc(__size);
+		if(__==NULL){return 0;}
+		memset(__,0,sizeof(__size));
+		size_t step=__size/3;
+		memmove(__,name,step);
+		char *__idx=(char*)__+step;
+		// printf("__ : %p\n__idx : %p\n",__,__idx);
+		// printf("%s\n",__idx-3);
+		memmove(__idx,":",1);
+		uchar *__xer=(uchar *)&__idx+1;
+		ulong __packed=0;
+		if((__packed=pack(__xer,"L",csize))!=4){
+		    printf("error packing L in xer\n"); 
+		    return 0;
+		}
+		unpack(__xer,"L",&_ures);
+		if(__[__size]=='\0'){
+		    printf("%s",__);
+		    printf("%08x%08x",u[0],u[1]);
+		    printf("k+%llu\n",_ures);
+		    // *u=hash16(3,__,8);
+		}
+		return __res;
 	}
 
 	int zmods(char const*_3curl){

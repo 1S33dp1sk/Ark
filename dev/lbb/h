@@ -16,44 +16,6 @@
 	#define __LBB_KEY_SIZE ((uns)256)
 	#define __LBB_ATT "../.lbb"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	static uchar __key[256];
 	static uns __fd=0;
 	static ulong __fsz=0;

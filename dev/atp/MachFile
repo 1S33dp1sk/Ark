@@ -1,0 +1,12 @@
+#ifndef __MACH_FILE__
+	#define __MACH_FILE__ 1
+	#define __format "k=v"
+	#define ATP() protocol()
+
+#elif __LO_FILE__
+	#define __format "k:v=index:=path"
+#elif __LBB__
+	#define __format "k@lbb#u"
+#else
+	#error "ternary is not supported on this machine.\n"
+#endif

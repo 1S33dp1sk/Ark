@@ -1,10 +1,108 @@
-_TEST_ADDR = 8421cd07d7e77c6eea
-
 __alphadef__ := a b c d e f g h i j k l m n o p q r s t u v w x y z
+
+morles:
+	cc dev/net/morles.c -o @/server
+	./@/server run
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_TEST_ADDR = 8421cd07d7e77c6eea
 #__bdef__ := a.tt b.al c.cc d.ef e.sx f.mt g.it h.lv i.ne j.ab k.ei l.bb m.ae n.et o.te p.ub q.ue r.dl t.rv u.sr v.ik w.lk x.vl y.bn z.ai
 __fieldsdef__ := .att .bal .ccc .def .exs .fmt .git .hlv .inc .jab .kei .lbb .mae .net .ote .pub .que .rdl .trv .usr .vik .xvl .ybn .zai
 __clevels__ := c cc 3c c3
-
 
 # ifeq (0,${MAKELEVEL})
 __me := $(shell whoami)

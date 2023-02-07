@@ -1,22 +1,33 @@
-#################################
-#			Base-26				#
-#################################
+
+
+
+#####################################
+#				Base-26				#
+#####################################
 all:
 __alphadef__ := a b c d e f g h i j k l m n o p q r s t u v w x y z
 __bdef__ := a.tt b.al c.cc d.ef e.sx f.mt g.it h.lv i.ne j.ab k.ei l.bb m.ae n.et o.te p.ub q.ue r.dl t.rv u.sr v.ik w.lk x.vl y.bn z.ai
 __fieldsdef__ := .att .bal .ccc .def .exs .fmt .git .hlv .inc .jab .kei .lbb .mae .net .ote .pub .que .rdl .trv .usr .vik .xvl .ybn .zai
-__clevels__ := c cc 3c
+__clevels__ := c cc ccc 
+__FLAMES__:=__Mach_001F_001A_abcdefghijklmnopqrstuvwxyz__0x
 __FNAME_L_S__ = \n__Makefile_001F_001A_\n\tabcdefghijklmnopqrstuvwxyz\n__0x\n
-#################################
-#			Shell				#
-#################################
+#####################################
+#				Morles				#
+#####################################
+server:
+	@\@/server run
+morles:
+	cc dev/net/morles.c -o @/server
+#####################################
+#				Shell				#
+#####################################
 __me:=$(shell whoami)
 __host:=$(shell arch)
 __cdir:=$(shell pwd)
 __home:=athernet
-#################################
-#		  C Directories			#
-#################################
+#####################################
+#			C/Directories			#
+#####################################
 _@:=${__cdir}/@
 __dev:=${__cdir}/dev
 __0xadir:=${__cdir}/0xa
@@ -26,9 +37,9 @@ __libsdir:=${__cdir}/libs
 __charms:=${__cdir}/charms
 att:=${__share}/@source
 @fld:=${_@}/fld
-#################################
-#			Shorts				#
-#################################
+#####################################
+#				Shorts				#
+#####################################
 __empty:=
 __binobjs:=${__bindir}/*.o
 __devheaders:=${__dev}/*.h
@@ -36,43 +47,35 @@ atherlib__:=libather.so
 anetlib__:=libathernet.so
 atherlib:=${__libsdir}/${atherlib__}
 anetlib:=${__libsdir}/${anetlib__}
-#################################
-#			@Source				#
-#################################
-
-__bin_clean:
+#####################################
+#				Clear				#
+#####################################
+clear_bin:
 	if [ -d ${__bindir} ]; then rm -rf ${__bindir}; fi
 
-__@_clean:
+clear@:
 	if [ -d ${_@} ]; then rm -rf ${_@}; fi
 
-__att_clean:
+clear_att:
 	if [ -d ${att} ]; then rm -rf ${att}; fi
 
-d_make:
+cleared_remake:
 	if [ ! -d ${__bindir} ]; then mkdir ${__bindir}; fi
 	if [ ! -d ${_@} ]; then mkdir ${_@}; fi
 	if [ ! -d ${att} ]; then mkdir  ${att}; fi
-
-
-_d_clean: __bin_clean __@_clean __att_clean d_make
-
-
-
-syster_start: fresh_start sek_start
-sek_start: clean_start clean_libathernet libathernet
-fresh_start: clean_start clean_libather libather
-clean_start:
-	if [ -d ${att} ]; then rm -rf ${att}; fi
-start: clean_start
-	if [ ! -d ${att} ]; then mkdir ${att}; fi
-	$_ clear_common
 clear_common:
 	# maybe should iterate over them delete &-> copy
 	cp ${__devheaders} ${att}
-#################################
-#			libather.so			#
-#################################
+clear_d: clear_bin clear@ clear_att cleared_remake clear_common 
+#####################################
+#				@Source				#
+#####################################
+ternary_start: clear_d ather_start athernet_start
+ather_start:  clean_libather libather
+athernet_start: clean_libathernet libathernet
+#####################################
+#				libather			#
+#####################################
 lib_ather:= hbar enk idxer zenv lbb fld
 __lib_ather__=$(addprefix __,$(addsuffix __,${lib_ather}))
 clean_libather: clean_hbar clean_enk clean_ixr clean_zenv clean_lbb
@@ -85,11 +88,11 @@ clean_libather: clean_hbar clean_enk clean_ixr clean_zenv clean_lbb
 	if [ -f ${atherlib} ]; then rm ${atherlib}; fi
 	@printf "\n"
 
-libather: start ${__lib_ather__}
+libather: ${__lib_ather__}
 	cc -shared $(addprefix ${__bindir}/,$(addsuffix .o,${lib_ather})) -o ${atherlib}
-#################################
-#			Hash bar 			#
-#################################
+#####################################
+#		libather - Hash bar			#
+#####################################
 hbar:=hbar
 # file output
 @hbar:=${att}/${hbar}
@@ -108,9 +111,9 @@ __hbar__:
 	cat ${hbar_h} > ${@hbar}.h
 	cat ${hbar_c} > ${@hbar}.c
 	cc -c -fpic $(addsuffix .c,${@hbar}) -o ${o_hbar}
-#################################
-#			Indexer				#
-#################################
+#####################################
+#				Indexer				#
+#####################################
 ir:=ixr
 ixr:=idxer
 idxer:=indexer
@@ -302,7 +305,40 @@ __fld__:
 	cat ${fld_h} > ${attfld}.h
 	cat ${fld_c} > ${attfld}.c
 	cc -c -fpic $(addsuffix .c,${attfld}) -o ${fld_o}
-	cc $(addsuffix .c,${attfld}) -o ${@fld}
+	cc $(addsuffix .c,${attfld}) -o ${@fld} 
+#################################
+#		 check &-> build		#
+#################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

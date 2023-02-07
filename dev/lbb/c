@@ -142,60 +142,6 @@ The book
 		return 0;
 	}
 
-	int usage(){
-		printf("usage :: lbb [get|set] [key] [record|value|type|address|description]\n");
-		return 0;
-	}
 
-	int lbb_level(){
-		return 0;
-	}
-
-	int process_args(int argc, char const *argv[]){
-		if((argc==1)&&(strstr(argv[0],"lbb"))!=NULL){
-			printf("%lu\n",0x64);
-			return 0;
-		}
-		// argc==2 
-		// check if level from now
-		// unsigned __lvl=islvl(argv[1][0]);
-		// if(__lvl){
-		// 	printf("level :: %u\n",__lvl);
-		// 	return lbb_level(__lvl);
-		// }
-		// all other scenarios 
-		if(argc==2){
-			char *rcrd=lbb_key(argv[2]);
-			printf("rcrd :: %s\n",rcrd);
-		}
-		// 1 more case for `lbb [level][kei]`
-		// 
-		if(argc>3){
-			int res=0;
-			printf("should append record\n");
-			// res = init_field(0,"kei","L",12);
-			printf("result :: %d\n",res);
-		}
-
-		return 0;
-	}
-
-	int lbb_pack(void *__field,size_t __ftype,char *__fmt,...){
-
-
-	}
-
-	size_t lbb_fill(void *__field,size_t __ftype,char const *__fpath){
-
-	}
-
-	char const *lbb_sign(/*socket_t or similar*/){
-		
-	}
-
-
-	
-
-	/**socket_t lbb_point(char const *paddr)**/
 
 #endif
