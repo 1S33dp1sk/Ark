@@ -1,4 +1,5 @@
-#define DEBUG 1
+#define DEBUG 1 
+
 
 
 #ifndef __TER__H
@@ -19,7 +20,11 @@
 #else
 
 
-
+/**
+NNE(X)
+     * @returns :   true if x is not 0x0000
+*/
+    #define NNE(v) v==0x0000?0x01:0x00
 
 int main(int argc, char const*argv[]) {
 	switch(argc){

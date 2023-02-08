@@ -1,11 +1,16 @@
 /// fields \\\
 #key:value=type@address
 #ifndef __LBB__H
+	#include <string.h>
+	#include <fcntl.h>
+	#include <sys/stat.h>
 	#include "utypes.h"
 	#include "idxer.h"
 	#include <sys/types.h>
 	#include <unistd.h>
 	#include <stdarg.h>
+	#define __lbb_cregex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
+	#define __lbb_ext ".lbb"
 	#define CAN_COMPILE 0
 
 	#define __R_SEP '\n'

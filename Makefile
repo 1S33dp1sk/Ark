@@ -1,6 +1,24 @@
 
 
 
+
+kmachid: libathernet  
+	__mhid
+
+__av_cmds__: 
+	@\@/ter env
+
+ac:= cc -c -fpic 
+
+
+
+__mhid: __av_cmds__ __av_netf__ __av_next
+	__mach__ 
+
+
+
+
+
 #####################################
 #				Base-26				#
 #####################################
@@ -35,7 +53,9 @@ __bindir:=${__cdir}/bin
 __share:=${__cdir}/shared
 __libsdir:=${__cdir}/libs
 __charms:=${__cdir}/charms
+attnet:=${__dev}/net
 att:=${__share}/@source
+netatt:=${att}/net
 @fld:=${_@}/fld
 #####################################
 #				Shorts				#
@@ -231,9 +251,19 @@ ybin_zcharms: clean_ylink
 #################################
 #		  libathernet.so		#
 #################################
-clean_libathernet: clean_fld clean_ter
+clean_libathernet: clean_netatt clean_fld clean_ter
 
-libathernet: fields ter_cm
+clean_netatt:
+	@printf "clean ::: @net\n"
+	if [ -d ${netatt} ]; then rm -rf ${netatt}; fi
+	@printf "\n"
+
+netatt:
+	if [ ! -d ${netatt} ]; then mkdir ${netatt}; fi
+	cp ${attnet}/*.h ${netatt}
+
+
+libathernet: netatt fields ter_cm 
 #################################
 #			Ternary				#
 #################################

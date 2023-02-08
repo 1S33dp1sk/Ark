@@ -9,7 +9,7 @@ Ternary
  * 1.   File type
  * a simple 2 bit/1 byte solution to determine the 
  * known type of the file. i.e: FIFO,Socket,Storage...
- &-> 
+&-> 
  * 2.   Contribution
  * With `access()` that's where the ternary actually 
  * shines. As it is divided into 3 main parts
@@ -25,41 +25,45 @@ Ternary
  * Keep in mind that all of the following code is based
  * on the current machines and their operations. Therefore,
  * this is not true ternary as we are simulating a ternary
- * system on a binary machine. #mrkj
+ * system on a binary machine. 
+
+ #mrkj
  * 
-\***/ 
-	#if __MACHFILE__
-		#define MachineData 
-		#if MachineData
-			#if __mach__f //*^8
+\***/
+#include "idxer.h"
+// mach \\
+	machine 
+#if __mach__ // n**8 bytes
+	#ifndef __MACH_FILE__
+		#error "att: MachFile cannot be included.\n"
+	#else
+		#if __mach__i //*^8
 			
-			#elif __lo_n //64bytes!
+		#elif __lo_n //64bytes!
 			
-			#elif __ter512 //ternary* 
+		#elif __ter512 //ternary* 
+				static const ulong *__ter_base={0xFFFF7777,0x77771111,0x11110000};
+				#define terins (ulong *)__ter_base
 			
-			#endif
-		#elif SocketSecret
-			// atp \\
-			ather transfer protocol
-			#include "atp/MachFile"
-			#ifndef __MACH_FILE__
-				#error "att >>> MachFile not found\n"
-			#else
-				#define 
-				#include "MachineDataGenerator"
-			#endif
 		#endif
-	#elif __ABOUT__
-		// if `a` --> implies that there is \
-		b
-		// but if `ab` implies that args=`ab`
-		#define ab "Athernet is a cool medium that allows endless sharing\n" // connections?
-		#ifdef ATHERNET_ABOUT
-			#info ab
-		#else
-			#define 
-			#include "field.h"
+	#endif
+#endif
+// atp \\
+	ather transfer protocol
+#if __ATP__
+	#ifndef ATP
+		#include "atp/MachFile"
 		#endif
+	#else
+		#include "net/mor.h"
+	#endif
+	#if __SOKPOINT__
+	#if Descriptions
+		#define dname Descriptions.__file__
+	#if Socket.point
+		#define sok_t Socket.type()
+
+
 	#elif __LBB__
 		#if TER_LBB
 			#define lbb "c@lbb#n"
@@ -224,3 +228,5 @@ Ternary
 		#define __TER__H 1
 	#endif
 #endif	
+#endif
+			#endif
