@@ -1,0 +1,116 @@
+#ifndef __ATP__H
+	#include "utypes.h"
+	#include <stdio.h>
+
+	#define ATP_SPEC_SIZE (8<<0x3)
+	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
+	#define ATP_PORT "9999" // The common ATP port
+	#define ATP_INUM 10 // instances of the same id
+
+	#define NOFB_TYPE(x) _Generic((x), \
+										signed char: (char)x, \
+										unsigned char:(uchar)x, \
+										int:(int)x, \
+										unsigned int:(uns)x, \
+										long int:(ulong)x, \
+										unsigned long int:(ulong)x, \
+										long long int:(tlong)x, \
+										unsigned long long int:(tlong)x, \
+										default:NULL)
+
+	#define FMT_ASCII_SPEC(__) _Generic((__), \
+												int: "%d",\
+												uns: "%u",\
+												char: "%c",\
+												long: "%ld",\
+												ulong: "%lu",\
+												tlong: "%llu",\
+												char *: "%s",\
+												long long: "%lld",\
+												default: "%p")
+	
+	#define FMT_HEXA_SPEC(__) _Generic((__), \
+												char: "c",\
+												unsigned char: "C",\
+												short: "h",\
+												int: "h",\
+												uns: "H",\
+												long: "l",\
+												ulong: "L",\
+												long long: "q",\
+												tlong: "Q",\
+												char *: "s",\
+												default: "_")
+
+	#define GET_FMT_STR(FSTR,NAR,...) do { \
+		memset(&FSTR,0,(NAR*sizeof(char)));\
+	}while(1!=1)
+
+    #define _OUT_ASCII(fd,x) do { \
+        char __[ATP_SPEC_SIZE];\
+        memset(&__,0,sizeof __);\
+        snprintf(__,sizeof __,"_%s", FMT_ASCII_SPEC(x));\
+        dprintf(fd,__,(x));\
+    }while(1!=1)
+
+	#define OUT_ASCII(fd,x) do { \
+		char __[ATP_SPEC_SIZE];\
+		memset(&__,0,sizeof __);\
+		snprintf(__,sizeof __,"%s\n", FMT_ASCII_SPEC(x));\
+		dprintf(fd,__,(x));\
+	}while(1!=1)
+
+    #define _OUTT_ASCII(fd,x) do { \
+        char __[ATP_SPEC_SIZE];\
+        memset(&__,0,sizeof __);\
+        snprintf(__,sizeof __,"\t_%s\n", FMT_ASCII_SPEC(x));\
+        dprintf(fd,__,(x));\
+    }while(1!=1)
+
+	#define __ASCII(x) OUT_ASCII(0,x)
+
+	#define __TEXT(x) OUT_ASCII(0,#x);
+
+	#define OUT_HEXA(fd,x) do { \
+		char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
+		memset(&_,0,sizeof _);memset(&__,0,sizeof __);\
+		snprintf(_,sizeof _,"%s",FMT_HEXA_SPEC(x));\
+		ulong pack_sz=pack(__,_,x);\
+		if(pack_sz>0){write(fd,__,pack_sz);}\
+	}while(1!=1)
+
+	#define Display(...) OUT_ASCII(0,#__VA_ARGS__);return 0;
+
+	#define __ARGS(...) #__VA_ARGS__
+
+	#define S_ARGS __ARGS
+	#define F_ARGS __ARGS
+	#define L_ARGS __ARGS
+
+
+enum __types_f {
+	FLD_STORAGE=0,
+	F_FIFO_LD=1,
+	FL_LOCK_D=2,
+};
+
+typedef enum __types_f type_f;
+
+int __file_att(char **__args,...);
+int __lock_att();
+int __fifo_att(char **__args,...);
+
+#define __ap_att(t,...) do{\
+switch(t) {\
+case __STORAGE__:\
+	__file_att(__VA_ARGS__);break;\
+case __FIFO__:\
+	__fifo_att(##__VA_ARGS__,__VA_ARGS__);break;\
+case __LOCK__:\
+	__lock_att(#__VA_ARGS__);break;\
+}\
+}while(1!=1)
+
+	#define __ATP__H 1
+#endif
+

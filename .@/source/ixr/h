@@ -1,0 +1,34 @@
+#ifndef __IXR__H
+	#include "utypes.h"
+	static ulong __cindex=0;
+	static ulong __ixr_fd=0;
+	#include <unistd.h>
+	#include <string.h>
+	#include <fcntl.h>
+	#include <sys/stat.h>
+
+
+	#define IDXR (const ulong) __cindex
+
+	#define INDEX_AT(x) (ulong)__set_start(x)
+	#define INDEX_G(g,e,v) (char *)__generic_fmt(g,e,v)
+	#define INDEX_END(x) (ulong)__set_comp(x)
+
+	enum __generic_fmt {
+		__key_value,
+		__env_var,
+		__sok_address,
+		__description
+	};
+typedef enum __generic_fmt gev;
+
+
+	#define __NEXT__ do {\
+	__cindex+=1;\
+	} while (1!=1);
+
+	// ulong __idxer_next();
+
+	#define __IXR__H 1
+#endif
+
