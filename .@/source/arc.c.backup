@@ -61,7 +61,7 @@ typedef struct __pr_generic prg;
 int init_generic(struct __pr_generic prg_dcloud){
     memset(&prg_dcloud,0,sizeof(prg_dcloud));
     prg_dcloud.path=((char const*)(lfiles[1]));
-    if(!ap_make(prg_dcloud.path)){
+    if(!__ap_fifo(prg_dcloud.path)){
         printf("error :: cannot make fifo\n");
         return 1;
     }

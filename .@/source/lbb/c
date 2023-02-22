@@ -90,12 +90,43 @@ int __ap_file(char const *__path){
 }
 
 int __ap_fifo(char const *__path){
-	if(mkfifo(__path,__lbb_share_flags)==0){
+	if(mkfifo(__path,__lbb_default_flags)==0){
 		return 1;
 	}
 	return -1;
-
 };
+
+
+ulong __ap_reader() {
+	int __fd=open(__lbb_locking,__lbb_lock_reader);
+	if(__fd==-1){
+		return (ulong)0;
+	};
+	ulong _fd=(ulong)__fd;
+	lbb_shard.lbb_fd=_fd;
+	return _fd;
+};
+
+
+int init_generic(struct __pr_generic prg_dcloud){
+    memset(&prg_dcloud,0,sizeof(prg_dcloud));
+    prg_dcloud.path=((char const*)(lfiles[1]));
+    if(__ap_fifo(prg_dcloud.path)==-1){
+        printf("error :: cannot make fifo\n");
+        return 1;
+    }
+    void *res=status(prg_dcloud.path);
+    if(res==NULL){
+        printf("error :: cannot obtain status ::: status()returned null\n");
+        return 1;
+    }
+    printf("path :: %s\n",prg_dcloud.path);
+    printf("inum :: %lu\n",inodenum);
+    printf("____\n");
+    return 0;
+};
+
+
 
 ulong fsize_st(void *st){
 	struct stat *__=(struct stat*)st;
@@ -115,7 +146,7 @@ uns dmode_st(void *st){
 ulong innum_st(void *st){
 	struct stat *__=(struct stat*)st;
 	return __->st_ino;
-}
+};
 
 
 /*******************************************************************/
@@ -161,7 +192,6 @@ void __closeb(){
 	close(shd_fd);
 	memset(&lbb_shard,0,sizeof(struct __lbb_shard));
 };
-
 
 
 ulong write_book(char *content, ulong csize) {
@@ -270,9 +300,9 @@ int spaces_and_tabs(char *word){
 	while(word[x]!='\0'){
 		if(word[x]==' '||word[x]=='	'){
 			count+=1;
-		}
+		};
 		x+=1;
-	}
+	};
 	return count;
 };
 
@@ -292,14 +322,14 @@ ulong sep_offset(char *string,char *seperator) {
 			}
 			else{
 				y=0;
-			}
-		}
+			};
+		};
 		x+=1;
-	}
+	};
 
 	if(offset_at==-1){
 		return 0;
-	}
+	};
 
 	return offset_at+1;
 };
@@ -328,16 +358,16 @@ spstr sepstr_offset(char *string, char *seperator) {
 		if(string[x]==seperator[y]){
 			while(seperator[y]==string[y+x]){
 				y+=1;
-			}
+			};
 			if(seperator[y]=='\0'){
 				offset_at=x;
 			}
 			else{
 				y=0;
-			}
-		}
+			};
+		};
 		x+=1;
-	}
+	};
 	struct sepstr res = {
 		.str=string,
 		.str_length=x,
@@ -357,7 +387,7 @@ strld extract_atoff(char *str, ulong atoff){
 	int c=0;
 	while(*s++){
 		c+=1;
-	}
+	};
 	res.len=c;
 	return res;
 };
@@ -378,7 +408,7 @@ void test_init_sepstr(char const*fullstr, char const*sep) {
 	}
 	else {
 		res=sepstr_offset((char *)fullstr,(char *)sep);
-	}
+	};
 
 	log_sepstr(res);
 };
@@ -411,13 +441,13 @@ int get_sstat(char const *__path, s_stat *sfile) {
 	ulong path_len=strlen(__path);
 	if(path_len>512){
 		return -1;
-	}
+	};
 	memmove(sfile->s_path,__path,path_len);
 	char *_path=(char *)__path;
 	ulong off_at=sep_offset(_path,"@");
 	if(off_at==0){
 		return -1;
-	}
+	};
 	#if DEBUG
 		printf("offset of @ is %lu characters\n", off_at);
 	#endif
@@ -477,7 +507,7 @@ int get_mstat(char const *__path, m_stat *mfile) {
 	memset(&temp,0,sizeof(struct stat));
 	if(stat(mfile->m_path,&temp)!=0){
 		return -1;
-	}
+	};
 	mfile->m_size=fsize_st(&temp);
 	mfile->m_mode=dmode_st(&temp);
 	mfile->m_blksz=iosize_st(&temp);
@@ -549,9 +579,9 @@ ulong __get_long_digits(ulong num) {
 	while(cnum!=0){
 		res+=1;
 		cnum=((ulong)(num/10));
-	}
+	};
 	return res+=1;
-}
+};
 
 char *__get_cfname(char const *__fname, ulong __fiter) {
 	ulong total_size=((ulong)(strlen(__fname)+__get_long_digits(__fiter)+1));
@@ -559,16 +589,14 @@ char *__get_cfname(char const *__fname, ulong __fiter) {
 	memset(&__,0,total_size);
 	sprintf(__,"%s:%lu",__fname,__fiter);
 	return strdup(__);
-}
+};
+
 char *__get_fcontents(char *__conts, ulong __size) {
 	char __[__size];
 	memset(&__,0,__size);
 	sprintf(__,"{ %s }\n",__conts);
 	return strdup(__);
-}
-
-
-
+};
 
 char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	ulong const field_size=sizeof(field);
@@ -586,7 +614,7 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	if(lbb_dd==-1){
 		printf("open failed\n");
 		return NULL;
-	}
+	};
 	printf("'%s'\n",fieldname);
 
 	field e_field;
@@ -605,14 +633,12 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		PACK_IN(lbb_dd,buflen,"%s\0",contents);
 		// OUT_ASCII(lbb_dd,contents);
 		c+=1;memset(__buffer,0,512);
-	}
-
+	};
 	close(__fd);
 	close(lbb_dd);
 
-
 	return strdup(fieldname);
-}
+};
 
 void free_fields(fields flds){
 	#include <stdlib.h>
@@ -620,8 +646,8 @@ void free_fields(fields flds){
 	while(flds[c]){
 		free(flds[c]);
 		c+=1;
-	}
-}
+	};
+};
 
 char *conv_fields(m_stat *m_st){
 	ulong __fd=open(m_st->m_path,__lbb_share_flags), __count=0, __size=(m_st->m_size), c=__size;
@@ -632,7 +658,7 @@ char *conv_fields(m_stat *m_st){
 	__count+=1;
 
 	return __conv_fields(hashof(1,m_st,sizeof(m_stat)),__fd,__count);
-}
+};
 
 
 

@@ -9,7 +9,9 @@
 	#include <stdarg.h>
 	#define __lbb_c_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
 	#define __lbb_shard_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
-	#define __lbb_share_flags O_RDONLY
+	#define __lbb_lock_reader (O_RDONLY)
+	#define __lbb_default_flags (S_IRUSR|S_IWGRP|S_IWOTH)
+	#define __lbb_share_flags (O_WRONLY)
 	#define __lbb_private_mode (S_IRWXU|S_IXGRP|S_IXOTH)
 	#define __lbb_share_mode (S_IRWXU|S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)
 	#define __lbb_public_mode (S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)
@@ -161,9 +163,6 @@ struct __lbb_shard {
 
 static struct __lbb_shard lbb_shard;
 
-#define ATT_BOOK 
-
-
 
 #define checkef_file __stres(__lbb_indexfile)
 #define checkef_dir __stres(__lbb_aetherdir)
@@ -184,6 +183,7 @@ printf("book:tern  ::  .lbb  ::: %s\n",FND_NTFND(checkef_lo));\
 #define __LBB_INIT do{\
 __LBB_START;\
 __LBB_FIFO;\
+__LBB__;\
 }while(1!=1);
 
 #define __LBB_START do{\
@@ -194,10 +194,9 @@ memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
 __ap_fifo(__lbb_locking);\
 }while(1!=1);
 
-#define __LBB_FILE do {\
-__ap_file(__lbb_indexfile);\
+#define __LBB__ do {\
+__ap_reader();\
 }while(1!=1);
-
 
 
 #define sz8(x) ((ulong)__8sz(x))
@@ -223,6 +222,17 @@ __ap_file(__lbb_indexfile);\
 }while(1!=1)
 
 
+
+struct __pr_generic {
+    char const *path;
+    struct stat st;
+    ulong inn;
+};
+
+typedef struct __pr_generic prg;
+
+
+
 #define inodenum ((ulong)((lbb_shard.lbb_mst).m_inn))
 #define ifilesize ((ulong)((lbb_shard.lbb_mst).m_size))
 #define idmode ((ulong)((lbb_shard.lbb_mst).m_mode))
@@ -236,7 +246,6 @@ ulong __fsize(char *fpath);
 ulong __iosize(char *fpath);
 void *__statusof(char const *__file);
 int __ap_fifo(char const *__path);
-int __ap_file(char const *__path);
 #define ap_make __ap_fifo
 
 

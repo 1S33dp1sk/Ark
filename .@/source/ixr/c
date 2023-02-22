@@ -17,27 +17,26 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 
 #define KV_SEP ':'
 #define ENV_SEP '='
-#define ATT_SEP
+#define ATT_SEP '@'
 
+#define LONG_SIZE ((ulong)(sizeof(ulong)))
 #define uc_size(x) ((ulong)(x*sizeof(uchar)))
-
 
 
 	ulong __index_increment() {
 		__cindex+=1;
 		return __cindex;
-	}
+	};
 
 	ulong indexer_start(){
 		if(__cindex!=0){
 			return 0;
 		};
-#ifndef INDEXER
-	#define INDEXER __cindex;
-#endif
+		#ifndef INDEXER
+			#define INDEXER __cindex;
+		#endif
 		return __index_increment();
 	};
-
 
 	ulong  __indexer__(char *idxnr) {
 		int ixr_fd=open(__ixr_frame,(O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY),(S_IRWXU|S_IXGRP|S_IXOTH));
@@ -51,11 +50,10 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 		return indexer_start()==0?0:__cindex;
 	};
 
-
 	ulong __set_start(char *__idxnr) {
 		__TEXT(Starting ATP '@Protocol');
 		return __indexer__(__idxnr);
-	}
+	};
 
 	ulong __set_next(char *__head){
 		#ifdef DEBUG
@@ -66,55 +64,6 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 		return res;
 	};
 
-char *__gdelim(gev __gtype) {
-	char __delim[3];
-	memset(&__delim,0,3);
-	__delim[2]='\0';
-	switch(__gtype){
-		case __key_value:
-			__delim[0]=KV_SEP;
-			__delim[1]='\0';
-			break;
-		case __env_var:
-			__delim[0]=ENV_SEP;
-			__delim[1]='\0';
-			break;
-		case __sok_address:
-			__delim[0]=KV_SEP;
-			__delim[1]=ENV_SEP;
-			break;
-		case __description:
-			__delim[0]=ENV_SEP;
-			__delim[1]=KV_SEP;
-			break;
-		default:break;
-	}
-	return strdup(__delim);
-};
-
-	char *__generic_fmt(gev g_type,char *__key, char *__value){
-		ulong klen=strlen(__key);
-		ulong vlen=strlen(__value);
-		ulong clen=klen+vlen+2;
-
-		char lbb_field[clen];
-		memset(&lbb_field,0,clen);
-		lbb_field[clen]='\0';
-		memmove(lbb_field,__key,klen);
-		char *_delim=__gdelim(g_type);
-		ulong __dlen=strlen(_delim);
-
-		switch(__dlen){
-		case 0: return NULL;
-		case 1: memset((lbb_field+klen),*_delim,1); memmove((lbb_field+klen+1),__value,vlen);
-		case 2: memset((lbb_field+klen),*_delim++,1);memset((lbb_field+klen),*_delim,1); memmove((lbb_field+klen+2),__value,vlen);
-		default: return NULL;
-		}
-
-		return strdup(lbb_field);
-	};
-
-
 	ulong __set_comp(char *__eof_seq){
 		ulong eslen=strlen(__eof_seq);ulong esqlen=eslen+2;
 		char __[esqlen];
@@ -123,9 +72,65 @@ char *__gdelim(gev __gtype) {
 		memmove((__+eslen),"\n\0",2);
 		ulong res=__set_next(__);
 		close(__ixr_fd);
-
 		return res;
-	}
+	};
+
+	char *__gdelim(__gev __gtype) {
+		char __delim[3];
+		memset(&__delim,0,3);
+		switch(__gtype){
+			case __key_value:
+				__delim[0]=KV_SEP;
+				__delim[1]='\0';
+				return strdup(__delim);
+			case __env_var:
+				__delim[0]=ENV_SEP;
+				__delim[1]='\0';
+				return strdup(__delim);
+			case __sok_address:
+				__delim[0]=KV_SEP;
+				__delim[1]=ENV_SEP;
+				break;
+			case __description:
+				__delim[0]=ENV_SEP;
+				__delim[1]=KV_SEP;
+				break;
+			default:break;
+		}
+		__delim[2]='\0';
+		printf("delimiter is '%s'\n",__delim);
+
+		return strdup(__delim);
+	};
+
+	char *__generic_fmt(__gev g_type,char *__key, char *__value){
+		ulong klen=strlen(__key);
+		ulong vlen=strlen(__value);
+		ulong clen=klen+vlen+2;
+
+		// log_gfmt(g_type);
+		// log_keyvalue(__key,__value);
+
+		char lbb_field[clen];
+		memset(&lbb_field,0,clen);
+		lbb_field[clen]='\0';
+		memmove(lbb_field,__key,klen);
+		char *_delim=__gdelim(g_type);
+		ulong __dlen=strlen(_delim);
+		memmove((lbb_field+klen),_delim, __dlen);
+		memmove((lbb_field+klen+__dlen),__value,vlen);
+
+
+		printf("{%s}",lbb_field);
+
+		return strdup(lbb_field);
+	};
+
+	char *__index(char *__) {
+		ulong llen=__set_next(__);
+
+		return (char *)hashof(1,(void *)IDXR,LONG_SIZE);
+	};
 
 
 
@@ -161,31 +166,39 @@ char *__gdelim(gev __gtype) {
 
 
 
+	void log_gfmt(__gev g_type) {
+		switch(g_type) {
+		case __key_value: __TEXT(Key:Value); break;
+		case __env_var: __TEXT(Enviroment=Spec); break;
+		case __sok_address: __TEXT(Socket:=Address); break;
+		case __description: __TEXT(Description=:Callable); break;
+		default: __TEXT(Unknown); break;
+		};
+	};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	void log_keyvalue(char *key, char *value) {
+		__ASCII(key);
+		__ASCII(value);
+	};
 
 
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

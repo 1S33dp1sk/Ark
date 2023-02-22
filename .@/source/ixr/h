@@ -7,21 +7,36 @@
 	#include <fcntl.h>
 	#include <sys/stat.h>
 
+	char const *hashof(unsigned level, void const *tohash, ulong thsize);
+
 
 	#define IDXR (const ulong) __cindex
 
 	#define INDEX_AT(x) (ulong)__set_start(x)
-	#define INDEX_G(g,e,v) (char *)__generic_fmt(g,e,v)
+	#define INDEX_G(g,e,v) (char *)__generic_fmt(_to_generic(g),e,v)
 	#define INDEX_END(x) (ulong)__set_comp(x)
 
+	#define DELIM(x) (char const *)__gdelim(_to_generic(x))
+
+
+	#define _to_generic(x) ((enum __generic_fmt)(x))
+
 	enum __generic_fmt {
+		gval,
 		__key_value,
 		__env_var,
 		__sok_address,
 		__description
 	};
-typedef enum __generic_fmt gev;
-
+	typedef enum __generic_fmt __gev;
+	enum g_format {
+		_G=gval,
+		KV=__key_value,
+		ENV=__env_var,
+		SOKA=__sok_address,
+		DESCR=__description
+	};
+	typedef enum g_format gfmt;
 
 	#define __NEXT__ do {\
 	__cindex+=1;\

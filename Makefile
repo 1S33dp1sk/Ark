@@ -36,7 +36,7 @@ exs@charms:=${@charms}/executables
 #			executables@			#
 #####################################
 @arch:=@${__host}
-karch_512_build:=${@1c}/k512_arc${@arch}
+karch_512_build:=${@1c}/k512${@arch}
 cloud_d_build:=${@1c}/d-cloud${@arch}
 fields_build:=${@1c}/fields${@arch}
 #####################################
@@ -75,7 +75,7 @@ charms:
 	fi;
 
 clean: __clean_charms__
-	if [ -f k512_arc ]; then rm -rf k512_arc; fi
+	if [ -f k512 ]; then rm -rf k512; fi
 	if [ -f d-cloud ]; then rm -rf d-cloud; fi
 	if [ -f fields ]; then rm -rf fields; fi
 
@@ -85,14 +85,13 @@ rebuild: clean charms
 __init__: _check_charms_
 
 __att__: 
-	${k512_arc} ${@charms}
+	${k512} ${@charms}
 
 __link__:
 	${d_cloud}
 
 __clean_charms__:
 	if [ -d ${@charms} ]; then rm -rf ${@charms}; fi
-
 
 # when rebuilding source clean
 _check_source_: __clean_charms__
@@ -118,7 +117,6 @@ clean_libather: clean_hbar clean_enk clean_ixr clean_lbb
 
 libather: ${__lib_ather__}
 	cc -shared $(addprefix ${obj@charms}/,$(addsuffix .o,${lib_ather})) -o ${atherlib}
-
 
 __charms_dirs__:
 	if [ ! -d ${@charms} ]; then mkdir ${@charms}; fi;
@@ -159,15 +157,9 @@ _check_charms_: \
 	libather
 
 
-
 # lbb to atp `midway link`
 lbb_atp_ml:
 	cat ${atp_h} >> ${_lbb}
-
-
-
-
-
 
 
 
@@ -176,9 +168,9 @@ lbb_atp_ml:
 3c: 
 	@printf "\n{{{ccc}}}\n"
 	if [ ! -d ${@3c} ]; then mkdir ${@3c}; fi
-	cp ${__src}/arc.c ${@3c}
+	cp ${__src}/k512.c ${@3c}
 	cp ${__src}/dcloud.c ${@3c}
-	cp ${__src}/i_fields.c ${@3c}
+	cp ${__src}/fields.c ${@3c}
 
 #compiled
 @2c:=${@3c}/2c
@@ -193,29 +185,26 @@ lbb_atp_ml:
 1c:
 	@printf "\n{  c  }\n"
 	if [ ! -d ${@1c} ]; then mkdir ${@1c}; fi
-	cc ${@3c}/arc.c -o ${@1c}/k512_arc${@arch} ${atherlib}
+	cc ${@3c}/k512.c -o ${@1c}/k512${@arch} ${atherlib}
 	cc ${@3c}/dcloud.c -o ${@1c}/d-cloud${@arch} ${atherlib}
-	cc ${@3c}/i_fields.c -o ${@1c}/fields${@arch} ${atherlib}
+	cc ${@3c}/fields.c -o ${@1c}/flds${@arch} ${atherlib}
 #tests
 3c_out:
-	cp ${@1c}/k512_arc${@arch} k512_arc
+	cp ${@1c}/k512${@arch} k512
 	cp ${@1c}/d-cloud${@arch} d-cloud
-	cp ${@1c}/fields${@arch} fields 
+	cp ${@1c}/flds${@arch} flds 
 
 
 build_3c: 3c 2c 1c 3c_out
 
 test_karch:
-	./k512_arc ${@charms}
+	./k512 ${@charms}
 
 test_cloud:
 	./d-cloud
 
 test_field:
 	./runid ${__tst}/index.ext
-
-
-
 
 
 #####################################
@@ -420,8 +409,6 @@ libathernet: libather mach_shell
 	cp ${_snet}/* ${@charms}
 	cc ${@charms}/morles.c -o ${shrd_fun}/morles ${atherlib}
 	${shrd_fun}/mach shell
-
-
 
 #################################
 #		 check &-> build		#

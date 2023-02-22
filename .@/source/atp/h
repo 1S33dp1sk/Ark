@@ -26,8 +26,9 @@
 												ulong: "%lu",\
 												tlong: "%llu",\
 												char *: "%s",\
+												char const *:"%s",\
 												long long: "%lld",\
-												default: "%p")
+												default: "%x")
 	
 	#define FMT_HEXA_SPEC(__) _Generic((__), \
 												char: "c",\
@@ -42,8 +43,21 @@
 												char *: "s",\
 												default: "_")
 
+
+	
+
+
+
+
 	#define GET_FMT_STR(FSTR,NAR,...) do { \
 		memset(&FSTR,0,(NAR*sizeof(char)));\
+	}while(1!=1)
+
+	#define SPEC_OUT(fd,k,fl,v) do {\
+		char __[ATP_SPEC_SIZE];\
+		memset(&__,0,sizeof __);\
+		snprintf(__,sizeof __,"%s%s%s\n", FMT_ASCII_SPEC(k),FMT_ASCII_SPEC(fl),FMT_ASCII_SPEC(v));\
+		dprintf(fd,__,(k),(fl),(v));\
 	}while(1!=1)
 
     #define _OUT_ASCII(fd,x) do { \
