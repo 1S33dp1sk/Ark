@@ -23,7 +23,7 @@
 #endif
 #define __k_arch512__h 1
 #endif
-#define __Karch_512__
+#define __Karch_512__ 
 #define __MA__F 0x100000000000000000000007
 #define LONG_MAX_COMPUTED_N_DIGITS 21 //logb(x) = loga(x) / loga(b)
 #define MachPtr 16

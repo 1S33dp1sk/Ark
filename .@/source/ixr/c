@@ -19,8 +19,12 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 #define ENV_SEP '='
 #define ATT_SEP '@'
 
-#define LONG_SIZE ((ulong)(sizeof(ulong)))
+#define LONG_SIZE ULONG_SIZE
+#define ULONG_SIZE ((ulong)(sizeof(ulong)))
 #define uc_size(x) ((ulong)(x*sizeof(uchar)))
+
+
+static ulong ___offset=0;
 
 
 	ulong __index_increment() {
@@ -28,51 +32,11 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 		return __cindex;
 	};
 
-	ulong indexer_start(){
-		if(__cindex!=0){
-			return 0;
-		};
-		#ifndef INDEXER
-			#define INDEXER __cindex;
-		#endif
-		return __index_increment();
-	};
-
-	ulong  __indexer__(char *idxnr) {
-		int ixr_fd=open(__ixr_frame,(O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY),(S_IRWXU|S_IXGRP|S_IXOTH));
-		printf("file descriptor :open::%d\n",ixr_fd);
-		if(ixr_fd==-1){
-			return 0;
-		};
-		__ixr_fd=ixr_fd;
-		printf("indexer field :%s::%lu\n",idxnr,__cindex);
-		OUT_ASCII(__ixr_fd,idxnr);
-		return indexer_start()==0?0:__cindex;
-	};
-
-	ulong __set_start(char *__idxnr) {
-		__TEXT(Starting ATP '@Protocol');
-		return __indexer__(__idxnr);
-	};
-
 	ulong __set_next(char *__head){
-		#ifdef DEBUG
-			printf("fd in set next :: %lu",__ixr_fd);
-		#endif
-		ulong __len=strlen(__head);
-		ulong res=write(__ixr_fd,__head,__len);
-		return res;
-	};
 
-	ulong __set_comp(char *__eof_seq){
-		ulong eslen=strlen(__eof_seq);ulong esqlen=eslen+2;
-		char __[esqlen];
-		memset(&__,0,esqlen);
-		memmove(__,__eof_seq,eslen);
-		memmove((__+eslen),"\n\0",2);
-		ulong res=__set_next(__);
-		close(__ixr_fd);
-		return res;
+
+		ulong __len=strlen(__head);
+		return (ulong)write(__ixr_fd,__head,__len);
 	};
 
 	char *__gdelim(__gev __gtype) {
@@ -83,11 +47,11 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 				__delim[0]=KV_SEP;
 				__delim[1]='\0';
 				return strdup(__delim);
-			case __env_var:
+			case __env_variable:
 				__delim[0]=ENV_SEP;
 				__delim[1]='\0';
 				return strdup(__delim);
-			case __sok_address:
+			case __sock_address:
 				__delim[0]=KV_SEP;
 				__delim[1]=ENV_SEP;
 				break;
@@ -98,8 +62,9 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 			default:break;
 		}
 		__delim[2]='\0';
-		printf("delimiter is '%s'\n",__delim);
-
+		#ifdef DEBUG
+			printf("delimiter is '%s'\n",__delim);
+		#endif
 		return strdup(__delim);
 	};
 
@@ -120,10 +85,62 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 		memmove((lbb_field+klen),_delim, __dlen);
 		memmove((lbb_field+klen+__dlen),__value,vlen);
 
-
-		printf("{%s}",lbb_field);
-
+		#ifdef LBB_PRINT
+			__ASCII(lbb_field)
+		#endif
+		#ifdef DEBUG
+			printf("{%s}",lbb_field);
+		#endif
 		return strdup(lbb_field);
+	};
+
+	ulong indexer_start(char *idxr){
+		if(__cindex!=0){
+			return 0;
+		};
+		#ifndef INDEXER
+			#define INDEXER __cindex;
+		#endif
+		return __index_increment();
+	};
+
+	ulong  __indexer__(char *idxnr) {
+		int ixr_fd=open(__ixr_frame,(O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY),(S_IRWXU|S_IXGRP|S_IXOTH));
+		
+		#ifdef DEBUG
+			printf("file descriptor :open::%d\n",ixr_fd);
+		#endif
+		if(ixr_fd==-1){
+			return 0;
+		};
+		__ixr_fd=ixr_fd;
+		#ifdef DEBUG
+			printf("indexer field :%s::%lu\n",idxnr,__cindex);
+			OUT_ASCII(__ixr_fd,idxnr);
+		#endif
+		return indexer_start(idxnr)==0?0:__cindex;
+	};
+
+	ulong __set_start(char *__idxnr) {
+		return __indexer__(__idxnr);
+	};
+
+	int __set_istart(ulong __inn){
+		#ifndef DEBUG_WLC
+			printf("inodenumber :: %lu\n",__inn);
+		#endif
+		return __indexer__((char *)hashof(2,&__inn,ULONG_SIZE));
+	};
+
+	ulong __set_comp(char *__eof_seq){
+		ulong eslen=strlen(__eof_seq);ulong esqlen=eslen+2;
+		char __[esqlen];
+		memset(&__,0,esqlen);
+		memmove(__,__eof_seq,eslen);
+		memmove((__+eslen),"\n\0",2);
+		ulong res=__set_next(__);
+		close(__ixr_fd);
+		return res;
 	};
 
 	char *__index(char *__) {
@@ -169,8 +186,8 @@ static const char *IXR_KVPSD_FMT="%s=:D";
 	void log_gfmt(__gev g_type) {
 		switch(g_type) {
 		case __key_value: __TEXT(Key:Value); break;
-		case __env_var: __TEXT(Enviroment=Spec); break;
-		case __sok_address: __TEXT(Socket:=Address); break;
+		case __env_variable: __TEXT(Enviroment=Spec); break;
+		case __sock_address: __TEXT(Socket:=Address); break;
 		case __description: __TEXT(Description=:Callable); break;
 		default: __TEXT(Unknown); break;
 		};

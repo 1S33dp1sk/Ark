@@ -96,6 +96,17 @@ int __ap_fifo(char const *__path){
 	return -1;
 };
 
+ulong __ap_writer() {
+	int __fd=open(__lbb_locking,__lbb_lock_writer);
+	if(__fd==-1){
+		return (ulong)0;
+	};
+	ulong _fd=(ulong)__fd;
+    __TEXT(Lock Writer);
+	printf("fifo opened :: writer :: %lu\n",_fd);
+	lbb_shard.lbb_fd=_fd;
+	return _fd;	
+}
 
 ulong __ap_reader() {
 	int __fd=open(__lbb_locking,__lbb_lock_reader);
@@ -103,6 +114,8 @@ ulong __ap_reader() {
 		return (ulong)0;
 	};
 	ulong _fd=(ulong)__fd;
+    __TEXT(Lock Reader);
+	printf("fifo opened :: reader :: %lu\n",_fd);
 	lbb_shard.lbb_fd=_fd;
 	return _fd;
 };
@@ -220,8 +233,10 @@ ulong lbb_print(char *kaddr){
 
 int lbb(char const *__cpath,ulong __lock){
 	ulong res=0;
-	SET_LBB_PATH(__cpath);
-	SET_LBB_FD(__lock);
+	#if defined(locked)
+		SET_LBB_PATH(__cpath);
+		SET_LBB_FD(__lock);
+	#endif
 	char *LOCKING="locked\n";
 	__writeb((uchar *)LOCKING,strlen(LOCKING));
 	__closeb();
@@ -499,6 +514,9 @@ int get_kstat(char const *__path, k_stat *kfile) {
 int get_mstat(char const *__path, m_stat *mfile) {
 	memset(mfile,0,sizeof(struct __m_stat));
 	ulong path_len=strlen(__path);
+	#ifdef DEBUG
+		printf("PATH :: %s\n",__path);
+	#endif
 	if(path_len>512){
 		return -1;
 	}
@@ -512,6 +530,8 @@ int get_mstat(char const *__path, m_stat *mfile) {
 	mfile->m_mode=dmode_st(&temp);
 	mfile->m_blksz=iosize_st(&temp);
 	mfile->m_inn=innum_st(&temp);
+
+	log_mstat(mfile);
 	return 0;
 };
 
@@ -568,6 +588,20 @@ void log_esptr(ulong *esptr) {
 	while(*esptr++);
 };
 
+void log_process_ids(ulong p_pid, ulong c_pid) {
+   printf("process ids ::\n");
+   printf("p.pid    =%lu\n",p_pid);
+   printf("c.pid    =%lu\n",c_pid);
+};
+
+void log_process_schema(ulong p_pid, ulong c_pid) {
+    printf("p_pid :: %lu",p_pid);
+    printf("\nc_pid :: %lu",c_pid);
+    printf("\nsuccess=%d\tnsucess=%d\n",CALL_SUCC(c_pid),CALL_NSUC(c_pid));
+    printf("call next ? %lu\n",CALL_NEXT(c_pid));
+};
+
+
 
 /*******************************************************************/
 
@@ -610,7 +644,7 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	memmove(fieldname,lfiles[0],lf_size);
 	memmove((fieldname+lf_size),__fn,fn_size);
 
-	ulong lbb_dd=open(fieldname,__lbb_shard_flags,__lbb_public_mode);
+	int lbb_dd=open(fieldname,__lbb_shard_flags,__lbb_public_mode);
 	if(lbb_dd==-1){
 		printf("open failed\n");
 		return NULL;

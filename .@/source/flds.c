@@ -1,7 +1,6 @@
 /// runid_flds \\\
 i run field ids
 
-
 #include "2c/_h512.h"
 #include "2c/ixr.h"
 
@@ -12,9 +11,10 @@ void __usage(){
 char *__pre_apple="/Users/mrkj/package/";
 char *__pre_unix="/home/mrkj/package";
 char *__pre_wind="C:\\package\\mrkj";
-
-
 char *__pre_="///mrkj\\\\";
+
+
+
 char const *mount_at="@charms/lbb/index.ext";
 char const *_socket_="22ef791c@0.0.0.0";
 char const *_forward_addr="@mrkj";
@@ -26,8 +26,6 @@ static const ulong __enu_size=512;
 #define DEBUG 1
 #define LBB_0 1
 #define LBB_1 1
-
-
 
 int get_allstats(){
     m_stat mstat;
@@ -61,36 +59,6 @@ char const *__hfilename(char *cpath){
     return hashof(1,cpath,strlen(cpath));
 };
 
-char *__fld_hash(char *cpath,ulong fsize, ulong max_enumer){
-    int x=-12;
-    long xx=129541;
-    __ASCII(xx);
-
-    // ulong size_path=strlen(cpath)*sizeof(char);
-    // ulong size_long=sizeof(ulong);
-    // ulong fld_size=(size_path)+(size_long*2);
-    // void *__fld=malloc(fld_size),*rfld=__fld;
-    // #ifdef DEBUG
-    //     printf("fld @%x\n",__fld);
-    // #endif
-    // void *__fld_cpath=((void *)(cpath));
-    // memmove(__fld,__fld_cpath,size_path);
-    // #ifdef DEBUG
-    //     printf("moved cpath ->fld @%x\n",(__fld+size_path));
-    // #endif
-    // void *__fld_fsize=((void *)(__fld+size_path));
-    // memmove(__fld_fsize,fsize,size_long);
-    // // #ifdef DEBUG
-    // //     printf("moved size ->fld @%x\n",(__fld+size_path+size_long));
-    // // #endif
-    // // void *__fld_maxenu=((void *)(max_enumer));
-    // // memmove((__fld+size_path+size_long),__fld_maxenu,size_long);
-    // // #ifdef DEBUG
-    // //     printf("moved max_enumer ->fld @%x\n",(__fld+size_path+(2*size_long)));
-    // // #endif
-    return cpath;
-};
-
 char *__fld_packed_hash(char *cpath,ulong fsize, ulong max_enumer){
     ulong size_path=strlen(cpath)*sizeof(char);
     ulong size_long=sizeof(ulong);
@@ -118,8 +86,11 @@ int main(int argc, char **argv){
     };
     // log_mstat(&(__fld.c_mst));
     char *cflds_head=conv_fields(&cm_st);
-    // ulong ixr_head=INDEX_AT(cflds_head);
-    // INDEX_END("\n")
+    if(cflds_head==NULL){
+        return 3;
+    };
+
     return 0;
 };
+
 

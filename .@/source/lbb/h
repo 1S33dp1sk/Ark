@@ -10,8 +10,9 @@
 	#define __lbb_c_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
 	#define __lbb_shard_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
 	#define __lbb_lock_reader (O_RDONLY)
+	#define __lbb_lock_writer (O_WRONLY)
 	#define __lbb_default_flags (S_IRUSR|S_IWGRP|S_IWOTH)
-	#define __lbb_share_flags (O_WRONLY)
+	#define __lbb_share_flags (O_RDONLY)
 	#define __lbb_private_mode (S_IRWXU|S_IXGRP|S_IXOTH)
 	#define __lbb_share_mode (S_IRWXU|S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)
 	#define __lbb_public_mode (S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)
@@ -20,6 +21,12 @@
 	** NNE : x :: true if x is not 0x0000
 	**/
 	#define NNE(v) v==0x0000?0x01:0x00
+
+
+#define CALL_SUCC(x) x==(ulong)0?1:0
+#define CALL_INST(x) x==(ulong)1?1:0
+#define CALL_NSUC(x) x==(ulong)-1?1:0
+#define CALL_NEXT(x) x<(ulong)-1?x>(ulong)1?1:x:0
 
 
 #define shd_fd fld_shard(lbb_shard)
@@ -155,18 +162,18 @@ struct __shard {
 typedef struct __shard shard;
 
 
-
 struct __lbb_shard {
 	struct __m_stat lbb_mst;
 	ulong lbb_fd;
 };
 
 static struct __lbb_shard lbb_shard;
+static m_stat *lbb_mstat = &(lbb_shard.lbb_mst);
 
 
-#define checkef_file __stres(__lbb_indexfile)
-#define checkef_dir __stres(__lbb_aetherdir)
-#define checkef_lo __stres(__lbb_ternarylo)
+#define checkef_file ((ulong)__stres(__lbb_indexfile))
+#define checkef_dir ((ulong)__stres(__lbb_convdir))
+#define checkef_lo ((ulong)__stres(__lbb_locking))
 
 #define __NOT_FOUND "Not-Found \xE2\x9C\x95"
 #define __FOUND "Found \xE2\x9C\x93"
@@ -174,29 +181,30 @@ static struct __lbb_shard lbb_shard;
 #define FND_NTFND(x) x==0?__NOT_FOUND:__FOUND
 
 #define LBB_INFO do{\
-printf("Linked Binary Book {a.k.a %s}\n","lbb");\
-printf("book:home  ::  lbb/  ::: %s\n",FND_NTFND(checkef_dir));\
-printf("book:lock  ::  lock  ::: %s\n",FND_NTFND(checkef_file));\
-printf("book:tern  ::  .lbb  ::: %s\n",FND_NTFND(checkef_lo));\
+	printf("Linked Binary Book {a.k.a %s}\n","lbb");\
+	printf("book:home  ::  lbb/  ::: %s\n",FND_NTFND(checkef_dir));\
+	printf("book:lock  ::  lock  ::: %s\n",FND_NTFND(checkef_file));\
+	printf("book:tern  ::  .lbb  ::: %s\n",FND_NTFND(checkef_lo));\
 }while(1!=1);
 
-#define __LBB_INIT do{\
-__LBB_START;\
-__LBB_FIFO;\
-__LBB__;\
-}while(1!=1);
-
-#define __LBB_START do{\
+#define __LBB__R do{\
 memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
-}while(1!=1);
-
-#define __LBB_FIFO do{\
-__ap_fifo(__lbb_locking);\
-}while(1!=1);
-
-#define __LBB__ do {\
 __ap_reader();\
 }while(1!=1);
+
+#define __LBB_START__ do{\
+memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
+if(!checkef_lo) {__ap_fifo(__lbb_locking);};\
+ulong __inn=INDEX_AT(__lbb_indexfile);\
+printf("getting shard .:%s:. ",lbb_mstat->m_path);\
+GET_SHARD(__lbb_indexfile);\
+}while(1!=1);
+
+#define __LBB__W do {\
+memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
+__ap_writer();\
+}while(1!=1);
+
 
 
 #define sz8(x) ((ulong)__8sz(x))
@@ -211,16 +219,12 @@ __ap_reader();\
 #define stres(x) __stres(x)
 
 
-#define SET_LBB_PATH(x) do {\
-	char *_x=(char *)x;\
-	memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
-	memmove((&(lbb_shard.lbb_mst).m_path),_x,strlen(_x));\
-}while(1!=1)
 
-#define SET_LBB_FD(x) do {\
-	lbb_shard.lbb_fd=x;\
-}while(1!=1)
 
+
+
+// should use _Generic
+#define GET_SHARD(x) get_mstat(x,&lbb_shard.lbb_mst)
 
 
 struct __pr_generic {
@@ -233,10 +237,10 @@ typedef struct __pr_generic prg;
 
 
 
-#define inodenum ((ulong)((lbb_shard.lbb_mst).m_inn))
-#define ifilesize ((ulong)((lbb_shard.lbb_mst).m_size))
-#define idmode ((ulong)((lbb_shard.lbb_mst).m_mode))
-#define iblkio ((ulong)((lbb_shard.lbb_mst).m_blksz))
+#define inodenum ((ulong)(lbb_mstat->m_inn))
+#define ifilesize ((ulong)(lbb_mstat->m_size))
+#define idmode ((ulong)(lbb_mstat->m_mode))
+#define iblkio ((ulong)(lbb_mstat->m_blk))
 
 
 int __stres(char const* cpath);
@@ -246,9 +250,6 @@ ulong __fsize(char *fpath);
 ulong __iosize(char *fpath);
 void *__statusof(char const *__file);
 int __ap_fifo(char const *__path);
-#define ap_make __ap_fifo
-
-
 
 
 int lbb(char const *__cpath, ulong __lockfd);
@@ -278,6 +279,8 @@ void log_str(strld __strld);
 void log_sepstr(spstr __spstr);
 void log_ptrdx(struct __ptrdx *ptrdx);
 void log_esptr(ulong *esptr);
+void log_process_ids(ulong ppid, ulong cpid);
+void log_process_schema(ulong ppid, ulong cpid);
 
 
 

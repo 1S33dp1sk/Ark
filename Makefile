@@ -38,7 +38,7 @@ exs@charms:=${@charms}/executables
 @arch:=@${__host}
 karch_512_build:=${@1c}/k512${@arch}
 cloud_d_build:=${@1c}/d-cloud${@arch}
-fields_build:=${@1c}/fields${@arch}
+fields_build:=${@1c}/flds${@arch}
 #####################################
 #				Shorts				#
 #####################################
@@ -77,7 +77,7 @@ charms:
 clean: __clean_charms__
 	if [ -f k512 ]; then rm -rf k512; fi
 	if [ -f d-cloud ]; then rm -rf d-cloud; fi
-	if [ -f fields ]; then rm -rf fields; fi
+	if [ -f flds ]; then rm -rf flds; fi
 
 rebuild: clean charms 
 
@@ -170,7 +170,7 @@ lbb_atp_ml:
 	if [ ! -d ${@3c} ]; then mkdir ${@3c}; fi
 	cp ${__src}/k512.c ${@3c}
 	cp ${__src}/dcloud.c ${@3c}
-	cp ${__src}/fields.c ${@3c}
+	cp ${__src}/flds.c ${@3c}
 
 #compiled
 @2c:=${@3c}/2c
@@ -187,7 +187,7 @@ lbb_atp_ml:
 	if [ ! -d ${@1c} ]; then mkdir ${@1c}; fi
 	cc ${@3c}/k512.c -o ${@1c}/k512${@arch} ${atherlib}
 	cc ${@3c}/dcloud.c -o ${@1c}/d-cloud${@arch} ${atherlib}
-	cc ${@3c}/fields.c -o ${@1c}/flds${@arch} ${atherlib}
+	cc ${@3c}/flds.c -o ${@1c}/flds${@arch} ${atherlib}
 #tests
 3c_out:
 	cp ${@1c}/k512${@arch} k512
@@ -213,7 +213,7 @@ test_field:
 all:
 __alphadef__ := a b c d e f g h i j k l m n o p q r s t u v w x y z
 __bdef__ := a.tt b.al c.cc d.ef e.sx f.mt g.it h.lv i.ne j.ab k.ei l.bb m.ae n.et o.te p.ub q.ue r.dl t.rv u.sr v.ik w.lk x.vl y.bn z.ai
-__fieldsdef__ := .att .bal .ccc .def .exs .fmt .git .hlv .inc .jab .kei .lbb .mae .net .ote .pub .que .rdl .trv .usr .vik .xvl .ybn .zai
+__fldsdef__ := .att .bal .ccc .def .exs .fmt .git .hlv .inc .jab .kei .lbb .mae .net .ote .pub .que .rdl .trv .usr .vik .xvl .ybn .zai
 __clevels__ := c cc ccc 
 __FLAMES__:=__Mach_001F_001A_abcdefghijklmnopqrstuvwxyz__0x
 __FNAME_L_S__ = \n__Makefile_001F_001A_\n\tabcdefghijklmnopqrstuvwxyz\n__0x\n
