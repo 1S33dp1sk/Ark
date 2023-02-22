@@ -40,12 +40,12 @@ ulong check_lock() {
     ulong res=__stres(__lbb_locking);
     if(!res){
         #if LOG_LEVEL >= 2
-            printf("lbb :: no lock found\n");
+            printf("%lu : lbb :: no lock found\n",c_pid);
         #endif
+        _exit(1);
     }
     return res;
 };
-
 
 
 // __TEXT(Hello World); //valid in ATP
@@ -63,13 +63,6 @@ struct __arc {
     ulong __lock;
 };
 
-#define CALL_AT(arc) __ASCII(arc)
-
-#define CHAIN_CALL(c,a) CALL_SUCC(c)?CALL_AT(a):return 1;
-
-#define __LBB_INIT__ else { __LBB__R; return 0;};
-#define __CHECK_LBB__ if(CALL_SUCC(c_pid)){ arc.__pid=(ulong)getpid(); __LBB__W; return 0;}
-#define __LBB__ __CHECK_LBB__ __LBB_INIT__
 
 int main(int argc, char const*argv[]) {
 
@@ -86,17 +79,19 @@ int main(int argc, char const*argv[]) {
     arc.__pid=p_pid;
     arc.__lock=check_lock();
 
-    __LBB__;
+    if(CALL_SUCC(c_pid)){ 
+    // forked process {a.k.a} child process
+        arc.__pid=(ulong)getpid(); 
+        __LBB__L;
+    }
+    else {
+    // main process {a.k.a} parent process
+         __LBB__R;
+    };
 
-    // // forked process {a.k.a} child process
-    // if(CALL_SUCC(c_pid)){
-    //     arc.__pid=(ulong)getpid();
-    //     __LBB__
-    //     return 0;
-    // }
-    // // main process {a.k.a} parent process
-    // _LBB_INIT
 
+
+ magic_shard();
 };
 
 #endif

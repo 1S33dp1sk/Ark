@@ -12,7 +12,7 @@
 
 	#define IDXR (const ulong) __cindex
 
-	#define INDEX_AT(x) (ulong)__set_istart(innum((char *)x))
+	#define INDEX_AT(x) __set_start(x)
 	#define INDEX_(x) __set_istart(x)
 	#define INDEX_G(g,e,v) (char *)__generic_fmt(_to_generic(g),e,v)
 	#define INDEX_END(x) (ulong)__set_comp(x);return 0;

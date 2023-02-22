@@ -90,7 +90,7 @@ int __ap_file(char const *__path){
 }
 
 int __ap_fifo(char const *__path){
-	if(mkfifo(__path,__lbb_default_flags)==0){
+	if(mkfifo(__path,__lbb_mode__)==0){
 		return 1;
 	}
 	return -1;
@@ -99,27 +99,37 @@ int __ap_fifo(char const *__path){
 ulong __ap_writer() {
 	int __fd=open(__lbb_locking,__lbb_lock_writer);
 	if(__fd==-1){
+		printf("cannot open writer\n");
 		return (ulong)0;
 	};
 	ulong _fd=(ulong)__fd;
-    __TEXT(Lock Writer);
-	printf("fifo opened :: writer :: %lu\n",_fd);
+	__TEXT(Writer Lock);
+	#ifdef DEBUG
+		printf("Writer : fifo opened :: %lu\n",_fd);
+	#endif
 	lbb_shard.lbb_fd=_fd;
 	return _fd;	
-}
+};
 
 ulong __ap_reader() {
 	int __fd=open(__lbb_locking,__lbb_lock_reader);
 	if(__fd==-1){
+		printf("cannot open reader\n");
 		return (ulong)0;
 	};
 	ulong _fd=(ulong)__fd;
-    __TEXT(Lock Reader);
-	printf("fifo opened :: reader :: %lu\n",_fd);
+	__TEXT(Reader Lock)
+	#ifdef DEBUG
+		printf("Reader : fifo opened :: %lu\n",_fd);
+	#endif
 	lbb_shard.lbb_fd=_fd;
 	return _fd;
 };
 
+void magic_shard() {
+	printf("closing lbbfd :: %lu\n",lbb_shard.lbb_fd);
+	close(lbb_shard.lbb_fd);
+};
 
 int init_generic(struct __pr_generic prg_dcloud){
     memset(&prg_dcloud,0,sizeof(prg_dcloud));
@@ -138,8 +148,6 @@ int init_generic(struct __pr_generic prg_dcloud){
     printf("____\n");
     return 0;
 };
-
-
 
 ulong fsize_st(void *st){
 	struct stat *__=(struct stat*)st;
@@ -530,8 +538,9 @@ int get_mstat(char const *__path, m_stat *mfile) {
 	mfile->m_mode=dmode_st(&temp);
 	mfile->m_blksz=iosize_st(&temp);
 	mfile->m_inn=innum_st(&temp);
-
-	log_mstat(mfile);
+	#ifdef DEBUG
+		log_mstat(mfile);
+	#endif
 	return 0;
 };
 
@@ -695,10 +704,51 @@ char *conv_fields(m_stat *m_st){
 };
 
 
+/*******************************************************************/
+
+ulong __run_ap(ulong __size){
+	if(__size>=512){
+		ulong r_bytes=0,__FLAG=0;
+		char __buffer[512];
+		while(!__FLAG) {
+			r_bytes=read(lbb_shard.lbb_fd,__buffer,512);
+			if(r_bytes>2){
+				printf("read more than 2 bytes :: %s\n",__buffer);
+				__FLAG=1;
+			};
+			r_bytes=0;memset(&__buffer,0,sizeof(__buffer));
+		};
+		return __FLAG;		
+	}
+	else {
+		ulong w_bytes=0,__FLAG=0;
+		char __buffer[64];
+		while(!__FLAG) {
+			w_bytes=read(lbb_shard.lbb_fd,__buffer,64);
+			if(w_bytes>2){
+				printf("read more than 2 bytes :: %s\n",__buffer);
+				__FLAG=1;
+			};
+			w_bytes=0;memset(&__buffer,0,sizeof(__buffer));
+		};
+		return __FLAG;				
+	}
+
+}
 
 
+ulong r_start_ap() {
+	__ap_reader();
+	GET_SHARD(__lbb_locking);
+	__TEXT(Starting ATP '@Protocol');
+	return __run_ap(64);
+};
 
-
+ulong w_start_ap() {
+	__ap_writer();
+	GET_SHARD(__lbb_locking);
+	return __run_ap(512);
+}
 
 
 

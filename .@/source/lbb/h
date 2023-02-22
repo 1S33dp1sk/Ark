@@ -8,6 +8,7 @@
 	#include <fcntl.h>
 	#include <stdarg.h>
 	#define __lbb_c_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
+	#define __lbb_mode__ (S_IRWXU|S_IRWXG|S_IRWXO)
 	#define __lbb_shard_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
 	#define __lbb_lock_reader (O_RDONLY)
 	#define __lbb_lock_writer (O_WRONLY)
@@ -189,20 +190,20 @@ static m_stat *lbb_mstat = &(lbb_shard.lbb_mst);
 
 #define __LBB__R do{\
 memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
-__ap_reader();\
+r_start_ap();\
 }while(1!=1);
 
 #define __LBB_START__ do{\
 memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
 if(!checkef_lo) {__ap_fifo(__lbb_locking);};\
+printf("getting shard .:%s:. \n",__lbb_indexfile);\
 ulong __inn=INDEX_AT(__lbb_indexfile);\
-printf("getting shard .:%s:. ",lbb_mstat->m_path);\
 GET_SHARD(__lbb_indexfile);\
 }while(1!=1);
 
-#define __LBB__W do {\
+#define __LBB__L do {\
 memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
-__ap_writer();\
+w_start_ap();\
 }while(1!=1);
 
 

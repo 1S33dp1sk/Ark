@@ -94,17 +94,18 @@ static ulong ___offset=0;
 		return strdup(lbb_field);
 	};
 
-	ulong indexer_start(char *idxr){
+	ulong indexer_start(char const *idxr){
 		if(__cindex!=0){
 			return 0;
 		};
 		#ifndef INDEXER
 			#define INDEXER __cindex;
 		#endif
+
 		return __index_increment();
 	};
 
-	ulong  __indexer__(char *idxnr) {
+	ulong  __indexer__(char const *idxnr) {
 		int ixr_fd=open(__ixr_frame,(O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY),(S_IRWXU|S_IXGRP|S_IXOTH));
 		
 		#ifdef DEBUG
@@ -121,15 +122,16 @@ static ulong ___offset=0;
 		return indexer_start(idxnr)==0?0:__cindex;
 	};
 
-	ulong __set_start(char *__idxnr) {
+	int __set_start(char const *__idxnr) {
+
+
 		return __indexer__(__idxnr);
 	};
 
 	int __set_istart(ulong __inn){
-		#ifndef DEBUG_WLC
-			printf("inodenumber :: %lu\n",__inn);
-		#endif
-		return __indexer__((char *)hashof(2,&__inn,ULONG_SIZE));
+		//starts with __inn == 0
+
+		return __indexer__(hashof(2,&__inn,ULONG_SIZE));
 	};
 
 	ulong __set_comp(char *__eof_seq){
@@ -143,10 +145,10 @@ static ulong ___offset=0;
 		return res;
 	};
 
-	char *__index(char *__) {
+	char const *__index(char *__) {
 		ulong llen=__set_next(__);
 
-		return (char *)hashof(1,(void *)IDXR,LONG_SIZE);
+		return hashof(1,(void *)IDXR,LONG_SIZE);
 	};
 
 
