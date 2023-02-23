@@ -169,7 +169,7 @@ lbb_atp_ml:
 	@printf "\n{{{ccc}}}\n"
 	if [ ! -d ${@3c} ]; then mkdir ${@3c}; fi
 	cp ${__src}/k512.c ${@3c}
-	cp ${__src}/dcloud.c ${@3c}
+	cp ${__src}/dclouds.c ${@3c}
 	cp ${__src}/flds.c ${@3c}
 
 #compiled
@@ -186,7 +186,7 @@ lbb_atp_ml:
 	@printf "\n{  c  }\n"
 	if [ ! -d ${@1c} ]; then mkdir ${@1c}; fi
 	cc ${@3c}/k512.c -o ${@1c}/k512${@arch} ${atherlib}
-	cc ${@3c}/dcloud.c -o ${@1c}/d-cloud${@arch} ${atherlib}
+	cc ${@3c}/dclouds.c -o ${@1c}/d-cloud${@arch} ${atherlib}
 	cc ${@3c}/flds.c -o ${@1c}/flds${@arch} ${atherlib}
 #tests
 3c_out:

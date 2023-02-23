@@ -24,7 +24,7 @@
 #define __k_arch512__h 1
 #endif
 #define __Karch_512__ 
-#define __MA__F 0x100000000000000000000007
+#define __MA__F 0x000000000000000000000008
 #define LONG_MAX_COMPUTED_N_DIGITS 21 //logb(x) = loga(x) / loga(b)
 #define MachPtr 16
 #define __GS__F __MA__F<<3
@@ -33,6 +33,9 @@
 #define LockF 512
 #define __UN__F __GS__F<<3
 #define UFile 4096
+#define ARC_GENERIC(x) (ulong)((1<<(x*3)))
+
+
 
 
 
@@ -85,8 +88,6 @@ uns __check_lbb_file(char *cpath,lbb_t ftype){
 };
 
 
-
-
 struct __arc_buffer {
     ulong level;
     uchar __[512];
@@ -99,26 +100,6 @@ struct __ustr {
 };
 
 typedef struct __ustr ustr;
-
-void *arc_read(ArcBuffer *buffer, ulong ffd) {
-    long res;
-    switch(buffer->level){
-    case 0:
-        res=read(ffd,buffer->__,24);
-        if(res!=-1){
-            return buffer;
-        }
-    default:
-        return NULL;
-    }
-}
-
-
-struct __dynamic_arc {
-    ulong level;
-    uchar *__;
-};
-typedef struct __dynamic_arc cld_buffer;
 
 
 #define arr_size(x) ((ulong)(sizeof(x)/sizeof(x[0])))
@@ -179,25 +160,25 @@ struct __ccc_item {
     const uchar *__charm;
     const char *__mod;
 };
-typedef struct __ccc_item arc;
+typedef struct __ccc_item ccc;
 
-static arc kArcs[26];
+static ccc kCCC[26];
 #define elem_hash(x) hash8(0,x,strlen(x))
 
 int __init_3ci(){
     int i_index=0;
     for(; i_index<25;i_index+=1){
-        kArcs[i_index].__charm=charms[i_index];
-        kArcs[i_index].__mod=mods[i_index];
-        kArcs[i_index].__3chash=elem_hash(mods[i_index]);
-        kArcs[i_index].nxt=&kArcs[i_index+1];
+        kCCC[i_index].__charm=charms[i_index];
+        kCCC[i_index].__mod=mods[i_index];
+        kCCC[i_index].__3chash=elem_hash(mods[i_index]);
+        kCCC[i_index].nxt=&kCCC[i_index+1];
         printf("INDEXING ARC :%d: %s\n", i_index,mods[i_index]);
     }
     printf("INDEXING ARC :%d: %s\n", i_index,mods[i_index]);
-    kArcs[i_index].__charm=charms[i_index];
-    kArcs[i_index].__mod=mods[i_index];
-    kArcs[i_index].__3chash=elem_hash(mods[i_index]);
-    kArcs[i_index].nxt=NULL;
+    kCCC[i_index].__charm=charms[i_index];
+    kCCC[i_index].__mod=mods[i_index];
+    kCCC[i_index].__3chash=elem_hash(mods[i_index]);
+    kCCC[i_index].nxt=NULL;
     return i_index;
 };
 
@@ -206,12 +187,12 @@ return __init_3ci();
 }
 
 void log_arcs(){
-    arc *karc=kArcs;
-    while(karc!=NULL){
-        printf("name :: %s\n",karc->__mod);
-        printf("charm :: %s\n",karc->__charm);
-        printf("hash :: %lu\n",karc->__3chash);
-        karc=karc->nxt;
+    ccc *kccc=kCCC;
+    while(kccc!=NULL){
+        printf("name :: %s\n",kccc->__mod);
+        printf("charm :: %s\n",kccc->__charm);
+        printf("hash :: %lu\n",kccc->__3chash);
+        kccc=kccc->nxt;
     }
 }
 

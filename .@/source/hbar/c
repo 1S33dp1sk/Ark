@@ -505,7 +505,7 @@ hash bar
         uint8_t const *__ = hash(level,tohash,thsize);
         memset(&u,0,sizeof(u));
         #ifdef DEBUG
-            printf("hash16-u:%lu:%08x%08x-",sizeof(u),u[0],u[1]);
+            printf("hash16-u:%lu:%08lx%08lx-",sizeof(u),u[0],u[1]);
         #endif
         for(uns k=0;k<2;k++){
             ulong res=0;
@@ -525,7 +525,6 @@ hash bar
     char const *fhashof( uns level , char const *filepath ) {
             struct stat __st;
             int __fd = open( filepath , O_RDONLY );
-            char *fl_hash;
 
             #ifdef DEBUG
                 printf( "attempting to open file :: %s :" , filepath );
@@ -536,19 +535,17 @@ hash bar
                 printf( "cannot obtain file info\n" );
                 return NULL;
             }
+            ulong __size=__st.st_size;
+            char fl_hash[__size];
+            memset(&fl_hash,0,__size);
+            ulong b_read=read(__fd,fl_hash,__size);
 
-            size_t __size = __st.st_size;
-            fl_hash = malloc( __size );
-
-            size_t b_read = read( __fd , fl_hash , __size );
             #ifdef DEBUG
-                printf( "file size :: %d\n" , __size );
-                printf( "bytes read :: %d\n" , b_read );    
+                printf( "file size :: %lu\n" , __size );
+                printf( "bytes read :: %lu\n" , b_read );    
             #endif
 
-            close(__fd);
-
-            return hashof( level , fl_hash , b_read );
+            return hashof(level,fl_hash,b_read);
     }
     /**
     file-hash raw
@@ -557,7 +554,6 @@ hash bar
     uint8_t const *fhash(uns level,char const*filepath) {
         struct stat __st;
         int __fd = open( filepath , O_RDONLY );
-        char *fl_hash;
 
         #ifdef DEBUG
             printf( "attempting to open file :: %s :" , filepath );
@@ -571,16 +567,17 @@ hash bar
             return NULL;
         }
 
-        size_t __size = __st.st_size;
-        fl_hash = malloc( __size );
+        ulong __size=__st.st_size;
+        char fl_hash[__size];
+        memset(&fl_hash,0,__size);
+        ulong b_read=read(__fd,fl_hash,__size);
 
-        size_t b_read = read( __fd , fl_hash , __size );
         #ifdef DEBUG
-            printf( "file size :: %d\n" , __size );
-            printf( "bytes read :: %d\n" , b_read );    
+            printf( "file size :: %lu\n" , __size );
+            printf( "bytes read :: %lu\n" , b_read );    
         #endif
 
-        return hash( level , fl_hash , b_read );
+        return hash(level,fl_hash,b_read);
     }   
     /**
     file-hash4

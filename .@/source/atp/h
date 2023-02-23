@@ -7,6 +7,10 @@
 	#define ATP_PORT "9999" // The common ATP port
 	#define ATP_INUM 10 // instances of the same id
 
+	#define ATP_KV_SEP ':'
+	#define ATP_ENV_SEP '='
+	#define ATP_ATT_SEP '@'
+
 	#define NOFB_TYPE(x) _Generic((x), \
 										signed char: (char)x, \
 										unsigned char:(uchar)x, \
@@ -43,11 +47,42 @@
 												char *: "s",\
 												default: "_")
 
+	
+	struct __fr_index {
+		char const *__fref;
+		char const *__frname;
+		ulong __fridx;
+	};
+
+	typedef struct __fr_index frindex;
+
+	enum __generic_fmt {
+		__gval,
+		__key_value,
+		__env_variable,
+		__sock_address,
+		__description
+	};
+	typedef enum __generic_fmt __gev;
+	enum g_format {
+		_G=__gval,
+		KV=__key_value,
+		ENV=__env_variable,
+		SOKA=__sock_address,
+		DESCR=__description
+	};
+	typedef enum g_format gfmt;
+
+
+	char const *__gdelim(__gev __);
+	char *__generic_fmt(__gev g_type,char *__key, char *__value);
 
 	
+	#define DELIM(x) (char const *)__gdelim(_to_generic(x))
 
 
-
+	#define _to_generic(x) ((enum __generic_fmt)(x))
+	
 
 	#define GET_FMT_STR(FSTR,NAR,...) do { \
 		memset(&FSTR,0,(NAR*sizeof(char)));\
@@ -101,29 +136,54 @@
 	#define F_ARGS __ARGS
 	#define L_ARGS __ARGS
 
+	/**
+	 * morles :: 
+	 *  off :: les <-> server
+	 *  on  :: mor --> les
+	 */
 
-enum __types_f {
-	FLD_STORAGE=0,
-	F_FIFO_LD=1,
-	FL_LOCK_D=2,
-};
+	struct __spec {
+		gfmt g_ev;
+		char const *g_delim;
+	};
+	typedef struct __spec spec;
 
-typedef enum __types_f type_f;
+	int spec_set_type(spec *__spec, gfmt __g);
 
-int __file_att(char **__args,...);
-int __lock_att();
-int __fifo_att(char **__args,...);
 
-#define __ap_att(t,...) do{\
-switch(t) {\
-case __STORAGE__:\
-	__file_att(__VA_ARGS__);break;\
-case __FIFO__:\
-	__fifo_att(##__VA_ARGS__,__VA_ARGS__);break;\
-case __LOCK__:\
-	__lock_att(#__VA_ARGS__);break;\
-}\
-}while(1!=1)
+	static ulong p_pid;
+	static ulong c_pid;
+
+	#define CALL_SUCC(x) x==(ulong)0?1:0
+	#define CALL_INST(x) x==(ulong)1?1:0
+	#define CALL_NSUC(x) x==(ulong)-1?1:0
+	#define CALL_NEXT(x) x<(ulong)-1?x>(ulong)1?1:x:0
+
+	#define LOG_LEVEL 2
+	
+
+	enum __types_f {
+		FLD_STORAGE=0,
+		F_FIFO_LD=1,
+		FL_LOCK_D=2,
+	};
+
+	typedef enum __types_f type_f;
+
+	int __file_att(char **__args,...);
+	int __lock_att();
+	int __fifo_att(char **__args,...);
+
+	#define __ap_att(t,...) do{\
+	switch(t) {\
+	case __STORAGE__:\
+		__file_att(__VA_ARGS__);break;\
+	case __FIFO__:\
+		__fifo_att(##__VA_ARGS__,__VA_ARGS__);break;\
+	case __LOCK__:\
+		__lock_att(#__VA_ARGS__);break;\
+	}\
+	}while(1!=1)
 
 	#define __ATP__H 1
 #endif

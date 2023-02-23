@@ -164,7 +164,7 @@ uns dmode_st(void *st){
 	return __->st_mode;
 };
 
-ulong innum_st(void *st){
+ulong inn_st(void *st){
 	struct stat *__=(struct stat*)st;
 	return __->st_ino;
 };
@@ -537,7 +537,7 @@ int get_mstat(char const *__path, m_stat *mfile) {
 	mfile->m_size=fsize_st(&temp);
 	mfile->m_mode=dmode_st(&temp);
 	mfile->m_blksz=iosize_st(&temp);
-	mfile->m_inn=innum_st(&temp);
+	mfile->m_inn=inn_st(&temp);
 	#ifdef DEBUG
 		log_mstat(mfile);
 	#endif
@@ -658,7 +658,6 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		printf("open failed\n");
 		return NULL;
 	};
-	printf("'%s'\n",fieldname);
 
 	field e_field;
 	memset(&e_field,0,field_size);
@@ -718,19 +717,22 @@ ulong __run_ap(ulong __size){
 			};
 			r_bytes=0;memset(&__buffer,0,sizeof(__buffer));
 		};
+		magic_shard();
 		return __FLAG;		
 	}
 	else {
 		ulong w_bytes=0,__FLAG=0;
-		char __buffer[64];
+		char *__buffer="hello world";
+		memset(&__buffer,0,sizeof(__buffer));
 		while(!__FLAG) {
-			w_bytes=read(lbb_shard.lbb_fd,__buffer,64);
+			w_bytes=write(lbb_shard.lbb_fd,__buffer,64);
 			if(w_bytes>2){
-				printf("read more than 2 bytes :: %s\n",__buffer);
+				printf("write more than 2 bytes :: %s\n",__buffer);
 				__FLAG=1;
 			};
 			w_bytes=0;memset(&__buffer,0,sizeof(__buffer));
 		};
+		magic_shard();
 		return __FLAG;				
 	}
 

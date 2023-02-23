@@ -19,25 +19,131 @@
 #include <errno.h>
 
 
-// get sockaddr, IPv4 or IPv6:
+char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
+
+// #define DEBUG 1
+
+
+
+enum __atypes_ {
+    at4=4,
+    at6=6
+
+};
+
+enum __stypes {
+    __sAF_INET=2,
+    __sAF_INET6=30
+};
+
+enum __atypes_ stype_to_atype(enum __stypes __stype) {
+    switch(__stype) {
+        case __sAF_INET: return at4;
+        case __sAF_INET6: return at6;
+        default: return at4;
+    }
+};
+
+enum __stypes a2s_type(enum __atypes_ _atype) {
+    switch(_atype) {
+        case at4: return __sAF_INET;
+        case at6: return __sAF_INET6;
+        default: return __sAF_INET;
+    };
+}
+
+struct __socket_address {
+    enum __atypes_ _atype;
+    void *_sokaddr;
+    char _sockaddr[128];
+    char ascii_addr[INET6_ADDRSTRLEN];
+};
+
+
+struct __sok_t {
+    ulong aip_sockfd;
+    ulong aip_socklen;
+    char aip_socket[128];
+};
+
+typedef struct __sok_t aipsock;
+
+void _socket_free_fd(struct __sok_t *sok_t) {
+    close(sok_t->aip_sockfd);
+};
+
+
+
+void _socket_address_free(struct __socket_address *sa){
+    free(sa->_sokaddr);
+};
+
+
+enum __atypes_ get_atype(struct __socket_address *sa) {
+    return sa->_atype;
+};
+
+void *get_sokaddr(struct __socket_address *sa) {
+    return sa->_sokaddr;
+};
+
+char *get_sockaddr(struct __socket_address *sa) {
+    return (char *)&(sa->_sockaddr);
+};
+
+
+
 void *__sok_addr(struct sockaddr *sa) {
     if (sa->sa_family == AF_INET) {
         return &(((struct sockaddr_in*)sa)->sin_addr);
     }
-    return &(((struct sockaddr_in6*)sa)->sin6_addr);
+    else {
+        return &(((struct sockaddr_in6*)sa)->sin6_addr);
+    };
+    return NULL;
+};
+
+// get sockaddr, IPv4 or IPv6:
+struct __socket_address __sock_addr(struct sockaddr *sa) {
+    struct __socket_address __sa;
+    memset(&__sa,0,sizeof(struct __socket_address));
+    if (sa->sa_family == AF_INET) {
+        __sa._atype=at4;
+        __sa._sokaddr=&(((struct sockaddr_in*)sa)->sin_addr);
+    }
+    else {
+        __sa._atype=at6;
+        __sa._sokaddr=&(((struct sockaddr_in6*)sa)->sin6_addr);
+    };
+    char s[INET6_ADDRSTRLEN];
+    ulong __s_size=sizeof(__sa.ascii_addr);
+    memset(__sa.ascii_addr,0,__s_size);
+    memset(&s,0,sizeof(s));
+    char const *sockname=inet_ntop(a2s_type(__sa._atype), __sa._sokaddr, s, sizeof(s));
+    memmove(__sa.ascii_addr, sockname, __s_size);
+    #ifdef DEBUG
+        printf("socket @%s\n",sockname);
+    #endif
+    return __sa;
+};
+
+struct sockaddr *sock_aip_to_sa(aipsock *sock){
+    struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_socket)));
+    return (struct sockaddr *)saddrst;
+}
+
+
+void log_socket(aipsock *sock) {
+    struct __socket_address info=__sock_addr(sock_aip_to_sa(sock));
+    printf("socket @%s\n",info.ascii_addr);
 }
 
 struct addrinfo __hints() {
 	struct addrinfo info;
 	info.ai_socktype=SOCK_STREAM;
 	info.ai_family=AF_UNSPEC;
-
 	return info;
 }
-
-
-char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
-
 
 char *uname(const char *__filename) {
 
@@ -45,7 +151,67 @@ char *uname(const char *__filename) {
 };
 
 
-#ifndef LES
+
+struct __sok_t __arcsocket() {
+    aipsock __sok;
+    memset(&__sok,0,sizeof(struct __sok_t));
+
+    struct addrinfo hints=__hints();
+    struct addrinfo *srvinfo, *aip;
+    struct sockaddr_storage ss_addr;
+    int __sfd=-1;
+    socklen_t slen;
+    char s_addr[INET6_ADDRSTRLEN];
+    memset(&s_addr,0,sizeof(s_addr));
+
+    if (getaddrinfo(NULL,ATP_PORT,&hints,&srvinfo)){
+        #ifdef DEBUG
+            printf("getaddrinfo error");
+        #endif
+        memset(&ss_addr,0,sizeof(struct sockaddr_storage));
+        return __sok;
+    };
+
+    int __yes=1;
+
+    for(aip=srvinfo;aip!=NULL;aip=aip->ai_next){
+      if((__sfd=socket(aip->ai_family,aip->ai_socktype,aip->ai_protocol))==-1){
+            #ifdef DEBUG
+                printf("server :: socket\n");
+            #endif
+            continue;
+        }
+        if(setsockopt(__sfd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(unsigned))==-1){
+            #ifdef DEBUG
+                printf("setsockopt\n");
+            #endif
+            exit(1);
+        }
+        if(bind(__sfd,aip->ai_addr,aip->ai_addrlen)==-1){
+            close(__sfd);
+            #ifdef DEBUG
+                perror("server: bind\n");
+            #endif
+            continue;
+        }
+        #ifdef DEBUG
+            printf("aip->next");
+        #endif
+        break;  
+    }
+
+
+    freeaddrinfo(srvinfo);
+
+    __sok.aip_sockfd=__sfd;
+    __sok.aip_socklen=(ulong)(aip->ai_addrlen);
+    struct sockaddr_storage *sasp=(struct sockaddr_storage*)aip->ai_addr;
+    memmove((__sok.aip_socket), sasp, sizeof(struct sockaddr_storage));
+
+    return __sok;
+}
+
+
 int les(void) {
     printf("d-cloud : atp {les}\n");
     int __fd, temp_fd, __yes=1, __rv;
@@ -132,14 +298,10 @@ int les(void) {
     }
     return 0;
 }
-#define LES les
-#endif
 
-#ifndef MOR
 int mor(void) {
     printf("d-cloud : atp {mor}\n");
 
-    #define SOK_CONNECT 1
     int sockfd, numbytes;  
     char buf[ATP_BUFFER_SIZE];
     struct addrinfo hints=__hints();
@@ -183,8 +345,7 @@ int mor(void) {
         return 2;
     }
 
-    inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr),
-            s, sizeof s);
+    inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
     #if LBB_LOG == 2
         printf("client: connecting to %s\n", s);
     #endif
@@ -206,19 +367,84 @@ int mor(void) {
 
     return 0;
 }
-#define MOR mor
-#endif
 
 
-
-
-
-int __fifo_att(char **__args, ...) {
-#if __AP_FIFO__ == 1
-    Display(at fifo)
-    #endif
+int spec_set_type(spec *sp, gfmt g) {
+    sp->g_ev=g;
+    sp->g_delim=DELIM(g);
     return 0;
 };
+
+
+
+char const *__gdelim(__gev __gtype) {
+    char __delim[3];
+    memset(&__delim,0,3);
+    switch(__gtype){
+        case __key_value:
+            __delim[0]=ATP_KV_SEP;
+            __delim[1]='\0';
+            return strdup(__delim);
+        case __env_variable:
+            __delim[0]=ATP_ENV_SEP;
+            __delim[1]='\0';
+            return strdup(__delim);
+        case __sock_address:
+            __delim[0]=ATP_KV_SEP;
+            __delim[1]=ATP_ENV_SEP;
+            break;
+        case __description:
+            __delim[0]=ATP_ENV_SEP;
+            __delim[1]=ATP_KV_SEP;
+            break;
+        default:break;
+    }
+    __delim[2]='\0';
+    #ifdef DEBUG
+        printf("delimiter is '%s'\n",__delim);
+    #endif
+    return strdup(__delim);
+};
+
+char *__generic_fmt(__gev g_type,char *__key, char *__value){
+    ulong klen=strlen(__key);
+    ulong vlen=strlen(__value);
+    ulong clen=klen+vlen+2;
+
+    // log_gfmt(g_type);
+    // log_keyvalue(__key,__value);
+
+    char lbb_field[clen];
+    memset(&lbb_field,0,clen);
+    lbb_field[clen]='\0';
+    memmove(lbb_field,__key,klen);
+    char const *_delim=__gdelim(g_type);
+    ulong __dlen=strlen(_delim);
+    memmove((lbb_field+klen),_delim, __dlen);
+    memmove((lbb_field+klen+__dlen),__value,vlen);
+
+    #ifdef LBB_PRINT
+        __ASCII(lbb_field)
+    #endif
+    #ifdef DEBUG
+        printf("{%s}",lbb_field);
+    #endif
+    return strdup(lbb_field);
+};
+
+
+
+
+
+// __TEXT(Hello World); //valid in ATP
+#ifdef __AT_PROTOCOL__
+int main(int argc, char **argv) {
+    spec var;
+    spec_set_type(&var, KV);
+    OUT_ASCII(0,var.g_delim);
+    return 0;
+}
+#endif
 
 
 

@@ -2,6 +2,7 @@
 i run field ids
 
 #include "2c/_h512.h"
+#include "2c/lbb.h"
 #include "2c/ixr.h"
 
 void __usage(){
@@ -12,8 +13,6 @@ char *__pre_apple="/Users/mrkj/package/";
 char *__pre_unix="/home/mrkj/package";
 char *__pre_wind="C:\\package\\mrkj";
 char *__pre_="///mrkj\\\\";
-
-
 
 char const *mount_at="@charms/lbb/index.ext";
 char const *_socket_="22ef791c@0.0.0.0";
@@ -69,7 +68,10 @@ char *__fld_packed_hash(char *cpath,ulong fsize, ulong max_enumer){
     return cpath;
 };
 
-int main(int argc, char **argv){ 
+#define OUTPUT 1
+#ifdef OUTPUT
+int main(int argc, char **argv){
+
     if(argc!=2){
         __TEXT(Use fields as :: `Fields /path/to/file`);
         return 1;
@@ -84,13 +86,72 @@ int main(int argc, char **argv){
         __TEXT(Field not found);
         return 2;
     };
-    // log_mstat(&(__fld.c_mst));
+    #ifdef DEBUG
+        log_mstat(&cm_st);
+    #endif
+
+
     char *cflds_head=conv_fields(&cm_st);
     if(cflds_head==NULL){
         return 3;
     };
+    #ifdef OUTPUT
+        printf("'%s'\n",cflds_head);
+    #endif
 
     return 0;
 };
+#elif LIBRARY
+int flds(int argc, char **argv) {
+    if(argc!=2){
+        __TEXT(Use fields as :: `Fields /path/to/file`);
+        return 1;
+    };
+    char *__fld_name=(char *)argv[1];
+    ulong __fld_n_size=strlen(__fld_name);
+
+    m_stat cm_st;
+    memset(&cm_st,0,sizeof(m_stat));
+    int res=get_mstat(__fld_name,&cm_st);
+    if(res==-1){
+        __TEXT(Field not found);
+        return 2;
+    };
+    #ifdef DEBUG
+        log_mstat(&cm_st);
+    #endif
+
+
+    char *cflds_head=conv_fields(&cm_st);
+    if(cflds_head==NULL){
+        return 3;
+    };
+    #ifdef OUTPUT
+        printf("'%s'\n",cflds_head);
+    #endif
+
+    return 0;
+}
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

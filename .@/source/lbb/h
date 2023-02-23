@@ -52,6 +52,8 @@ static const char *__lbb_locking = "@charms/lock";
 
 
 
+
+
 unsigned int pack(uchar *buf,char const *fmt,...);
 
 #define PACK_IN(fld,siz,fmt,...) do {\
@@ -188,20 +190,19 @@ static m_stat *lbb_mstat = &(lbb_shard.lbb_mst);
 	printf("book:tern  ::  .lbb  ::: %s\n",FND_NTFND(checkef_lo));\
 }while(1!=1);
 
-#define __LBB__R do{\
+#define __LBB_READER__ do{\
 memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
+if(!checkef_lo) {__ap_fifo(__lbb_locking);};\
 r_start_ap();\
 }while(1!=1);
 
 #define __LBB_START__ do{\
 memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
-if(!checkef_lo) {__ap_fifo(__lbb_locking);};\
 printf("getting shard .:%s:. \n",__lbb_indexfile);\
-ulong __inn=INDEX_AT(__lbb_indexfile);\
 GET_SHARD(__lbb_indexfile);\
 }while(1!=1);
 
-#define __LBB__L do {\
+#define __LBB_WRITER__ do {\
 memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
 w_start_ap();\
 }while(1!=1);
@@ -215,7 +216,8 @@ w_start_ap();\
 #define st_iosize(x) ((ulong)iosize_st(x))
 #define dmde(x) ((uns)__dmode(x))
 #define st_dmode(x) ((ulong)dmode_st(x))
-#define innum(x) (ulong)__inodenum(x)
+#define inn(x) (ulong)__inodenum(x)
+#define st_inn(x) ((ulong)inn_st(x))
 #define status(x) __statusof(x)
 #define stres(x) __stres(x)
 

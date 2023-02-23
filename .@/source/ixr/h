@@ -9,32 +9,14 @@
 
 	char const *hashof(unsigned level, void const *tohash, ulong thsize);
 
-
 	#define IDXR (const ulong) __cindex
 
-	#define INDEX_AT(x) __set_start(x)
-	#define INDEX_(x) __set_istart(x)
+	#define INDEX_START() __indexer__("TheBook")
+	#define INDEX_AT(x) (char const *)__get_ixron(x)
 	#define INDEX_G(g,e,v) (char *)__generic_fmt(_to_generic(g),e,v)
-	#define INDEX_END(x) (ulong)__set_comp(x);return 0;
-	#define DELIM(x) (char const *)__gdelim(_to_generic(x))
-	#define _to_generic(x) ((enum __generic_fmt)(x))
+	#define INDEX_END(x) return __set_comp(x);
 
-	enum __generic_fmt {
-		__gval,
-		__key_value,
-		__env_variable,
-		__sock_address,
-		__description
-	};
-	typedef enum __generic_fmt __gev;
-	enum g_format {
-		_G=__gval,
-		KV=__key_value,
-		ENV=__env_variable,
-		SOKA=__sock_address,
-		DESCR=__description
-	};
-	typedef enum g_format gfmt;
+	
 
 	#define __NEXT__ do {\
 	__cindex+=1;\
