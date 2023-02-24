@@ -208,7 +208,6 @@ w_start_ap();\
 }while(1!=1);
 
 
-
 #define sz8(x) ((ulong)__8sz(x))
 #define fsze(x) ((ulong)__fsize(x))
 #define st_fsize(x) ((ulong)fsize_st(x))
@@ -220,10 +219,6 @@ w_start_ap();\
 #define st_inn(x) ((ulong)inn_st(x))
 #define status(x) __statusof(x)
 #define stres(x) __stres(x)
-
-
-
-
 
 
 // should use _Generic

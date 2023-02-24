@@ -5,7 +5,7 @@
 	#define ATP_SPEC_SIZE (8<<0x3)
 	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
 	#define ATP_PORT "9999" // The common ATP port
-	#define ATP_INUM 10 // instances of the same id
+	#define ATP_BACKLOG 10 // instances of the same id
 
 	#define ATP_KV_SEP ':'
 	#define ATP_ENV_SEP '='
@@ -47,13 +47,28 @@
 												char *: "s",\
 												default: "_")
 
-	
+	enum __atypes_ {
+	    at4=4,
+	    at6=6
+	};
+
+	enum __stypes {
+	    __sAF_INET=2,
+	    __sAF_INET6=30
+	};
+
+	struct __sok_t {
+	    ulong aip_sockfd;
+	    ulong aip_socklen;
+	    char aip_socket[128];
+	};
+	typedef struct __sok_t aipsock;
+
 	struct __fr_index {
 		char const *__fref;
 		char const *__frname;
 		ulong __fridx;
 	};
-
 	typedef struct __fr_index frindex;
 
 	enum __generic_fmt {
@@ -64,6 +79,7 @@
 		__description
 	};
 	typedef enum __generic_fmt __gev;
+	
 	enum g_format {
 		_G=__gval,
 		KV=__key_value,
@@ -80,10 +96,8 @@
 	
 	#define DELIM(x) (char const *)__gdelim(_to_generic(x))
 
-
 	#define _to_generic(x) ((enum __generic_fmt)(x))
 	
-
 	#define GET_FMT_STR(FSTR,NAR,...) do { \
 		memset(&FSTR,0,(NAR*sizeof(char)));\
 	}while(1!=1)

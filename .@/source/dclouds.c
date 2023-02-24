@@ -40,14 +40,39 @@ void __arcsok(){
     __sok=__arcsocket();
 };
 
+ulong __aipfd() {
+    return __sok.aip_sockfd;
+};
+
+ulong __aiplen(){
+    return __sok.aip_socklen;
+};
+
+char *__aipsock_raw(){
+    return (char *)__sok.aip_socket;
+};
+
+struct sockaddr *__aipsock_addr_sa(){
+    return sock_aip_to_sa(&__sok);
+};
+
+aip_saddr __aipsock_addr(){
+    return __sock_addr(__aipsock_addr_sa());
+};
+
+void *__arcstart(void *c_step){
+
+    return __arcell(c_step);
+};
+
 static ulong step_c=0;
 
 enum step_size {
     step_point=8,
     step_addr=16,
-    step_sok=128
+    step_sok=128,
+    step_start=256
 };
-
 
 void *__arcstp(enum step_size stsize){
     void *stp;
@@ -64,6 +89,10 @@ void *__arcstp(enum step_size stsize){
         __arcsok();
         return __arcstp(6);
     }
+    else if(stsize==step_start) {
+        __arcstp(6);__arcstp(128);
+        return __arcstart(__arcstp(6)); 
+    }
     return stp;
 };
 
@@ -79,19 +108,6 @@ ulong lenify(char const*__){
 
 static ulong points_c=0;
 
-void free_arcs() {
-    void *d2ptr, *dptr=arc->__points;
-    for(ulong i=0;i<points_c;i++){
-        d2ptr=(dpoint *)dptr;
-        free((d2ptr+i));
-    };
-};
-
-void free_args() {
-    _socket_free_fd(&__sok);
-    free_arcs();
-};
-
 void *__arc_stpoints(ulong __stindex, char const *__stname) {
     dpoint *__point=__arcstp(__MA__F);
     memset(__point,0,sizeof(ulong));
@@ -103,7 +119,6 @@ void *__arc_stpoints(ulong __stindex, char const *__stname) {
     memmove(stname,__stname,length);
     __point->__name=stname;
 
-
     char const *__stref=hashof(1, __stname, length);
     ulong ref_length=lenify(__stref);
     char *stref=(char *)malloc(ref_length);
@@ -111,12 +126,28 @@ void *__arc_stpoints(ulong __stindex, char const *__stname) {
     memmove(stref,__stref,ref_length);
     __point->__ref=stref;
 
-
     points_c+=1;
     return (dpoint *)__point;
-}
+};
 
-#define __TEST_128 1 
+void free_arcs() {
+    void *d2ptr, *dptr=arc->__points;
+    for(ulong i=0;i<points_c;i++){
+        d2ptr=(dpoint *)dptr;
+        free((d2ptr+i));
+    };
+};
+
+void free_sok(){ 
+    _socket_free_fd(&__sok);
+};
+
+void free_args() {
+    free_arcs();
+    free_sok();
+};
+
+#define __TEST_256 1 
 
 
 #ifdef __D_CLOUD__
@@ -132,8 +163,9 @@ int main(int argc, char const*argv[]) {
     #elif __TEST_128
         void *temp=__arcstp(128);
         log_socket(&__sok);
+    #elif __TEST_256
+        void *temp=__arcstp(256);
     #endif
-
 
    free_args();
 };

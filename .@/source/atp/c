@@ -23,19 +23,6 @@ char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
 
 // #define DEBUG 1
 
-
-
-enum __atypes_ {
-    at4=4,
-    at6=6
-
-};
-
-enum __stypes {
-    __sAF_INET=2,
-    __sAF_INET6=30
-};
-
 enum __atypes_ stype_to_atype(enum __stypes __stype) {
     switch(__stype) {
         case __sAF_INET: return at4;
@@ -50,7 +37,7 @@ enum __stypes a2s_type(enum __atypes_ _atype) {
         case at6: return __sAF_INET6;
         default: return __sAF_INET;
     };
-}
+};
 
 struct __socket_address {
     enum __atypes_ _atype;
@@ -59,39 +46,27 @@ struct __socket_address {
     char ascii_addr[INET6_ADDRSTRLEN];
 };
 
-
-struct __sok_t {
-    ulong aip_sockfd;
-    ulong aip_socklen;
-    char aip_socket[128];
-};
-
-typedef struct __sok_t aipsock;
+typedef struct __socket_address aip_saddr;
 
 void _socket_free_fd(struct __sok_t *sok_t) {
     close(sok_t->aip_sockfd);
 };
 
-
-
-void _socket_address_free(struct __socket_address *sa){
-    free(sa->_sokaddr);
+void _socket_address_free(struct __socket_address *aip_sa){
+    free(aip_sa->_sokaddr);
 };
 
-
-enum __atypes_ get_atype(struct __socket_address *sa) {
-    return sa->_atype;
+enum __atypes_ get_atype(struct __socket_address *aip_sa) {
+    return aip_sa->_atype;
 };
 
-void *get_sokaddr(struct __socket_address *sa) {
-    return sa->_sokaddr;
+void *get_sokaddr(struct __socket_address *aip_sa) {
+    return aip_sa->_sokaddr;
 };
 
-char *get_sockaddr(struct __socket_address *sa) {
-    return (char *)&(sa->_sockaddr);
+char *get_sockaddr(struct __socket_address *aip_sa) {
+    return (char *)&(aip_sa->_sockaddr);
 };
-
-
 
 void *__sok_addr(struct sockaddr *sa) {
     if (sa->sa_family == AF_INET) {
@@ -130,27 +105,24 @@ struct __socket_address __sock_addr(struct sockaddr *sa) {
 struct sockaddr *sock_aip_to_sa(aipsock *sock){
     struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_socket)));
     return (struct sockaddr *)saddrst;
-}
-
+};
 
 void log_socket(aipsock *sock) {
     struct __socket_address info=__sock_addr(sock_aip_to_sa(sock));
     printf("socket @%s\n",info.ascii_addr);
-}
+};
 
 struct addrinfo __hints() {
 	struct addrinfo info;
 	info.ai_socktype=SOCK_STREAM;
 	info.ai_family=AF_UNSPEC;
 	return info;
-}
+};
 
 char *uname(const char *__filename) {
 
 	return (char *)hashof(2,__filename,strlen(__filename));
 };
-
-
 
 struct __sok_t __arcsocket() {
     aipsock __sok;
@@ -175,7 +147,7 @@ struct __sok_t __arcsocket() {
     int __yes=1;
 
     for(aip=srvinfo;aip!=NULL;aip=aip->ai_next){
-      if((__sfd=socket(aip->ai_family,aip->ai_socktype,aip->ai_protocol))==-1){
+        if((__sfd=socket(aip->ai_family,aip->ai_socktype,aip->ai_protocol))==-1){
             #ifdef DEBUG
                 printf("server :: socket\n");
             #endif
@@ -209,8 +181,68 @@ struct __sok_t __arcsocket() {
     memmove((__sok.aip_socket), sasp, sizeof(struct sockaddr_storage));
 
     return __sok;
-}
+};
 
+#define socket_fd(x) (ulong)(x.aip_sockfd)
+#define socket_len(x) (ulong)(x.aip_socklen)
+#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
+#define DEBUG 1
+
+int __aip_listen(ulong aipsfd){
+    return listen(aipsfd,ATP_BACKLOG)==-1?1:0;
+};
+
+void __ellrun(ulong __fd, ulong __len, struct sockaddr *__addr) {
+
+    aipsock temp_sok;
+    memset(&temp_sok,0,sizeof(aipsock));
+
+    while(1) {
+        socklen_t *temp_sockelen=((socklen_t *)&(temp_sok.aip_socklen));
+        ulong *temp_sockefd=((ulong *)&(temp_sok.aip_sockfd));
+        struct sockaddr *temp_sockeaddr=((struct sockaddr *)&(temp_sok.aip_socket));
+        *temp_sockelen=sizeof(temp_sockeaddr);
+        int __tempfd=accept(__fd, temp_sockeaddr, temp_sockelen);
+        if(__tempfd==-1) {
+            #ifdef DEBUG
+                printf("error : accept :: ");
+            #endif
+            continue;
+        };
+        #ifdef DEBUG
+            log_socket(&temp_sok);
+        #endif
+        _socket_free_fd(&temp_sok);
+    };
+};
+
+void *__arcell(void *c_stp) {
+    struct __sok_t __socket =__arcsocket();
+    struct __socket_address saddr_st=__sock_addr(sock_aip_to_sa(&__socket));
+
+    ulong socket_fd=socket_fd(__socket);
+    ulong socket_len=socket_len(__socket);
+    struct sockaddr *socket_addr=socket_staddr(__socket);
+
+
+    #ifdef DEBUG
+        printf("starting ell, <%p>\n", c_stp);
+        printf("fd=%lu",socket_fd);
+        log_socket(&__socket);
+    #endif
+
+    if(__aip_listen(socket_fd)) {
+         #ifdef DEBUG
+            printf("error : listen\n");
+        #endif
+        _exit(1);
+    };
+
+
+    __ellrun(socket_fd,socket_len,socket_addr);
+
+    return c_stp;
+};
 
 int les(void) {
     printf("d-cloud : atp {les}\n");
@@ -260,7 +292,7 @@ int les(void) {
         #endif
         exit(1);
     }
-    if(listen(__fd,ATP_INUM)==-1){
+    if(listen(__fd,ATP_BACKLOG)==-1){
         #ifdef DEBUG
             perror("listen\n");
         #endif
@@ -297,7 +329,7 @@ int les(void) {
         close(temp_fd);
     }
     return 0;
-}
+};
 
 int mor(void) {
     printf("d-cloud : atp {mor}\n");
@@ -366,16 +398,13 @@ int mor(void) {
     close(sockfd);
 
     return 0;
-}
-
+};
 
 int spec_set_type(spec *sp, gfmt g) {
     sp->g_ev=g;
     sp->g_delim=DELIM(g);
     return 0;
 };
-
-
 
 char const *__gdelim(__gev __gtype) {
     char __delim[3];
@@ -431,9 +460,6 @@ char *__generic_fmt(__gev g_type,char *__key, char *__value){
     #endif
     return strdup(lbb_field);
 };
-
-
-
 
 
 // __TEXT(Hello World); //valid in ATP
