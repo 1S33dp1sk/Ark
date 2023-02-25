@@ -115,7 +115,7 @@ void log_socket(aipsock *sock) {
 struct addrinfo __hints() {
 	struct addrinfo info;
 	info.ai_socktype=SOCK_STREAM;
-	info.ai_family=AF_UNSPEC;
+	info.ai_family=PF_UNSPEC;
 	return info;
 };
 
@@ -129,6 +129,7 @@ struct __sok_t __arcsocket() {
     memset(&__sok,0,sizeof(struct __sok_t));
 
     struct addrinfo hints=__hints();
+    hints.ai_flags=AI_PASSIVE;
     struct addrinfo *srvinfo, *aip;
     struct sockaddr_storage ss_addr;
     int __sfd=-1;
@@ -184,13 +185,82 @@ struct __sok_t __arcsocket() {
 };
 
 #define socket_fd(x) (ulong)(x.aip_sockfd)
+#define sock_fd(x) (ulong)(x->aip_sockfd)
 #define socket_len(x) (ulong)(x.aip_socklen)
+#define sock_len(x) (ulong)(x->aip_socklen)
 #define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
 #define DEBUG 1
 
 int __aip_listen(ulong aipsfd){
-    return listen(aipsfd,ATP_BACKLOG)==-1?1:0;
+    int res=listen(aipsfd,ATP_BACKLOG)==-1?1:0;
+    if(res==-1){
+        printf("err number:\n");
+        printf("%d\n",errno);
+        return 1;   
+    }
+    return 0;
 };
+
+void __aip_send(aipsock *sock, char *msg_to_send){
+    ulong msglen=strlen(msg_to_send);
+    if(send(sock_fd(sock),msg_to_send,msglen,0)==-1){
+        #ifdef DEBUG
+            printf("send : failed :: payload { %s }\n", msg_to_send);
+        #endif
+    }
+}
+
+
+int __incheck(char c){   
+    if( (c>=0x30)&&(c<=0x39)){
+        #ifdef DDEBUG
+            printf("char %c has a value of %d\n",c,c);  
+        #endif
+        return 1;
+    };
+    return 0;
+};
+
+ulong __tonum(char const *var){
+    ulong d=1,__c=0,res=0,__len=strlen(var);
+    int c;
+    if(var[__len]=='\0'){
+        while(__incheck(var[__c])){
+            d*=10;
+            __c+=1;
+        };
+        __c=0;
+        if(d>=10){d/=10;}
+        #ifdef DDEBUG
+            printf("digits count :: %lu\n",d);
+        #endif
+        while(__incheck(var[__c])){
+            res+=(d*(var[__c]-0x30));
+            __c+=1;d/=10;
+        }
+        #ifdef DDEBUG
+            printf("result is :: %lu\n", res);
+        #endif
+    };
+    return res;
+};
+
+
+ulong tonum(int i){
+    ulong res=0;
+    if(i>0){
+        res+=i;
+        return res;
+    };
+    return 0;
+}
+
+void sock_errs(){
+    printf("value of EBADF = %d\n", EBADF);
+    printf("value of ENOTSOCK = %d\n", ENOTSOCK);
+};
+
+
 
 void __ellrun(ulong __fd, ulong __len, struct sockaddr *__addr) {
 
@@ -206,15 +276,26 @@ void __ellrun(ulong __fd, ulong __len, struct sockaddr *__addr) {
         if(__tempfd==-1) {
             #ifdef DEBUG
                 printf("error : accept :: ");
+                printf("err number ::: ");
+                printf("%d\n",errno);
+                break;
             #endif
             continue;
         };
+        temp_sok.aip_sockfd=tonum(__tempfd);
         #ifdef DEBUG
             log_socket(&temp_sok);
         #endif
+        if(!fork()){
+            close(__fd);
+            __aip_send(&temp_sok, "ell shell ::\n");
+            _socket_free_fd(&temp_sok);
+            exit(0);
+        }
         _socket_free_fd(&temp_sok);
     };
 };
+
 
 void *__arcell(void *c_stp) {
     struct __sok_t __socket =__arcsocket();
@@ -232,8 +313,10 @@ void *__arcell(void *c_stp) {
     #endif
 
     if(__aip_listen(socket_fd)) {
-         #ifdef DEBUG
+        #ifdef DEBUG
             printf("error : listen\n");
+            printf("err number:\n");
+            printf("%d\n",errno);
         #endif
         _exit(1);
     };
@@ -243,6 +326,77 @@ void *__arcell(void *c_stp) {
 
     return c_stp;
 };
+
+
+int lbb_run() {
+    printf("d-cloud : atp {mor}\n");
+
+    int sockfd, numbytes;  
+    char buf[ATP_BUFFER_SIZE];
+    struct addrinfo hints=__hints();
+    struct addrinfo *servinfo, *p;
+    int rv;
+    char s[INET6_ADDRSTRLEN];
+
+
+    if ((rv = getaddrinfo(NULL, ATP_PORT, &hints, &servinfo)) != 0) {
+        #ifdef DEBUG
+            fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        #endif
+        return 1;
+    }
+
+    // loop through all the results and connect to the first we can
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            #ifdef DEBUG
+                perror("client: socket");
+            #endif
+            continue;
+        }
+
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            #ifdef DEBUG
+                perror("client: connect");
+            #endif
+            continue;
+        }
+
+        break;
+    }
+
+    if (p == NULL) {
+        #ifdef DEBUG
+            fprintf(stderr, "client: failed to connect\n");
+        #endif
+        return 2;
+    }
+
+    inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
+    #ifdef DEBUG
+        printf("client: connecting to %s\n", s);
+    #endif
+    freeaddrinfo(servinfo); // all done with this structure
+
+    if ((numbytes = recv(sockfd, buf, ATP_BUFFER_SIZE-1, 0)) == -1) {
+        #ifdef DEBUG
+            perror("recv");
+        #endif
+        exit(1);
+    }
+
+    buf[numbytes] = '\0';
+
+    #ifdef DEBUG
+        printf("client: received '%s'\n",buf);
+    #endif
+    close(sockfd);
+
+    return 0;
+}
+
 
 int les(void) {
     printf("d-cloud : atp {les}\n");
@@ -344,7 +498,7 @@ int mor(void) {
 
     if ((rv = getaddrinfo(NULL, ATP_PORT, &hints, &servinfo)) != 0) {
         #ifdef DEBUG
-            fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+            printf("getaddrinfo: %s\n", gai_strerror(rv));
         #endif
         return 1;
     }
@@ -354,7 +508,7 @@ int mor(void) {
         if ((sockfd = socket(p->ai_family, p->ai_socktype,
                 p->ai_protocol)) == -1) {
             #ifdef DEBUG
-                perror("client: socket");
+                printf("client: socket");
             #endif
             continue;
         }
@@ -362,7 +516,7 @@ int mor(void) {
         if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             close(sockfd);
             #ifdef DEBUG
-                perror("client: connect");
+                printf("client: connect");
             #endif
             continue;
         }
@@ -372,27 +526,27 @@ int mor(void) {
 
     if (p == NULL) {
         #ifdef DEBUG
-            fprintf(stderr, "client: failed to connect\n");
+            printf("client: failed to connect\n");
         #endif
         return 2;
     }
 
     inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
-    #if LBB_LOG == 2
+    #if DEBUG
         printf("client: connecting to %s\n", s);
     #endif
     freeaddrinfo(servinfo); // all done with this structure
 
     if ((numbytes = recv(sockfd, buf, ATP_BUFFER_SIZE-1, 0)) == -1) {
         #ifdef DEBUG
-            perror("recv");
+            printf("recv");
         #endif
         exit(1);
     }
 
     buf[numbytes] = '\0';
 
-    #if LBB_LOG == 2
+    #if DEBUG
         printf("client: received '%s'\n",buf);
     #endif
     close(sockfd);
