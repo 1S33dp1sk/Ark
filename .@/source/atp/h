@@ -80,14 +80,14 @@
 	};
 	typedef enum __generic_fmt __gev;
 	
-	enum g_format {
+	enum __fmt_t {
 		_G=__gval,
 		KV=__key_value,
 		ENV=__env_variable,
 		SOKA=__sock_address,
 		DESCR=__description
 	};
-	typedef enum g_format gfmt;
+	typedef enum __fmt_t fmt_t;
 
 
 	char const *__gdelim(__gev __);
@@ -157,12 +157,12 @@
 	 */
 
 	struct __spec {
-		gfmt g_ev;
+		fmt_t g_ev;
 		char const *g_delim;
 	};
 	typedef struct __spec spec;
 
-	int spec_set_type(spec *__spec, gfmt __g);
+	int spec_set_type(spec *__spec, fmt_t __g);
 
 
 	static ulong p_pid;

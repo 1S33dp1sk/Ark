@@ -64,7 +64,6 @@ unsigned int pack(uchar *buf,char const *fmt,...);
 
 
 void __closeb();
-ulong sep_offset(char *string,char *seperator);
 
 /**
  * string manipulation **
@@ -117,7 +116,12 @@ struct __m_stat {
 	char m_path[512];
 };
 
+
 typedef struct __m_stat m_stat;
+void *__mstat__(m_stat st) {
+
+	return memset(&st, 0, sizeof(m_stat));
+};
 
 /**
  * S-structure {a.k.a socket} **
@@ -260,8 +264,9 @@ void lbb_close();
 
 
 int spaces_and_tabs(char *__string);
-char *str_b4offset(char *__string, ulong __offset);
-char *str_a4offset(char *__string, ulong __offset);
+char *str_b4offset(char const *__string, ulong __offset);
+char *str_a4offset(char const *__string, ulong __offset);
+ulong sep_offset(char const *string,char *seperator);
 spstr sepstr_offset(char *__string, char *__seperator);
 strld extract_atoff(char *__string, ulong __offset);
 

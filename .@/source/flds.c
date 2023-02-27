@@ -5,8 +5,12 @@ i run field ids
 #include "2c/lbb.h"
 #include "2c/ixr.h"
 
+#define OUTPUT 1
+#define DEBUG 1
+
+
 void __usage(){
-    printf("%s\n", "dcloud [on/off]\n");
+    __TEXT(Use fields as :: `Fields /path/to/file`);
 };
 
 char *__pre_apple="/Users/mrkj/package/";
@@ -22,9 +26,6 @@ char const *k_addr="mrkj@25258931ae9311739141";
 
 static const ulong __enu_size=512;
 
-#define DEBUG 1
-#define LBB_0 1
-#define LBB_1 1
 
 int get_allstats(){
     m_stat mstat;
@@ -68,12 +69,52 @@ char *__fld_packed_hash(char *cpath,ulong fsize, ulong max_enumer){
     return cpath;
 };
 
-#define OUTPUT 1
+
+char *flds(char const *__fldname) {
+    if(__fldname==NULL){
+        #ifdef LOG_ERR
+            __TEXT(API : flds :: fld is null);
+        #endif
+        return NULL;
+    };
+    ulong __fld_n_size=strlen(__fldname);
+
+    m_stat cm_st;
+    m_stat *__cm_st=__mstat__(cm_st);
+    int res=get_mstat(__fldname,__cm_st);
+    if(res==-1){
+        #ifdef LOG_ERR
+            __TEXT(Field not found);
+        #endif
+        return NULL;
+    };
+    #ifdef DEBUG
+        log_mstat(&cm_st);
+    #endif
+
+
+    char *cflds_head=conv_fields(__cm_st);
+    if(cflds_head==NULL){
+        #ifdef LOG_ERR
+            printf("cflds header is null\n");
+        #endif
+        return NULL;
+    };
+    // needs to index here
+    #ifdef DEBUG
+        printf("'%s'\n",cflds_head);
+    #endif
+
+    return strdup(cflds_head);
+};
+
 #ifdef OUTPUT
 int main(int argc, char **argv){
 
     if(argc!=2){
-        __TEXT(Use fields as :: `Fields /path/to/file`);
+        #ifdef LOG_ERR
+            __usage();
+        #endif
         return 1;
     };
     char *__fld_name=(char *)argv[1];
@@ -81,57 +122,34 @@ int main(int argc, char **argv){
 
     m_stat cm_st;
     memset(&cm_st,0,sizeof(m_stat));
+
     int res=get_mstat(__fld_name,&cm_st);
     if(res==-1){
-        __TEXT(Field not found);
+        #ifdef LOG_ERR
+            __TEXT(Field not found);
+        #endif
         return 2;
     };
+    
     #ifdef DEBUG
         log_mstat(&cm_st);
     #endif
 
-
     char *cflds_head=conv_fields(&cm_st);
     if(cflds_head==NULL){
+        #ifdef LOG_ERR
+            printf("cflds header is null\n");
+        #endif
         return 3;
     };
+
     #ifdef OUTPUT
         printf("'%s'\n",cflds_head);
     #endif
 
     return 0;
 };
-#elif LIBRARY
-int flds(int argc, char **argv) {
-    if(argc!=2){
-        __TEXT(Use fields as :: `Fields /path/to/file`);
-        return 1;
-    };
-    char *__fld_name=(char *)argv[1];
-    ulong __fld_n_size=strlen(__fld_name);
 
-    m_stat cm_st;
-    memset(&cm_st,0,sizeof(m_stat));
-    int res=get_mstat(__fld_name,&cm_st);
-    if(res==-1){
-        __TEXT(Field not found);
-        return 2;
-    };
-    #ifdef DEBUG
-        log_mstat(&cm_st);
-    #endif
-
-
-    char *cflds_head=conv_fields(&cm_st);
-    if(cflds_head==NULL){
-        return 3;
-    };
-    #ifdef OUTPUT
-        printf("'%s'\n",cflds_head);
-    #endif
-
-    return 0;
-}
 #endif
 
 

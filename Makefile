@@ -39,6 +39,7 @@ exs@charms:=${@charms}/executables
 karch_512_build:=${@1c}/k512${@arch}
 cloud_d_build:=${@1c}/d-cloud${@arch}
 fields_build:=${@1c}/flds${@arch}
+udef_build:=${@1c}/udef${@arch}
 #####################################
 #				Shorts				#
 #####################################
@@ -78,17 +79,13 @@ clean: __clean_charms__
 	if [ -f k512 ]; then rm -rf k512; fi
 	if [ -f d-cloud ]; then rm -rf d-cloud; fi
 	if [ -f flds ]; then rm -rf flds; fi
+	if [ -f udef ]; then rm -rf udef; fi
+
 
 rebuild: clean charms 
 
 # must product a `@charms` directory
 __init__: _check_charms_
-
-__att__: 
-	${k512} ${@charms}
-
-__link__:
-	${d_cloud}
 
 __clean_charms__:
 	if [ -d ${@charms} ]; then rm -rf ${@charms}; fi
@@ -171,6 +168,7 @@ lbb_atp_ml:
 	cp ${__src}/k512.c ${@3c}
 	cp ${__src}/dclouds.c ${@3c}
 	cp ${__src}/flds.c ${@3c}
+	cp ${__src}/udef.c ${@3c}
 
 #compiled
 @2c:=${@3c}/2c
@@ -188,11 +186,13 @@ lbb_atp_ml:
 	cc ${@3c}/k512.c -o ${@1c}/k512${@arch} ${atherlib}
 	cc ${@3c}/dclouds.c -o ${@1c}/d-cloud${@arch} ${atherlib}
 	cc ${@3c}/flds.c -o ${@1c}/flds${@arch} ${atherlib}
+	cc ${@3c}/udef.c -o ${@1c}/udef${@arch} ${atherlib}
 #tests
 3c_out:
 	cp ${@1c}/k512${@arch} k512
 	cp ${@1c}/d-cloud${@arch} d-cloud
 	cp ${@1c}/flds${@arch} flds 
+	cp ${@1c}/udef${@arch} udef
 
 
 build_3c: 3c 2c 1c 3c_out

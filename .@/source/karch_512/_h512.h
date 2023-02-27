@@ -197,7 +197,6 @@ void log_arcs(){
 }
 
 
-#define LBB_0 1
 static const uns __lbb_idx__=11;
 static uns env_hash_0,env_hash_1;
 
@@ -396,8 +395,9 @@ ulong arch_cfile(lbb_t _){
         case lbb_3:return lbbatt(3,__8sz(7));
         case lbb_4:return lbbatt(4,__8sz(8));
         default:return 0;
-    }
-}
+    };
+};
+
 
 ulong arch_fpermissions(char *cpath){
     ulong __=__file_x(cpath);

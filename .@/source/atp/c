@@ -21,7 +21,14 @@
 
 char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
 
-// #define DEBUG 1
+
+#define socket_fd(x) (ulong)(x.aip_sockfd)
+#define sock_fd(x) (ulong)(x->aip_sockfd)
+#define socket_len(x) (ulong)(x.aip_socklen)
+#define sock_len(x) (ulong)(x->aip_socklen)
+#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
+
+#define DEBUG 1
 
 enum __atypes_ stype_to_atype(enum __stypes __stype) {
     switch(__stype) {
@@ -112,11 +119,10 @@ void log_socket(aipsock *sock) {
     printf("socket @%s\n",info.ascii_addr);
 };
 
-struct addrinfo __hints() {
-	struct addrinfo info;
-	info.ai_socktype=SOCK_STREAM;
-	info.ai_family=PF_UNSPEC;
-	return info;
+void __hints(struct addrinfo *info) {
+    memset(info, 0,sizeof(struct addrinfo));
+	info->ai_socktype=SOCK_STREAM;
+	info->ai_family=AF_UNSPEC;
 };
 
 char *uname(const char *__filename) {
@@ -128,24 +134,21 @@ struct __sok_t __arcsocket() {
     aipsock __sok;
     memset(&__sok,0,sizeof(struct __sok_t));
 
-    struct addrinfo hints=__hints();
-    hints.ai_flags=AI_PASSIVE;
+    struct addrinfo hints;
+    __hints(&hints);
+    // hints.ai_flags=AI_PASSIVE;
+
     struct addrinfo *srvinfo, *aip;
     struct sockaddr_storage ss_addr;
-    int __sfd=-1;
-    socklen_t slen;
-    char s_addr[INET6_ADDRSTRLEN];
-    memset(&s_addr,0,sizeof(s_addr));
+    int __sfd, __res=1, __yes=1;
 
-    if (getaddrinfo(NULL,ATP_PORT,&hints,&srvinfo)){
+    if ((__res=getaddrinfo(NULL,ATP_PORT,&hints,&srvinfo))){
         #ifdef DEBUG
-            printf("getaddrinfo error");
+            printf("getaddrinfo error : %s\n", gai_strerror(__res));
         #endif
-        memset(&ss_addr,0,sizeof(struct sockaddr_storage));
+        memset(&__sok,0,sizeof(struct __sok_t));
         return __sok;
     };
-
-    int __yes=1;
 
     for(aip=srvinfo;aip!=NULL;aip=aip->ai_next){
         if((__sfd=socket(aip->ai_family,aip->ai_socktype,aip->ai_protocol))==-1){
@@ -163,18 +166,24 @@ struct __sok_t __arcsocket() {
         if(bind(__sfd,aip->ai_addr,aip->ai_addrlen)==-1){
             close(__sfd);
             #ifdef DEBUG
-                perror("server: bind\n");
+                printf("server: bind\n");
             #endif
             continue;
         }
         #ifdef DEBUG
-            printf("aip->next");
+            printf("aip->next\n");
         #endif
-        break;  
-    }
-
-
+        break;
+    };
     freeaddrinfo(srvinfo);
+
+    if(aip==NULL){
+        #ifdef DEBUG
+            printf("cannot connect to any socket\n");
+        #endif
+        _exit(1);
+    };
+
 
     __sok.aip_sockfd=__sfd;
     __sok.aip_socklen=(ulong)(aip->ai_addrlen);
@@ -183,13 +192,6 @@ struct __sok_t __arcsocket() {
 
     return __sok;
 };
-
-#define socket_fd(x) (ulong)(x.aip_sockfd)
-#define sock_fd(x) (ulong)(x->aip_sockfd)
-#define socket_len(x) (ulong)(x.aip_socklen)
-#define sock_len(x) (ulong)(x->aip_socklen)
-#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
-#define DEBUG 1
 
 int __aip_listen(ulong aipsfd){
     int res=listen(aipsfd,ATP_BACKLOG)==-1?1:0;
@@ -207,9 +209,47 @@ void __aip_send(aipsock *sock, char *msg_to_send){
         #ifdef DEBUG
             printf("send : failed :: payload { %s }\n", msg_to_send);
         #endif
-    }
-}
+    };
+};
 
+void *__aip_recieve(aipsock *sock) {
+    int numbytes;
+    char buf[512];
+    memset(&buf,0,sizeof(buf));
+    if ((numbytes = recv(sock_fd(sock), buf, 512, 0)) == -1) {
+        #ifdef DEBUG
+            perror("recv");
+        #endif
+        exit(1);
+    }
+    return (void *)strdup(buf);
+};
+
+struct __buffin {
+    char __pname[8];
+    char __intrpt[64];
+    char __effective[440];
+    char *_org;//512-byte msg payload
+};
+
+
+
+void init_nifty(struct __buffin *nifty){
+    memmove(nifty->_org, nifty->__pname, 8);
+    memmove(((nifty->_org)+8), nifty->__intrpt, 64);
+    memmove(((nifty->_org)+72), nifty->__effective, 440);
+};
+
+
+// function that associates the @-protocol
+// with the linked binary book (lbb)
+void ___associate(void *__buffer) {
+    struct __buffin __nifty;
+    memset(&__nifty,0,sizeof(struct __buffin));
+    __nifty._org=(char *)__buffer;
+    init_nifty(&__nifty);
+
+};
 
 int __incheck(char c){   
     if( (c>=0x30)&&(c<=0x39)){
@@ -245,7 +285,6 @@ ulong __tonum(char const *var){
     return res;
 };
 
-
 ulong tonum(int i){
     ulong res=0;
     if(i>0){
@@ -253,14 +292,12 @@ ulong tonum(int i){
         return res;
     };
     return 0;
-}
+};
 
 void sock_errs(){
     printf("value of EBADF = %d\n", EBADF);
     printf("value of ENOTSOCK = %d\n", ENOTSOCK);
 };
-
-
 
 void __ellrun(ulong __fd, ulong __len, struct sockaddr *__addr) {
 
@@ -296,7 +333,6 @@ void __ellrun(ulong __fd, ulong __len, struct sockaddr *__addr) {
     };
 };
 
-
 void *__arcell(void *c_stp) {
     struct __sok_t __socket =__arcsocket();
     struct __socket_address saddr_st=__sock_addr(sock_aip_to_sa(&__socket));
@@ -327,18 +363,18 @@ void *__arcell(void *c_stp) {
     return c_stp;
 };
 
-
 int lbb_run() {
     printf("d-cloud : atp {mor}\n");
 
     int sockfd, numbytes;  
     char buf[ATP_BUFFER_SIZE];
-    struct addrinfo hints=__hints();
+    struct addrinfo hints;
+    __hints(&hints);
+    hints.ai_flags=AI_DEFAULT;
     struct addrinfo *servinfo, *p;
     int rv;
     char s[INET6_ADDRSTRLEN];
-
-
+    
     if ((rv = getaddrinfo(NULL, ATP_PORT, &hints, &servinfo)) != 0) {
         #ifdef DEBUG
             fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -395,13 +431,18 @@ int lbb_run() {
     close(sockfd);
 
     return 0;
-}
-
+};
 
 int les(void) {
     printf("d-cloud : atp {les}\n");
+
+
     int __fd, temp_fd, __yes=1, __rv;
-    struct addrinfo hints=__hints(); 
+    struct addrinfo hints;
+    __hints(&hints);
+    hints.ai_flags=AI_PASSIVE;
+
+
     struct addrinfo *__servinfo, *temp;
     struct sockaddr_storage __caddr;
 
@@ -490,7 +531,9 @@ int mor(void) {
 
     int sockfd, numbytes;  
     char buf[ATP_BUFFER_SIZE];
-    struct addrinfo hints=__hints();
+    struct addrinfo hints;
+    __hints(&hints);
+    hints.ai_flags=AI_DEFAULT;
     struct addrinfo *servinfo, *p;
     int rv;
     char s[INET6_ADDRSTRLEN];
@@ -554,7 +597,7 @@ int mor(void) {
     return 0;
 };
 
-int spec_set_type(spec *sp, gfmt g) {
+int spec_set_type(spec *sp, fmt_t g) {
     sp->g_ev=g;
     sp->g_delim=DELIM(g);
     return 0;
@@ -564,24 +607,28 @@ char const *__gdelim(__gev __gtype) {
     char __delim[3];
     memset(&__delim,0,3);
     switch(__gtype){
+        // Key : Value
         case __key_value:
             __delim[0]=ATP_KV_SEP;
             __delim[1]='\0';
             return strdup(__delim);
+        // ENV = Variable
         case __env_variable:
             __delim[0]=ATP_ENV_SEP;
             __delim[1]='\0';
             return strdup(__delim);
+        // Socket:=Address
         case __sock_address:
             __delim[0]=ATP_KV_SEP;
             __delim[1]=ATP_ENV_SEP;
             break;
+        // Variable=:description
         case __description:
             __delim[0]=ATP_ENV_SEP;
             __delim[1]=ATP_KV_SEP;
             break;
         default:break;
-    }
+    };
     __delim[2]='\0';
     #ifdef DEBUG
         printf("delimiter is '%s'\n",__delim);
@@ -594,7 +641,7 @@ char *__generic_fmt(__gev g_type,char *__key, char *__value){
     ulong vlen=strlen(__value);
     ulong clen=klen+vlen+2;
 
-    // log_gfmt(g_type);
+    // log_fmt_t(g_type);
     // log_keyvalue(__key,__value);
 
     char lbb_field[clen];
@@ -623,7 +670,7 @@ int main(int argc, char **argv) {
     spec_set_type(&var, KV);
     OUT_ASCII(0,var.g_delim);
     return 0;
-}
+};
 #endif
 
 

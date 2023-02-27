@@ -301,7 +301,7 @@ int _stres(char const *__fpath){
 
 
 
-	void log_gfmt(__gev g_type) {
+	void log_fmt_t(__gev g_type) {
 		switch(g_type) {
 		case __key_value: __TEXT(Key:Value); break;
 		case __env_variable: __TEXT(Enviroment=Spec); break;

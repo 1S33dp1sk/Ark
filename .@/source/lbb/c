@@ -185,14 +185,22 @@ ulong __writeb(uchar *content,ulong c_size) {
 	return 0;
 };
 
-char *__readb(){
-	ulong __res=0,__fsz=shd_sze,__fd=shd_fd;
+
+int _d__getfd(char *__fpath) {
+	return open(__fpath, __lbb_lock_reader);
+}
+
+#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
+
+char *__readb(ulong f_size, ulong f_d,ulong r_o){
+	ulong __res=r_o,__fsz=f_size,__fd=f_d;
 	uchar lbb_content[__fsz+1];
-	__res=read(__fd,lbb_content,__fsz);
-	if(__res==-1){
+	int __tempres=read(__fd,lbb_content,__fsz);
+	if(__tempres==-1){
 		printf("cannot read lbb\n");
 		return NULL;
-	}
+	};
+	__res=(ulong)__tempres;
 	lbb_content[__fsz+1]='\0';
 	if((__res<__fsz)&&(__res>0)){
 		// means that reading was interuptted
@@ -200,6 +208,8 @@ char *__readb(){
 		// so we can read from where we left off
 		__res=pread(__fd,(lbb_content+__res),(__fsz-__res),__res);
 	}
+
+
 	return strdup((char*)lbb_content);
 };
 
@@ -220,9 +230,13 @@ ulong write_book(char *content, ulong csize) {
 	return __writeb((uchar*)content,csize);
 };
 
-char *read_book(){ 
-
-	return __readb();
+char *read_book(char *__bpath){ 
+	m_stat cm_st;
+	int res=get_mstat(__bpath, &cm_st);
+	if(res!=0){
+		return NULL;
+	}
+	return __readb(cm_st.m_size, _d__getfd(__bpath), 0);
 };
 
 void lbb_close(){
@@ -333,7 +347,7 @@ int spaces_and_tabs(char *word){
  * find `seperator` in `string`
 **/
 
-ulong sep_offset(char *string,char *seperator) {
+ulong sep_offset(char const *string,char *seperator) {
 	long x=0,y=0,len_count=0,offset_at=-1;
 	while(string[x]!='\0'){
 		if(string[x]==seperator[y]){
@@ -358,14 +372,14 @@ ulong sep_offset(char *string,char *seperator) {
 };
 
 
-char *str_b4offset(char *string, ulong offset) {
+char *str_b4offset(char const *string, ulong offset) {
 	char temp[offset];
 	memset(&temp,0,sizeof temp);
 	snprintf(temp,offset,"%s",string);
 	return strdup(temp);
 };
 
-char *str_a4offset(char *string, ulong offset){
+char *str_a4offset(char const *string, ulong offset){
 	ulong flen=strlen(string)+1;//to offset the offset 
 	if(flen<offset){return NULL;}
 	ulong slen=flen-offset;
@@ -538,9 +552,6 @@ int get_mstat(char const *__path, m_stat *mfile) {
 	mfile->m_mode=dmode_st(&temp);
 	mfile->m_blksz=iosize_st(&temp);
 	mfile->m_inn=inn_st(&temp);
-	#ifdef DEBUG
-		log_mstat(mfile);
-	#endif
 	return 0;
 };
 
@@ -676,6 +687,7 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		// OUT_ASCII(lbb_dd,contents);
 		c+=1;memset(__buffer,0,512);
 	};
+	
 	close(__fd);
 	close(lbb_dd);
 
