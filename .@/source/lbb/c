@@ -1,0 +1,741 @@
+/// lbb \\\
+little black book
+
+#ifndef __LBB__H
+#include "lbb.h"
+#include "ixr.h"
+#endif
+
+
+#ifndef __lbb_name
+	#define __lbb_name "linked binary book"
+
+void unpack(uchar *buf,char const *fmt,...);
+
+ulong fsize_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_size;
+};
+ulong iosize_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_blksize;
+};
+uns dmode_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_mode;
+};
+ulong inn_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_ino;
+};
+void *__statusof(char const *__file) {
+    struct stat __;
+    memset(&__,0,sizeof(struct stat));
+    if(stat(__file,&__)==0){
+        return (void *)__file;
+    }
+    return NULL;
+};
+
+
+int __ap_file(char const *__path){
+	int __fd=open(__path,__lbb_shard_flags);
+	if(__fd==-1){
+		return __fd;
+	}
+	lbb_shard.lbb_fd=__fd;
+
+	return __fd;
+}
+
+int __ap_fifo(char const *__path){
+	if(mkfifo(__path,__lbb_mode__)==0){
+		return 1;
+	}
+	return -1;
+};
+
+ulong __ap_writer() {
+	int __fd=open(__lbb_locking,__lbb_lock_writer);
+	if(__fd==-1){
+		printf("cannot open writer\n");
+		return (ulong)0;
+	};
+	ulong _fd=(ulong)__fd;
+	// __TEXT(Writer Lock);
+	#ifdef DEBUG
+		printf("Writer : fifo opened :: %lu\n",_fd);
+	#endif
+	lbb_shard.lbb_fd=_fd;
+	return _fd;	
+};
+
+ulong __ap_reader() {
+	int __fd=open(__lbb_locking,__lbb_lock_reader);
+	if(__fd==-1){
+		printf("cannot open reader\n");
+		return (ulong)0;
+	};
+	ulong _fd=(ulong)__fd;
+	// __TEXT(Reader Lock)
+	#ifdef DEBUG
+		printf("Reader : fifo opened :: %lu\n",_fd);
+	#endif
+	lbb_shard.lbb_fd=_fd;
+	return _fd;
+};
+
+void magic_shard() {
+	printf("closing lbbfd :: %lu\n",lbb_shard.lbb_fd);
+	close(lbb_shard.lbb_fd);
+};
+
+// int init_generic(struct __pr_generic prg_dcloud){
+//     memset(&prg_dcloud,0,sizeof(prg_dcloud));
+//     prg_dcloud.path=((char const*)(lfiles[1]));
+//     if(__ap_fifo(prg_dcloud.path)==-1){
+//         printf("error :: cannot make fifo\n");
+//         return 1;
+//     }
+//     void *res=status(prg_dcloud.path);
+//     if(res==NULL){
+//         printf("error :: cannot obtain status ::: status()returned null\n");
+//         return 1;
+//     }
+//     printf("path :: %s\n",prg_dcloud.path);
+//     printf("inum :: %lu\n",inodenum);
+//     printf("____\n");
+//     return 0;
+// };
+
+
+
+/*******************************************************************/
+
+
+ulong __writeb(uchar *content,ulong c_size) {
+	ulong __fd=shd_fd;
+	if(__fd!=0){
+		ulong _size = (ulong)write(__fd,content,c_size);
+		#ifdef DEBUG
+			printf( "resof write :: %lu\n",_size);
+		#endif
+		return _size;
+	}	
+	return 0;
+};
+
+
+int _d__getfd(char *__fpath) {
+	return open(__fpath, __lbb_lock_reader);
+}
+
+#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
+
+char *__readb(ulong f_size, ulong f_d,ulong r_o){
+	ulong __res=r_o,__fsz=f_size,__fd=f_d;
+	uchar lbb_content[__fsz+1];
+	int __tempres=read(__fd,lbb_content,__fsz);
+	if(__tempres==-1){
+		printf("cannot read lbb\n");
+		return NULL;
+	};
+	__res=(ulong)__tempres;
+	lbb_content[__fsz+1]='\0';
+	if((__res<__fsz)&&(__res>0)){
+		// means that reading was interuptted
+		// for some reason, like a pipe or sig
+		// so we can read from where we left off
+		__res=pread(__fd,(lbb_content+__res),(__fsz-__res),__res);
+	}
+
+
+	return strdup((char*)lbb_content);
+};
+
+ulong __fillb(){ // create &-> fill the book
+	ulong __res=__writeb((uchar*)shd_key,LBB_BUFFER_SIZE);
+	__closeb();
+	return __res;
+};
+
+void __closeb(){
+	close(shd_fd);
+	memset(&lbb_shard,0,sizeof(struct __lbb_shard));
+};
+
+
+ulong write_book(char *content, ulong csize) {
+
+	return __writeb((uchar*)content,csize);
+};
+
+char *read_book(char *__bpath){ 
+	m_stat cm_st;
+	int res=get_mstat(__bpath, &cm_st);
+	if(res!=0){
+		return NULL;
+	}
+	return __readb(cm_st.m_size, _d__getfd(__bpath), 0);
+};
+
+void lbb_close(){
+	__closeb();
+};
+
+ulong reset_book(){
+
+	return __fillb();
+};
+
+ulong lbb_print(char *kaddr){
+	ulong res=__writeb((uchar *)kaddr,strlen(kaddr));
+	return res;
+};
+
+int lbb(char const *__cpath,ulong __lock){
+	ulong res=0;
+	#if defined(locked)
+		SET_LBB_PATH(__cpath);
+		SET_LBB_FD(__lock);
+	#endif
+	char *LOCKING="locked\n";
+	__writeb((uchar *)LOCKING,strlen(LOCKING));
+	__closeb();
+	return res;
+};
+
+
+
+/*******************************************************************/
+
+
+struct __ptrdx __iptridx(char const *__ptr_index) {
+	char *_ptr_idx=(char *)__ptr_index;
+
+	ulong plen=strlen(_ptr_idx);
+	ulong lcount=0;
+
+	ulong off_at=sep_offset(_ptr_idx,"ae");
+
+	char *_pidx=str_b4offset(_ptr_idx,off_at);
+	ulong pidx,_pxlen=strlen(_pidx);
+	uchar *pidx_=(uchar *)_pidx;
+	unpack(pidx_,"L",pidx);
+
+
+	char *_tri=str_a4offset(_ptr_idx,off_at);
+	ulong tri,_tilen=strlen(_tri);
+	uchar *tri_=(uchar *)_tri;
+	unpack(tri_,"L",tri);
+
+	struct __ptrdx ipd;
+	memset(&ipd,0,sizeof(struct __ptrdx));
+	ipd.pidx=pidx;
+	ipd.tri=tri;
+
+	return ipd;
+};
+
+void *___exsptr(char const *__ptr_index) {
+	ulong lcount=0, lcpy=0, plen=strlen(__ptr_index), comb_len=plen;
+	char *_ptr_idx=(char *)__ptr_index;
+	uchar *__pind=(uchar *)_ptr_idx;
+
+	while(comb_len>8){
+		lcount+=1;comb_len-=8;
+	};
+
+	// ulong esize=lcount*(sizeof(ulong));
+	// void *_es_ptrs=malloc(esize);
+	// _es_ptrs=memset(_es_ptrs,0,esize);
+
+	// ulong *es_ptr=(ulong *)_es_ptrs;
+
+	// es_ptr[0]=1281;
+	// es_ptr[1]=28589105;
+
+	// // while(lcpy<(lcount-1)){
+	// // 	unpack(__pind,"L",es_ptrs[lcpy]);
+	// // 	lcpy+=1;
+	// // };
+	// // es_ptrs[lcount]='\0';
+
+	// // // log_esptr()
+	// // return es_ptrs;
+
+
+	return (void *)__ptr_index;
+};
+
+/**
+ * count spaces and tabs in `word`
+**/
+
+int spaces_and_tabs(char *word){
+	int count=0, x=0;
+	while(word[x]!='\0'){
+		if(word[x]==' '||word[x]=='	'){
+			count+=1;
+		};
+		x+=1;
+	};
+	return count;
+};
+
+/**
+ * find `seperator` in `string`
+**/
+
+ulong sep_offset(char const *string,char *seperator) {
+	long x=0,y=0,len_count=0,offset_at=-1;
+	while(string[x]!='\0'){
+		if(string[x]==seperator[y]){
+			while(seperator[y]==string[y+x]){
+				y+=1;
+			}
+			if(seperator[y]=='\0'){
+				offset_at=x;
+			}
+			else{
+				y=0;
+			};
+		};
+		x+=1;
+	};
+
+	if(offset_at==-1){
+		return 0;
+	};
+
+	return offset_at+1;
+};
+
+
+char *str_b4offset(char const *string, ulong offset) {
+	char temp[offset];
+	memset(&temp,0,sizeof temp);
+	snprintf(temp,offset,"%s",string);
+	return strdup(temp);
+};
+
+char *str_a4offset(char const *string, ulong offset){
+	ulong flen=strlen(string)+1;//to offset the offset 
+	if(flen<offset){return NULL;}
+	ulong slen=flen-offset;
+	char temp[slen];
+	memset(&temp,0,sizeof temp);
+	snprintf(temp,slen,"%s",(string+offset));
+	return strdup(temp);
+};
+
+spstr sepstr_offset(char *string, char *seperator) {
+	int x=0,y=0,len_count=0,offset_at=-1;
+	while(string[x]!='\0'){
+		if(string[x]==seperator[y]){
+			while(seperator[y]==string[y+x]){
+				y+=1;
+			};
+			if(seperator[y]=='\0'){
+				offset_at=x;
+			}
+			else{
+				y=0;
+			};
+		};
+		x+=1;
+	};
+	struct sepstr res = {
+		.str=string,
+		.str_length=x,
+		.sep=seperator,
+		.sep_offs=offset_at,
+	};
+	return res;
+};
+
+/**
+ * extract the string at offset
+**/
+strld extract_atoff(char *str, ulong atoff){
+	strld res;
+	res.data=str+atoff;
+	char *s=str+atoff;
+	int c=0;
+	while(*s++){
+		c+=1;
+	};
+	res.len=c;
+	return res;
+};
+
+
+/*******************************************************************/
+
+
+void test_spaces_and_tabs() {
+	int spta_count=spaces_and_tabs(" aksd foa	sf");
+	printf("spaces+tabs count :: %d\n",spta_count);
+};
+
+void test_init_sepstr(char const*fullstr, char const*sep) {
+	struct sepstr res;
+	if(fullstr==NULL||sep==NULL){
+		res=sepstr_offset("mykey:has a very niceth=ce value of ", "=c");
+	}
+	else {
+		res=sepstr_offset((char *)fullstr,(char *)sep);
+	};
+
+	log_sepstr(res);
+};
+
+/*******************************************************************/
+
+
+int main_sepstr(int argc, char const *argv[]){
+	if(argc==3){
+		test_init_sepstr(argv[1],argv[2]);
+	}
+	else{
+		test_init_sepstr(NULL,NULL);
+	}
+	return 0;
+};
+
+int main_atoff(){
+	strld sep=extract_atoff("hello world\n",6);
+	log_str(sep);
+	return 0;
+};
+
+
+/*******************************************************************/
+
+
+int get_sstat(char const *__path, s_stat *sfile) {
+	memset(sfile,0,sizeof(s_stat));
+	ulong path_len=strlen(__path);
+	if(path_len>512){
+		return -1;
+	};
+	memmove(sfile->s_path,__path,path_len);
+	char *_path=(char *)__path;
+	ulong off_at=sep_offset(_path,"@");
+	if(off_at==0){
+		return -1;
+	};
+	#if DEBUG
+		printf("offset of @ is %lu characters\n", off_at);
+	#endif
+
+	char *faddr=str_b4offset(_path,off_at);
+	sfile->sa_len=strlen(faddr);
+
+	char *fipat=str_a4offset(_path,off_at);
+	sfile->se_len=strlen(fipat);
+
+	memmove((&sfile->s_addr),faddr,sfile->sa_len);
+	memmove((&sfile->s_ipv),fipat,sfile->se_len);
+
+	if(fipat==NULL){
+		return -1;
+	}
+
+	if(sfile->sa_len>8){sfile->s_term=__pub;}else{ sfile->s_term=__pvt;}
+
+	return 0;
+};
+
+int get_kstat(char const *__path, k_stat *kfile) {
+	memset(kfile,0,sizeof(struct __k_stat));
+	char *_path=(char *)__path;
+	ulong off_at=sep_offset(_path,"@");
+
+
+	char *uname=str_b4offset(_path,off_at);
+	ulong unlen=strlen(uname);
+
+	char *ixes=str_a4offset(_path,off_at);
+	ulong ixlen=strlen(ixes);
+
+	memmove((&kfile->u_name),uname,unlen);
+	memmove((&kfile->i_addr),ixes,ixlen);
+
+	(kfile->exsp).ptrdx=__iptridx(__path);
+	log_ptrdx(&((kfile->exsp).ptrdx));
+
+	// (kfile->exsp).esptr=___exsptr(__path);
+	// log_esptr((kfile->exsp).esptr);
+
+
+	return 0;
+};
+
+
+int get_mstat(char const *__path, m_stat *mfile) {
+	memset(mfile,0,sizeof(struct __m_stat));
+	ulong path_len=strlen(__path);
+	if(path_len>512){
+		#ifdef LOG_ERR
+			printf("path specified is 512+ \n");
+		#endif
+		return -1;
+	}
+	memmove(mfile->m_path,__path,path_len);
+	struct stat temp;
+	memset(&temp,0,sizeof(struct stat));
+	if(stat(mfile->m_path,&temp)!=0){
+		#ifdef LOG_ERR
+			printf("cannot determine `stat` call\n");
+		#endif
+		return -1;
+	};
+	mfile->m_size=fsize_st(&temp);
+	mfile->m_mode=dmode_st(&temp);
+	mfile->m_blksz=iosize_st(&temp);
+	mfile->m_inn=inn_st(&temp);
+	return 0;
+};
+
+
+/*******************************************************************/
+
+
+void log_kstat(k_stat *kfile) {
+	printf("dcloud : K\n");
+	printf("uname	= %s\n", kfile->u_name);
+	printf("iaddr	= %s\n", kfile->i_addr);
+};
+
+void log_sstat(s_stat *sfile){
+	printf("dcloud : ATP :: dist ::: shared\n");
+	printf("path	= %s\n", sfile->s_path);
+	printf("iploc	= %s\n", sfile->s_ipv);
+	printf("port	= %s\n", __s_port);
+	printf("addr	= %s\n", sfile->s_addr);
+	printf("term	= %s\n", sfile->s_term==0?"PUBLIC":"PRIVATE");
+};
+
+void log_mstat(m_stat *mfile){
+	printf("dcloud : ATP :: dist ::: mounted\n");
+	printf("path	= %s\n", mfile->m_path);
+	printf("nodenum	= %lu\n", mfile->m_inn);
+	printf("size	= %lu\n",mfile->m_size);
+	printf("mode	= %lu\n",mfile->m_mode);
+	printf("blkio	= %lu\n",mfile->m_blksz);
+};
+
+void log_str(strld __){
+	printf("string\n");
+	printf("length=%d\n",__.len);
+	printf("data:=%s\n",__.data);
+};
+
+void log_sepstr(spstr ss){
+	printf("string=%s\nlength=%d\nseperator=%s\noffset=%d\n",ss.str,ss.str_length,ss.sep,ss.sep_offs);
+};
+
+void log_ptrdx(struct __ptrdx *ptrdx) {
+	printf("dcloud : K :: ptrdx\n");
+	printf("pidx :%lu\n",ptrdx->pidx);
+	printf("tri  :%lu\n",ptrdx->tri);
+};
+
+void log_esptr(ulong *esptr) {
+	printf("dcloud : K :: esptr\n");
+	ulong c=0;
+	do {
+		printf(":%lu=%lu\n",c,esptr[c]);c+=1;
+	}
+	while(*esptr++);
+};
+
+void log_process_ids(ulong p_pid, ulong c_pid) {
+   printf("process ids ::\n");
+   printf("p.pid    =%lu\n",p_pid);
+   printf("c.pid    =%lu\n",c_pid);
+};
+
+void log_process_schema(ulong p_pid, ulong c_pid) {
+    printf("p_pid :: %lu",p_pid);
+    printf("\nc_pid :: %lu",c_pid);
+    printf("\nsuccess=%d\tnsucess=%d\n",CALL_SUCC(c_pid),CALL_NSUC(c_pid));
+    printf("call next ? %lu\n",CALL_NEXT(c_pid));
+};
+
+
+
+/*******************************************************************/
+
+
+
+
+
+ulong __get_long_digits(ulong num) {
+	ulong cnum=((ulong)(num/10));
+	ulong res=0;
+	while(cnum!=0){
+		res+=1;
+		cnum=((ulong)(num/10));
+	};
+	return res+=1;
+};
+
+char *__get_cfname(char const *__fname, ulong __iter) {
+	ulong __flen=strlen(__fname);
+	if(__flen<=40){
+		#ifdef LOG_ERR
+			printf("file name cannot be longer than 40 bytes\n");
+		#endif
+		return NULL;
+	}
+	char __[64];memset(&__,0,sizeof(__));
+	sprintf(__,"%s:%lu",__fname,__iter);
+	return strdup(__);
+};
+
+char *__get_fcontents(char *__conts, ulong __size) {
+	char __[__size];
+	memset(&__,0,__size);
+	sprintf(__,"{%s}",__conts);
+	return strdup(__);
+};
+
+char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
+	ulong const field_size=sizeof(field);
+	ulong const lf_size=strlen(__lbb_convdir);
+	ulong const fn_size=strlen(__fn);
+	ulong c=0,_res=0,__offset=0;
+
+	// create entry in lbb/
+	char fieldname[fn_size+lf_size+1];
+	memset(&fieldname,0,fn_size+lf_size);
+	memmove(fieldname,lfiles[0],lf_size);
+	memmove((fieldname+lf_size),__fn,fn_size);
+
+	int lbb_dd=open(fieldname,__lbb_shard_flags,__lbb_public_mode);
+	if(lbb_dd==-1){
+		printf("open failed\n");
+		return NULL;
+	};
+
+	field e_field;
+	memset(&e_field,0,field_size);
+	char *__buffer=(char *)&(e_field.contents.et);
+	while(c<__fld_count){
+		memset(__buffer,0,512);
+		#ifdef DEBUG
+			printf("Conv Fields DEBUG :: %lu\n", c);
+		#endif
+		// read size
+		int __tempres=pread(__fd,__buffer,512,__offset);
+		if(__tempres>=1){
+			_res=(ulong)__tempres;
+			__offset+=_res;
+		}
+		_OUT_ASCII(lbb_dd,_res);
+		#ifdef DEBUG
+			printf("read size :: %lu\n", _res);
+		#endif
+		// file path
+		char *__fcharm=__get_cfname(__fn,c);
+		OUT_ASCII(lbb_dd,__fcharm);
+		#ifdef DEBUG
+			printf("file path :: %s\n", __fcharm);
+		#endif
+		// get checksum for entire file
+		char *checksum=(char *)hashof(1,e_field.contents.et,e_field.contents.len);
+		_OUT_ASCII(lbb_dd,checksum);
+		#ifdef DEBUG
+			printf("file checksum :: %s\n", checksum);
+		#endif		
+		// get the content size of the buffer
+		ulong buflen=strlen(__buffer);
+		_OUT_ASCII(lbb_dd,buflen);
+		#ifdef DEBUG
+			printf("buflen :: %lu\n", buflen);
+		#endif	
+		// pack the contents as binary with s indicator
+		char *contents=__get_fcontents(__buffer,buflen);
+		ulong conbuf_len=strlen(contents);
+		PACK_IN(lbb_dd,conbuf_len,"%s\0",contents);
+		#ifdef DEBUG
+			printf("contents : start content --->%s<---end contents\n", contents);
+		#endif
+		c+=1;
+	};
+	
+	close(__fd);
+	close(lbb_dd);
+
+
+
+	return strdup(fieldname);
+};
+
+void free_fields(fields flds){
+	#include <stdlib.h>
+	ulong c=0;
+	while(flds[c]){
+		free(flds[c]);
+		c+=1;
+	};
+};
+
+char *conv_fields(m_stat *m_st){
+	ulong __fd=open(m_st->m_path,__lbb_share_flags), __count=0, __size=(m_st->m_size), c=__size;
+	while(c>512){
+		__count+=1;
+		c-=512;
+	};
+	__count+=1;
+
+	return __conv_fields(hashof(1,m_st,sizeof(m_stat)),__fd,__count);
+};
+
+
+/*******************************************************************/
+
+ulong __run_ap(ulong __size){
+	if(__size>=512){
+		ulong r_bytes=0,__FLAG=0;
+		char __buffer[512];
+		while(!__FLAG) {
+			r_bytes=read(lbb_shard.lbb_fd,__buffer,512);
+			if(r_bytes>2){
+				printf("read more than 2 bytes :: %s\n",__buffer);
+				__FLAG=1;
+			};
+			r_bytes=0;memset(&__buffer,0,sizeof(__buffer));
+		};
+		magic_shard();
+		return __FLAG;		
+	}
+	else {
+		ulong w_bytes=0,__FLAG=0;
+		char *__buffer="hello world";
+		memset(&__buffer,0,sizeof(__buffer));
+		while(!__FLAG) {
+			w_bytes=write(lbb_shard.lbb_fd,__buffer,64);
+			if(w_bytes>2){
+				printf("write more than 2 bytes :: %s\n",__buffer);
+				__FLAG=1;
+			};
+			w_bytes=0;memset(&__buffer,0,sizeof(__buffer));
+		};
+		magic_shard();
+		return __FLAG;				
+	}
+
+}
+
+
+
+
+
+
+
+
+
+#endif

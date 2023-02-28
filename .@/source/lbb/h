@@ -1,0 +1,298 @@
+#ifndef __LBB__H
+	#include "utypes.h"
+	#include "standard.h"
+	#define __lbb_c_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
+	#define __lbb_mode__ (S_IRWXU|S_IRWXG|S_IRWXO)
+	#define __lbb_shard_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
+	#define __lbb_lock_reader (O_RDONLY)
+	#define __lbb_lock_writer (O_WRONLY)
+	#define __lbb_default_flags (S_IRUSR|S_IWGRP|S_IWOTH)
+	#define __lbb_share_flags (O_RDONLY)
+	#define __lbb_private_mode (S_IRWXU|S_IXGRP|S_IXOTH)
+	#define __lbb_share_mode (S_IRWXU|S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)
+	#define __lbb_public_mode (S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)
+
+	/**
+	** NNE : x :: true if x is not 0x0000
+	**/
+	#define NNE(v) v==0x0000?0x01:0x00
+
+
+
+    #define FMT_ASCII_SPEC(__) _Generic((__), \
+                                            int: "%d",\
+                                            uns: "%u",\
+                                            char: "%c",\
+                                            long: "%ld",\
+                                            ulong: "%lu",\
+                                            tlong: "%llu",\
+                                            char *: "%s",\
+                                            char const *:"%s",\
+                                            long long: "%lld",\
+                                            default: "%x")
+
+    #define _OUT_ASCII(fd,x) do { \
+        char __[512];\
+        memset(&__,0,sizeof __);\
+        snprintf(__,sizeof __,"_%s", FMT_ASCII_SPEC(x));\
+        dprintf(fd,__,(x));\
+    }while(1!=1)
+
+    #define OUT_ASCII(fd,x) do { \
+        char __[512];\
+        memset(&__,0,sizeof __);\
+        snprintf(__,sizeof __,"%s\n", FMT_ASCII_SPEC(x));\
+        dprintf(fd,__,(x));\
+    }while(1!=1)
+
+
+
+#define CALL_SUCC(x) x==(ulong)0?1:0
+#define CALL_INST(x) x==(ulong)1?1:0
+#define CALL_NSUC(x) x==(ulong)-1?1:0
+#define CALL_NEXT(x) x<(ulong)-1?x>(ulong)1?1:x:0
+
+
+#define shd_fd fld_shard(lbb_shard)
+#define shd_key pth_shard(lbb_shard)
+#define shd_sze sze_shard(lbb_shard)
+#define shd_io ioz_shard(lbb_shard)
+
+static const char *__lbb_indexfile = "@charms/.lbb\0";
+static const char *__lbb_convdir = "@charms/lbb\0";
+static const char *__lbb_locking = "@charms/lock\0";
+
+
+#define pth_shard(x) ((char *)((x.lbb_mst).m_path))
+#define fld_shard(x) ((ulong)(x.lbb_fd))
+#define sze_shard(x) ((ulong)((x.lbb_mst).m_size))
+#define ioz_shard(x) ((ulong)((x.lbb_mst).m_blksz))
+
+
+unsigned int pack(uchar *buf,char const *fmt,...);
+
+#define PACK_IN(fld,siz,fmt,...) do {\
+    uchar __[siz];memset(&__,0,siz);\
+    ulong sz=(ulong)pack(__,fmt,##__VA_ARGS__);\
+    write(fld,__,sz);\
+} while (1!=1);
+
+
+void __closeb();
+
+/**
+ * string manipulation **
+						*/
+struct __str {
+	int len;
+	char *data;
+};
+
+typedef struct __str strld;
+
+struct sepstr {
+	char *str;
+	int str_length;
+	char *sep;
+	int sep_offs;	
+};
+
+typedef struct sepstr spstr;
+
+/**
+ * K-structture **
+				 */
+struct __ptrdx {
+	ulong pidx;
+	ulong tri;
+};
+
+union __exs_ptr {
+	ulong *esptr;
+	struct __ptrdx ptrdx;
+};
+
+struct __k_stat {
+	char u_name[8];
+	union __exs_ptr exsp;
+	char i_addr[512];
+};
+
+typedef struct __k_stat k_stat;
+
+/**
+ * M-structure {a.k.a mounted} **
+								*/
+struct __m_stat {
+	ulong m_size;
+	ulong m_mode;
+	ulong m_blksz;
+	ulong m_inn;
+	char m_path[512];
+};
+
+
+typedef struct __m_stat m_stat;
+void *__mstat__(m_stat st) {
+
+	return memset(&st, 0, sizeof(m_stat));
+};
+
+/**
+ * S-structure {a.k.a socket} **
+							   */
+enum __sterm {
+	__pub=0,
+	__pvt
+};
+
+struct __s_stat {
+	char s_path[256];
+	char s_ipv[16];
+	ulong sa_len;
+	char s_addr[64];
+	ulong se_len;
+#define __s_port "9999"
+	enum __sterm s_term;
+};
+
+typedef struct __s_stat s_stat;
+
+
+struct __contents {
+    ulong len;
+    uchar et[512];
+};
+typedef struct __contents __ucont;
+typedef char  __uname[24];
+struct __ucname__ {
+    __uname uname;
+    __ucont contents;
+};
+typedef struct __ucname__ field;
+typedef field* fld;
+typedef fld* fields;
+
+char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
+
+
+struct __shard {
+	m_stat sd_mstat;
+	field sd_fld;
+};
+
+typedef struct __shard shard;
+
+
+struct __lbb_shard {
+	struct __m_stat lbb_mst;
+	ulong lbb_fd;
+};
+
+static struct __lbb_shard lbb_shard;
+static struct __lbb_shard *l_shard=&lbb_shard;
+static m_stat *lbb_mstat = &(lbb_shard.lbb_mst);
+
+
+#define checkef_file ((ulong)__stres(__lbb_indexfile))
+#define checkef_dir ((ulong)__stres(__lbb_convdir))
+#define checkef_lo ((ulong)__stres(__lbb_locking))
+
+#define __NOT_FOUND "Not-Found \xE2\x9C\x95"
+#define __FOUND "Found \xE2\x9C\x93"
+
+#define FND_NTFND(x) x==0?__NOT_FOUND:__FOUND
+
+#define LBB_INFO do{\
+	printf("Linked Binary Book {a.k.a %s}\n","lbb");\
+	printf("book:home  ::  lbb/  ::: %s\n",FND_NTFND(checkef_dir));\
+	printf("book:lock  ::  lock  ::: %s\n",FND_NTFND(checkef_file));\
+	printf("book:tern  ::  .lbb  ::: %s\n",FND_NTFND(checkef_lo));\
+}while(1!=1);
+
+#define __LBB_READER__ do{\
+memset(l_shard,0,sizeof(struct __lbb_shard));\
+if(!checkef_lo) {__ap_fifo(__lbb_locking);};\
+r_start_ap();\
+}while(1!=1);
+
+#define __LBB_START__ do{\
+memset(lbb_mstat, 0, sizeof(struct __m_stat));\
+memset(l_shard,0,sizeof(struct __lbb_shard));\
+printf("getting shard .:%s:. \n",__lbb_indexfile);\
+get_mstat(__lbb_indexfile,lbb_mstat);\
+INDEXER(NULL);\
+}while(1!=1);
+
+#define __LBB_WRITER__ do {\
+memset(l_shard,0,sizeof(struct __lbb_shard));\
+w_start_ap();\
+}while(1!=1);
+
+
+
+
+
+struct __pr_generic {
+    char const *path;
+    struct stat st;
+    ulong inn;
+};
+
+typedef struct __pr_generic prg;
+
+
+
+#define inodenum ((ulong)(lbb_mstat->m_inn))
+#define ifilesize ((ulong)(lbb_mstat->m_size))
+#define idmode ((ulong)(lbb_mstat->m_mode))
+#define iblkio ((ulong)(lbb_mstat->m_blk))
+
+
+int __stres(char const* cpath);
+uns __8sz(uns __);
+uns __dmode(char *cpath);
+ulong __fsize(char *fpath);
+ulong __iosize(char *fpath);
+void *__statusof(char const *__file);
+int __ap_fifo(char const *__path);
+
+
+int lbb(char const *__cpath, ulong __lockfd);
+ulong write_book(char *__contents, ulong __c_size);
+ulong start_book();
+ulong lbb_print(char *k__addr);
+char *read_book();
+ulong reset_book();
+void lbb_close();
+
+
+int spaces_and_tabs(char *__string);
+char *str_b4offset(char const *__string, ulong __offset);
+char *str_a4offset(char const *__string, ulong __offset);
+ulong sep_offset(char const *string,char *seperator);
+spstr sepstr_offset(char *__string, char *__seperator);
+strld extract_atoff(char *__string, ulong __offset);
+
+
+int get_kstat(char const *__path, k_stat *kfile);
+int get_sstat(char const *__path, s_stat *sfile);
+int get_mstat(char const *__path, m_stat *mfile);
+
+void log_mstat(m_stat *mfile);
+void log_sstat(s_stat *sfile);
+void log_kstat(k_stat *kfile);
+void log_str(strld __strld);
+void log_sepstr(spstr __spstr);
+void log_ptrdx(struct __ptrdx *ptrdx);
+void log_esptr(ulong *esptr);
+void log_process_ids(ulong ppid, ulong cpid);
+void log_process_schema(ulong ppid, ulong cpid);
+
+
+
+#define __lbb_buffer_size 512
+#define LBB_BUFFER_SIZE ((ulong)__lbb_buffer_size)
+
+	#define __LBB__H 1
+#endif
