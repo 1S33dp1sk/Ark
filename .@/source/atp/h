@@ -1,15 +1,64 @@
 #ifndef __ATP__H
 	#include "utypes.h"
-	#include <stdio.h>
-
+	#include "standard.h"
 	#define ATP_SPEC_SIZE (8<<0x3)
 	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
 	#define ATP_PORT "9999" // The common ATP port
 	#define ATP_BACKLOG 10 // instances of the same id
 
-	#define ATP_KV_SEP ':'
-	#define ATP_ENV_SEP '='
-	#define ATP_ATT_SEP '@'
+	#define __ATP_ENV "="
+	#define __ATP_KEY ":"
+	#define __ATP_AT "@"
+	#define __ATP_AE "Aether(cid)"
+	#define __ATP_A4 "localhost"
+	#define __ATP_A6 "::1"
+
+	enum __atypes_ {
+	    at4=4,
+	    at6=6
+	};
+
+	enum __stypes {
+	    __sAF_INET=2,
+	    __sAF_INET6=30
+	};
+
+	enum __step_size {
+		__step_point=8,
+		__step_addr=16,
+		__step_sok=128,
+		__step_start=256,
+		__step_mor=512
+	};
+	typedef enum __step_size stp_size;
+
+	struct __st_points {
+		ulong __index;
+		char const *__ref;
+		char const *__name;
+	};
+	typedef struct __st_points dpoint;
+
+	struct __arc_t {
+		ulong __pid;
+		int __fork;
+		ulong __next;
+		dpoint **__points;
+	};
+	typedef struct __arc_t arc_t;
+
+	struct __sok_t {
+	    ulong aip_sockfd;
+	    ulong aip_socklen;
+	    char aip_socket[128];
+	};
+	typedef struct __sok_t aipsock;
+
+	static arc_t __arc;
+	static struct __sok_t __sok;
+	static ulong step_c=0;
+	const arc_t* arc=&__arc;
+	static ulong points_c=0;
 
 	#define NOFB_TYPE(x) _Generic((x), \
 										signed char: (char)x, \
@@ -22,18 +71,6 @@
 										unsigned long long int:(tlong)x, \
 										default:NULL)
 
-	#define FMT_ASCII_SPEC(__) _Generic((__), \
-												int: "%d",\
-												uns: "%u",\
-												char: "%c",\
-												long: "%ld",\
-												ulong: "%lu",\
-												tlong: "%llu",\
-												char *: "%s",\
-												char const *:"%s",\
-												long long: "%lld",\
-												default: "%x")
-	
 	#define FMT_HEXA_SPEC(__) _Generic((__), \
 												char: "c",\
 												unsigned char: "C",\
@@ -46,124 +83,6 @@
 												tlong: "Q",\
 												char *: "s",\
 												default: "_")
-
-	enum __atypes_ {
-	    at4=4,
-	    at6=6
-	};
-
-	enum __stypes {
-	    __sAF_INET=2,
-	    __sAF_INET6=30
-	};
-
-	struct __sok_t {
-	    ulong aip_sockfd;
-	    ulong aip_socklen;
-	    char aip_socket[128];
-	};
-	typedef struct __sok_t aipsock;
-
-	struct __fr_index {
-		char const *__fref;
-		char const *__frname;
-		ulong __fridx;
-	};
-	typedef struct __fr_index frindex;
-
-	enum __generic_fmt {
-		__gval,
-		__key_value,
-		__env_variable,
-		__sock_address,
-		__description
-	};
-	typedef enum __generic_fmt __gev;
-	
-	enum __fmt_t {
-		_G=__gval,
-		KV=__key_value,
-		ENV=__env_variable,
-		SOKA=__sock_address,
-		DESCR=__description
-	};
-	typedef enum __fmt_t fmt_t;
-
-
-	char const *__gdelim(__gev __);
-	char *__generic_fmt(__gev g_type,char *__key, char *__value);
-
-	
-	#define DELIM(x) (char const *)__gdelim(_to_generic(x))
-
-	#define _to_generic(x) ((enum __generic_fmt)(x))
-	
-	#define GET_FMT_STR(FSTR,NAR,...) do { \
-		memset(&FSTR,0,(NAR*sizeof(char)));\
-	}while(1!=1)
-
-	#define SPEC_OUT(fd,k,fl,v) do {\
-		char __[ATP_SPEC_SIZE];\
-		memset(&__,0,sizeof __);\
-		snprintf(__,sizeof __,"%s%s%s\n", FMT_ASCII_SPEC(k),FMT_ASCII_SPEC(fl),FMT_ASCII_SPEC(v));\
-		dprintf(fd,__,(k),(fl),(v));\
-	}while(1!=1)
-
-    #define _OUT_ASCII(fd,x) do { \
-        char __[ATP_SPEC_SIZE];\
-        memset(&__,0,sizeof __);\
-        snprintf(__,sizeof __,"_%s", FMT_ASCII_SPEC(x));\
-        dprintf(fd,__,(x));\
-    }while(1!=1)
-
-	#define OUT_ASCII(fd,x) do { \
-		char __[ATP_SPEC_SIZE];\
-		memset(&__,0,sizeof __);\
-		snprintf(__,sizeof __,"%s\n", FMT_ASCII_SPEC(x));\
-		dprintf(fd,__,(x));\
-	}while(1!=1)
-
-    #define _OUTT_ASCII(fd,x) do { \
-        char __[ATP_SPEC_SIZE];\
-        memset(&__,0,sizeof __);\
-        snprintf(__,sizeof __,"\t_%s\n", FMT_ASCII_SPEC(x));\
-        dprintf(fd,__,(x));\
-    }while(1!=1)
-
-	#define __ASCII(x) OUT_ASCII(0,x)
-
-	#define __TEXT(x) OUT_ASCII(0,#x);
-
-	#define OUT_HEXA(fd,x) do { \
-		char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
-		memset(&_,0,sizeof _);memset(&__,0,sizeof __);\
-		snprintf(_,sizeof _,"%s",FMT_HEXA_SPEC(x));\
-		ulong pack_sz=pack(__,_,x);\
-		if(pack_sz>0){write(fd,__,pack_sz);}\
-	}while(1!=1)
-
-	#define Display(...) OUT_ASCII(0,#__VA_ARGS__);return 0;
-
-	#define __ARGS(...) #__VA_ARGS__
-
-	#define S_ARGS __ARGS
-	#define F_ARGS __ARGS
-	#define L_ARGS __ARGS
-
-	/**
-	 * morles :: 
-	 *  off :: les <-> server
-	 *  on  :: mor --> les
-	 */
-
-	struct __spec {
-		fmt_t g_ev;
-		char const *g_delim;
-	};
-	typedef struct __spec spec;
-
-	int spec_set_type(spec *__spec, fmt_t __g);
-
 
 	static ulong p_pid;
 	static ulong c_pid;
@@ -198,6 +117,17 @@
 		__lock_att(#__VA_ARGS__);break;\
 	}\
 	}while(1!=1)
+
+
+	void *__arc_stpoints(ulong __stindex, char const *__stname);
+	void *__arcstp(stp_size __stpsize);
+	void __arcpid();
+	void __arcfork();
+	void __arcsok();
+	void *__arcstart(void *__arc);
+	int mor(void *args);
+	int les(void *args);
+
 
 	#define __ATP__H 1
 #endif

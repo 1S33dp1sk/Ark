@@ -1,32 +1,41 @@
-/// UDEF \\\
-user defined interaction (input/output)
+/// d-atp \\\
 
+#ifndef __Karch_512__
 #include "2c/_h512.h"
+#include "2c/lbb.h"
+#include "2c/ixr.h"
+#define OUTPUT 1
+#define DEBUG 1
+#define LOG_ERR 1
+#endif
+
+#define __AT_DEFINED '@'
+#if __AT_DEFINED!=64
+	#define AT_DEFINED 64
+#else
+	#define AT_DEFINED __AT_DEFINED
+#endif
+
+#define __P_LEN 8
+#define __I_LEN 64
+#define __A_LEN 512
+#define __API_LEN (__P_LEN+__I_LEN+__A_LEN)
 
 #define __PASS_MAX_C 24
 #define __PASS_MID_C 16
 #define __PASS_MIN_C 8
 
+#define __read_hash__ ((char const *)hashof(0, "read\0", 4))
+#define __write_hash__ ((char const *)hashof(0, "write\0", 4))
+#define __execute_hash__ ((char const *)hashof(0, "execute\0", 4))
+#define __connect_hash__ ((char const *)hashof(0, "connect\0", 4))
+#define __send_hash__ ((char const *)hashof(0, "send\0", 4))
+#define __listen_hash__ ((char const *)hashof(0, "listen\0", 4))
 
-#define DEBUG 1
-#define LOG_ERR 1
-
-
-#define d_atpointer "@193rfzd193<python3>{ print('hello world') }"
-#define d_atpoint "@charms/lbb/193rfzd193"
-#define d_atbase "@charms/"
-#define lbb_base "@charms/lbb"
-
-void __udef_inp() {
-	system("@cls||clear");
-	printf("\t\t\tWelcome to 'd-cloud'\n\n");
-};
-
-
-char const *__getcaller(){
-
-	return (char const *)__FILE__;
-};
+#define d_atpointer "@193rfzd193<python3>{ print('hello world') }\0"
+#define d_atpoint "@charms/lbb/193rfzd193\0"
+#define d_atbase "@charms/\0"
+#define lbb_base "@charms/lbb\0"
 
 enum __p_types {
 	__nul,
@@ -35,13 +44,6 @@ enum __p_types {
 	__pnt
 };
 typedef enum __p_types p_type;
-
-#define __AT_DEFINED '@'
-#if __AT_DEFINED!=64
-	#define AT_DEFINED 64
-#else
-	#define AT_DEFINED __AT_DEFINED
-#endif
 
 struct __into {
 	char const *argument;
@@ -53,26 +55,10 @@ typedef struct __into into_st;
 void *__into__(into_st st) {
 
 	return memset(&st, 0, sizeof(into_st));
-}
-
+};
 
 #define i_argument(i) (i->argument)
 #define i_ptype(i) (i->arg_t)
-
-
-#define __P_LEN 8
-#define __I_LEN 64
-#define __A_LEN 512
-
-ulong str_rwings(char const *__) {
-	ulong temp=0;
-	do {
-		if(*__!='\0'){
-			temp+=1;
-		};
-	}while(*__++);
-	return temp;
-};
 
 struct __in_pia {
 	char pointer[__P_LEN];
@@ -85,15 +71,11 @@ void *__pia__(pia_st st) {
 
 	return memset(&st, 0, sizeof(pia_st));
 };
-
-struct __at_pa {
-	ulong p_len;
-	char p_at[512];
-};
-
 #define __p_args(p) ((void *)(&(p.args)))
 #define p_args(p) ((char const *)(p.args))
 #define _p_args_len(p) ((ulong)(str_rwings(p_args(p))))
+#define pst_args(p) ((char const *)(p->args))
+#define pst_args_len(p) ((ulong)str_rwings(pst_args(p)))
 
 #define __p_pointer(p) ((void *)(&(p.pointer)))
 #define p_pointer(p) ((char const *)((p.pointer)))
@@ -102,6 +84,56 @@ struct __at_pa {
 #define __p_interpreter(p) ((void *)(&(p.interpreter)))
 #define p_interpreter(p) ((char const *)(p.interpreter))
 #define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
+
+
+char const *__pia_http(pia_st *pst) {
+	#ifdef OUTPUT
+		printf("starting http parsers (pia) :: \n");
+	#endif
+	char __[__API_LEN], *__ptr=memset(&__,0,sizeof(__));
+	char *__interpt=pst->interpreter;
+	ulong __ilen=str_rwings(__interpt);
+	memmove(__ptr, __interpt, __ilen);
+	#ifdef OUTPUT
+		printf("GET /%s", pst->pointer);
+		printf("\nInterpreter:%s", pst->interpreter);
+		printf("\nArgs:%s\n", pst->args);
+	#endif
+	return strdup(__);
+};
+
+
+
+char const *__getcaller(){
+
+	return (char const *)__FILE__;
+};
+
+char const *__charm_call(char const *__filefrom) {
+	char const *__caller=__getcaller();
+	ulong __clen=str_rwings(__caller);
+	ulong __flen=str_rwings(__filefrom);
+	char charmcall[__clen];
+	memset(&charmcall, 0, sizeof(charmcall));
+
+	ulong f_sep=sep_offset(__filefrom, d_atbase);
+	ulong c_sep=sep_offset(__caller, d_atbase);
+	if(!c_sep||!f_sep) {
+		#ifdef LOG_ERR
+			printf("f:sep=%lu, c:sep=%lu\n", f_sep, c_sep);
+			printf("seperate offset is null\n");
+		#endif
+		return NULL;
+	};
+
+	memmove(charmcall, __caller, c_sep);
+	memmove((charmcall+c_sep), (__filefrom+f_sep), (__flen-f_sep));
+	#ifdef DEBUG
+		printf("charmcall :: %s\n", charmcall);
+	#endif
+
+	return strdup(charmcall);
+};
 
 
 int __check_allowed(char const *__){ 
@@ -123,23 +155,38 @@ int check_addr(const char *_addr) {
 };
 
 
-#define __read_hash__ hashof(0, "read\0", 5)
-#define __write_hash__ hashof(0, "write\0", 6)
-#define __execute_hash__ hashof(0, "execute\0", 8)
-
-#define log_var printf("wow called\n nice\n")
-
-#define __log *log_var
-
-
-int __get_command(char const *args[]) {
-	char const *__c_arg=args[0];
-	ulong __carglen=str_rwings(__c_arg);
-	char const *__c_hash=hashof(0, __c_arg, __carglen);
-
-	return log_var;
-};
-
+int check_command(into_st *into, char const **args) {
+	char const *__pntr=i_argument(into);
+	char const *__arghash=hashof(0, __pntr, 4);
+	if(strstr(__read_hash__, __arghash)!=NULL) {
+		printf("will read the hash\n");
+		return 0;	
+	}
+	else if (strstr(__write_hash__, __arghash)!= NULL){
+		printf("will write a message to hash\n");
+		return 0;		
+	}
+	else if(strstr(__execute_hash__, __arghash)!=NULL) {
+		printf("should execute the command \n");
+		return 0;
+	}
+	else if (strstr(__send_hash__,__arghash)!=NULL) {
+		printf("will send msg to hash\n");
+		return 0;
+	}
+	else if (strstr(__connect_hash__,__arghash)!=NULL) {
+		printf("will try to connect to address\n");
+		return 0;
+	}
+	else if (strstr(__listen_hash__,__arghash)!=NULL) {
+		printf("will try to listen on the address\n");
+		return 0;
+	}
+	else {
+		printf("none of them matched\n");
+		return 1;
+	}
+}
 
 int __exact_match(char const *_a, char const *_b) {
 	ulong __alen=str_rwings(_a), __blen=str_rwings(_b);
@@ -158,7 +205,6 @@ int __exact_match(char const *_a, char const *_b) {
 	};
 	return 1;
 };
-
 
 int decode_lbb_addr(into_st *into, char const *args[]) {
 	char const *__arg=i_argument(into);
@@ -197,11 +243,10 @@ int decode_lbb_addr(into_st *into, char const *args[]) {
 	#ifdef DEBUG
 		log_mstat(__cm_st);
 	#endif
-	int __cmd=__get_command(args);
-	// void *cmd = (void *)&__cmd;
+
+
 	return 0;
 };
-
 
 int decode_pointer(into_st *into) {
 	#ifdef DEBUG
@@ -287,15 +332,37 @@ int decode_pointer(into_st *into) {
 		printf("arguments    := %s\n", p_args(pst));
 	#endif
 
+	__pia_http(&pst);
+
 	return 0;
 };
 
+void *__arc_stpoints(ulong __stindex, char const *__stname) {
+    dpoint *__point=__arcstp(0x8);
+    memset(__point,0,sizeof(ulong));
+    __point->__index=__stindex;
+    
+    ulong length=str_rwings(__stname);
+    char *stname=(char *)malloc(length);
+    memset(stname,0,length);
+    memmove(stname,__stname,length);
+    __point->__name=stname;
+
+    char const *__stref=hashof(1, __stname, length);
+    ulong ref_length=str_rwings(__stref);
+    char *stref=(char *)malloc(ref_length);
+    memset(stref,0,ref_length);
+    memmove(stref,__stref,ref_length);
+    __point->__ref=stref;
+
+    // points_c+=1;
+    return (dpoint *)__point;
+};
 
 int decode_point(into_st *into) {
 	#ifdef DEBUG
 		printf("decoding aetherpoint :: \n");
 	#endif
-
 	ulong pnt_offset=sep_offset(into->argument, d_atbase);
 	char *point=str_a4offset(into->argument, pnt_offset);
 	printf("point @%s\n", point);
@@ -307,56 +374,68 @@ p_type __decode_p(into_st *into) {
 	char const *point_buffer=into->argument;
 	if(point_buffer==NULL) {
 		#ifdef DEBUG
-			printf("point buffer is null\n");
+			printf("\ndecode p : { NULL }\n");
 		#endif
 		into->arg_t=__nul;
 		return __nul;
 	}
 	if(*point_buffer!=AT_DEFINED) {
 		#ifdef DEBUG
-			printf("point buffer is not known\n");
+			printf("\ndecode p : { unknown }\n");
 		#endif
 		into->arg_t=__unk;
 		return __unk;
 	};
-	for(int i=0; i<strlen(d_atbase); i++) {
+	for(int i=0; i<str_rwings(d_atbase)-1; i++) {
 		if(point_buffer[i]!=d_atbase[i]) {
 			#ifdef DEBUG
-				printf("point buffer is a pointer\n");
+				printf("\ndecode p : kPtr\n");
 			#endif
 			into->arg_t=__ptr;
 			return __ptr;
 		};
 	};
 	#ifdef DEBUG
-		printf("point buffer is a point\n");
+		printf("\ndecode p : @point{}\n");
 	#endif
 	into->arg_t=__pnt;
 	return __pnt;
 };
 
-
+int __point_run() {
+	void *temp = __arcstp(512);
+	return 0;
+}
 int main(int argc,char const*argv[]) {
+#define __ARGC__ argc
+#define __ARGV__ *argv
+__LBB_START__
 	into_st into;
 	__into__(into);
 	into.argument=argv[1];
 	p_type typepoint=__decode_p(&into);
 	switch(typepoint){
+	case __nul:
+		return __point_run();
 	case __unk: 
 		if(argc>=3){
 			return decode_lbb_addr(&into, &argv[2]);
+		}
+		else if (argc>=2) {
+			return check_command(&into, argv);
 		};
 		#ifdef LOG_ERR
 			printf("unknown command\n");
-			printf("usage :: udef addr command\n");
+		#endif
+		#ifdef DEBUG
+			printf("usage :: %s addr command\n", argv[0]);
 		#endif
 		return 1;
 	case __ptr: return decode_pointer(&into);
 	case __pnt: return decode_point(&into);
 	default: return 1;
 	};
-
-	
+INDEX_END("\n");
 };
 
 

@@ -17,6 +17,9 @@
     #define unpacku32 unpack_u_32
     #define unpacku64 unpack_u_64
 
+
+
+
     void enc_unum( ulong base , uchar *buf , ulong i ) {
         while ( base > 0 ) {
             *buf++ = i >> (8*base);
@@ -157,6 +160,14 @@
 
         for(; *format != '\0'; format++) {
             switch(*format) {
+            case '{':
+                C=(unsigned char)'{';
+                size+=1;*buf++=C;
+                break; 
+            case '}':
+                C=(unsigned char)'}';
+                size+=1;*buf++=C;
+                break;                
             case '_':
                 C=(unsigned char)'_';
                 size+=1;*buf++=C;

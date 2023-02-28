@@ -3,81 +3,40 @@ little black book
 
 #ifndef __LBB__H
 #include "lbb.h"
+#include "ixr.h"
 #endif
+
+
 #ifndef __lbb_name
 	#define __lbb_name "linked binary book"
 
-
-
 void unpack(uchar *buf,char const *fmt,...);
 
-
-ulong __fsize(char *__fpath){
-    struct stat __;
-    memset(&__,0,sizeof(struct stat));
-    if(stat(__fpath,&__)!=0){return 0;}
-    return __.st_size;
+ulong fsize_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_size;
 };
-
-ulong __iosize(char *__fpath){
-    struct stat __;
-    memset(&__,0,sizeof(struct stat));
-    if(stat(__fpath,&__)!=0){return 0;}
-    return __.st_blksize;
+ulong iosize_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_blksize;
 };
-
-ulong __inodenum(char *__fpath){
-	struct stat __;
-	memset(&__,0,sizeof(struct stat));
-	if(stat(__fpath,&__)!=0){return 0;}
-	return __.st_ino;
+uns dmode_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_mode;
 };
-
-uns __dmode(char *__fpath){
-    struct stat __;
-    memset(&__,0,sizeof(struct stat));
-    if(stat(__fpath,&__)!=0){return 0;}
-    return __.st_mode;
+ulong inn_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_ino;
 };
-
 void *__statusof(char const *__file) {
-	struct stat __;
-	memset(&__,0,sizeof(struct stat));
-	if(stat(__file,&__)==0){
-		return (void *)__file;
-	}
-	return NULL;
-};
-
-int __stres(char const*cpath){
-	return access(cpath,F_OK)==0;
-};
-
-ulong __file_r(char*cpath){
-    if (access(cpath,R_OK)==0){
-        return 1;
+    struct stat __;
+    memset(&__,0,sizeof(struct stat));
+    if(stat(__file,&__)==0){
+        return (void *)__file;
     }
-    return 0;
+    return NULL;
 };
 
-ulong __file_w(char*cpath){
-    if (access(cpath,W_OK)==0){
-        return 2; 
-    }
-    return 0;
-};
-
-ulong __file_x(char*cpath){
-    if (access(cpath,X_OK)==0){
-        return fsze(cpath);
-    }
-    return 0;
-};
-
-uns __8sz(uns _){
-    uns __=1;while(_>0){__*=8;_--;}
-    return __;
-};
 
 int __ap_file(char const *__path){
 	int __fd=open(__path,__lbb_shard_flags);
@@ -103,7 +62,7 @@ ulong __ap_writer() {
 		return (ulong)0;
 	};
 	ulong _fd=(ulong)__fd;
-	__TEXT(Writer Lock);
+	// __TEXT(Writer Lock);
 	#ifdef DEBUG
 		printf("Writer : fifo opened :: %lu\n",_fd);
 	#endif
@@ -118,7 +77,7 @@ ulong __ap_reader() {
 		return (ulong)0;
 	};
 	ulong _fd=(ulong)__fd;
-	__TEXT(Reader Lock)
+	// __TEXT(Reader Lock)
 	#ifdef DEBUG
 		printf("Reader : fifo opened :: %lu\n",_fd);
 	#endif
@@ -131,43 +90,24 @@ void magic_shard() {
 	close(lbb_shard.lbb_fd);
 };
 
-int init_generic(struct __pr_generic prg_dcloud){
-    memset(&prg_dcloud,0,sizeof(prg_dcloud));
-    prg_dcloud.path=((char const*)(lfiles[1]));
-    if(__ap_fifo(prg_dcloud.path)==-1){
-        printf("error :: cannot make fifo\n");
-        return 1;
-    }
-    void *res=status(prg_dcloud.path);
-    if(res==NULL){
-        printf("error :: cannot obtain status ::: status()returned null\n");
-        return 1;
-    }
-    printf("path :: %s\n",prg_dcloud.path);
-    printf("inum :: %lu\n",inodenum);
-    printf("____\n");
-    return 0;
-};
+// int init_generic(struct __pr_generic prg_dcloud){
+//     memset(&prg_dcloud,0,sizeof(prg_dcloud));
+//     prg_dcloud.path=((char const*)(lfiles[1]));
+//     if(__ap_fifo(prg_dcloud.path)==-1){
+//         printf("error :: cannot make fifo\n");
+//         return 1;
+//     }
+//     void *res=status(prg_dcloud.path);
+//     if(res==NULL){
+//         printf("error :: cannot obtain status ::: status()returned null\n");
+//         return 1;
+//     }
+//     printf("path :: %s\n",prg_dcloud.path);
+//     printf("inum :: %lu\n",inodenum);
+//     printf("____\n");
+//     return 0;
+// };
 
-ulong fsize_st(void *st){
-	struct stat *__=(struct stat*)st;
-	return __->st_size;
-};
-
-ulong iosize_st(void *st){
-	struct stat *__=(struct stat*)st;
-	return __->st_blksize;
-};
-
-uns dmode_st(void *st){
-	struct stat *__=(struct stat*)st;
-	return __->st_mode;
-};
-
-ulong inn_st(void *st){
-	struct stat *__=(struct stat*)st;
-	return __->st_ino;
-};
 
 
 /*******************************************************************/
@@ -536,16 +476,19 @@ int get_kstat(char const *__path, k_stat *kfile) {
 int get_mstat(char const *__path, m_stat *mfile) {
 	memset(mfile,0,sizeof(struct __m_stat));
 	ulong path_len=strlen(__path);
-	#ifdef DEBUG
-		printf("PATH :: %s\n",__path);
-	#endif
 	if(path_len>512){
+		#ifdef LOG_ERR
+			printf("path specified is 512+ \n");
+		#endif
 		return -1;
 	}
 	memmove(mfile->m_path,__path,path_len);
 	struct stat temp;
 	memset(&temp,0,sizeof(struct stat));
 	if(stat(mfile->m_path,&temp)!=0){
+		#ifdef LOG_ERR
+			printf("cannot determine `stat` call\n");
+		#endif
 		return -1;
 	};
 	mfile->m_size=fsize_st(&temp);
@@ -627,6 +570,8 @@ void log_process_schema(ulong p_pid, ulong c_pid) {
 
 
 
+
+
 ulong __get_long_digits(ulong num) {
 	ulong cnum=((ulong)(num/10));
 	ulong res=0;
@@ -637,18 +582,23 @@ ulong __get_long_digits(ulong num) {
 	return res+=1;
 };
 
-char *__get_cfname(char const *__fname, ulong __fiter) {
-	ulong total_size=((ulong)(strlen(__fname)+__get_long_digits(__fiter)+1));
-	char __[total_size];
-	memset(&__,0,total_size);
-	sprintf(__,"%s:%lu",__fname,__fiter);
+char *__get_cfname(char const *__fname, ulong __iter) {
+	ulong __flen=strlen(__fname);
+	if(__flen<=40){
+		#ifdef LOG_ERR
+			printf("file name cannot be longer than 40 bytes\n");
+		#endif
+		return NULL;
+	}
+	char __[64];memset(&__,0,sizeof(__));
+	sprintf(__,"%s:%lu",__fname,__iter);
 	return strdup(__);
 };
 
 char *__get_fcontents(char *__conts, ulong __size) {
 	char __[__size];
 	memset(&__,0,__size);
-	sprintf(__,"{ %s }\n",__conts);
+	sprintf(__,"{%s}",__conts);
 	return strdup(__);
 };
 
@@ -674,22 +624,52 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	memset(&e_field,0,field_size);
 	char *__buffer=(char *)&(e_field.contents.et);
 	while(c<__fld_count){
-		_res=pread(__fd,__buffer,512,__offset);
+		memset(__buffer,0,512);
+		#ifdef DEBUG
+			printf("Conv Fields DEBUG :: %lu\n", c);
+		#endif
+		// read size
+		int __tempres=pread(__fd,__buffer,512,__offset);
+		if(__tempres>=1){
+			_res=(ulong)__tempres;
+			__offset+=_res;
+		}
 		_OUT_ASCII(lbb_dd,_res);
+		#ifdef DEBUG
+			printf("read size :: %lu\n", _res);
+		#endif
+		// file path
 		char *__fcharm=__get_cfname(__fn,c);
 		OUT_ASCII(lbb_dd,__fcharm);
+		#ifdef DEBUG
+			printf("file path :: %s\n", __fcharm);
+		#endif
+		// get checksum for entire file
 		char *checksum=(char *)hashof(1,e_field.contents.et,e_field.contents.len);
 		_OUT_ASCII(lbb_dd,checksum);
+		#ifdef DEBUG
+			printf("file checksum :: %s\n", checksum);
+		#endif		
+		// get the content size of the buffer
 		ulong buflen=strlen(__buffer);
 		_OUT_ASCII(lbb_dd,buflen);
+		#ifdef DEBUG
+			printf("buflen :: %lu\n", buflen);
+		#endif	
+		// pack the contents as binary with s indicator
 		char *contents=__get_fcontents(__buffer,buflen);
-		PACK_IN(lbb_dd,buflen,"%s\0",contents);
-		// OUT_ASCII(lbb_dd,contents);
-		c+=1;memset(__buffer,0,512);
+		ulong conbuf_len=strlen(contents);
+		PACK_IN(lbb_dd,conbuf_len,"%s\0",contents);
+		#ifdef DEBUG
+			printf("contents : start content --->%s<---end contents\n", contents);
+		#endif
+		c+=1;
 	};
 	
 	close(__fd);
 	close(lbb_dd);
+
+
 
 	return strdup(fieldname);
 };
@@ -749,26 +729,6 @@ ulong __run_ap(ulong __size){
 	}
 
 }
-
-
-ulong r_start_ap() {
-	__ap_reader();
-	GET_SHARD(__lbb_locking);
-	__TEXT(Starting ATP '@Protocol');
-	return __run_ap(64);
-};
-
-ulong w_start_ap() {
-	__ap_writer();
-	GET_SHARD(__lbb_locking);
-	return __run_ap(512);
-}
-
-
-
-
-
-
 
 
 

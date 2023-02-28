@@ -1,12 +1,6 @@
 #ifndef __LBB__H
 	#include "utypes.h"
-	#include <stdio.h>
-	#include <unistd.h>
-	#include <string.h>
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <fcntl.h>
-	#include <stdarg.h>
+	#include "standard.h"
 	#define __lbb_c_regex "\\(^[a-zA-Z0-9]*\\)[=:]\\{1,\\}\\([a-zA-Z0-9]*\\)$"
 	#define __lbb_mode__ (S_IRWXU|S_IRWXG|S_IRWXO)
 	#define __lbb_shard_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
@@ -24,6 +18,35 @@
 	#define NNE(v) v==0x0000?0x01:0x00
 
 
+
+    #define FMT_ASCII_SPEC(__) _Generic((__), \
+                                            int: "%d",\
+                                            uns: "%u",\
+                                            char: "%c",\
+                                            long: "%ld",\
+                                            ulong: "%lu",\
+                                            tlong: "%llu",\
+                                            char *: "%s",\
+                                            char const *:"%s",\
+                                            long long: "%lld",\
+                                            default: "%x")
+
+    #define _OUT_ASCII(fd,x) do { \
+        char __[512];\
+        memset(&__,0,sizeof __);\
+        snprintf(__,sizeof __,"_%s", FMT_ASCII_SPEC(x));\
+        dprintf(fd,__,(x));\
+    }while(1!=1)
+
+    #define OUT_ASCII(fd,x) do { \
+        char __[512];\
+        memset(&__,0,sizeof __);\
+        snprintf(__,sizeof __,"%s\n", FMT_ASCII_SPEC(x));\
+        dprintf(fd,__,(x));\
+    }while(1!=1)
+
+
+
 #define CALL_SUCC(x) x==(ulong)0?1:0
 #define CALL_INST(x) x==(ulong)1?1:0
 #define CALL_NSUC(x) x==(ulong)-1?1:0
@@ -35,23 +58,15 @@
 #define shd_sze sze_shard(lbb_shard)
 #define shd_io ioz_shard(lbb_shard)
 
-static const char *__lbb_indexfile = "@charms/.lbb";
-static const char *__lbb_convdir = "@charms/lbb";
-static const char *__lbb_locking = "@charms/lock";
+static const char *__lbb_indexfile = "@charms/.lbb\0";
+static const char *__lbb_convdir = "@charms/lbb\0";
+static const char *__lbb_locking = "@charms/lock\0";
 
 
 #define pth_shard(x) ((char *)((x.lbb_mst).m_path))
 #define fld_shard(x) ((ulong)(x.lbb_fd))
 #define sze_shard(x) ((ulong)((x.lbb_mst).m_size))
 #define ioz_shard(x) ((ulong)((x.lbb_mst).m_blksz))
-
-#define __key__delim ':'
-#define __val__delim '='
-#define ref_delim ":="
-#define att_delim "=:"
-
-
-
 
 
 unsigned int pack(uchar *buf,char const *fmt,...);
@@ -175,6 +190,7 @@ struct __lbb_shard {
 };
 
 static struct __lbb_shard lbb_shard;
+static struct __lbb_shard *l_shard=&lbb_shard;
 static m_stat *lbb_mstat = &(lbb_shard.lbb_mst);
 
 
@@ -195,38 +211,26 @@ static m_stat *lbb_mstat = &(lbb_shard.lbb_mst);
 }while(1!=1);
 
 #define __LBB_READER__ do{\
-memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
+memset(l_shard,0,sizeof(struct __lbb_shard));\
 if(!checkef_lo) {__ap_fifo(__lbb_locking);};\
 r_start_ap();\
 }while(1!=1);
 
 #define __LBB_START__ do{\
-memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
+memset(lbb_mstat, 0, sizeof(struct __m_stat));\
+memset(l_shard,0,sizeof(struct __lbb_shard));\
 printf("getting shard .:%s:. \n",__lbb_indexfile);\
-GET_SHARD(__lbb_indexfile);\
+get_mstat(__lbb_indexfile,lbb_mstat);\
+INDEXER(NULL);\
 }while(1!=1);
 
 #define __LBB_WRITER__ do {\
-memset(&lbb_shard,0,sizeof(struct __lbb_shard));\
+memset(l_shard,0,sizeof(struct __lbb_shard));\
 w_start_ap();\
 }while(1!=1);
 
 
-#define sz8(x) ((ulong)__8sz(x))
-#define fsze(x) ((ulong)__fsize(x))
-#define st_fsize(x) ((ulong)fsize_st(x))
-#define iosze(x) ((ulong)__iosize(x))
-#define st_iosize(x) ((ulong)iosize_st(x))
-#define dmde(x) ((uns)__dmode(x))
-#define st_dmode(x) ((ulong)dmode_st(x))
-#define inn(x) (ulong)__inodenum(x)
-#define st_inn(x) ((ulong)inn_st(x))
-#define status(x) __statusof(x)
-#define stres(x) __stres(x)
 
-
-// should use _Generic
-#define GET_SHARD(x) get_mstat(x,&lbb_shard.lbb_mst)
 
 
 struct __pr_generic {

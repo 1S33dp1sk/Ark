@@ -1,9 +1,7 @@
 /// hbar \\\
 hash bar
 
-#ifndef __HBAR__H
-#include "hbar.h"
-#endif
+
 #ifndef __hbar_name 
 	#define __hbar_name "hash_bar"
 	#define byte_to_hex __btoh
@@ -394,10 +392,6 @@ hash bar
 	 ***AFNAB**
 	**/ 
 	char const *hashof( uns level , void const *tohash , size_t thsize ) {
-		#ifdef DEBUG
-			char const *_strhash=(char const *)tohash;
-			printf("hashof : string to hash :: %s\n",_strhash);
-		#endif
 		unsigned hash_size = 0 , k_flag = 0 , hashstr_len = 4;
 		switch ( level ) {
 			case 0:
@@ -430,7 +424,7 @@ hash bar
 	}
 	// raw 
 	uint8_t const *hash( uns level , void const *tohash , size_t thsize ) {
-		#ifdef DEBUG
+		#ifdef DEBUG_HASH
 			char const *_strhash=(char const *)tohash;
 			printf("hash : string to hash :: %s\n",_strhash);
 		#endif

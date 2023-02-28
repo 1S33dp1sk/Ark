@@ -15,11 +15,11 @@
 #ifndef __ENK__H
     #include "enk.h"
 #endif
-#ifndef __LBB__H
-    #include "lbb.h"
-#endif
 #ifndef __IXR__H
     #include "ixr.h"
+#endif
+#ifndef __LBB__H
+    #include "lbb.h"
 #endif
 #define __k_arch512__h 1
 #endif
@@ -29,18 +29,13 @@
 #define MachPtr 16
 #define __GS__F __MA__F<<3
 #define GSocketField 64
-#define __LO__F __LO__F<<3
+#define __LO__F __GS__F<<3
 #define LockF 512
-#define __UN__F __GS__F<<3
+#define __UN__F __LO__F<<3
 #define UFile 4096
 #define ARC_GENERIC(x) (ulong)((1<<(x*3)))
 
-
-
-
-
 #define arch_filename "@charms/Lockfile"
-
 
 uns __get_fd(char *cpath,uns __flag);
 uns __get_process_flags(char *cpath);
@@ -65,6 +60,65 @@ int arch_cdesc(ulong lbbfd) {
 
     return 0;
 }
+
+ulong __fsize(char *__fpath){
+    struct stat __;
+    memset(&__,0,sizeof(struct stat));
+    if(stat(__fpath,&__)!=0){return 0;}
+    return __.st_size;
+};
+
+ulong __iosize(char *__fpath){
+    struct stat __;
+    memset(&__,0,sizeof(struct stat));
+    if(stat(__fpath,&__)!=0){return 0;}
+    return __.st_blksize;
+};
+
+ulong __inodenum(char const *__fpath){
+    struct stat __;
+    memset(&__,0,sizeof(struct stat));
+    if(stat(__fpath,&__)!=0){return 0;}
+    return __.st_ino;
+};
+
+uns __dmode(char *__fpath){
+    struct stat __;
+    memset(&__,0,sizeof(struct stat));
+    if(stat(__fpath,&__)!=0){return 0;}
+    return __.st_mode;
+};
+
+int __stres(char const*cpath){
+    return access(cpath,F_OK)==0;
+};
+
+ulong __file_r(char*cpath){
+    if (access(cpath,R_OK)==0){
+        return 1;
+    }
+    return 0;
+};
+
+ulong __file_w(char*cpath){
+    if (access(cpath,W_OK)==0){
+        return 2; 
+    }
+    return 0;
+};
+
+ulong __file_x(char*cpath){
+    if (access(cpath,X_OK)==0){
+        return fsze(cpath);
+    }
+    return 0;
+};
+
+uns __8sz(uns _){
+    uns __=1;while(_>0){__*=8;_--;}
+    return __;
+};
+
 
 uns __get_fd(char *cpath,uns __flag){
     ulong __fd,__fsz,__iosz;
@@ -117,6 +171,9 @@ static const uchar charms[26][4]={
     "trv\0","usr\0","vik\0","wln\0","xvl\0","ybn\0","z0x\0"
 };
 
+char const *mount_at="@charms/lbb/\0";
+
+static const ulong __enu_size=512;
 static const char mod_att[]="address\0";
 static const char mod_bal[]="balance\0";
 static const char mod_ccc[]="charm\0";
@@ -193,14 +250,71 @@ void log_arcs(){
         printf("charm :: %s\n",kccc->__charm);
         printf("hash :: %lu\n",kccc->__3chash);
         kccc=kccc->nxt;
+    };
+};
+
+char const *__gdelim(__gfmt_t __gtype) {
+    char __delim[3], *_d=((char *)&__delim);
+    memset(&__delim,0,3);
+    switch(__gtype){
+        // Key : Value
+        case __key_value:
+            memmove(_d, __ATP_KEY, sizeof(__ATP_KEY));
+            break;
+        // ENV = Variable
+        case __env_variable:
+            memmove(_d, __ATP_ENV, sizeof(__ATP_ENV));
+            break;
+        // Socket := Address
+        case __path_address:
+            memmove(_d, __ATP_KEY, sizeof(__ATP_KEY));
+            memmove(_d+sizeof(__ATP_KEY), __ATP_ENV, sizeof(__ATP_ENV));
+            break;
+        // Variable =: description
+        case __fld__:
+            memmove(_d, __ATP_ENV, sizeof(__ATP_ENV));
+            memmove((_d+sizeof(__ATP_ENV)), __ATP_KEY, sizeof(__ATP_KEY));
+            break;
+        default: 
+            return NULL;
+    };
+    __delim[2]='\0';
+    #ifdef DEBUG
+        printf("delimiter is '%s'\n",_d);
+    #endif
+    return strdup(__delim);
+};
+
+
+char const *__generic_fmt(__gfmt_t g_type,char const *__key, char const *__value){
+    ulong klen=strlen(__key);
+    ulong vlen=strlen(__value);
+    ulong clen=klen+vlen+2;
+
+    char lbb_field[clen];memset(&lbb_field,0,sizeof(lbb_field));
+    lbb_field[clen]='\0';
+
+    memmove(lbb_field,__key,klen);
+    char const *_delim=__gdelim(g_type);
+    if(_delim==NULL) {
+        #ifdef LOG_ERR
+            printf("delimiter is null\n");
+        #endif
+        return NULL;
     }
-}
+    ulong __dlen=strlen(_delim);
+    memmove((lbb_field+klen),_delim, __dlen);
+    memmove((lbb_field+klen+__dlen),__value,vlen);
+
+    #ifdef DEBUG
+        printf("{%s}",lbb_field);
+    #endif
+    return (char const *)strdup(lbb_field);
+};
 
 
 static const uns __lbb_idx__=11;
 static uns env_hash_0,env_hash_1;
-
-
 
 ulong __env_hash(char **__var){
     uns __count=0;
@@ -459,7 +573,204 @@ int arch_cenv(){
     char const *hvar=__keys_hash(__var,envar_count);
     printf("k+%x:%u:=ENVHASH=1\n",env_hash_0,envar_count); // ENVHASH :: ZENV
     return 0;
+};
+
+
+ulong str_rwings(char const *__str) {
+    ulong temp=0;
+    do {
+        if(*__str!='\0'){
+            temp+=1;
+        };
+    }while(*__str++);
+    return temp;
+};
+
+ulong __index_increment() {
+    __cindex+=1;
+    return __cindex;
+};
+
+ulong __set_next(char const *__head){
+    ulong __len=strlen(__head);
+    if((__head==NULL)||__len==1){
+        return 0;
+    }
+    long _res=pwrite(__ixr_fd,__head,__len,___offset);
+    if(_res!=-1){
+        ___offset+=__len;
+    }
+    #ifdef DEBUG
+        printf("\nnext -->\n");
+        printf("head   :: %s\n", __head);
+        printf("length :: %lu\n", __len);
+        printf("result :: %ld\n", _res);
+        printf("offset ::: %lu\n", ___offset);
+    #endif
+    return __cindex;
+};
+
+ulong indexer_start(char const *idxr){
+    if(__cindex!=0){
+        return 0;
+    };
+    return __index_increment();
+};
+
+int __eparse_frame() {
+
+    return 0;
 }
+
+char const *__index(char const *__) {
+    __cindex+=1;
+    return hashof(1,(void *)__,str_rwings(__));
+};
+
+
+int __index_r(char const *idxnr) {
+    char const *_rfmt=__generic_fmt(__key_value, idxnr, __index(idxnr));
+    ulong llen=__set_next(_rfmt);
+    return 0;
+}
+
+int __indexer__(char const *idxnr) {
+    int ixr_fd=-1;
+    #ifdef DEBUG
+        printf("indexer : called with argument :: %s\n", idxnr);
+        printf("starting cindex=%lu\n",__cindex);
+    #endif
+    if(idxnr==NULL){
+        if(__ixr_fd!=0x228){
+            #ifdef LOG_ERR
+                printf("trying to instantiate indexer on %lu", 0x228);
+            #endif
+            return -1;
+        }
+        if(!__stres(__ixr_frame)){
+            #ifdef DEBUG
+                printf("indexer init .lbb :: \n");
+            #endif
+            ixr_fd=open(__ixr_frame,(O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY),(S_IRWXU|S_IXGRP|S_IXOTH));
+            if(ixr_fd==-1){
+                #ifdef LOG_ERR
+                    printf("indexer fd failed on create\n");
+                #endif
+                return -1;
+            };
+            __ixr_fd=(ulong)ixr_fd;
+            #ifdef DEBUG
+                printf("indexer file descriptor :: %lu\n",__ixr_fd);
+            #endif
+            return 0;
+        };
+        return -1;
+    };
+    ixr_fd=open(__ixr_frame,(O_RDWR|O_NOFOLLOW_ANY),(S_IRWXU|S_IXGRP|S_IXOTH));
+    if(ixr_fd==-1){
+        printf("Cannot instantiate indexer\n");
+        return -1;
+    };
+    __ixr_fd=(ulong)ixr_fd; 
+    #ifdef DEBUG
+        printf("Parsing index file :: %s\n", __ixr_frame);
+        printf("file descriptor :open::%d\n",ixr_fd);
+    #endif
+    return 0;
+};
+
+
+void log_fmt_t(fmt_t __format) {
+    switch(__format) {
+    case __key_value: __TEXT(Key:Value); break;
+    case __env_variable: __TEXT(Enviroment=Spec); break;
+    case __path_address: __TEXT(Socket:=Address); break;
+    case __fld__: __TEXT(Description=:Callable); break;
+    default: __TEXT(Unknown); break;
+    };
+};
+
+
+void log_keyvalue(char *key, char *value) {
+    __ASCII(key);
+    __ASCII(value);
+};
+
+
+void __usage(){
+    __TEXT(Use lbb as :: `d-lbb /path/to/file`);
+};
+
+int get_allstats(char *__mountpoint, char *__socketaddress, char *__fieldshare){
+    m_stat mstat;
+    int res=get_mstat(__mountpoint,&mstat);
+    printf("get mstat res=%d\n",res);
+    log_mstat(&mstat);
+
+    s_stat sstat;
+    res=get_sstat(__socketaddress,&sstat);
+    printf("get sstat res=%d\n",res);
+    log_sstat(&sstat);
+
+    k_stat kstat;
+    res=get_kstat(__fieldshare,&kstat);
+    printf("get kstat res=%d\n",res);
+    log_kstat(&kstat);
+
+    return res;
+};
+
+ulong __enu_count(ulong __size){
+    ulong __c=0;
+    do {
+        __c+=1;
+    }while((__size-=__enu_size)>512);
+    return __c;
+};
+
+#define LOG_ERR 1
+
+char *flds(char const *__fldname) {
+    if(__fldname==NULL){
+        #ifdef LOG_ERR
+            __TEXT(API : flds :: fld is null);
+        #endif
+        return NULL;
+    };
+    ulong __fld_n_size=strlen(__fldname);
+    #ifdef DEBUG
+        printf("flds : fldname :: %s ::: %lu\n", __fldname, __fld_n_size);
+    #endif
+
+    m_stat cm_st;
+    m_stat *__cm_st=__mstat__(cm_st);
+    int res=get_mstat(__fldname,__cm_st);
+    if(res==-1){
+        #ifdef LOG_ERR
+            __TEXT(Field not found);
+        #endif
+        return NULL;
+    };
+    #ifdef DEBUG
+        log_mstat(&cm_st);
+    #endif
+
+
+    char *cflds_head=conv_fields(__cm_st);
+    if(cflds_head==NULL){
+        #ifdef LOG_ERR
+            printf("cflds header is null\n");
+        #endif
+        return NULL;
+    };
+    // needs to index here
+
+    #ifdef OUTPUT
+        printf("'%s'\n",cflds_head);
+    #endif
+
+    return strdup(cflds_head);
+};
 
 
 #endif

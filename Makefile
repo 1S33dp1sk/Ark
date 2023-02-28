@@ -39,7 +39,6 @@ exs@charms:=${@charms}/executables
 karch_512_build:=${@1c}/k512${@arch}
 cloud_d_build:=${@1c}/d-cloud${@arch}
 fields_build:=${@1c}/flds${@arch}
-udef_build:=${@1c}/udef${@arch}
 #####################################
 #				Shorts				#
 #####################################
@@ -76,10 +75,9 @@ charms:
 	fi;
 
 clean: __clean_charms__
-	if [ -f k512 ]; then rm -rf k512; fi
-	if [ -f d-cloud ]; then rm -rf d-cloud; fi
-	if [ -f flds ]; then rm -rf flds; fi
-	if [ -f udef ]; then rm -rf udef; fi
+	if [ -f d-atp ]; then rm -rf d-atp; fi
+	if [ -f d-cld ]; then rm -rf d-cld; fi
+	if [ -f d-lbb ]; then rm -rf d-lbb; fi
 
 
 rebuild: clean charms 
@@ -101,9 +99,9 @@ _check_source_: __clean_charms__
 #################################
 #			libather			#
 #################################
-lib_ather:= hbar lbb enk ixr atp
+lib_ather:= hbar lbb enk atp
 __lib_ather__=$(addprefix __,$(addsuffix __,${lib_ather}))
-clean_libather: clean_hbar clean_enk clean_ixr clean_lbb
+clean_libather: clean_hbar clean_enk clean_lbb
 	@printf "clean :(cc): libather\n"
 	if [ -f ${o_hbar} ]; then rm ${o_hbar}; fi
 	if [ -f ${xer_o} ]; then rm ${xer_o}; fi
@@ -137,11 +135,7 @@ __ccc_headers__:
 	cat ${enk_h} > ${_enk}
 	cat ${enk_c} >> ${_enk}
 	cat ${lbb_h} > ${_lbb}
-	cat ${atp_h} >> ${_lbb}
 	cat ${lbb_c} >> ${_lbb}
-	cat ${ixr_h} > ${_ixr}
-	cat ${atp_h} >> ${_ixr}
-	cat ${ixr_c} >> ${_ixr}
 	cat ${atp_h} >> ${_atp}
 	cat ${atp_c} >> ${_atp}
 
@@ -165,10 +159,7 @@ lbb_atp_ml:
 3c: 
 	@printf "\n{{{ccc}}}\n"
 	if [ ! -d ${@3c} ]; then mkdir ${@3c}; fi
-	cp ${__src}/k512.c ${@3c}
-	cp ${__src}/dclouds.c ${@3c}
-	cp ${__src}/flds.c ${@3c}
-	cp ${__src}/udef.c ${@3c}
+	cp ${__src}/d_*.c ${@3c}
 
 #compiled
 @2c:=${@3c}/2c
@@ -183,16 +174,14 @@ lbb_atp_ml:
 1c:
 	@printf "\n{  c  }\n"
 	if [ ! -d ${@1c} ]; then mkdir ${@1c}; fi
-	cc ${@3c}/k512.c -o ${@1c}/k512${@arch} ${atherlib}
-	cc ${@3c}/dclouds.c -o ${@1c}/d-cloud${@arch} ${atherlib}
-	cc ${@3c}/flds.c -o ${@1c}/flds${@arch} ${atherlib}
-	cc ${@3c}/udef.c -o ${@1c}/udef${@arch} ${atherlib}
+	cc ${@3c}/d_atp.c -o ${@1c}/d-atp${@arch} ${atherlib}
+	cc ${@3c}/d_cld.c -o ${@1c}/d-cld${@arch} ${atherlib}
+	cc ${@3c}/d_lbb.c -o ${@1c}/d-lbb${@arch} ${atherlib}
 #tests
 3c_out:
-	cp ${@1c}/k512${@arch} k512
-	cp ${@1c}/d-cloud${@arch} d-cloud
-	cp ${@1c}/flds${@arch} flds 
-	cp ${@1c}/udef${@arch} udef
+	cp ${@1c}/d-atp${@arch} d-atp
+	cp ${@1c}/d-cld${@arch} d-cld
+	cp ${@1c}/d-lbb${@arch} d-lbb
 
 
 build_3c: 3c 2c 1c 3c_out

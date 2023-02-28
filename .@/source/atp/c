@@ -1,34 +1,20 @@
 /// ATP \\\
 @ protocol
 
-
 #ifndef __ATP__H
 #include "atp.h"
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <sys/wait.h>
-#include <errno.h>
 
+#define OUTPUT 1
 
 char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
-
 
 #define socket_fd(x) (ulong)(x.aip_sockfd)
 #define sock_fd(x) (ulong)(x->aip_sockfd)
 #define socket_len(x) (ulong)(x.aip_socklen)
 #define sock_len(x) (ulong)(x->aip_socklen)
 #define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
-
-#define DEBUG 1
 
 enum __atypes_ stype_to_atype(enum __stypes __stype) {
     switch(__stype) {
@@ -216,12 +202,12 @@ void *__aip_recieve(aipsock *sock) {
     int numbytes;
     char buf[512];
     memset(&buf,0,sizeof(buf));
-    if ((numbytes = recv(sock_fd(sock), buf, 512, 0)) == -1) {
-        #ifdef DEBUG
-            perror("recv");
+    if ((numbytes = recv(sock_fd(sock), buf, 512, 0))==-1) {
+        #ifdef LOG_ERR
+            printf("aip : recv :: failed\n");
         #endif
         exit(1);
-    }
+    };
     return (void *)strdup(buf);
 };
 
@@ -232,14 +218,11 @@ struct __buffin {
     char *_org;//512-byte msg payload
 };
 
-
-
 void init_nifty(struct __buffin *nifty){
     memmove(nifty->_org, nifty->__pname, 8);
     memmove(((nifty->_org)+8), nifty->__intrpt, 64);
     memmove(((nifty->_org)+72), nifty->__effective, 440);
 };
-
 
 // function that associates the @-protocol
 // with the linked binary book (lbb)
@@ -299,10 +282,15 @@ void sock_errs(){
     printf("value of ENOTSOCK = %d\n", ENOTSOCK);
 };
 
-void __ellrun(ulong __fd, ulong __len, struct sockaddr *__addr) {
+#define DEBUG 1
+
+void __ellrun(ulong __fd) {
 
     aipsock temp_sok;
     memset(&temp_sok,0,sizeof(aipsock));
+    #ifdef OUTPUT
+        printf("running ell :: \n");
+    #endif
 
     while(1) {
         socklen_t *temp_sockelen=((socklen_t *)&(temp_sok.aip_socklen));
@@ -315,9 +303,8 @@ void __ellrun(ulong __fd, ulong __len, struct sockaddr *__addr) {
                 printf("error : accept :: ");
                 printf("err number ::: ");
                 printf("%d\n",errno);
-                break;
             #endif
-            continue;
+            break;
         };
         temp_sok.aip_sockfd=tonum(__tempfd);
         #ifdef DEBUG
@@ -326,6 +313,8 @@ void __ellrun(ulong __fd, ulong __len, struct sockaddr *__addr) {
         if(!fork()){
             close(__fd);
             __aip_send(&temp_sok, "ell shell ::\n");
+            char *msg_recvd=__aip_recieve(&temp_sok);
+            printf("recieved => %s\n", msg_recvd);
             _socket_free_fd(&temp_sok);
             exit(0);
         }
@@ -340,7 +329,6 @@ void *__arcell(void *c_stp) {
     ulong socket_fd=socket_fd(__socket);
     ulong socket_len=socket_len(__socket);
     struct sockaddr *socket_addr=socket_staddr(__socket);
-
 
     #ifdef DEBUG
         printf("starting ell, <%p>\n", c_stp);
@@ -358,186 +346,119 @@ void *__arcell(void *c_stp) {
     };
 
 
-    __ellrun(socket_fd,socket_len,socket_addr);
+    __ellrun(socket_fd);
 
     return c_stp;
 };
 
-int lbb_run() {
-    printf("d-cloud : atp {mor}\n");
+void __ellcall(ulong __socfd, char *reusable, ulong r_size) {
+    #ifdef OUTPUT
+        printf("reading input\n");
+    #endif
+    int __tempres=0;
+    memset(reusable, 0, r_size);
+    while(__tempres!=-1) {
+        __tempres=read(0, reusable, r_size);
+        #ifdef OUTPUT
+            printf("\n\nread input :: %s\n", reusable);
+        #endif
+        #ifdef OUTPUT 
+            printf("sending to socket\n");
+        #endif
+        __tempres=send(__socfd, reusable, r_size, 0);
+        break;
+    };
+        close(__socfd);
+};
+
+void __ellget(ulong __sockfd, char *reusable, ulong reu_size) {
+    memset(reusable, 0, reu_size);
+    int __recvd_num=recv(__sockfd, reusable, reu_size, 0);
+    if(__recvd_num==-1) {
+        #ifdef OUTPUT
+            printf("could not recieve in `ellcall`\n");
+        #endif
+        exit(1);
+    };
+
+    reusable[__recvd_num] = '\0';
+    #if DEBUG
+        printf("client: received '%s'\n",reusable);
+    #endif
+
+};
+
+void __arcfork(){
+    __arc.__fork=fork();
+};
+
+void __arcsok(){
+    __sok=__arcsocket();
+};
+
+ulong __aipfd() {
+    return __sok.aip_sockfd;
+};
+
+ulong __aiplen(){
+    return __sok.aip_socklen;
+};
+
+char *__aipsock_raw(){
+    return (char *)__sok.aip_socket;
+};
+
+struct sockaddr *__aipsock_addr_sa(){
+    return sock_aip_to_sa(&__sok);
+};
+
+aip_saddr __aipsock_addr(){
+    return __sock_addr(__aipsock_addr_sa());
+};
+
+void *__arcstart(void *c_step){
+
+    return __arcell(c_step);
+};
+
+void *__arcrun(void *c_step) {
+
+    return __arcstp(512);
+};
+
+void __arcpid(){
+    __arc.__pid=(ulong)getpid();
+};
+
+void free_arcs() {
+    void *d2ptr, *dptr=arc->__points;
+    for(ulong i=0;i<points_c;i++){
+        d2ptr=(dpoint *)dptr;
+        free((d2ptr+i));
+    };
+};
+
+void free_sok(){ 
+    _socket_free_fd(&__sok);
+};
+
+void free_args() {
+    free_arcs();
+    free_sok();
+};
+
+
+int mor(void *args) {
+    printf("d-cloud : atp {mor} :: %p\n", args);
 
     int sockfd, numbytes;  
     char buf[ATP_BUFFER_SIZE];
     struct addrinfo hints;
-    __hints(&hints);
     hints.ai_flags=AI_DEFAULT;
+    __hints(&hints);
     struct addrinfo *servinfo, *p;
     int rv;
     char s[INET6_ADDRSTRLEN];
-    
-    if ((rv = getaddrinfo(NULL, ATP_PORT, &hints, &servinfo)) != 0) {
-        #ifdef DEBUG
-            fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-        #endif
-        return 1;
-    }
-
-    // loop through all the results and connect to the first we can
-    for(p = servinfo; p != NULL; p = p->ai_next) {
-        if ((sockfd = socket(p->ai_family, p->ai_socktype,
-                p->ai_protocol)) == -1) {
-            #ifdef DEBUG
-                perror("client: socket");
-            #endif
-            continue;
-        }
-
-        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-            close(sockfd);
-            #ifdef DEBUG
-                perror("client: connect");
-            #endif
-            continue;
-        }
-
-        break;
-    }
-
-    if (p == NULL) {
-        #ifdef DEBUG
-            fprintf(stderr, "client: failed to connect\n");
-        #endif
-        return 2;
-    }
-
-    inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
-    #ifdef DEBUG
-        printf("client: connecting to %s\n", s);
-    #endif
-    freeaddrinfo(servinfo); // all done with this structure
-
-    if ((numbytes = recv(sockfd, buf, ATP_BUFFER_SIZE-1, 0)) == -1) {
-        #ifdef DEBUG
-            perror("recv");
-        #endif
-        exit(1);
-    }
-
-    buf[numbytes] = '\0';
-
-    #ifdef DEBUG
-        printf("client: received '%s'\n",buf);
-    #endif
-    close(sockfd);
-
-    return 0;
-};
-
-int les(void) {
-    printf("d-cloud : atp {les}\n");
-
-
-    int __fd, temp_fd, __yes=1, __rv;
-    struct addrinfo hints;
-    __hints(&hints);
-    hints.ai_flags=AI_PASSIVE;
-
-
-    struct addrinfo *__servinfo, *temp;
-    struct sockaddr_storage __caddr;
-
-    socklen_t __sin_size;
-    char __saddr[INET6_ADDRSTRLEN];
-
-    if ((__rv=getaddrinfo(NULL,ATP_PORT,&hints,&__servinfo))!=0){
-        #ifdef DEBUG
-            fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(__rv));
-        #endif
-        return 1;
-    }
-
-    for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
-        if((__fd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
-            #ifdef DEBUG
-                perror("server :: socket\n");
-            #endif
-            continue;
-        }
-        if(setsockopt(__fd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(unsigned))==-1){
-            #ifdef DEBUG
-                perror("setsockopt\n");
-            #endif
-            exit(1);
-        }
-        if(bind(__fd,temp->ai_addr,temp->ai_addrlen)==-1){
-            close(__fd);
-            #ifdef DEBUG
-                perror("server: bind\n");
-            #endif
-            continue;
-        }
-        break;
-    }
-
-    freeaddrinfo(__servinfo);
-
-    if(temp==NULL){
-        #ifdef DEBUG
-            fprintf(stderr,"server : failed to bind\n");
-        #endif
-        exit(1);
-    }
-    if(listen(__fd,ATP_BACKLOG)==-1){
-        #ifdef DEBUG
-            perror("listen\n");
-        #endif
-        exit(1);
-    }
-
-    while(1){
-        __sin_size=sizeof(__caddr);
-        temp_fd=accept(__fd,(struct sockaddr*)&__caddr,&__sin_size);
-        if(temp_fd==-1){
-            #ifdef DEBUG
-                perror("accept\n");
-            #endif
-            continue;
-        }
-        inet_ntop(__caddr.ss_family,__sok_addr((struct sockaddr*)&__caddr), __saddr, sizeof(__saddr));
-        #if LBB_LOG >= 2
-            printf("server : got connection from %s\n",__saddr);
-        #endif
-        if(!fork()){
-            close(__fd);
-
-            char *msg_to_send="Hello World\0";
-            ulong msglen=strlen(msg_to_send);
-
-            if(send(temp_fd,msg_to_send,msglen,0)==-1){
-                #ifdef DEBUG
-                    perror("send\n");
-                #endif
-            }
-            close(temp_fd);
-            exit(0);
-        }
-        close(temp_fd);
-    }
-    return 0;
-};
-
-int mor(void) {
-    printf("d-cloud : atp {mor}\n");
-
-    int sockfd, numbytes;  
-    char buf[ATP_BUFFER_SIZE];
-    struct addrinfo hints;
-    __hints(&hints);
-    hints.ai_flags=AI_DEFAULT;
-    struct addrinfo *servinfo, *p;
-    int rv;
-    char s[INET6_ADDRSTRLEN];
-
 
     if ((rv = getaddrinfo(NULL, ATP_PORT, &hints, &servinfo)) != 0) {
         #ifdef DEBUG
@@ -545,7 +466,6 @@ int mor(void) {
         #endif
         return 1;
     }
-
     // loop through all the results and connect to the first we can
     for(p = servinfo; p != NULL; p = p->ai_next) {
         if ((sockfd = socket(p->ai_family, p->ai_socktype,
@@ -572,94 +492,95 @@ int mor(void) {
             printf("client: failed to connect\n");
         #endif
         return 2;
-    }
+    };
 
     inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
     #if DEBUG
         printf("client: connecting to %s\n", s);
     #endif
     freeaddrinfo(servinfo); // all done with this structure
+    memset(&buf, 0, sizeof(buf));
+    __ellcall(sockfd, (char *)&buf, sizeof(buf)-1);
 
-    if ((numbytes = recv(sockfd, buf, ATP_BUFFER_SIZE-1, 0)) == -1) {
-        #ifdef DEBUG
-            printf("recv");
-        #endif
-        exit(1);
-    }
-
-    buf[numbytes] = '\0';
-
-    #if DEBUG
-        printf("client: received '%s'\n",buf);
-    #endif
+ 
     close(sockfd);
 
     return 0;
 };
 
-int spec_set_type(spec *sp, fmt_t g) {
-    sp->g_ev=g;
-    sp->g_delim=DELIM(g);
+
+int les(void *args) {
+    printf("d-cloud : atp {les}\n");
+
+    int sockfd, temp_fd, __yes=1, __rv;
+    struct addrinfo hints;
+    __hints(&hints);
+    hints.ai_flags=AI_PASSIVE;
+    struct addrinfo *__servinfo, *temp;
+    struct sockaddr_storage __caddr;
+
+    socklen_t __sin_size;
+    char __saddr[INET6_ADDRSTRLEN];
+
+    if ((__rv=getaddrinfo(NULL,ATP_PORT,&hints,&__servinfo))!=0){
+        #ifdef DEBUG
+            fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(__rv));
+        #endif
+        return 1;
+    }
+    for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
+        if((sockfd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
+            #ifdef DEBUG
+                perror("server :: socket\n");
+            #endif
+            continue;
+        }
+        if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(unsigned))==-1){
+            #ifdef DEBUG
+                perror("setsockopt\n");
+            #endif
+            exit(1);
+        }
+        if(bind(sockfd,temp->ai_addr,temp->ai_addrlen)==-1){
+            close(sockfd);
+            #ifdef DEBUG
+                perror("server: bind\n");
+            #endif
+            continue;
+        }
+        break;
+    }
+
+    freeaddrinfo(__servinfo);
+    __ellrun(sockfd);
+
     return 0;
 };
 
-char const *__gdelim(__gev __gtype) {
-    char __delim[3];
-    memset(&__delim,0,3);
-    switch(__gtype){
-        // Key : Value
-        case __key_value:
-            __delim[0]=ATP_KV_SEP;
-            __delim[1]='\0';
-            return strdup(__delim);
-        // ENV = Variable
-        case __env_variable:
-            __delim[0]=ATP_ENV_SEP;
-            __delim[1]='\0';
-            return strdup(__delim);
-        // Socket:=Address
-        case __sock_address:
-            __delim[0]=ATP_KV_SEP;
-            __delim[1]=ATP_ENV_SEP;
-            break;
-        // Variable=:description
-        case __description:
-            __delim[0]=ATP_ENV_SEP;
-            __delim[1]=ATP_KV_SEP;
-            break;
-        default:break;
-    };
-    __delim[2]='\0';
-    #ifdef DEBUG
-        printf("delimiter is '%s'\n",__delim);
-    #endif
-    return strdup(__delim);
-};
 
-char *__generic_fmt(__gev g_type,char *__key, char *__value){
-    ulong klen=strlen(__key);
-    ulong vlen=strlen(__value);
-    ulong clen=klen+vlen+2;
-
-    // log_fmt_t(g_type);
-    // log_keyvalue(__key,__value);
-
-    char lbb_field[clen];
-    memset(&lbb_field,0,clen);
-    lbb_field[clen]='\0';
-    memmove(lbb_field,__key,klen);
-    char const *_delim=__gdelim(g_type);
-    ulong __dlen=strlen(_delim);
-    memmove((lbb_field+klen),_delim, __dlen);
-    memmove((lbb_field+klen+__dlen),__value,vlen);
-
-    #ifdef LBB_PRINT
-        __ASCII(lbb_field)
-    #endif
-    #ifdef DEBUG
-        printf("{%s}",lbb_field);
-    #endif
-    return strdup(lbb_field);
+void *__arcstp(stp_size stsize){
+    void *stp;
+    if(stsize<=__step_point) {
+        __arcpid();
+        // step_c+=1;
+        stp=malloc(0x8);
+    }
+    else if (stsize<=__step_addr) {
+        __arcfork();
+        return __arcstp(6);
+    }
+    else if(stsize==__step_sok) {
+        __arcsok();
+        return __arcstp(6);
+    }
+    else if(stsize==__step_start) {
+        return __arcstart(__arcstp(6));
+    }
+    else if(stsize==__step_mor) {
+         mor(__arcstp(6));
+        return __arcstp(6);
+    }
+    return stp;
 };
 
 
@@ -672,35 +593,3 @@ int main(int argc, char **argv) {
     return 0;
 };
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

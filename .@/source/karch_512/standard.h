@@ -7,6 +7,7 @@
 **/
 #define __ANET_IDX 2
 
+
 #ifndef __anet_unistd
 #include <unistd.h>
 #define __anet_unistd __ANET_IDX
@@ -52,6 +53,35 @@
 #define __anet_sys_stat __ANET_IDX
 #endif
 
+#ifndef __anet_sys_socket
+#include <sys/socket.h>
+#define __anet_sys_socket __ANET_IDX
+#endif
+
+#ifndef __anet_sys_wait
+#include <sys/wait.h>
+#define __anet_sys_wait __ANET_IDX
+#endif
+
+#ifndef __anet_errno
+#include <errno.h>
+#define __anet_errno __ANET_IDX
+#endif
+
+#ifndef __anet_netdb
+#include <netdb.h>
+#define __anet_netdb __ANET_IDX
+#endif
+
+#ifndef __anet_netinet_in
+#include <netinet/in.h>
+#define __anet_netinet_in __ANET_IDX
+#endif
+
+#ifndef __anet_arpa_inet
+#include <arpa/inet.h>
+#define __anet_arpa_inet __ANET_IDX
+#endif
 
 
 
