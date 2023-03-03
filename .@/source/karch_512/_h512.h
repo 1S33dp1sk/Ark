@@ -287,30 +287,41 @@ char const *__gdelim(__gfmt_t __gtype) {
 
 
 char const *__generic_fmt(__gfmt_t g_type,char const *__key, char const *__value){
-    ulong klen=strlen(__key);
-    ulong vlen=strlen(__value);
-    ulong clen=klen+vlen+2;
+    ulong klen=str_rwings(__key);
+    ulong vlen=str_rwings(__value);
+    ulong clen=klen+vlen+3;
 
-    char lbb_field[clen];memset(&lbb_field,0,sizeof(lbb_field));
-    lbb_field[clen]='\0';
+
+    char lbb_field[clen];memset(&lbb_field,0,sizeof(lbb_field));lbb_field[clen]='\0';
 
     memmove(lbb_field,__key,klen);
     char const *_delim=__gdelim(g_type);
     if(_delim==NULL) {
         #ifdef LOG_ERR
-            printf("delimiter is null\n");
+            printf("generic format :: delimiter is null\n");
         #endif
         return NULL;
     }
-    ulong __dlen=strlen(_delim);
+    ulong __dlen=str_rwings(_delim);
     memmove((lbb_field+klen),_delim, __dlen);
     memmove((lbb_field+klen+__dlen),__value,vlen);
 
-    #ifdef DEBUG
-        printf("{%s}",lbb_field);
-    #endif
+    lbb_field[str_rwings(lbb_field)]='\n';    
+
+
     return (char const *)strdup(lbb_field);
 };
+
+
+
+
+char const *__irv(char const *__key, char const *__value) {
+    char const *__rv=__generic_fmt(__key_value, __key, __value);
+    ulong irv_len=str_rwings(__rv)+LONG_MAX_COMPUTED_N_DIGITS;
+    char irv[irv_len];memset(&irv, 0, sizeof(irv));
+    sprintf(irv, "%lu:%s", __cindex, __rv);
+    return (char const *)strdup(irv);
+}
 
 
 static const uns __lbb_idx__=11;
@@ -546,9 +557,9 @@ static ulong arch_fname(char *name,ulong csize){
         printf("%08lx%08lx",u[0],u[1]);
         printf("k+%lu\n",_ures);
         // *u=hash16(3,__,8);
-    }
+    };
     return __res;
-}
+};
 
 int arch_mods(char const*_3curl){
     ulong fieldname=0, ccc__offset=0;
@@ -576,15 +587,8 @@ int arch_cenv(){
 };
 
 
-ulong str_rwings(char const *__str) {
-    ulong temp=0;
-    do {
-        if(*__str!='\0'){
-            temp+=1;
-        };
-    }while(*__str++);
-    return temp;
-};
+
+
 
 ulong __index_increment() {
     __cindex+=1;
@@ -592,14 +596,15 @@ ulong __index_increment() {
 };
 
 ulong __set_next(char const *__head){
-    ulong __len=strlen(__head);
+    ulong __len=str_rwings(__head);
     if((__head==NULL)||__len==1){
         return 0;
-    }
+    };
     long _res=pwrite(__ixr_fd,__head,__len,___offset);
+
     if(_res!=-1){
         ___offset+=__len;
-    }
+    };
     #ifdef DEBUG
         printf("\nnext -->\n");
         printf("head   :: %s\n", __head);
@@ -607,7 +612,7 @@ ulong __set_next(char const *__head){
         printf("result :: %ld\n", _res);
         printf("offset ::: %lu\n", ___offset);
     #endif
-    return __cindex;
+    return __cindex+=1;
 };
 
 ulong indexer_start(char const *idxr){
@@ -619,63 +624,86 @@ ulong indexer_start(char const *idxr){
 
 int __eparse_frame() {
 
-    return 0;
-}
 
-char const *__index(char const *__) {
-    __cindex+=1;
+    return 0;
+};
+
+char const *__xreference(char const *__) {
+
     return hashof(1,(void *)__,str_rwings(__));
 };
 
-
 int __index_r(char const *idxnr) {
-    char const *_rfmt=__generic_fmt(__key_value, idxnr, __index(idxnr));
-    ulong llen=__set_next(_rfmt);
-    return 0;
-}
+    char const *_rfmt=__generic_fmt(__key_value,  __xreference(idxnr), idxnr);
+    return __set_next(_rfmt);
+};
 
-int __indexer__(char const *idxnr) {
+int __index_irn(char const *key, char const *val) {
+
+    return __set_next(__irv(key, val));;
+};
+
+int __index_ixn(char const *key) {
+
+    return __index_irn(key, __xreference(key));
+};
+
+
+#define __ixr_start_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
+#define __ixr_access_flags (O_RDWR|O_NOFOLLOW_ANY)
+#define __ixr_pmode (S_IRWXU|S_IXGRP|S_IXOTH)
+
+
+int __indexer_start(char const *idr) {
+    if(idr!=NULL){
+        #ifdef LOG_ERR
+            printf("indexer cannot have a non-null start\n");
+        #endif
+        return -1;
+    };
     int ixr_fd=-1;
-    #ifdef DEBUG
-        printf("indexer : called with argument :: %s\n", idxnr);
-        printf("starting cindex=%lu\n",__cindex);
-    #endif
-    if(idxnr==NULL){
-        if(__ixr_fd!=0x228){
+    if(__ixr_fd!=0x228){
+        #ifdef LOG_ERR
+            printf("trying to instantiate indexer on %lu", 0x228);
+        #endif
+        return -1;
+    };
+    if(!__stres(__ixr_frame)){
+        ixr_fd=open(__ixr_frame, __ixr_start_flags, __ixr_pmode);
+        if(ixr_fd==-1){
             #ifdef LOG_ERR
-                printf("trying to instantiate indexer on %lu", 0x228);
+                printf("indexer fd failed on create\n");
             #endif
             return -1;
-        }
-        if(!__stres(__ixr_frame)){
-            #ifdef DEBUG
-                printf("indexer init .lbb :: \n");
-            #endif
-            ixr_fd=open(__ixr_frame,(O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY),(S_IRWXU|S_IXGRP|S_IXOTH));
-            if(ixr_fd==-1){
-                #ifdef LOG_ERR
-                    printf("indexer fd failed on create\n");
-                #endif
-                return -1;
-            };
-            __ixr_fd=(ulong)ixr_fd;
-            #ifdef DEBUG
-                printf("indexer file descriptor :: %lu\n",__ixr_fd);
-            #endif
-            return 0;
         };
-        return -1;
+        __ixr_fd=(ulong)ixr_fd;
     };
-    ixr_fd=open(__ixr_frame,(O_RDWR|O_NOFOLLOW_ANY),(S_IRWXU|S_IXGRP|S_IXOTH));
-    if(ixr_fd==-1){
-        printf("Cannot instantiate indexer\n");
-        return -1;
-    };
-    __ixr_fd=(ulong)ixr_fd; 
     #ifdef DEBUG
-        printf("Parsing index file :: %s\n", __ixr_frame);
-        printf("file descriptor :open::%d\n",ixr_fd);
+        printf("Indexer loaded :: %s\n",idr);
+        printf(" cfd :: %lu\n",__ixr_fd);
     #endif
+    __index_ixn(__FILE__);
+    return 0;
+};
+
+int __indexer__(char const *idxnr) {
+    if(__ixr_fd==0x228) {
+        #ifdef DEBUG
+            printf("Indexer Starting @%s\n", idxnr);
+        #endif
+        int ixr_fd=-1;
+        ixr_fd=open(__ixr_frame, __ixr_access_flags, __ixr_pmode);
+        if(ixr_fd==-1){
+            printf("Cannot instantiate indexer\n");
+            return -1;
+        };
+        __ixr_fd=(ulong)ixr_fd;
+        #ifdef DEBUG
+            printf("Parsing index file :: %s\n", __ixr_frame);
+            printf("file descriptor :open::%d\n",ixr_fd);
+        #endif
+    };
+    __index_irn(__xreference(idxnr), idxnr);
     return 0;
 };
 

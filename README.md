@@ -7,11 +7,6 @@ running `make` should suffice
 currently at #10
 
 
-
-
-
-
-
 In a world where communiication is instant and data is being shared more than ever, the cost of storing a byte is becoming increasingly less, However, the rate at which the data size is increasing outpaces the cost decrease by several miles. That's why i created the d-cloud. a simple solution to increase communication speed and decrease the cost of saving data. 
 
  
@@ -30,3 +25,9 @@ simply any L0,L1,L2 can connect to it && L3 can access it ::
 	L(0) => any processor that can read and process the `_h512.h` to check the necessary modules to run L(3).
 	
 	L(n) are defined as a pseudo reference to the type of information handling and processing that can be applied to the reference.
+
+
+# karch512
+
+The entire system built is a pass by reference system, in where references can be kept secret, shared, or set to be publicy available. From commands to files, cli, installers, etc are all available direclty from the source.
+

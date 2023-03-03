@@ -126,7 +126,7 @@ ulong __writeb(uchar *content,ulong c_size) {
 };
 
 
-int _d__getfd(char *__fpath) {
+int __dgetfd(char *__fpath) {
 	return open(__fpath, __lbb_lock_reader);
 }
 
@@ -153,6 +153,17 @@ char *__readb(ulong f_size, ulong f_d,ulong r_o){
 	return strdup((char*)lbb_content);
 };
 
+
+void __readin(char *buffer, ulong size, ulong stfd) {
+	ulong __res=0,__fsz=size,__fd=stfd;
+	int __tempres=0;
+	do {
+		__tempres=pread(__fd, (buffer+__res), (__fsz-__res), __res);
+		__res+=__tempres>0?__tempres:0;
+	}while(__tempres!=0);
+	buffer[__fsz]='\0';
+};
+
 ulong __fillb(){ // create &-> fill the book
 	ulong __res=__writeb((uchar*)shd_key,LBB_BUFFER_SIZE);
 	__closeb();
@@ -176,7 +187,7 @@ char *read_book(char *__bpath){
 	if(res!=0){
 		return NULL;
 	}
-	return __readb(cm_st.m_size, _d__getfd(__bpath), 0);
+	return __readb(cm_st.m_size, __dgetfd(__bpath), 0);
 };
 
 void lbb_close(){
@@ -283,6 +294,22 @@ int spaces_and_tabs(char *word){
 	return count;
 };
 
+char *__stn(char const *word, ulong len) {
+	ulong rc=0, c=0;
+	char temp[len];memset(&temp, 0, sizeof(word));
+	do {
+		if((word[c]==' ')||(word[c]=='	')||(word[c]=='\n')){
+			c+=1;
+		}
+		else {
+			temp[rc]=word[c];
+			rc+=1;c+=1;
+		};
+	}while(c<=len);
+	temp[rc]='\0';
+	return strdup(temp);
+}
+
 /**
  * find `seperator` in `string`
 **/
@@ -293,7 +320,7 @@ ulong sep_offset(char const *string,char *seperator) {
 		if(string[x]==seperator[y]){
 			while(seperator[y]==string[y+x]){
 				y+=1;
-			}
+			};
 			if(seperator[y]=='\0'){
 				offset_at=x;
 			}
@@ -303,20 +330,22 @@ ulong sep_offset(char const *string,char *seperator) {
 		};
 		x+=1;
 	};
-
 	if(offset_at==-1){
 		return 0;
 	};
-
-	return offset_at+1;
+	return offset_at;
 };
-
 
 char *str_b4offset(char const *string, ulong offset) {
 	char temp[offset];
 	memset(&temp,0,sizeof temp);
 	snprintf(temp,offset,"%s",string);
 	return strdup(temp);
+};
+
+char *stn_b4offset(char const *string, ulong offset) {
+
+	return __stn(string, offset);
 };
 
 char *str_a4offset(char const *string, ulong offset){
