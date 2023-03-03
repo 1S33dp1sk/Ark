@@ -1,6 +1,7 @@
 #ifndef __ATP__H
 	#include "utypes.h"
 	#include "standard.h"
+	#include "ixr.h"
 	#define ATP_SPEC_SIZE (8<<0x3)
 	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
 	#define ATP_PORT "9999" // The common ATP port

@@ -380,47 +380,79 @@ hash bar
 		case 3: return "0x00000000000000000000000000000000";
 		default: return "0";
 		}
-	}
+	};
+
+
+
+	void *__generate_lock(char const *__hash, ulong __hlen) {
+		if(__hlen<8||__hlen%8!=0||__hlen%4!=0) {
+			printf("not safe, not recomended, will not do it\n");
+			return NULL;
+		};
+		ulong __atplsize=(__hlen>>3);
+		char atp_lock[__atplsize];
+		memset(&atp_lock, 0, __atplsize);
+
+		ulong __lsize=(__hlen<<2);
+		char __lock[__lsize];
+		memset(&__lock, 0, __lsize);
+
+		char const *__hh=hashof(2, __hash, __hlen);
+		#ifdef DEBUG
+			printf("generating lock ....\n");
+			printf("lock(%s) : %lu :: %lu ::: %s\n",__hash,__atplsize, __lsize, __hh);
+		#endif
+
+		memmove(&__lock, __hh, __lsize);
+
+
+		return malloc(8);
+	};
+
+
+
+
 	/**
 	hashof str based on level
 	 * extreme care for the values must be taken when using this function
 	 * specially `thsize` {a.k.a to_hash_size} 
 	 *  ONLY send size values that are `sizeof(tohash)<=` otherwise the hash
-	 * will be random and there will be no way to guarantee consistency.
+	 * will be random and there will be no way to retrieve it or guarantee 
+	 * any kind of consistency.
 	 * 
 	 * this is by design, as we can generate randomness from this. 
 	 ***AFNAB**
 	**/ 
-	char const *hashof( uns level , void const *tohash , size_t thsize ) {
-		unsigned hash_size = 0 , k_flag = 0 , hashstr_len = 4;
-		switch ( level ) {
+	char const *hashof(uns level, void const *tohash, size_t thsize) {
+		unsigned hash_size=0,k_flag=0,hashstr_len=4;
+		switch (level) {
 			case 0:
-				hash_size = 256;
+				hash_size=256;
 				break;
 			case 1:
-				hash_size = 384;
-				hashstr_len = 8;
+				hash_size=384;
+				hashstr_len=8;
 				break;
 			case 2:
-				hash_size = 512;
-				hashstr_len = 16;
+				hash_size=512;
+				hashstr_len=16;
 				break;
 			case 3:
-				k_flag = 1;
-				hash_size = 256;
-				hashstr_len = 32;
+				k_flag=1;
+				hash_size=256;
+				hashstr_len=32;
 				break;
 			default:
 				return NULL;        
 		}
 		char __hsized[hash_size];
-		memset( &__hsized , 0 , hash_size );
+		memset(&__hsized, 0, hash_size);
 		uint8_t *__hptr;
-		sha3_init( &__sha3 , hash_size );
-		sha3_set_flags( &__sha3 , k_flag );
-		sha3_update( &__sha3 , tohash , thsize );
-		h_str_tl( __hsized , ( uint8_t * ) sha3_finalize( &__sha3 ) , hashstr_len );
-		return strdup( __hsized );
+		sha3_init(&__sha3, hash_size);
+		sha3_set_flags(&__sha3,k_flag);
+		sha3_update(&__sha3,tohash,thsize);
+		h_str_tl(__hsized, (uint8_t *)sha3_finalize(&__sha3), hashstr_len);
+		return strdup(__hsized);
 	}
 	// raw 
 	uint8_t const *hash( uns level , void const *tohash , size_t thsize ) {

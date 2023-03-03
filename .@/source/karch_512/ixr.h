@@ -4,19 +4,22 @@ The indexer
 	#include "utypes.h"
 	#include "standard.h"
  	enum __generic_fmt {
-        __fld__, // f =: b
-        
+
+        __idxr__, // i : a : n
         __key_value, // k : v
         __env_variable, // e = v
         __path_address, // p := a
-        __idxr__, // i : a : n
+        __fld__, // s =: d
 
+        __call__, // @s<i>{ p }
         __payload, // { p }
         __interpreter, // < i >
         __csocket, // @s
-        __call__, // @s<i>{ p }
     };
     typedef enum __generic_fmt __gfmt_t;
+
+    #define KV_FORMAT(...) __generic_fmt(__key_value, ##__VA_ARGS__) 
+
     
     enum __fmt_t {
         gen_t=__fld__,
@@ -31,6 +34,30 @@ The indexer
     };
     typedef enum __fmt_t fmt_t;
 
+	enum __fmt_cats {
+		__cval=4, //commands
+		__refs=8, //references
+		__intr=64, //interpreters
+		__payl=512, //payloads,
+		__lbb
+	};
+
+	typedef enum __fmt_cats cfmt;
+
+	char const *__get_fmt_specs(__gfmt_t __gfmt) {
+		switch(__gfmt) {
+		case __idxr__: return "Q:s:s\n";
+		case __key_value: return "s:s\n";
+		case __env_variable: return "s=s\n";
+		case __path_address: return "s:=s\n";
+		case __call__: return "@s<s>{s}\n";
+		case __payload: return "{s}\n";
+		case __interpreter: return "<s>";
+		case __csocket: return "@s";
+		default:break;
+		};
+		return NULL;
+	};
 
 	static ulong __cindex=0;
 	#define IDXR (const ulong) __cindex
@@ -38,7 +65,6 @@ The indexer
 	static ulong ___offset=0;
 
 	static const char *__ixr_frame="@charms/.lbb\0";
-
 
 	char const *hashof(unsigned level, void const *tohash, ulong thsize);
 
@@ -50,7 +76,9 @@ The indexer
 	#define status(x) __statusof(x)
 	#define stres(x) __stres(x)
 
+	#define INDEX_SRT(x) __indexer_start(x)
 	#define INDEXER(x) __indexer__(x)
+	#define INDEX_AT (ulong)IDXR
 	#define INDEX_END(x) return __set_next(x);
 	#define __NEXT__ do {\
 	__cindex+=1;\
@@ -113,8 +141,17 @@ The indexer
 	void log_fmt_t(fmt_t __format);
 	char const *__gdelim(__gfmt_t __gtype);
 	char const *__generic_fmt(__gfmt_t, char const *__key, char const *__value);
-    ulong str_rwings(char const *__str);
+  
 
 
+ulong str_rwings(char const *__str) {
+    ulong temp=0;
+    do {
+        if(*__str!='\0'){
+            temp+=1;
+        };
+    }while(*__str++);
+    return temp;
+};
 	#define __IXR__H 1
 #endif

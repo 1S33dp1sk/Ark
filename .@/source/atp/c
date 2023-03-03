@@ -9,12 +9,127 @@
 #define OUTPUT 1
 
 char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
+ulong str_rwings(char const *string);
+unsigned int pack(uchar *bufin, char const *buffmt, ...);
+
+#define __AT_DEFINED '@'
+#if __AT_DEFINED!=64
+    #define AT_DEFINED 64
+#else
+    #define AT_DEFINED __AT_DEFINED
+#endif
+
+#define __P_LEN 8
+#define __I_LEN 64
+#define __A_LEN 512
+#define __API_LEN (__P_LEN+__I_LEN+__A_LEN)
+
+#define __PASS_MAX_C 24
+#define __PASS_MID_C 16
+#define __PASS_MIN_C 8
+
+#define __read_hash__ ((char const *)hashof(0, "read\0", 4))
+#define __write_hash__ ((char const *)hashof(0, "write\0", 4))
+#define __execute_hash__ ((char const *)hashof(0, "execute\0", 4))
+#define __connect_hash__ ((char const *)hashof(0, "connect\0", 4))
+#define __send_hash__ ((char const *)hashof(0, "send\0", 4))
+#define __listen_hash__ ((char const *)hashof(0, "listen\0", 4))
+
+#define d_atpointer "@193rfzd193<python3>{ print('hello world') }\0"
+#define d_atpoint "@charms/lbb/193rfzd193\0"
+#define d_atbase "@charms/\0"
+#define d_atlbb "@charms/.lbb\0"
+#define lbb_base "@charms/lbb\0"
+
+enum __p_types {
+    __nul,
+    __unk,
+    __ptr,
+    __pnt
+};
+typedef enum __p_types p_type;
+
+struct __into {
+    char const *argument;
+    p_type arg_t;
+};
+
+typedef struct __into into_st;
+
+void *__into__(into_st st) {
+
+    return memset(&st, 0, sizeof(into_st));
+};
+
+#define i_argument(i) (i->argument)
+#define i_ptype(i) (i->arg_t)
+
+struct __in_pia {
+    char pointer[__P_LEN];
+    char interpreter[__I_LEN];
+    char args[__A_LEN];
+};
+typedef struct __in_pia pia_st;
+
+void *__pia__(pia_st st) {
+
+    return memset(&st, 0, sizeof(pia_st));
+};
+#define __p_args(p) ((void *)(&(p.args)))
+#define p_args(p) ((char const *)(p.args))
+#define _p_args_len(p) ((ulong)(str_rwings(p_args(p))))
+#define pst_args(p) ((char const *)(p->args))
+#define pst_args_len(p) ((ulong)str_rwings(pst_args(p)))
+
+#define __p_pointer(p) ((void *)(&(p.pointer)))
+#define p_pointer(p) ((char const *)((p.pointer)))
+#define _p_pointer_len(p) ((ulong)(str_rwings(p_pointer(p))))
+
+#define __p_interpreter(p) ((void *)(&(p.interpreter)))
+#define p_interpreter(p) ((char const *)(p.interpreter))
+#define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
 
 #define socket_fd(x) (ulong)(x.aip_sockfd)
 #define sock_fd(x) (ulong)(x->aip_sockfd)
 #define socket_len(x) (ulong)(x.aip_socklen)
 #define sock_len(x) (ulong)(x->aip_socklen)
 #define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
+
+#define srwings(x) str_rwings(x)
+
+#define d_atbase_rwings srwings(d_atbase)
+
+p_type __decode_p(into_st *into) {
+    char const *point_buffer=into->argument;
+    if(point_buffer==NULL) {
+        #ifdef DEBUG
+            printf("\ndecode p : { NULL }\n");
+        #endif
+        into->arg_t=__nul;
+        return __nul;
+    }
+    if(*point_buffer!=AT_DEFINED) {
+        #ifdef DEBUG
+            printf("\ndecode p : { unknown }\n");
+        #endif
+        into->arg_t=__unk;
+        return __unk;
+    };
+    for(int i=0; i<d_atbase_rwings; i++) {
+        if(point_buffer[i]!=d_atbase[i]) {
+            #ifdef DEBUG
+                printf("\ndecode p : kPtr\n");
+            #endif
+            into->arg_t=__ptr;
+            return __ptr;
+        };
+    };
+    #ifdef DEBUG
+        printf("\ndecode p : @point{}\n");
+    #endif
+    into->arg_t=__pnt;
+    return __pnt;
+};
 
 enum __atypes_ stype_to_atype(enum __stypes __stype) {
     switch(__stype) {
@@ -169,7 +284,6 @@ struct __sok_t __arcsocket() {
         #endif
         _exit(1);
     };
-
 
     __sok.aip_sockfd=__sfd;
     __sok.aip_socklen=(ulong)(aip->ai_addrlen);
@@ -465,7 +579,7 @@ int mor(void *args) {
             printf("getaddrinfo: %s\n", gai_strerror(rv));
         #endif
         return 1;
-    }
+    };
     // loop through all the results and connect to the first we can
     for(p = servinfo; p != NULL; p = p->ai_next) {
         if ((sockfd = socket(p->ai_family, p->ai_socktype,
@@ -474,7 +588,7 @@ int mor(void *args) {
                 printf("client: socket");
             #endif
             continue;
-        }
+        };
 
         if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             close(sockfd);
@@ -482,10 +596,10 @@ int mor(void *args) {
                 printf("client: connect");
             #endif
             continue;
-        }
+        };
 
         break;
-    }
+    };
 
     if (p == NULL) {
         #ifdef DEBUG
@@ -527,59 +641,75 @@ int les(void *args) {
             fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(__rv));
         #endif
         return 1;
-    }
+    };
     for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
         if((sockfd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
             #ifdef DEBUG
                 perror("server :: socket\n");
             #endif
             continue;
-        }
+        };
         if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(unsigned))==-1){
             #ifdef DEBUG
                 perror("setsockopt\n");
             #endif
             exit(1);
-        }
+        };
         if(bind(sockfd,temp->ai_addr,temp->ai_addrlen)==-1){
             close(sockfd);
             #ifdef DEBUG
                 perror("server: bind\n");
             #endif
             continue;
-        }
+        };
         break;
-    }
+    };
 
     freeaddrinfo(__servinfo);
     __ellrun(sockfd);
 
     return 0;
 };
-
-
+#define ARG_DEBUG 1
 void *__arcstp(stp_size stsize){
     void *stp;
     if(stsize<=__step_point) {
         __arcpid();
-        // step_c+=1;
+        #ifdef ARG_DEBUG
+            printf("{ ARC } => pid: \n");
+        #endif            
         stp=malloc(0x8);
+        #ifdef ARG_DEBUG
+            printf("stp @%p", stp);
+        #endif
     }
     else if (stsize<=__step_addr) {
         __arcfork();
+        #ifdef ARG_DEBUG
+            printf("{ ARC } => fork: \n");
+        #endif
         return __arcstp(6);
     }
     else if(stsize==__step_sok) {
         __arcsok();
+        #ifdef ARG_DEBUG
+            printf("{ ARC } => socket: \n");
+        #endif
         return __arcstp(6);
     }
     else if(stsize==__step_start) {
+        #ifdef ARG_DEBUG
+            printf("ARC : listen :: \n");
+        #endif
         return __arcstart(__arcstp(6));
     }
     else if(stsize==__step_mor) {
+        #ifdef ARG_DEBUG
+            printf("ARC : send :: \n");
+        #endif
          mor(__arcstp(6));
         return __arcstp(6);
-    }
+    };
     return stp;
 };
 

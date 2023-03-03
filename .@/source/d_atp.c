@@ -9,82 +9,6 @@
 #define LOG_ERR 1
 #endif
 
-#define __AT_DEFINED '@'
-#if __AT_DEFINED!=64
-	#define AT_DEFINED 64
-#else
-	#define AT_DEFINED __AT_DEFINED
-#endif
-
-#define __P_LEN 8
-#define __I_LEN 64
-#define __A_LEN 512
-#define __API_LEN (__P_LEN+__I_LEN+__A_LEN)
-
-#define __PASS_MAX_C 24
-#define __PASS_MID_C 16
-#define __PASS_MIN_C 8
-
-#define __read_hash__ ((char const *)hashof(0, "read\0", 4))
-#define __write_hash__ ((char const *)hashof(0, "write\0", 4))
-#define __execute_hash__ ((char const *)hashof(0, "execute\0", 4))
-#define __connect_hash__ ((char const *)hashof(0, "connect\0", 4))
-#define __send_hash__ ((char const *)hashof(0, "send\0", 4))
-#define __listen_hash__ ((char const *)hashof(0, "listen\0", 4))
-
-#define d_atpointer "@193rfzd193<python3>{ print('hello world') }\0"
-#define d_atpoint "@charms/lbb/193rfzd193\0"
-#define d_atbase "@charms/\0"
-#define lbb_base "@charms/lbb\0"
-
-enum __p_types {
-	__nul,
-	__unk,
-	__ptr,
-	__pnt
-};
-typedef enum __p_types p_type;
-
-struct __into {
-	char const *argument;
-	p_type arg_t;
-};
-
-typedef struct __into into_st;
-
-void *__into__(into_st st) {
-
-	return memset(&st, 0, sizeof(into_st));
-};
-
-#define i_argument(i) (i->argument)
-#define i_ptype(i) (i->arg_t)
-
-struct __in_pia {
-	char pointer[__P_LEN];
-	char interpreter[__I_LEN];
-	char args[__A_LEN];
-};
-typedef struct __in_pia pia_st;
-
-void *__pia__(pia_st st) {
-
-	return memset(&st, 0, sizeof(pia_st));
-};
-#define __p_args(p) ((void *)(&(p.args)))
-#define p_args(p) ((char const *)(p.args))
-#define _p_args_len(p) ((ulong)(str_rwings(p_args(p))))
-#define pst_args(p) ((char const *)(p->args))
-#define pst_args_len(p) ((ulong)str_rwings(pst_args(p)))
-
-#define __p_pointer(p) ((void *)(&(p.pointer)))
-#define p_pointer(p) ((char const *)((p.pointer)))
-#define _p_pointer_len(p) ((ulong)(str_rwings(p_pointer(p))))
-
-#define __p_interpreter(p) ((void *)(&(p.interpreter)))
-#define p_interpreter(p) ((char const *)(p.interpreter))
-#define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
-
 
 char const *__pia_http(pia_st *pst) {
 	#ifdef OUTPUT
@@ -155,18 +79,21 @@ int check_addr(const char *_addr) {
 };
 
 
+
+
 int check_command(into_st *into, char const **args) {
 	char const *__pntr=i_argument(into);
 	char const *__arghash=hashof(0, __pntr, 4);
-	if(strstr(__read_hash__, __arghash)!=NULL) {
+
+	if(strstr(__read_hash__,__arghash)!=NULL) {
 		printf("will read the hash\n");
 		return 0;	
 	}
-	else if (strstr(__write_hash__, __arghash)!= NULL){
+	else if (strstr(__write_hash__,__arghash)!= NULL){
 		printf("will write a message to hash\n");
 		return 0;		
 	}
-	else if(strstr(__execute_hash__, __arghash)!=NULL) {
+	else if(strstr(__execute_hash__,__arghash)!=NULL) {
 		printf("should execute the command \n");
 		return 0;
 	}
@@ -185,7 +112,7 @@ int check_command(into_st *into, char const **args) {
 	else {
 		printf("none of them matched\n");
 		return 1;
-	}
+	};
 }
 
 int __exact_match(char const *_a, char const *_b) {
@@ -367,39 +294,6 @@ int decode_point(into_st *into) {
 	char *point=str_a4offset(into->argument, pnt_offset);
 	printf("point @%s\n", point);
 	return 0;
-};
-
-
-p_type __decode_p(into_st *into) {
-	char const *point_buffer=into->argument;
-	if(point_buffer==NULL) {
-		#ifdef DEBUG
-			printf("\ndecode p : { NULL }\n");
-		#endif
-		into->arg_t=__nul;
-		return __nul;
-	}
-	if(*point_buffer!=AT_DEFINED) {
-		#ifdef DEBUG
-			printf("\ndecode p : { unknown }\n");
-		#endif
-		into->arg_t=__unk;
-		return __unk;
-	};
-	for(int i=0; i<str_rwings(d_atbase)-1; i++) {
-		if(point_buffer[i]!=d_atbase[i]) {
-			#ifdef DEBUG
-				printf("\ndecode p : kPtr\n");
-			#endif
-			into->arg_t=__ptr;
-			return __ptr;
-		};
-	};
-	#ifdef DEBUG
-		printf("\ndecode p : @point{}\n");
-	#endif
-	into->arg_t=__pnt;
-	return __pnt;
 };
 
 int __point_run() {

@@ -221,7 +221,7 @@ memset(lbb_mstat, 0, sizeof(struct __m_stat));\
 memset(l_shard,0,sizeof(struct __lbb_shard));\
 printf("getting shard .:%s:. \n",__lbb_indexfile);\
 get_mstat(__lbb_indexfile,lbb_mstat);\
-INDEXER(NULL);\
+INDEX_SRT(NULL);\
 }while(1!=1);
 
 #define __LBB_WRITER__ do {\
