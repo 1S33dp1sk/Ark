@@ -409,9 +409,6 @@ hash bar
 		return malloc(8);
 	};
 
-
-
-
 	/**
 	hashof str based on level
 	 * extreme care for the values must be taken when using this function

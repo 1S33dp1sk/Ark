@@ -1,29 +1,24 @@
 
 
 
-@GET<atp/http> {
-	
+
+
+
+
+
+
+@GET<lbb/new_field>(payload)
+
+
+@ATP<lbb/aeth_txn>(cids, txndata) {
+	char *txndata;
+	ulong *cids;
 }
 
-
-@POST<json|txt|jpg> {
-	
+@ETH<txn>(1, s_msg) {
 
 }
 
-
-
-@ETH<txn> {
-
-}
-
-
-@ATP<lbb>()
-
-@ATP<msg>()
-
-@ATP<call_id>()
-@ATP<connect>()
 
 
 

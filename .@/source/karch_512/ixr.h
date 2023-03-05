@@ -3,68 +3,29 @@ The indexer
 #ifndef __IXR__H
 	#include "utypes.h"
 	#include "standard.h"
- 	enum __generic_fmt {
 
-        __idxr__, // i : a : n
-        __key_value, // k : v
-        __env_variable, // e = v
-        __path_address, // p := a
-        __fld__, // s =: d
+#define __FLAG_START 0x1
+#define __INTERPRETER_FS 0x2
+#define __FLAG_IE_PS 0x3
+#define __FLAG_ES 0x4
+#define __FLAG_IS 0x5
+#define __FLAG__ 0x10
+#define FLAG 0x100
+#define __flag_interpret 16
+#define __flag_indexer 228
+#define __flag_handler 261
+#define __flag_payload 273
 
-        __call__, // @s<i>{ p }
-        __payload, // { p }
-        __interpreter, // < i >
-        __csocket, // @s
-    };
-    typedef enum __generic_fmt __gfmt_t;
-
+	#define str_wsize(x) (str_rwings(x)*sizeof(char))
+	#define ustr_wsize(x) (str_rwings(x)*sizeof(uchar))
     #define KV_FORMAT(...) __generic_fmt(__key_value, ##__VA_ARGS__) 
 
-    
-    enum __fmt_t {
-        gen_t=__fld__,
-        exa_t=__key_value,
-        bas_t=__env_variable,
-        pat_t=__path_address,
-        idx_t=__idxr__,
-        pld_t=__payload,
-        ipr_t=__interpreter,
-        sok_t=__csocket,
-        atp_t=__call__
-    };
-    typedef enum __fmt_t fmt_t;
-
-	enum __fmt_cats {
-		__cval=4, //commands
-		__refs=8, //references
-		__intr=64, //interpreters
-		__payl=512, //payloads,
-		__lbb
-	};
-
-	typedef enum __fmt_cats cfmt;
-
-	char const *__get_fmt_specs(__gfmt_t __gfmt) {
-		switch(__gfmt) {
-		case __idxr__: return "Q:s:s\n";
-		case __key_value: return "s:s\n";
-		case __env_variable: return "s=s\n";
-		case __path_address: return "s:=s\n";
-		case __call__: return "@s<s>{s}\n";
-		case __payload: return "{s}\n";
-		case __interpreter: return "<s>";
-		case __csocket: return "@s";
-		default:break;
-		};
-		return NULL;
-	};
+	
 
 	static ulong __cindex=0;
 	#define IDXR (const ulong) __cindex
 	static ulong __ixr_fd=0x228;
 	static ulong ___offset=0;
-
-	static const char *__ixr_frame="@charms/.lbb\0";
 
 	char const *hashof(unsigned level, void const *tohash, ulong thsize);
 
@@ -76,20 +37,13 @@ The indexer
 	#define status(x) __statusof(x)
 	#define stres(x) __stres(x)
 
-	#define INDEX_SRT(x) __indexer_start(x)
-	#define INDEXER(x) __indexer__(x)
+	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
 	#define INDEX_AT (ulong)IDXR
 	#define INDEX_END(x) return __set_next(x);
-	#define __NEXT__ do {\
-	__cindex+=1;\
-	} while (1!=1);
-
 
 	#define LONG_SIZE ULONG_SIZE
 	#define ULONG_SIZE ((ulong)(sizeof(ulong)))
 	#define uc_size(x) ((ulong)(x*sizeof(uchar)))
-
-
 
 	#define GET_FMT_STR(FSTR,NAR,...) do { \
 		memset(&FSTR,0,(NAR*sizeof(char)));\
@@ -139,19 +93,12 @@ The indexer
 	#endif
 
 	void log_fmt_t(fmt_t __format);
-	char const *__gdelim(__gfmt_t __gtype);
-	char const *__generic_fmt(__gfmt_t, char const *__key, char const *__value);
-  
+	char const *__gdelim(fmt_t __gtype);
+	char const *__generic_fmt(fmt_t _gtype, char const *__key, char const *__value);
 
 
-ulong str_rwings(char const *__str) {
-    ulong temp=0;
-    do {
-        if(*__str!='\0'){
-            temp+=1;
-        };
-    }while(*__str++);
-    return temp;
-};
+
+
+
 	#define __IXR__H 1
 #endif

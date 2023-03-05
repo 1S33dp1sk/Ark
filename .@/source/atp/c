@@ -5,18 +5,18 @@
 #include "atp.h"
 #endif
 
-
 #define OUTPUT 1
 
 char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
+char const *fhashof(unsigned level, char const *__tohash);
 ulong str_rwings(char const *string);
 unsigned int pack(uchar *bufin, char const *buffmt, ...);
 
 #define __AT_DEFINED '@'
 #if __AT_DEFINED!=64
-    #define AT_DEFINED 64
+	#define AT_DEFINED 64
 #else
-    #define AT_DEFINED __AT_DEFINED
+	#define AT_DEFINED __AT_DEFINED
 #endif
 
 #define __P_LEN 8
@@ -39,41 +39,204 @@ unsigned int pack(uchar *bufin, char const *buffmt, ...);
 #define d_atpoint "@charms/lbb/193rfzd193\0"
 #define d_atbase "@charms/\0"
 #define d_atlbb "@charms/.lbb\0"
-#define lbb_base "@charms/lbb\0"
+#define __LBB_BASE_LEN str_rwings(__lbb_convdir)
+
+
+
+
+
+ulong str_rwings(char const *__str) {
+	ulong temp=0;
+	do {
+		if(*__str!='\0'){
+			temp+=1;
+		};
+	}while(*__str++);
+	return temp;
+};
+
+int __stres(char const *__cpath){
+	#ifdef DEBUG
+		printf("checking cpath :: %s\n", __cpath);
+		printf("result of access = %d\n", access(__cpath, F_OK));
+	#endif
+	return access(__cpath,F_OK)==0;
+};
+
+/**
+ * count spaces and tabs in `word`
+**/
+
+int spaces_and_tabs(char *word){
+	int count=0, x=0;
+	while(word[x]!='\0'){
+		if(word[x]==' '||word[x]==' '){
+			count+=1;
+		};
+		x+=1;
+	};
+	return count;
+};
+
+char *__stn(char const *word, ulong len) {
+	ulong rc=0, c=0;
+	char temp[len];memset(&temp, 0, sizeof(word));
+	do {
+		if((word[c]==' ')||(word[c]=='	')||(word[c]=='\n')){
+			c+=1;
+		}
+		else {
+			temp[rc]=word[c];
+			rc+=1;c+=1;
+		};
+	}while(c<=len);
+	temp[rc]='\0';
+	return strdup(temp);
+};
+
+/**
+ * find `seperator` in `string`
+**/
+
+ulong sep_offset(char const *string,char *seperator) {
+	long x=0,y=0,len_count=0,offset_at=-1;
+	while(string[x]!='\0'){
+		if(string[x]==seperator[y]){
+			while(seperator[y]==string[y+x]){
+				y+=1;
+			};
+			if(seperator[y]=='\0'){
+				offset_at=x;
+			}
+			else{
+				y=0;
+			};
+		};
+		x+=1;
+	};
+	if(offset_at==-1){
+		return 0;
+	};
+	return offset_at;
+};
+
+char *str_b4offset(char const *string, ulong offset) {
+	char temp[offset];
+	memset(&temp,0,sizeof temp);
+	snprintf(temp,offset,"%s",string);
+	return strdup(temp);
+};
+
+char *stn_b4offset(char const *string, ulong offset) {
+
+	return __stn(string, offset);
+};
+
+char *str_a4offset(char const *string, ulong offset){
+	ulong flen=strlen(string)+1;//to offset the offset 
+	if(flen<offset){return NULL;}
+	ulong slen=flen-offset;
+	char temp[slen];
+	memset(&temp,0,sizeof temp);
+	snprintf(temp,slen,"%s",(string+offset));
+	return strdup(temp);
+};
+
+ulong fsize_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_size;
+};
+
+ulong iosize_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_blksize;
+};
+
+uns dmode_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_mode;
+};
+
+ulong inn_st(void *st){
+    struct stat *__=(struct stat*)st;
+    return __->st_ino;
+};
+
+void *__statusof(char const *__file) {
+    struct stat __;
+    memset(&__,0,sizeof(struct stat));
+    if(stat(__file,&__)==0){
+        return (void *)__file;
+    }
+    return NULL;
+};
+
+
+
+void *__mstat__(m_stat st) {
+
+	return memset(&st, 0, sizeof(m_stat));
+};
+
+int get_mstat(char const *__path, m_stat *mfile) {
+	memset(mfile,0,sizeof(struct __m_stat));
+	ulong path_len=strlen(__path);
+	if(path_len>512){
+		#ifdef LOG_ERR
+			printf("path specified is 512+ \n");
+		#endif
+		return -1;
+	}
+	memmove(mfile->m_path,__path,path_len);
+	struct stat temp;
+	memset(&temp,0,sizeof(struct stat));
+	if(stat(mfile->m_path,&temp)!=0){
+		#ifdef LOG_ERR
+			printf("cannot determine `stat` call\n");
+		#endif
+		return -1;
+	};
+	mfile->m_size=fsize_st(&temp);
+	mfile->m_mode=dmode_st(&temp);
+	mfile->m_blksz=iosize_st(&temp);
+	mfile->m_inn=inn_st(&temp);
+	return 0;
+};
 
 enum __p_types {
-    __nul,
-    __unk,
-    __ptr,
-    __pnt
+	__nul,
+	__unk,
+	__ptr,
+	__pnt
 };
 typedef enum __p_types p_type;
 
 struct __into {
-    char const *argument;
-    p_type arg_t;
+	char const *argument;
+	p_type arg_t;
 };
 
 typedef struct __into into_st;
 
 void *__into__(into_st st) {
 
-    return memset(&st, 0, sizeof(into_st));
+	return memset(&st, 0, sizeof(into_st));
 };
 
 #define i_argument(i) (i->argument)
 #define i_ptype(i) (i->arg_t)
 
 struct __in_pia {
-    char pointer[__P_LEN];
-    char interpreter[__I_LEN];
-    char args[__A_LEN];
+	char pointer[__P_LEN];
+	char interpreter[__I_LEN];
+	char entry_p[__P_LEN];
+	char args[__A_LEN];
 };
 typedef struct __in_pia pia_st;
 
 void *__pia__(pia_st st) {
 
-    return memset(&st, 0, sizeof(pia_st));
+	return memset(&st, 0, sizeof(pia_st));
 };
 #define __p_args(p) ((void *)(&(p.args)))
 #define p_args(p) ((char const *)(p.args))
@@ -89,6 +252,8 @@ void *__pia__(pia_st st) {
 #define p_interpreter(p) ((char const *)(p.interpreter))
 #define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
 
+#define _p_pointerinterpreter_len(p) (_p_interpreter_len(p)+_p_pointer_len(p))
+
 #define socket_fd(x) (ulong)(x.aip_sockfd)
 #define sock_fd(x) (ulong)(x->aip_sockfd)
 #define socket_len(x) (ulong)(x.aip_socklen)
@@ -100,128 +265,423 @@ void *__pia__(pia_st st) {
 #define d_atbase_rwings srwings(d_atbase)
 
 p_type __decode_p(into_st *into) {
-    char const *point_buffer=into->argument;
-    if(point_buffer==NULL) {
-        #ifdef DEBUG
-            printf("\ndecode p : { NULL }\n");
-        #endif
-        into->arg_t=__nul;
-        return __nul;
-    }
-    if(*point_buffer!=AT_DEFINED) {
-        #ifdef DEBUG
-            printf("\ndecode p : { unknown }\n");
-        #endif
-        into->arg_t=__unk;
-        return __unk;
-    };
-    for(int i=0; i<d_atbase_rwings; i++) {
-        if(point_buffer[i]!=d_atbase[i]) {
-            #ifdef DEBUG
-                printf("\ndecode p : kPtr\n");
-            #endif
-            into->arg_t=__ptr;
-            return __ptr;
-        };
-    };
-    #ifdef DEBUG
-        printf("\ndecode p : @point{}\n");
-    #endif
-    into->arg_t=__pnt;
-    return __pnt;
+	char const *point_buffer=into->argument;
+	if(point_buffer==NULL) {
+		#ifdef DEBUG
+			printf("\ndecode p : { NULL }\n");
+		#endif
+		into->arg_t=__nul;
+		return __nul;
+	}
+	if(*point_buffer!=AT_DEFINED) {
+		#ifdef DEBUG
+			printf("\ndecode p : { unknown }\n");
+		#endif
+		into->arg_t=__unk;
+		return __unk;
+	};
+	for(int i=0; i<d_atbase_rwings; i++) {
+		if(point_buffer[i]!=d_atbase[i]) {
+			#ifdef DEBUG
+				printf("\ndecode p : kPtr\n");
+			#endif
+			into->arg_t=__ptr;
+			return __ptr;
+		};
+	};
+	#ifdef DEBUG
+		printf("\ndecode p : @point{}\n");
+	#endif
+	into->arg_t=__pnt;
+	return __pnt;
 };
 
+char const *__pia_http(pia_st *pst) {
+	#ifdef OUTPUT
+		printf("starting http parsers (pia) :: \n");
+	#endif
+	char __[__API_LEN], *__ptr=memset(&__,0,sizeof(__));
+	char *__interpt=pst->interpreter;
+	ulong __ilen=str_rwings(__interpt);
+	memmove(__ptr, __interpt, __ilen);
+	#ifdef OUTPUT
+		printf("GET /%s", pst->pointer);
+		printf("\nInterpreter:%s", pst->interpreter);
+		printf("\nArgs:%s\n", pst->args);
+	#endif
+	return strdup(__);
+};
+
+
+/**
+ * d-lbb GET some_handler||path/to
+ * 
+ * d-lbb some_script
+ * 
+ * d-lbb text_out __TEXT
+ */ 
+
+lbb_t get_lbb_type(char const *bufin) {
+	/**
+	 * payloads must start with the actual 
+	 * address in lbb
+	 */
+	if((*bufin>=0x30)&&(*bufin<=0x39)){
+		return __payld_entr;
+	}
+	/**
+	 * protocol calls must be used as in the
+	 * standard pre-defined by the https
+	 * GET/POST/LBB/ATP
+	 */
+	else if((*bufin>=0x41)&&(*bufin<=0x5a)){
+		return __proto_call;
+	}
+	/**
+	 * interpreters are called by using the entire
+	 * suite of the call, so an interpreter doesn't
+	 * have to be a specific call, could be a prg
+	 * entry point.
+	 */
+	else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
+		return __intrp_decl;
+	};
+	/**
+	 * will exit with grace if unknown
+	 */
+	return __unknown;
+};
+
+
+int __check_allowed(char const *__){ 
+	int __nallowed[]={'\\', '/', '.'};
+	while(*__++){
+		for(int i=0;i<arr_size(__nallowed); i++){
+			int __cmp=*(__);
+			if (__cmp==__nallowed[i]){
+				return 0;
+			};
+		};
+	};
+	return 1;
+};
+
+int check_addr(const char *_addr) {
+	
+	return __check_allowed(_addr)==0;
+};
+
+int check_command(into_st *into, char const **args) {
+	char const *__pntr=i_argument(into);
+	char const *__arghash=hashof(0, __pntr, 4);
+
+	if(strstr(__read_hash__,__arghash)!=NULL) {
+		printf("will read the hash\n");
+		return 0;   
+	}
+	else if (strstr(__write_hash__,__arghash)!= NULL){
+		printf("will write a message to hash\n");
+		return 0;       
+	}
+	else if(strstr(__execute_hash__,__arghash)!=NULL) {
+		printf("should execute the command \n");
+		return 0;
+	}
+	else if (strstr(__send_hash__,__arghash)!=NULL) {
+		printf("will send msg to hash\n");
+		return 0;
+	}
+	else if (strstr(__connect_hash__,__arghash)!=NULL) {
+		printf("will try to connect to address\n");
+		return 0;
+	}
+	else if (strstr(__listen_hash__,__arghash)!=NULL) {
+		printf("will try to listen on the address\n");
+		return 0;
+	}
+	else {
+		printf("none of them matched\n");
+		return 1;
+	};
+}
+
+int __exact_match(char const *_a, char const *_b) {
+	ulong __alen=str_rwings(_a), __blen=str_rwings(_b);
+	if (__alen!=__blen) {
+		#ifdef LOG_ERR
+			printf("A&B do not matchn\n");
+		#endif
+		return 0;
+	};
+	while(--__alen!=0) {
+		if(_a[__alen]==_b[__alen]){
+			continue;
+		}else {
+			return 0;
+		};
+	};
+	return 1;
+};
+
+int decode_lbb_addr(into_st *into, char const *args[]) {
+	char const *__arg=i_argument(into);
+	ulong _addr_len=str_rwings(__arg);
+
+	if(check_addr(__arg)==-1){
+		#ifdef LOG_ERR
+			printf("address is not correctly formatted\n");
+		#endif
+		return 1;
+	};
+
+	ulong _addr_max=__LBB_BASE_LEN+_addr_len;
+	char __address[_addr_max];
+	memset(&__address, 0, sizeof(__address));
+	memmove(__address, __lbb_convdir, __LBB_BASE_LEN);
+	memmove((__address+__LBB_BASE_LEN), __arg, _addr_len);
+	__address[_addr_max]='\0';
+
+	#ifdef DEBUG
+		printf("decoding lbb address :: \n");
+	#endif
+	if(!__stres(__address)){
+		#ifdef LOG_ERR
+			printf("address doesn't exist ( %s ) \n", __address);
+		#endif
+		return 2;
+	};
+	m_stat cm_st;
+	m_stat *__cm_st=__mstat__(cm_st);
+	#ifdef DEBUG
+		printf("getting mstat :: \n");
+	#endif
+	get_mstat(__address, __cm_st);
+	#ifdef DEBUG
+		log_mstat(__cm_st);
+	#endif
+
+
+	return 0;
+};
+
+int decode_pointer(into_st *into) {
+	#ifdef DEBUG
+		printf("decoding pointer :: \n");
+	#endif
+
+	char const *arg=i_argument(into);
+	ulong __argflen=str_rwings(arg);
+	pia_st pst;
+	__pia__(pst);
+
+	ulong ptr_name_offset=sep_offset(arg, "<");
+	// we increment the `arg` to get rid of the @ & then
+	// seperate offset considers the `<` included in str_b4
+	// so we decrement the count
+	char *__ptrname=str_b4offset(++arg, ptr_name_offset-1);
+	memmove(__p_pointer(pst), __ptrname, __P_LEN);
+	ulong __pointer_len=_p_pointer_len(pst);
+	if(__pointer_len>__P_LEN){
+		#ifdef LOG_ERR
+			printf("pointer names must be 8 bytes\n");
+		#endif
+		#ifdef DEBUG
+			printf("pointer contents iteration ::\n");
+			for(int i=0;i<__pointer_len; i++){
+				printf("%d(%c)\n", __ptrname[i],__ptrname[i]);
+			}
+		#endif
+		return 2;
+	};
+
+	// recenter the `arg` to be able to extract the correct offset
+	char *_ptrcomplete=str_a4offset(--arg, ptr_name_offset);
+	ulong intrpt_path_offset=sep_offset(_ptrcomplete, ">");
+	char *__interpreter=str_b4offset(_ptrcomplete, intrpt_path_offset);
+	memmove(__p_interpreter(pst), __interpreter, __I_LEN);
+	ulong __interpreter_len=_p_interpreter_len(pst);
+	if(__interpreter_len>__I_LEN){
+		#ifdef LOG_ERR
+			printf("interpreters always have a maximum of 64 bytes for a reference call\n");
+		#endif
+		#ifdef DEBUG
+			printf("__interpreter :: %s : %lu\n", __interpreter,__interpreter_len);
+			printf("offset is @ %lu\n", intrpt_path_offset);
+		#endif
+		return 3;
+	};
+
+	// seperate the bracket insides by seperating the `{`
+	// and making use of the fact that `}` should be at end of data inp (eodi)
+	char *_intrargs=str_a4offset(_ptrcomplete, __interpreter_len);
+	ulong args_path_offset=sep_offset(_intrargs, "{");
+	char *__args=str_a4offset(_intrargs, args_path_offset);
+	ulong arg_length=str_rwings((char const *)__args);
+	ulong __arg_offset=arg_length-1;
+	if(__args[__arg_offset]!='}'){
+		#ifdef LOG_ERR
+			printf("err : malformat :: no closing arg sequence `}Z`\n");
+		#endif
+		return 1;
+	};
+
+	// get the actual args inside the brackets
+	char *args=str_b4offset(__args, arg_length);
+	memmove(__p_args(pst), args, __A_LEN);
+	arg_length=_p_args_len(pst);
+	if(arg_length>__A_LEN){
+		#ifdef DEBUG
+			printf("payloads are restricted to 512bytes max\n");
+		#endif
+		#ifdef DEBUG
+			printf("ptr complete :: %s\n", _ptrcomplete);
+			printf("intra arguments :: %s\n", _intrargs);
+			printf("start args offset :: %lu\n", args_path_offset);
+			printf("main args :: %s\n", __args);
+		#endif
+		return 4;
+	};
+
+	#ifdef DEBUG
+		printf("pointer name := %s\n", p_pointer(pst));
+		printf("interpreter  := %s\n", p_interpreter(pst));
+		printf("arguments    := %s\n", p_args(pst));
+	#endif
+
+	__pia_http(&pst);
+
+	return 0;
+};
+
+void *__arc_stpoints(ulong __stindex, char const *__stname) {
+	dpoint *__point=__arcstp(0x8);
+	memset(__point,0,sizeof(ulong));
+	__point->__index=__stindex;
+	
+	ulong length=str_rwings(__stname);
+	char *stname=(char *)malloc(length);
+	memset(stname,0,length);
+	memmove(stname,__stname,length);
+	__point->__name=stname;
+
+	char const *__stref=hashof(1, __stname, length);
+	ulong ref_length=str_rwings(__stref);
+	char *stref=(char *)malloc(ref_length);
+	memset(stref,0,ref_length);
+	memmove(stref,__stref,ref_length);
+	__point->__ref=stref;
+
+	// points_c+=1;
+	return (dpoint *)__point;
+};
+
+int decode_point(into_st *into) {
+	#ifdef DEBUG
+		printf("decoding aetherpoint :: \n");
+	#endif
+	ulong pnt_offset=sep_offset(into->argument, d_atbase);
+	char *point=str_a4offset(into->argument, pnt_offset);
+	printf("point @%s\n", point);
+	return 0;
+};
+
+int __point_run() {
+	void *temp = __arcstp(512);
+	return 0;
+};
+
+
 enum __atypes_ stype_to_atype(enum __stypes __stype) {
-    switch(__stype) {
-        case __sAF_INET: return at4;
-        case __sAF_INET6: return at6;
-        default: return at4;
-    }
+	switch(__stype) {
+		case __sAF_INET: return at4;
+		case __sAF_INET6: return at6;
+		default: return at4;
+	}
 };
 
 enum __stypes a2s_type(enum __atypes_ _atype) {
-    switch(_atype) {
-        case at4: return __sAF_INET;
-        case at6: return __sAF_INET6;
-        default: return __sAF_INET;
-    };
+	switch(_atype) {
+		case at4: return __sAF_INET;
+		case at6: return __sAF_INET6;
+		default: return __sAF_INET;
+	};
 };
 
 struct __socket_address {
-    enum __atypes_ _atype;
-    void *_sokaddr;
-    char _sockaddr[128];
-    char ascii_addr[INET6_ADDRSTRLEN];
+	enum __atypes_ _atype;
+	void *_sokaddr;
+	char _sockaddr[128];
+	char ascii_addr[INET6_ADDRSTRLEN];
 };
 
 typedef struct __socket_address aip_saddr;
 
 void _socket_free_fd(struct __sok_t *sok_t) {
-    close(sok_t->aip_sockfd);
+	close(sok_t->aip_sockfd);
 };
 
 void _socket_address_free(struct __socket_address *aip_sa){
-    free(aip_sa->_sokaddr);
+	free(aip_sa->_sokaddr);
 };
 
 enum __atypes_ get_atype(struct __socket_address *aip_sa) {
-    return aip_sa->_atype;
+	return aip_sa->_atype;
 };
 
 void *get_sokaddr(struct __socket_address *aip_sa) {
-    return aip_sa->_sokaddr;
+	return aip_sa->_sokaddr;
 };
 
 char *get_sockaddr(struct __socket_address *aip_sa) {
-    return (char *)&(aip_sa->_sockaddr);
+	return (char *)&(aip_sa->_sockaddr);
 };
 
 void *__sok_addr(struct sockaddr *sa) {
-    if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in*)sa)->sin_addr);
-    }
-    else {
-        return &(((struct sockaddr_in6*)sa)->sin6_addr);
-    };
-    return NULL;
+	if (sa->sa_family == AF_INET) {
+		return &(((struct sockaddr_in*)sa)->sin_addr);
+	}
+	else {
+		return &(((struct sockaddr_in6*)sa)->sin6_addr);
+	};
+	return NULL;
 };
 
 // get sockaddr, IPv4 or IPv6:
 struct __socket_address __sock_addr(struct sockaddr *sa) {
-    struct __socket_address __sa;
-    memset(&__sa,0,sizeof(struct __socket_address));
-    if (sa->sa_family == AF_INET) {
-        __sa._atype=at4;
-        __sa._sokaddr=&(((struct sockaddr_in*)sa)->sin_addr);
-    }
-    else {
-        __sa._atype=at6;
-        __sa._sokaddr=&(((struct sockaddr_in6*)sa)->sin6_addr);
-    };
-    char s[INET6_ADDRSTRLEN];
-    ulong __s_size=sizeof(__sa.ascii_addr);
-    memset(__sa.ascii_addr,0,__s_size);
-    memset(&s,0,sizeof(s));
-    char const *sockname=inet_ntop(a2s_type(__sa._atype), __sa._sokaddr, s, sizeof(s));
-    memmove(__sa.ascii_addr, sockname, __s_size);
-    #ifdef DEBUG
-        printf("socket @%s\n",sockname);
-    #endif
-    return __sa;
+	struct __socket_address __sa;
+	memset(&__sa,0,sizeof(struct __socket_address));
+	if (sa->sa_family == AF_INET) {
+		__sa._atype=at4;
+		__sa._sokaddr=&(((struct sockaddr_in*)sa)->sin_addr);
+	}
+	else {
+		__sa._atype=at6;
+		__sa._sokaddr=&(((struct sockaddr_in6*)sa)->sin6_addr);
+	};
+	char s[INET6_ADDRSTRLEN];
+	ulong __s_size=sizeof(__sa.ascii_addr);
+	memset(__sa.ascii_addr,0,__s_size);
+	memset(&s,0,sizeof(s));
+	char const *sockname=inet_ntop(a2s_type(__sa._atype), __sa._sokaddr, s, sizeof(s));
+	memmove(__sa.ascii_addr, sockname, __s_size);
+	#ifdef DEBUG
+		printf("socket @%s\n",sockname);
+	#endif
+	return __sa;
 };
 
 struct sockaddr *sock_aip_to_sa(aipsock *sock){
-    struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_socket)));
-    return (struct sockaddr *)saddrst;
+	struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_socket)));
+	return (struct sockaddr *)saddrst;
 };
 
 void log_socket(aipsock *sock) {
-    struct __socket_address info=__sock_addr(sock_aip_to_sa(sock));
-    printf("socket @%s\n",info.ascii_addr);
+	struct __socket_address info=__sock_addr(sock_aip_to_sa(sock));
+	printf("socket @%s\n",info.ascii_addr);
 };
 
 void __hints(struct addrinfo *info) {
-    memset(info, 0,sizeof(struct addrinfo));
+	memset(info, 0,sizeof(struct addrinfo));
 	info->ai_socktype=SOCK_STREAM;
 	info->ai_family=AF_UNSPEC;
 };
@@ -232,494 +692,723 @@ char *uname(const char *__filename) {
 };
 
 struct __sok_t __arcsocket() {
-    aipsock __sok;
-    memset(&__sok,0,sizeof(struct __sok_t));
+	aipsock __sok;
+	memset(&__sok,0,sizeof(struct __sok_t));
 
-    struct addrinfo hints;
-    __hints(&hints);
-    // hints.ai_flags=AI_PASSIVE;
+	struct addrinfo hints;
+	__hints(&hints);
+	// hints.ai_flags=AI_PASSIVE;
 
-    struct addrinfo *srvinfo, *aip;
-    struct sockaddr_storage ss_addr;
-    int __sfd, __res=1, __yes=1;
+	struct addrinfo *srvinfo, *aip;
+	struct sockaddr_storage ss_addr;
+	int __sfd, __res=1, __yes=1;
 
-    if ((__res=getaddrinfo(NULL,ATP_PORT,&hints,&srvinfo))){
-        #ifdef DEBUG
-            printf("getaddrinfo error : %s\n", gai_strerror(__res));
-        #endif
-        memset(&__sok,0,sizeof(struct __sok_t));
-        return __sok;
-    };
+	if ((__res=getaddrinfo(NULL,ATP_PORT,&hints,&srvinfo))){
+		#ifdef DEBUG
+			printf("getaddrinfo error : %s\n", gai_strerror(__res));
+		#endif
+		memset(&__sok,0,sizeof(struct __sok_t));
+		return __sok;
+	};
 
-    for(aip=srvinfo;aip!=NULL;aip=aip->ai_next){
-        if((__sfd=socket(aip->ai_family,aip->ai_socktype,aip->ai_protocol))==-1){
-            #ifdef DEBUG
-                printf("server :: socket\n");
-            #endif
-            continue;
-        }
-        if(setsockopt(__sfd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(unsigned))==-1){
-            #ifdef DEBUG
-                printf("setsockopt\n");
-            #endif
-            exit(1);
-        }
-        if(bind(__sfd,aip->ai_addr,aip->ai_addrlen)==-1){
-            close(__sfd);
-            #ifdef DEBUG
-                printf("server: bind\n");
-            #endif
-            continue;
-        }
-        #ifdef DEBUG
-            printf("aip->next\n");
-        #endif
-        break;
-    };
-    freeaddrinfo(srvinfo);
+	for(aip=srvinfo;aip!=NULL;aip=aip->ai_next){
+		if((__sfd=socket(aip->ai_family,aip->ai_socktype,aip->ai_protocol))==-1){
+			#ifdef DEBUG
+				printf("server :: socket\n");
+			#endif
+			continue;
+		}
+		if(setsockopt(__sfd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(unsigned))==-1){
+			#ifdef DEBUG
+				printf("setsockopt\n");
+			#endif
+			exit(1);
+		}
+		if(bind(__sfd,aip->ai_addr,aip->ai_addrlen)==-1){
+			close(__sfd);
+			#ifdef DEBUG
+				printf("server: bind\n");
+			#endif
+			continue;
+		}
+		#ifdef DEBUG
+			printf("aip->next\n");
+		#endif
+		break;
+	};
+	freeaddrinfo(srvinfo);
 
-    if(aip==NULL){
-        #ifdef DEBUG
-            printf("cannot connect to any socket\n");
-        #endif
-        _exit(1);
-    };
+	if(aip==NULL){
+		#ifdef DEBUG
+			printf("cannot connect to any socket\n");
+		#endif
+		_exit(1);
+	};
 
-    __sok.aip_sockfd=__sfd;
-    __sok.aip_socklen=(ulong)(aip->ai_addrlen);
-    struct sockaddr_storage *sasp=(struct sockaddr_storage*)aip->ai_addr;
-    memmove((__sok.aip_socket), sasp, sizeof(struct sockaddr_storage));
+	__sok.aip_sockfd=__sfd;
+	__sok.aip_socklen=(ulong)(aip->ai_addrlen);
+	struct sockaddr_storage *sasp=(struct sockaddr_storage*)aip->ai_addr;
+	memmove((__sok.aip_socket), sasp, sizeof(struct sockaddr_storage));
 
-    return __sok;
+	return __sok;
 };
 
 int __aip_listen(ulong aipsfd){
-    int res=listen(aipsfd,ATP_BACKLOG)==-1?1:0;
-    if(res==-1){
-        printf("err number:\n");
-        printf("%d\n",errno);
-        return 1;   
-    }
-    return 0;
+	int res=listen(aipsfd,ATP_BACKLOG)==-1?1:0;
+	if(res==-1){
+		printf("err number:\n");
+		printf("%d\n",errno);
+		return 1;   
+	}
+	return 0;
 };
 
 void __aip_send(aipsock *sock, char *msg_to_send){
-    ulong msglen=strlen(msg_to_send);
-    if(send(sock_fd(sock),msg_to_send,msglen,0)==-1){
-        #ifdef DEBUG
-            printf("send : failed :: payload { %s }\n", msg_to_send);
-        #endif
-    };
+	ulong msglen=strlen(msg_to_send);
+	if(send(sock_fd(sock),msg_to_send,msglen,0)==-1){
+		#ifdef DEBUG
+			printf("send : failed :: payload { %s }\n", msg_to_send);
+		#endif
+	};
 };
 
 void *__aip_recieve(aipsock *sock) {
-    int numbytes;
-    char buf[512];
-    memset(&buf,0,sizeof(buf));
-    if ((numbytes = recv(sock_fd(sock), buf, 512, 0))==-1) {
-        #ifdef LOG_ERR
-            printf("aip : recv :: failed\n");
-        #endif
-        exit(1);
-    };
-    return (void *)strdup(buf);
+	int numbytes;
+	char buf[512];
+	memset(&buf,0,sizeof(buf));
+	if ((numbytes = recv(sock_fd(sock), buf, 512, 0))==-1) {
+		#ifdef LOG_ERR
+			printf("aip : recv :: failed\n");
+		#endif
+		exit(1);
+	};
+	return (void *)strdup(buf);
 };
 
 struct __buffin {
-    char __pname[8];
-    char __intrpt[64];
-    char __effective[440];
-    char *_org;//512-byte msg payload
+	char __pname[8];
+	char __intrpt[64];
+	char __effective[440];
+	char *_org;//512-byte msg payload
 };
 
 void init_nifty(struct __buffin *nifty){
-    memmove(nifty->_org, nifty->__pname, 8);
-    memmove(((nifty->_org)+8), nifty->__intrpt, 64);
-    memmove(((nifty->_org)+72), nifty->__effective, 440);
+	memmove(nifty->_org, nifty->__pname, 8);
+	memmove(((nifty->_org)+8), nifty->__intrpt, 64);
+	memmove(((nifty->_org)+72), nifty->__effective, 440);
 };
 
 // function that associates the @-protocol
 // with the linked binary book (lbb)
 void ___associate(void *__buffer) {
-    struct __buffin __nifty;
-    memset(&__nifty,0,sizeof(struct __buffin));
-    __nifty._org=(char *)__buffer;
-    init_nifty(&__nifty);
+	struct __buffin __nifty;
+	memset(&__nifty,0,sizeof(struct __buffin));
+	__nifty._org=(char *)__buffer;
+	init_nifty(&__nifty);
 
 };
 
 int __incheck(char c){   
-    if( (c>=0x30)&&(c<=0x39)){
-        #ifdef DDEBUG
-            printf("char %c has a value of %d\n",c,c);  
-        #endif
-        return 1;
-    };
-    return 0;
+	if( (c>=0x30)&&(c<=0x39)){
+		#ifdef DDEBUG
+			printf("char %c has a value of %d\n",c,c);  
+		#endif
+		return 1;
+	};
+	return 0;
 };
 
 ulong __tonum(char const *var){
-    ulong d=1,__c=0,res=0,__len=strlen(var);
-    int c;
-    if(var[__len]=='\0'){
-        while(__incheck(var[__c])){
-            d*=10;
-            __c+=1;
-        };
-        __c=0;
-        if(d>=10){d/=10;}
-        #ifdef DDEBUG
-            printf("digits count :: %lu\n",d);
-        #endif
-        while(__incheck(var[__c])){
-            res+=(d*(var[__c]-0x30));
-            __c+=1;d/=10;
-        }
-        #ifdef DDEBUG
-            printf("result is :: %lu\n", res);
-        #endif
-    };
-    return res;
+	ulong d=1,__c=0,res=0,__len=strlen(var);
+	int c;
+	if(var[__len]=='\0'){
+		while(__incheck(var[__c])){
+			d*=10;
+			__c+=1;
+		};
+		__c=0;
+		if(d>=10){d/=10;}
+		#ifdef DDEBUG
+			printf("digits count :: %lu\n",d);
+		#endif
+		while(__incheck(var[__c])){
+			res+=(d*(var[__c]-0x30));
+			__c+=1;d/=10;
+		}
+		#ifdef DDEBUG
+			printf("result is :: %lu\n", res);
+		#endif
+	};
+	return res;
 };
 
 ulong tonum(int i){
-    ulong res=0;
-    if(i>0){
-        res+=i;
-        return res;
-    };
-    return 0;
+	ulong res=0;
+	if(i>0){
+		res+=i;
+		return res;
+	};
+	return 0;
 };
 
 void sock_errs(){
-    printf("value of EBADF = %d\n", EBADF);
-    printf("value of ENOTSOCK = %d\n", ENOTSOCK);
+	printf("value of EBADF = %d\n", EBADF);
+	printf("value of ENOTSOCK = %d\n", ENOTSOCK);
 };
 
-#define DEBUG 1
 
 void __ellrun(ulong __fd) {
 
-    aipsock temp_sok;
-    memset(&temp_sok,0,sizeof(aipsock));
-    #ifdef OUTPUT
-        printf("running ell :: \n");
-    #endif
+	aipsock temp_sok;
+	memset(&temp_sok,0,sizeof(aipsock));
+	#ifdef OUTPUT
+		printf("running ell :: \n");
+	#endif
 
-    while(1) {
-        socklen_t *temp_sockelen=((socklen_t *)&(temp_sok.aip_socklen));
-        ulong *temp_sockefd=((ulong *)&(temp_sok.aip_sockfd));
-        struct sockaddr *temp_sockeaddr=((struct sockaddr *)&(temp_sok.aip_socket));
-        *temp_sockelen=sizeof(temp_sockeaddr);
-        int __tempfd=accept(__fd, temp_sockeaddr, temp_sockelen);
-        if(__tempfd==-1) {
-            #ifdef DEBUG
-                printf("error : accept :: ");
-                printf("err number ::: ");
-                printf("%d\n",errno);
-            #endif
-            break;
-        };
-        temp_sok.aip_sockfd=tonum(__tempfd);
-        #ifdef DEBUG
-            log_socket(&temp_sok);
-        #endif
-        if(!fork()){
-            close(__fd);
-            __aip_send(&temp_sok, "ell shell ::\n");
-            char *msg_recvd=__aip_recieve(&temp_sok);
-            printf("recieved => %s\n", msg_recvd);
-            _socket_free_fd(&temp_sok);
-            exit(0);
-        }
-        _socket_free_fd(&temp_sok);
-    };
+	while(1) {
+		socklen_t *temp_sockelen=((socklen_t *)&(temp_sok.aip_socklen));
+		ulong *temp_sockefd=((ulong *)&(temp_sok.aip_sockfd));
+		struct sockaddr *temp_sockeaddr=((struct sockaddr *)&(temp_sok.aip_socket));
+		*temp_sockelen=sizeof(temp_sockeaddr);
+		int __tempfd=accept(__fd, temp_sockeaddr, temp_sockelen);
+		if(__tempfd==-1) {
+			#ifdef DEBUG
+				printf("error : accept :: ");
+				printf("err number ::: ");
+				printf("%d\n",errno);
+			#endif
+			break;
+		};
+		temp_sok.aip_sockfd=tonum(__tempfd);
+		#ifdef DEBUG
+			log_socket(&temp_sok);
+		#endif
+		if(!fork()){
+			close(__fd);
+			__aip_send(&temp_sok, "ell shell ::\n");
+			char *msg_recvd=__aip_recieve(&temp_sok);
+			printf("recieved => %s\n", msg_recvd);
+			_socket_free_fd(&temp_sok);
+			exit(0);
+		}
+		_socket_free_fd(&temp_sok);
+	};
 };
 
 void *__arcell(void *c_stp) {
-    struct __sok_t __socket =__arcsocket();
-    struct __socket_address saddr_st=__sock_addr(sock_aip_to_sa(&__socket));
+	struct __sok_t __socket =__arcsocket();
+	struct __socket_address saddr_st=__sock_addr(sock_aip_to_sa(&__socket));
 
-    ulong socket_fd=socket_fd(__socket);
-    ulong socket_len=socket_len(__socket);
-    struct sockaddr *socket_addr=socket_staddr(__socket);
+	ulong socket_fd=socket_fd(__socket);
+	ulong socket_len=socket_len(__socket);
+	struct sockaddr *socket_addr=socket_staddr(__socket);
 
-    #ifdef DEBUG
-        printf("starting ell, <%p>\n", c_stp);
-        printf("fd=%lu",socket_fd);
-        log_socket(&__socket);
-    #endif
+	#ifdef DEBUG
+		printf("starting ell, <%p>\n", c_stp);
+		printf("fd=%lu",socket_fd);
+		log_socket(&__socket);
+	#endif
 
-    if(__aip_listen(socket_fd)) {
-        #ifdef DEBUG
-            printf("error : listen\n");
-            printf("err number:\n");
-            printf("%d\n",errno);
-        #endif
-        _exit(1);
-    };
+	if(__aip_listen(socket_fd)) {
+		#ifdef DEBUG
+			printf("error : listen\n");
+			printf("err number:\n");
+			printf("%d\n",errno);
+		#endif
+		_exit(1);
+	};
 
 
-    __ellrun(socket_fd);
+	__ellrun(socket_fd);
 
-    return c_stp;
+	return c_stp;
 };
 
 void __ellcall(ulong __socfd, char *reusable, ulong r_size) {
-    #ifdef OUTPUT
-        printf("reading input\n");
-    #endif
-    int __tempres=0;
-    memset(reusable, 0, r_size);
-    while(__tempres!=-1) {
-        __tempres=read(0, reusable, r_size);
-        #ifdef OUTPUT
-            printf("\n\nread input :: %s\n", reusable);
-        #endif
-        #ifdef OUTPUT 
-            printf("sending to socket\n");
-        #endif
-        __tempres=send(__socfd, reusable, r_size, 0);
-        break;
-    };
-        close(__socfd);
+	#ifdef OUTPUT
+		printf("reading input\n");
+	#endif
+	int __tempres=0;
+	memset(reusable, 0, r_size);
+	while(__tempres!=-1) {
+		__tempres=read(0, reusable, r_size);
+		#ifdef OUTPUT
+			printf("\n\nread input :: %s\n", reusable);
+		#endif
+		#ifdef OUTPUT 
+			printf("sending to socket\n");
+		#endif
+		__tempres=send(__socfd, reusable, r_size, 0);
+		break;
+	};
+		close(__socfd);
 };
 
 void __ellget(ulong __sockfd, char *reusable, ulong reu_size) {
-    memset(reusable, 0, reu_size);
-    int __recvd_num=recv(__sockfd, reusable, reu_size, 0);
-    if(__recvd_num==-1) {
-        #ifdef OUTPUT
-            printf("could not recieve in `ellcall`\n");
-        #endif
-        exit(1);
-    };
+	memset(reusable, 0, reu_size);
+	int __recvd_num=recv(__sockfd, reusable, reu_size, 0);
+	if(__recvd_num==-1) {
+		#ifdef OUTPUT
+			printf("could not recieve in `ellcall`\n");
+		#endif
+		exit(1);
+	};
 
-    reusable[__recvd_num] = '\0';
-    #if DEBUG
-        printf("client: received '%s'\n",reusable);
-    #endif
+	reusable[__recvd_num] = '\0';
+	#if DEBUG
+		printf("client: received '%s'\n",reusable);
+	#endif
 
 };
 
 void __arcfork(){
-    __arc.__fork=fork();
+	__arc.__fork=fork();
 };
 
 void __arcsok(){
-    __sok=__arcsocket();
+	__sok=__arcsocket();
 };
 
 ulong __aipfd() {
-    return __sok.aip_sockfd;
+	return __sok.aip_sockfd;
 };
 
 ulong __aiplen(){
-    return __sok.aip_socklen;
+	return __sok.aip_socklen;
 };
 
 char *__aipsock_raw(){
-    return (char *)__sok.aip_socket;
+	return (char *)__sok.aip_socket;
 };
 
 struct sockaddr *__aipsock_addr_sa(){
-    return sock_aip_to_sa(&__sok);
+	return sock_aip_to_sa(&__sok);
 };
 
 aip_saddr __aipsock_addr(){
-    return __sock_addr(__aipsock_addr_sa());
+	return __sock_addr(__aipsock_addr_sa());
 };
 
 void *__arcstart(void *c_step){
 
-    return __arcell(c_step);
+	return __arcell(c_step);
 };
 
 void *__arcrun(void *c_step) {
 
-    return __arcstp(512);
+	return __arcstp(512);
 };
 
 void __arcpid(){
-    __arc.__pid=(ulong)getpid();
+	__arc.__pid=(ulong)getpid();
 };
 
 void free_arcs() {
-    void *d2ptr, *dptr=arc->__points;
-    for(ulong i=0;i<points_c;i++){
-        d2ptr=(dpoint *)dptr;
-        free((d2ptr+i));
-    };
+	void *d2ptr, *dptr=arc->__points;
+	for(ulong i=0;i<points_c;i++){
+		d2ptr=(dpoint *)dptr;
+		free((d2ptr+i));
+	};
 };
 
 void free_sok(){ 
-    _socket_free_fd(&__sok);
+	_socket_free_fd(&__sok);
 };
 
 void free_args() {
-    free_arcs();
-    free_sok();
+	free_arcs();
+	free_sok();
 };
 
 
 int mor(void *args) {
-    printf("d-cloud : atp {mor} :: %p\n", args);
+	printf("d-cloud : atp {mor} :: %p\n", args);
 
-    int sockfd, numbytes;  
-    char buf[ATP_BUFFER_SIZE];
-    struct addrinfo hints;
-    hints.ai_flags=AI_DEFAULT;
-    __hints(&hints);
-    struct addrinfo *servinfo, *p;
-    int rv;
-    char s[INET6_ADDRSTRLEN];
+	int sockfd, numbytes;  
+	char buf[ATP_BUFFER_SIZE];
+	struct addrinfo hints;
+	hints.ai_flags=AI_DEFAULT;
+	__hints(&hints);
+	struct addrinfo *servinfo, *p;
+	int rv;
+	char s[INET6_ADDRSTRLEN];
 
-    if ((rv = getaddrinfo(NULL, ATP_PORT, &hints, &servinfo)) != 0) {
-        #ifdef DEBUG
-            printf("getaddrinfo: %s\n", gai_strerror(rv));
-        #endif
-        return 1;
-    };
-    // loop through all the results and connect to the first we can
-    for(p = servinfo; p != NULL; p = p->ai_next) {
-        if ((sockfd = socket(p->ai_family, p->ai_socktype,
-                p->ai_protocol)) == -1) {
-            #ifdef DEBUG
-                printf("client: socket");
-            #endif
-            continue;
-        };
+	if ((rv = getaddrinfo(NULL, ATP_PORT, &hints, &servinfo)) != 0) {
+		#ifdef DEBUG
+			printf("getaddrinfo: %s\n", gai_strerror(rv));
+		#endif
+		return 1;
+	};
+	// loop through all the results and connect to the first we can
+	for(p = servinfo; p != NULL; p = p->ai_next) {
+		if ((sockfd = socket(p->ai_family, p->ai_socktype,
+				p->ai_protocol)) == -1) {
+			#ifdef DEBUG
+				printf("client: socket");
+			#endif
+			continue;
+		};
 
-        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-            close(sockfd);
-            #ifdef DEBUG
-                printf("client: connect");
-            #endif
-            continue;
-        };
+		if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+			close(sockfd);
+			#ifdef DEBUG
+				printf("client: connect");
+			#endif
+			continue;
+		};
 
-        break;
-    };
+		break;
+	};
 
-    if (p == NULL) {
-        #ifdef DEBUG
-            printf("client: failed to connect\n");
-        #endif
-        return 2;
-    };
+	if (p == NULL) {
+		#ifdef DEBUG
+			printf("client: failed to connect\n");
+		#endif
+		return 2;
+	};
 
-    inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
-    #if DEBUG
-        printf("client: connecting to %s\n", s);
-    #endif
-    freeaddrinfo(servinfo); // all done with this structure
-    memset(&buf, 0, sizeof(buf));
-    __ellcall(sockfd, (char *)&buf, sizeof(buf)-1);
+	inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
+	#if DEBUG
+		printf("client: connecting to %s\n", s);
+	#endif
+	freeaddrinfo(servinfo); // all done with this structure
+	memset(&buf, 0, sizeof(buf));
+	__ellcall(sockfd, (char *)&buf, sizeof(buf)-1);
 
  
-    close(sockfd);
+	close(sockfd);
 
-    return 0;
+	return 0;
 };
 
 
 int les(void *args) {
-    printf("d-cloud : atp {les}\n");
+	printf("d-cloud : atp {les}\n");
 
-    int sockfd, temp_fd, __yes=1, __rv;
-    struct addrinfo hints;
-    __hints(&hints);
-    hints.ai_flags=AI_PASSIVE;
-    struct addrinfo *__servinfo, *temp;
-    struct sockaddr_storage __caddr;
+	int sockfd, temp_fd, __yes=1, __rv;
+	struct addrinfo hints;
+	__hints(&hints);
+	hints.ai_flags=AI_PASSIVE;
+	struct addrinfo *__servinfo, *temp;
+	struct sockaddr_storage __caddr;
 
-    socklen_t __sin_size;
-    char __saddr[INET6_ADDRSTRLEN];
+	socklen_t __sin_size;
+	char __saddr[INET6_ADDRSTRLEN];
 
-    if ((__rv=getaddrinfo(NULL,ATP_PORT,&hints,&__servinfo))!=0){
-        #ifdef DEBUG
-            fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(__rv));
-        #endif
-        return 1;
-    };
-    for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
-        if((sockfd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
-            #ifdef DEBUG
-                perror("server :: socket\n");
-            #endif
-            continue;
-        };
-        if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(unsigned))==-1){
-            #ifdef DEBUG
-                perror("setsockopt\n");
-            #endif
-            exit(1);
-        };
-        if(bind(sockfd,temp->ai_addr,temp->ai_addrlen)==-1){
-            close(sockfd);
-            #ifdef DEBUG
-                perror("server: bind\n");
-            #endif
-            continue;
-        };
-        break;
-    };
+	if ((__rv=getaddrinfo(NULL,ATP_PORT,&hints,&__servinfo))!=0){
+		#ifdef DEBUG
+			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(__rv));
+		#endif
+		return 1;
+	};
+	for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
+		if((sockfd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
+			#ifdef DEBUG
+				perror("server :: socket\n");
+			#endif
+			continue;
+		};
+		if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(unsigned))==-1){
+			#ifdef DEBUG
+				perror("setsockopt\n");
+			#endif
+			exit(1);
+		};
+		if(bind(sockfd,temp->ai_addr,temp->ai_addrlen)==-1){
+			close(sockfd);
+			#ifdef DEBUG
+				perror("server: bind\n");
+			#endif
+			continue;
+		};
+		break;
+	};
 
-    freeaddrinfo(__servinfo);
-    __ellrun(sockfd);
+	freeaddrinfo(__servinfo);
+	__ellrun(sockfd);
 
-    return 0;
+	return 0;
 };
 #define ARG_DEBUG 1
 void *__arcstp(stp_size stsize){
-    void *stp;
-    if(stsize<=__step_point) {
-        __arcpid();
-        #ifdef ARG_DEBUG
-            printf("{ ARC } => pid: \n");
-        #endif            
-        stp=malloc(0x8);
-        #ifdef ARG_DEBUG
-            printf("stp @%p", stp);
-        #endif
-    }
-    else if (stsize<=__step_addr) {
-        __arcfork();
-        #ifdef ARG_DEBUG
-            printf("{ ARC } => fork: \n");
-        #endif
-        return __arcstp(6);
-    }
-    else if(stsize==__step_sok) {
-        __arcsok();
-        #ifdef ARG_DEBUG
-            printf("{ ARC } => socket: \n");
-        #endif
-        return __arcstp(6);
-    }
-    else if(stsize==__step_start) {
-        #ifdef ARG_DEBUG
-            printf("ARC : listen :: \n");
-        #endif
-        return __arcstart(__arcstp(6));
-    }
-    else if(stsize==__step_mor) {
-        #ifdef ARG_DEBUG
-            printf("ARC : send :: \n");
-        #endif
-         mor(__arcstp(6));
-        return __arcstp(6);
-    };
-    return stp;
+	void *stp;
+	if(stsize<=__step_point) {
+		__arcpid();
+		#ifdef ARG_DEBUG
+			printf("{ ARC } => pid: \n");
+		#endif            
+		stp=malloc(0x8);
+		#ifdef ARG_DEBUG
+			printf("stp @%p", stp);
+		#endif
+	}
+	else if (stsize<=__step_addr) {
+		__arcfork();
+		#ifdef ARG_DEBUG
+			printf("{ ARC } => fork: \n");
+		#endif
+		return __arcstp(6);
+	}
+	else if(stsize==__step_sok) {
+		__arcsok();
+		#ifdef ARG_DEBUG
+			printf("{ ARC } => socket: \n");
+		#endif
+		return __arcstp(6);
+	}
+	else if(stsize==__step_start) {
+		#ifdef ARG_DEBUG
+			printf("ARC : listen :: \n");
+		#endif
+		return __arcstart(__arcstp(6));
+	}
+	else if(stsize==__step_mor) {
+		#ifdef ARG_DEBUG
+			printf("ARC : send :: \n");
+		#endif
+		 mor(__arcstp(6));
+		return __arcstp(6);
+	};
+	return stp;
 };
+
+// read from till
+int __read_ft(char *dbuffer, ulong dbuf_len) {
+    int __direction=0;
+    ulong __flags=0, c__=0, __c=dbuf_len;
+    char const *arg=(char const *)dbuffer;
+    ulong main_offset=0, __alen=str_rwings(arg);
+    pia_st pst; __pia__(pst);
+    char *ptr_interchange, *__ptrname, *__interpreter, *__args, *__payload;
+    do {
+        c__+=1;
+        if(!__flags) {
+            #ifdef DEBUG
+                printf("-----\n");
+            #endif
+            if(dbuffer[c__]=='@') {
+                __direction+=1;
+                __flags|=__FLAG__;
+                #ifdef DEBUG
+                    printf(">%c__", dbuffer[c__]);
+                #endif
+                #ifdef LOG_FLAGS
+                    printf("FLAG START #%lu#\n", __flags);
+                #endif
+            }
+            else if(dbuffer[__c]=='}') {
+                __direction-=1;
+                __flags|=__FLAG_ES;
+                #ifdef DEBUG
+                    printf("__%c<", dbuffer[__c]);
+                #endif
+                #ifdef LOG_FLAGS
+                    printf("FLAG END #%lu#\n", __flags);
+                #endif       
+            }else {
+            #ifdef DEBUG
+                printf("direction unknown ::: \n");
+            #endif
+            };
+           
+        } else { 
+        ulong temp;
+           if((__flags==__flag_interpret)||(dbuffer[c__]=='@')) {
+            main_offset+=c__;
+                __flags|=__FLAG_START;
+                #ifdef LOG_FLAGS
+                    printf("FLAG START #%lu#\n", __flags);
+                #endif
+                #ifdef LOG_ATT
+                    printf("__@%lu\n", main_offset);
+                #endif
+                temp=sep_offset(arg, "<");
+                // we increment the `arg` to get rid of the @ & then
+                // seperate offset considers the `<` included in str_b4
+                // so we decrement the count
+                temp-=1;
+                __ptrname=stn_b4offset(arg, temp);
+                #ifdef DEBUG
+                    printf("pointer name ::: %s\n", __ptrname);
+                #endif
+                memmove(__p_pointer(pst), __ptrname, str_wsize(__ptrname));
+                temp=_p_pointer_len(pst);
+                if(temp>__P_LEN){
+                    #ifdef LOG_ERR
+                        printf("pointer names must be 8 bytes\n");
+                    #endif
+                    #ifdef DEBUG
+                        printf("pointer contents iteration ::\n");
+                        for(int i=0;i<temp; i++){
+                            printf("%d(%c)\n", __ptrname[i],__ptrname[i]);
+                        }
+                    #endif
+                    return 2;
+                };
+            }
+            else if((__flags==__FLAG_IS)&&(dbuffer[c__]=='<')) {
+                __flags|=FLAG;
+                #ifdef LOG_FLAGS
+                    printf("INTERPRETER FLAG #%lu#\n", __flags);
+                #endif
+                // recenter the `arg` to be able to extract the correct offset
+                ptr_interchange=str_a4offset(arg, temp);
+                ptr_interchange+=(temp);
+                temp=sep_offset(ptr_interchange, ">");
+                #ifdef LOG_ATT
+                    printf("__@%lu\n", temp);
+                #endif
+                __interpreter=stn_b4offset(ptr_interchange, temp);
+                #ifdef DEBUG
+                    printf("interpreter :: %s\n", __interpreter);
+                #endif
+                memmove(__p_interpreter(pst), __interpreter, str_wsize(__interpreter));
+                ulong temp=_p_pointer_len(pst)+_p_interpreter_len(pst);
+                if(temp>__I_LEN){
+                    #ifdef LOG_ERR
+                        printf("interpreters always have a maximum of 64 bytes for a reference call\n");
+                    #endif
+                    #ifdef DEBUG
+                        printf("__interpreter :: %s : %lu\n", __interpreter,temp);
+                    #endif
+                    return 3;
+                };
+            }
+            else if((__flags==__flag_handler)&&(dbuffer[c__]=='(')) {
+                __flags|=__FLAG_IE_PS;
+                #ifdef LOG_FLAGS
+                    printf("FLAG ARGS START #%lu#\n", __flags);
+                #endif
+                // seperate the bracket insides by seperating the `{`
+                // and making use of the fact that `}` should be at end of data inp (eodi)
+                ptr_interchange=str_a4offset(arg, temp);
+                temp=sep_offset(ptr_interchange, "(");
+                __args=str_a4offset(ptr_interchange, temp);
+                temp=str_rwings((char const *)__args);
+                // if(__args[temp]!='}'){
+                //     #ifdef LOG_ERR
+                //         printf("err : malformat :: no closing arg sequence `}Z`\n");
+                //     #endif
+                //     return 1;
+                // };
+            }
+            else if((__flags==__flag_handler)&&(dbuffer[c__]=='{')) {
+                __flags|=__FLAG_ES;
+                #ifdef LOG_FLAGS
+                    printf("FLAG PAYLOAD START #%lu#\n", __flags);
+                #endif
+
+                ptr_interchange=str_a4offset(arg, temp);
+                ptr_interchange+=(temp);
+                temp=sep_offset(ptr_interchange, "}");
+                #ifdef DEBUG
+                    printf("payload : %s\n", ptr_interchange);
+                #endif
+
+                // // get the actual args inside the brackets
+                // ptr_interchange=str_a4offset(ptr_interchange, temp);
+                // temp=sep_offset(ptr_interchange, "{");
+                // __payload=str_b4offset(ptr_interchange, temp);
+                // memmove(__p_args(pst), __payload, __A_LEN);
+                // temp=_p_args_len(pst);
+                // if(temp>__A_LEN){
+                //     #ifdef LOG_ERR
+                //         printf("payloads are restricted to 512bytes max\n");
+                //     #endif
+                //     #ifdef DEBUG
+                //         printf("interchange :: %s\n", ptr_interchange);
+                //         printf("intra arguments :: %s\n", ptr_interchange);
+                //         printf("start args offset :: %lu\n", temp);
+                //         printf("main args :: %s\n", __args);
+                //     #endif
+                //     return 4;
+                // };
+                // #ifdef DEBUG
+                //     printf("pointer name := %s\n", p_pointer(pst));
+                //     printf("interpreter  := %s\n", p_interpreter(pst));
+                //     printf("arguments    := %s\n", p_args(pst));
+                // #endif
+            };
+        };
+        __c--;
+    }while(__c>0);
+
+    return 0;
+};
+
+
+unsigned get_hlevel(char *href) {
+    ulong c=str_rwings(href);
+    unsigned res=((c)>>3);
+    if (res>3){
+        return 3;
+    };
+    return res;
+};
+
+char const *__kaddress(char const *__hash) {
+    ulong __len=str_rwings(__hash)+3;
+    char temp[__len];memset(&temp, 0, sizeof(temp));
+    temp[0]='k';
+    switch((__len-3)) {
+    case 8:  temp[1]='C'; break; // command 
+    case 16: temp[1]='I'; break; // interpreter
+    case 32: temp[1]='P'; break; // payload
+    default: temp[1]='K'; break; // K-address
+    }
+    memmove((temp+2), __hash, __len);
+    temp[__len]='\0';
+    return (char const *)strdup(temp);
+};
+
+
+char const *kaddress(char const *__name, lbb_t __type) {
+	ulong __len=str_rwings(__name);
+    switch(__type){
+    case __unknown: break;
+    case __path_sys: return __kaddress(fhashof(0, __name));
+    case __proto_call: return __kaddress(hashof(1, __name, __len));
+    case __intrp_decl: return __kaddress(hashof(2, __name, __len));
+    case __payld_entr: return __kaddress(hashof(3, __name, __len));
+    default: break;
+    };
+    return NULL;
+};
+
+dpoint *__stpoint(char const *st_name, char const *st_val) {
+    if(st_name==NULL){
+        return NULL;
+    };
+    ulong __len=str_rwings(st_name);
+    dpoint *d_stpoint=(dpoint *)malloc(sizeof(dpoint));
+
+    if(st_name[0]!='k') {
+    	d_stpoint->__name=st_name;
+		d_stpoint->__ref=kaddress(st_val, get_lbb_type(st_name));
+		d_stpoint->__index=__cindex;
+		
+    }
+    else {
+      switch(st_name[1]){
+	    case 'C': break;
+	    case 'I': break;
+	    case 'P': break;
+	    case 'K': break;
+	    default: break;
+	    }
+	    return NULL;
+    };
+    return d_stpoint;
+};
+
 
 
 // __TEXT(Hello World); //valid in ATP
 #ifdef __AT_PROTOCOL__
 int main(int argc, char **argv) {
-    spec var;
-    spec_set_type(&var, KV);
-    OUT_ASCII(0,var.g_delim);
-    return 0;
+	spec var;
+	spec_set_type(&var, KV);
+	OUT_ASCII(0,var.g_delim);
+	return 0;
 };
 #endif

@@ -3,7 +3,6 @@ little black book
 
 #ifndef __LBB__H
 #include "lbb.h"
-#include "ixr.h"
 #endif
 
 
@@ -12,30 +11,6 @@ little black book
 
 void unpack(uchar *buf,char const *fmt,...);
 
-ulong fsize_st(void *st){
-    struct stat *__=(struct stat*)st;
-    return __->st_size;
-};
-ulong iosize_st(void *st){
-    struct stat *__=(struct stat*)st;
-    return __->st_blksize;
-};
-uns dmode_st(void *st){
-    struct stat *__=(struct stat*)st;
-    return __->st_mode;
-};
-ulong inn_st(void *st){
-    struct stat *__=(struct stat*)st;
-    return __->st_ino;
-};
-void *__statusof(char const *__file) {
-    struct stat __;
-    memset(&__,0,sizeof(struct stat));
-    if(stat(__file,&__)==0){
-        return (void *)__file;
-    }
-    return NULL;
-};
 
 
 int __ap_file(char const *__path){
@@ -46,7 +21,7 @@ int __ap_file(char const *__path){
 	lbb_shard.lbb_fd=__fd;
 
 	return __fd;
-}
+};
 
 int __ap_fifo(char const *__path){
 	if(mkfifo(__path,__lbb_mode__)==0){
@@ -89,6 +64,14 @@ void magic_shard() {
 	printf("closing lbbfd :: %lu\n",lbb_shard.lbb_fd);
 	close(lbb_shard.lbb_fd);
 };
+
+void *__lbb_get(char **cert, char *name, ulong cid) {
+
+	printf("cert :: %s\n", cert[0]);
+	printf("name : %s\n", name);
+	printf("cid = %lu\n", cid);
+	return name;
+}
 
 // int init_generic(struct __pr_generic prg_dcloud){
 //     memset(&prg_dcloud,0,sizeof(prg_dcloud));
@@ -279,85 +262,6 @@ void *___exsptr(char const *__ptr_index) {
 	return (void *)__ptr_index;
 };
 
-/**
- * count spaces and tabs in `word`
-**/
-
-int spaces_and_tabs(char *word){
-	int count=0, x=0;
-	while(word[x]!='\0'){
-		if(word[x]==' '||word[x]=='	'){
-			count+=1;
-		};
-		x+=1;
-	};
-	return count;
-};
-
-char *__stn(char const *word, ulong len) {
-	ulong rc=0, c=0;
-	char temp[len];memset(&temp, 0, sizeof(word));
-	do {
-		if((word[c]==' ')||(word[c]=='	')||(word[c]=='\n')){
-			c+=1;
-		}
-		else {
-			temp[rc]=word[c];
-			rc+=1;c+=1;
-		};
-	}while(c<=len);
-	temp[rc]='\0';
-	return strdup(temp);
-}
-
-/**
- * find `seperator` in `string`
-**/
-
-ulong sep_offset(char const *string,char *seperator) {
-	long x=0,y=0,len_count=0,offset_at=-1;
-	while(string[x]!='\0'){
-		if(string[x]==seperator[y]){
-			while(seperator[y]==string[y+x]){
-				y+=1;
-			};
-			if(seperator[y]=='\0'){
-				offset_at=x;
-			}
-			else{
-				y=0;
-			};
-		};
-		x+=1;
-	};
-	if(offset_at==-1){
-		return 0;
-	};
-	return offset_at;
-};
-
-char *str_b4offset(char const *string, ulong offset) {
-	char temp[offset];
-	memset(&temp,0,sizeof temp);
-	snprintf(temp,offset,"%s",string);
-	return strdup(temp);
-};
-
-char *stn_b4offset(char const *string, ulong offset) {
-
-	return __stn(string, offset);
-};
-
-char *str_a4offset(char const *string, ulong offset){
-	ulong flen=strlen(string)+1;//to offset the offset 
-	if(flen<offset){return NULL;}
-	ulong slen=flen-offset;
-	char temp[slen];
-	memset(&temp,0,sizeof temp);
-	snprintf(temp,slen,"%s",(string+offset));
-	return strdup(temp);
-};
-
 spstr sepstr_offset(char *string, char *seperator) {
 	int x=0,y=0,len_count=0,offset_at=-1;
 	while(string[x]!='\0'){
@@ -502,34 +406,17 @@ int get_kstat(char const *__path, k_stat *kfile) {
 };
 
 
-int get_mstat(char const *__path, m_stat *mfile) {
-	memset(mfile,0,sizeof(struct __m_stat));
-	ulong path_len=strlen(__path);
-	if(path_len>512){
-		#ifdef LOG_ERR
-			printf("path specified is 512+ \n");
-		#endif
-		return -1;
-	}
-	memmove(mfile->m_path,__path,path_len);
-	struct stat temp;
-	memset(&temp,0,sizeof(struct stat));
-	if(stat(mfile->m_path,&temp)!=0){
-		#ifdef LOG_ERR
-			printf("cannot determine `stat` call\n");
-		#endif
-		return -1;
-	};
-	mfile->m_size=fsize_st(&temp);
-	mfile->m_mode=dmode_st(&temp);
-	mfile->m_blksz=iosize_st(&temp);
-	mfile->m_inn=inn_st(&temp);
-	return 0;
-};
+
 
 
 /*******************************************************************/
 
+void log_dpoint(dpoint *dst_point) {
+	printf("dst point :: \n");
+	printf("@%lu\n", dst_point->__index);
+	printf("name :%s\n",dst_point->__name);
+	printf("ref  :%s\n",dst_point->__ref);
+}
 
 void log_kstat(k_stat *kfile) {
 	printf("dcloud : K\n");
@@ -599,8 +486,6 @@ void log_process_schema(ulong p_pid, ulong c_pid) {
 
 
 
-
-
 ulong __get_long_digits(ulong num) {
 	ulong cnum=((ulong)(num/10));
 	ulong res=0;
@@ -640,7 +525,7 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	// create entry in lbb/
 	char fieldname[fn_size+lf_size+1];
 	memset(&fieldname,0,fn_size+lf_size);
-	memmove(fieldname,lfiles[0],lf_size);
+	memmove(fieldname,__lbb_convdir,lf_size);
 	memmove((fieldname+lf_size),__fn,fn_size);
 
 	int lbb_dd=open(fieldname,__lbb_shard_flags,__lbb_public_mode);
