@@ -15,48 +15,48 @@
     
     #define unpacku16 unpack_u_16
     #define unpacku32 unpack_u_32
-    #define unpacku64 unpack_u_64
+    #define unpacku64(x) ((ulong *)unpack_u_64(x))
 
 
 
 
-    void enc_unum( ulong base , uchar *buf , ulong i ) {
-        while ( base > 0 ) {
-            *buf++ = i >> (8*base);
+    void enc_unum(ulong base, uchar *buf, ulong i) {
+        while (base>0) {
+            *buf++=i>>(8*base);
             base--; 
-        }
-        *buf++ = i;
-    }
+        };
+        *buf++=i;
+    };
 
     void enc_brnum( ulong base , ulong roof , uchar *buf , ulong *i ) {
         for(ulong iter=0; roof-iter>0; iter++){
-            while ( base > 0 ) {
+            while (base>0) {
                 *buf++ = i[iter] >> (8*base);
                 base--;
-            }
+            };
             *buf++= i[iter];
-        }
-    }
+        };
+    };
 
     
     // 16 bit integer
     void pack_i_16(uchar*buf , unsigned int i ) {
 
         *buf++ = i >> 8; *buf++ = i;
-    }
+    };
     // 32 bit integer
     void pack_i_32(uchar*buf , unsigned long int i ) {
 
         *buf++ = i>>24; *buf++ = i>>16;
         *buf++ = i>>8;  *buf++ = i;
-    }
+    };
     // 64 bit integer
     void pack_i_64(uchar*buf , unsigned long long int i ) {
         *buf++ = i>>56; *buf++ = i>>48;
         *buf++ = i>>40; *buf++ = i>>32;
         *buf++ = i>>24; *buf++ = i>>16;
         *buf++ = i>>8;  *buf++ = i; 
-    }
+    };
 
     /********************************************************************
     *********************************************************************/
@@ -109,18 +109,40 @@
         return i;
     }
     // 64 bit UNSIGNED
-    unsigned long long int unpack_u_64(uchar*buf ) {
-        return \
-            ( ( unsigned long long int )buf[0]<<56 ) |
-            ( ( unsigned long long int )buf[1]<<48 ) |
-            ( ( unsigned long long int )buf[2]<<40 ) |
-            ( ( unsigned long long int )buf[3]<<32 ) |
-            ( ( unsigned long long int )buf[4]<<24 ) |
-            ( ( unsigned long long int )buf[5]<<16 ) |
-            ( ( unsigned long long int )buf[6]<<8 )  |
-            buf[7];
-    }
+    ulong unpack_u_64(uchar*buf) {
+        ulong __=0,__c=8;
+        do {
+            __|=(((ulong)buf[8-__c])<<((__c-1)*8));
+            --__c;
+        }while(__c>0);
+        #ifdef DEBUG
+            printf("\n");
+            printf("%02x-", (buf[0]));
+            printf("%02x-", (buf[1]));
+            printf("%02x-", (buf[2]));
+            printf("%02x-", (buf[3]));
+            printf("%02x-", (buf[4]));
+            printf("%02x-", (buf[5]));
+            printf("%02x-", (buf[6]));
+            printf("%02x", (buf[7]));
+            printf("=%lu\n", __);
+        #endif
+        return __;
+    };
 
+    pt2s unpack_k512(uchar *buf, ulong div) {
+        memset(up, 0, sizeof(struct _u2st));
+        ulong __=0,_c=div,__c=8;
+        do {
+            do {
+                u[div-_c]|=(((ulong)buf[8-__c])<<((__c-_c)*8));
+                --__c;   
+            }while(__c>0);
+            _c-=1;
+            buf+=8;
+        }while(_c>0);
+        return up;
+    };
 
 
     /*
@@ -160,16 +182,19 @@
 
         for(; *format != '\0'; format++) {
             switch(*format) {
-            case '{':
-                C=(unsigned char)'{';
+
+            case '\n':
+                C=(unsigned char)'\n';
                 size+=1;*buf++=C;
-                break; 
-            case '}':
-                C=(unsigned char)'}';
-                size+=1;*buf++=C;
-                break;                
+                break;
+
             case '_':
                 C=(unsigned char)'_';
+                size+=1;*buf++=C;
+                break;
+           
+            case ':':
+                C=(unsigned char)':';
                 size+=1;*buf++=C;
                 break;
 
@@ -195,7 +220,7 @@
             case 'H': // 16-bit unsigned
                 size += 2;
                 H = va_arg(ap, unsigned int);
-                packi16(buf, H);
+                packu16(buf, H);
                 buf += 2;
                 break;
 
@@ -221,10 +246,17 @@
                 break;
 
             case 'Q': // 64-bit unsigned
-                size += 8;
-                Q = va_arg(ap, unsigned long long int);
-                packu64(buf, Q);
-                buf += 8;
+                Q = va_arg(ap, ulong);
+                if(Q==0) {
+                    packu16(buf, 0);
+                    buf+=2;
+                    size+=2;
+                }
+                else {
+                    packu64(buf, Q);
+                    buf+=8;
+                    size+=8;
+                };
                 break;
 
             case 's': // string
@@ -270,7 +302,14 @@
         unsigned long int *L;
 
         long long int *q;            // 64-bit
-        unsigned long long int *Q;
+        ulong *Q;
+
+
+        struct _u2st U={
+            ._1=0,
+            ._2=0,
+        };
+        pt2s _U=&U;
 
         float *f;                    // floats
         double *d;
@@ -284,10 +323,24 @@
 
         for(; *format != '\0'; format++) {
             switch(*format) {
+
+            case ':': 
+                #ifdef TRACE
+                    printf("Socket:buffer @%u\n", *buf);
+                #endif
+                buf++; break;
+
             case '_':
-                C = va_arg(ap, unsigned char*);
-                *C = *buf++;
-                break;
+                #ifdef TRACE
+                    printf("Parse_buffer @%u\n", *buf);
+                #endif
+                ++buf; break;
+
+            case '\n':
+                #ifdef TRACE
+                    printf("n'buffer @%u\n", *buf);
+                #endif
+                buf++; break;
 
             case 'c': // 8-bit
                 c = va_arg(ap, signed char*);
@@ -309,7 +362,7 @@
 
             case 'H': // 16-bit unsigned
                 H = va_arg(ap, unsigned int*);
-                *H = unpack_u_16(buf);
+                *H = unpacku16(buf);
                 buf += 2;
                 break;
 
@@ -321,7 +374,7 @@
 
             case 'L': // 32-bit unsigned
                 L = va_arg(ap, unsigned long int*);
-                *L = unpack_u_32(buf);
+                *L = unpacku32(buf);
                 buf += 4;
                 break;
 
@@ -332,30 +385,69 @@
                 break;
 
             case 'Q': // 64-bit unsigned
-                Q = va_arg(ap, unsigned long long int*);
-                *Q = unpack_u_64(buf);
-                buf += 8;
+                Q=va_arg(ap, ulong*);
+                *Q=unpack_u_64(buf);
+                buf+=8;
                 break;
+
+            case 'U': // u128 bit unsigned compression
+                if(unpacku16(buf)==0){
+                    printf("u0 = 0\n");
+                    u[0]=0;
+                    buf+=2;
+                }
+                else {
+                    u[0]=unpack_u_64(buf);
+                    buf+=8;
+                };
+                ++buf;
+                if(unpacku16(buf)==0){
+                    printf("u1 = 0\n");
+                    u[1]=0;
+                    buf+=2;
+                }
+                else {
+                    u[1]=unpack_u_64(buf);  
+                    buf+=8;
+                };
+                ++buf;
+                if(unpacku16(buf)==0){
+                    printf("u2 = 0\n");
+                    u[2]=0;
+                    buf+=2;
+                }
+                else {
+                    u[2]=unpack_u_64(buf);  
+                    buf+=8;
+                };
+                ++buf;
+                #ifdef DEBUG
+                    printf("U0 : %lu\t", u[0]);
+                    printf("U1 : %lu\t", u[1]);
+                    printf("U2 : %lu\n", u[2]);
+                #endif
+                break;
+
 
             case 's': // string
                 s = va_arg(ap, char*);
                 len = unpacku32(buf);
                 buf += 4;
-                if (maxstrlen > 0 && len >= maxstrlen) count = maxstrlen - 1;
-                else count = len;
+                printf("length is = %u\n", len);
+                count=len;
                 memcpy(s, buf, count);
                 s[count] = '\0';
-                buf += len;
+                printf("s : %s\n", s);
+                buf+=len;
                 break;
 
             default:
                 if (isdigit(*format)) { // track max str len
                     maxstrlen = maxstrlen * 10 + (*format-'0');
-                }
-            }
-
+                };
+            };
             if (!isdigit(*format)) maxstrlen = 0;
-        }
+        };
 
         va_end(ap);
     }

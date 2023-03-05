@@ -6,6 +6,7 @@
 	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
 	#define ATP_PORT "9999" // The common ATP port
 	#define ATP_BACKLOG 10 // instances of the same id
+	#define arr_size(x) ((ulong)(sizeof(x)/sizeof(x[0])))
 
 	#define __ATP_ENV "="
 	#define __ATP_KEY ":"
@@ -14,46 +15,6 @@
 	#define __ATP_A4 "localhost"
 	#define __ATP_A6 "::1"
 
-	enum __atypes_ {
-	    at4=4,
-	    at6=6
-	};
-
-	enum __stypes {
-	    __sAF_INET=2,
-	    __sAF_INET6=30
-	};
-
-	enum __step_size {
-		__step_point=8,
-		__step_addr=16,
-		__step_sok=128,
-		__step_start=256,
-		__step_mor=512
-	};
-	typedef enum __step_size stp_size;
-
-	struct __st_points {
-		ulong __index;
-		char const *__ref;
-		char const *__name;
-	};
-	typedef struct __st_points dpoint;
-
-	struct __arc_t {
-		ulong __pid;
-		int __fork;
-		ulong __next;
-		dpoint **__points;
-	};
-	typedef struct __arc_t arc_t;
-
-	struct __sok_t {
-	    ulong aip_sockfd;
-	    ulong aip_socklen;
-	    char aip_socket[128];
-	};
-	typedef struct __sok_t aipsock;
 
 	static arc_t __arc;
 	static struct __sok_t __sok;
@@ -93,32 +54,10 @@
 	#define CALL_NSUC(x) x==(ulong)-1?1:0
 	#define CALL_NEXT(x) x<(ulong)-1?x>(ulong)1?1:x:0
 
-	#define LOG_LEVEL 2
 	
-
-	enum __types_f {
-		FLD_STORAGE=0,
-		F_FIFO_LD=1,
-		FL_LOCK_D=2,
-	};
-
-	typedef enum __types_f type_f;
-
 	int __file_att(char **__args,...);
 	int __lock_att();
 	int __fifo_att(char **__args,...);
-
-	#define __ap_att(t,...) do{\
-	switch(t) {\
-	case __STORAGE__:\
-		__file_att(__VA_ARGS__);break;\
-	case __FIFO__:\
-		__fifo_att(##__VA_ARGS__,__VA_ARGS__);break;\
-	case __LOCK__:\
-		__lock_att(#__VA_ARGS__);break;\
-	}\
-	}while(1!=1)
-
 
 	void *__arc_stpoints(ulong __stindex, char const *__stname);
 	void *__arcstp(stp_size __stpsize);
@@ -128,7 +67,11 @@
 	void *__arcstart(void *__arc);
 	int mor(void *args);
 	int les(void *args);
-
+	char *str_a4offset(char const *__string, ulong __offset);
+	char *str_b4offset(char const *__string, ulong __offset);
+	ulong sep_offset(char const *__string, char *__seperator);
+	int __stres(char const *__fpath);
+	int get_mstat(char const *__fpath, m_stat *mst);
 
 	#define __ATP__H 1
 #endif

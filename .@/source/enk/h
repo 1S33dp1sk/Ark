@@ -6,6 +6,7 @@
     #include <stdint.h>
     #include "utypes.h"
     #include <unistd.h>
+    #include <stdlib.h>
 
     unsigned int pack(uchar *buf,char const *fmt,...);
 
@@ -24,6 +25,9 @@
     void pack_i_32(uchar *buf,unsigned long int i);
     void pack_i_64(uchar *buf,unsigned long long int i);
    
+    #define len_strze(x) (((ulong)x)*(sizeof(char)))
+    #define len_ustrze(x) (((ulong)x)*(sizeof(uchar)))
+
 
     //unpacking
     uns unpack_u_16(uchar *buf);
@@ -31,7 +35,7 @@
     #define unpacki16 unpack_i_16
     unsigned long int unpack_u_32(uchar *buf);
     long int unpack_i_32(uchar *buf);
-    unsigned long long int unpack_u_64(uchar *buf);
+    ulong unpack_u_64(uchar *buf);
     long long int unpack_i_64(uchar *buf);
 
     #define __ENK__H 1

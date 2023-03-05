@@ -53,21 +53,15 @@
 #define CALL_NEXT(x) x<(ulong)-1?x>(ulong)1?1:x:0
 
 
-#define shd_fd fld_shard(lbb_shard)
-#define shd_key pth_shard(lbb_shard)
-#define shd_sze sze_shard(lbb_shard)
-#define shd_io ioz_shard(lbb_shard)
-
-static const char *__lbb_indexfile = "@charms/.lbb\0";
-static const char *__lbb_convdir = "@charms/lbb\0";
-static const char *__lbb_locking = "@charms/lock\0";
-
-
 #define pth_shard(x) ((char *)((x.lbb_mst).m_path))
 #define fld_shard(x) ((ulong)(x.lbb_fd))
 #define sze_shard(x) ((ulong)((x.lbb_mst).m_size))
 #define ioz_shard(x) ((ulong)((x.lbb_mst).m_blksz))
 
+#define shd_fd fld_shard(lbb_shard)
+#define shd_key pth_shard(lbb_shard)
+#define shd_sze sze_shard(lbb_shard)
+#define shd_io ioz_shard(lbb_shard)
 
 unsigned int pack(uchar *buf,char const *fmt,...);
 
@@ -121,24 +115,6 @@ struct __k_stat {
 typedef struct __k_stat k_stat;
 
 /**
- * M-structure {a.k.a mounted} **
-								*/
-struct __m_stat {
-	ulong m_size;
-	ulong m_mode;
-	ulong m_blksz;
-	ulong m_inn;
-	char m_path[512];
-};
-
-
-typedef struct __m_stat m_stat;
-void *__mstat__(m_stat st) {
-
-	return memset(&st, 0, sizeof(m_stat));
-};
-
-/**
  * S-structure {a.k.a socket} **
 							   */
 enum __sterm {
@@ -157,7 +133,6 @@ struct __s_stat {
 };
 
 typedef struct __s_stat s_stat;
-
 
 struct __contents {
     ulong len;
@@ -193,10 +168,14 @@ static struct __lbb_shard lbb_shard;
 static struct __lbb_shard *l_shard=&lbb_shard;
 static m_stat *lbb_mstat = &(lbb_shard.lbb_mst);
 
-
 #define checkef_file ((ulong)__stres(__lbb_indexfile))
 #define checkef_dir ((ulong)__stres(__lbb_convdir))
 #define checkef_lo ((ulong)__stres(__lbb_locking))
+
+#define inodenum ((ulong)(lbb_mstat->m_inn))
+#define ifilesize ((ulong)(lbb_mstat->m_size))
+#define idmode ((ulong)(lbb_mstat->m_mode))
+#define iblkio ((ulong)(lbb_mstat->m_blk))
 
 #define __NOT_FOUND "Not-Found \xE2\x9C\x95"
 #define __FOUND "Found \xE2\x9C\x93"
@@ -221,17 +200,14 @@ memset(lbb_mstat, 0, sizeof(struct __m_stat));\
 memset(l_shard,0,sizeof(struct __lbb_shard));\
 printf("getting shard .:%s:. \n",__lbb_indexfile);\
 get_mstat(__lbb_indexfile,lbb_mstat);\
-INDEX_SRT(NULL);\
+if(!checkef_file){INDEXER(NULL);}\
+	else{INDEXER("TheBook");};\
 }while(1!=1);
 
 #define __LBB_WRITER__ do {\
 memset(l_shard,0,sizeof(struct __lbb_shard));\
 w_start_ap();\
 }while(1!=1);
-
-
-
-
 
 struct __pr_generic {
     char const *path;
@@ -241,31 +217,22 @@ struct __pr_generic {
 
 typedef struct __pr_generic prg;
 
-
-
-#define inodenum ((ulong)(lbb_mstat->m_inn))
-#define ifilesize ((ulong)(lbb_mstat->m_size))
-#define idmode ((ulong)(lbb_mstat->m_mode))
-#define iblkio ((ulong)(lbb_mstat->m_blk))
-
-
 int __stres(char const* cpath);
 uns __8sz(uns __);
-uns __dmode(char *cpath);
-ulong __fsize(char *fpath);
-ulong __iosize(char *fpath);
-void *__statusof(char const *__file);
-int __ap_fifo(char const *__path);
+uns __dmode(char const *__cpath);
+ulong __fsize(char const *__cpath);
+ulong __iosize(char const *__cpath);
+void *__statusof(char const *__cpath);
+int __ap_fifo(char const *__cpath);
 
 
 int lbb(char const *__cpath, ulong __lockfd);
 ulong write_book(char *__contents, ulong __c_size);
 ulong start_book();
 ulong lbb_print(char *k__addr);
-char *read_book();
 ulong reset_book();
+char *read_book();
 void lbb_close();
-
 
 int spaces_and_tabs(char *__string);
 char *str_b4offset(char const *__string, ulong __offset);
@@ -288,7 +255,6 @@ void log_ptrdx(struct __ptrdx *ptrdx);
 void log_esptr(ulong *esptr);
 void log_process_ids(ulong ppid, ulong cpid);
 void log_process_schema(ulong ppid, ulong cpid);
-
 
 
 #define __lbb_buffer_size 512
