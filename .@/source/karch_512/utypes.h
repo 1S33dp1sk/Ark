@@ -32,14 +32,18 @@
 	typedef enum __types_f type_f;
 
 	enum __atypes_ {
+		atp='0',
 	    at4=4,
-	    at6=6
+	    at6=6,
+		ate='e',
 	};
+	typedef enum __atypes_ at_t;
 
 	enum __stypes {
 	    __sAF_INET=2,
 	    __sAF_INET6=30
 	};
+	typedef enum __stypes sAF_type;
 
 	enum __step_size {
 		__step_point=8,
@@ -90,7 +94,6 @@
 		ulong d_count;
 		ulong checksum;
 	};
-
 	typedef struct __ixr_h ixr_h;
 
 
@@ -119,11 +122,11 @@
       
         
         __intrprt__,
-        ipr_t=__intrprt__+3, // < i >
+        ipr_t=__intrprt__+1, // < i >
       
         
         __csok__,
-        sok_t=__csok__+3, // @s
+        sok_t=__csok__+1, // @s
       
         
         __call__,
@@ -136,9 +139,8 @@
 		__refs=8, //references
 		__intr=64, //interpreters
 		__payl=512, //payloads,
-		__lbb
+		__lbb //all others e.g binaries
 	};
-
 	typedef enum __fmt_cats cfmt;
 
 	struct __dpoint_indexes {
@@ -146,7 +148,6 @@
 	    ulong filesize;
 	    dpoint **idxrs;
 	};
-
 	typedef struct __dpoint_indicies dices;
 
 	// supported file types
@@ -155,10 +156,10 @@
 		{a.k.a} FIFO **/
 		    f_reader=1,
 		/**
-		{a.k.a} PIPE **/
+		{a.k.a} C.PIPE **/
 		    f_socket=2,
 		/**
-		{a.k.a} FILE **/
+		{a.k.a} B.FILE **/
 		    f_field=3,
 		/**
 		{a.k.a} DIRECTORY **/
@@ -185,7 +186,6 @@
 		};
 	typedef enum __ftypes__size fld_sz;
 
-	
 
 static const char *__lbb_indexfile = "@charms/lbb/.lbb\0";
 static const char *__lbb_convdir = "@charms/lbb\0";
@@ -193,10 +193,13 @@ static const char *__lbb_locking = "@charms/lock\0";
 
 	/**
 	 * 
-	 * can modify a call to similar to `autoreconf` in `conifgure.ac` to iterate 
-	 * something like AC_DEFINE([__uX],[__u5],[defines a struct of 8**5])
-	 * and create a __uX where `X` is any number
-	 * for any base 8 num, obtaining the `__u64` defined by linux kernel etc.
+	 * can modify a call or similar, to `conifgure.ac` usign `autoreconf` to iterate 
+	 * e.g :: AC_DEFINE([__uX],[__u5],[defines a struct of 8**5]).
+	 * for any base 8-num a simple __u8 yeilds the `__u64` defined by linux kernel.
+	 * logically, to create a __uX structure where `X` is any number. where the resulting
+	 * struct can be computed as X<<3
+	 * Mathematically, this is the free base number, a dynamic definition instead of local constant which 
+	 * causes restricitions to the octal, hexa, deci, etx. numbering systems.
 	 * 
 	**/
 		static ulong __cindex;

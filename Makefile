@@ -79,6 +79,7 @@ clean: __clean_charms__
 	if [ -f d-cld ]; then rm -rf d-cld; fi
 	if [ -f d-lbb ]; then rm -rf d-lbb; fi
 	if [ -f d-pts ]; then rm -rf d-pts; fi
+	if [ -f d-prg ]; then rm -rf d-prg; fi
 
 
 rebuild: clean charms 
@@ -118,8 +119,7 @@ __charms_dirs__:
 	if [ ! -d ${@charms} ]; then mkdir ${@charms}; fi;
 	if [ ! -d ${@3c} ]; then mkdir ${@3c}; fi
 	if [ ! -d ${lbb@charms} ]; then mkdir ${lbb@charms}; fi
-	cp ${__tst}/index.ext ${lbb@charms}
-	cp ${__tst}/api.d .
+# 	cp ${__tst}/api.d .
 ###### REMOVE CP in production from `__charms__dirs__`
 
 __ccc_dirs__:
@@ -162,6 +162,7 @@ lbb_atp_ml:
 	@printf "\n{{{ccc}}}\n"
 	if [ ! -d ${@3c} ]; then mkdir ${@3c}; fi
 	cp ${__src}/d_*.c ${@3c}
+	cp ${__src}/*.d ${@3c}
 
 #compiled
 @2c:=${@3c}/2c
@@ -180,12 +181,15 @@ lbb_atp_ml:
 	cc ${@3c}/d_cld.c -o ${@1c}/d-cld${@arch} ${atherlib}
 	cc ${@3c}/d_lbb.c -o ${@1c}/d-lbb${@arch} ${atherlib}
 	cc ${@3c}/d_pts.c -o ${@1c}/d-pts${@arch} ${atherlib}
+	cc ${@3c}/d_prg.c -o ${@1c}/d-prg${@arch} ${atherlib}
+# 	cc ${@3c}/api.c -o ${@1c}/d-prg${@arch} ${atherlib}
 #tests
 3c_out:
 	cp ${@1c}/d-atp${@arch} d-atp
 	cp ${@1c}/d-cld${@arch} d-cld
 	cp ${@1c}/d-lbb${@arch} d-lbb
 	cp ${@1c}/d-pts${@arch} d-pts
+	cp ${@1c}/d-prg${@arch} d-prg
 
 build_3c: 3c 2c 1c 3c_out
 
@@ -195,8 +199,6 @@ test_karch:
 test_cloud:
 	./d-cloud
 
-test_field:
-	./runid ${__tst}/index.ext
 
 
 #####################################

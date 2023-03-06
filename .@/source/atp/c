@@ -5,45 +5,6 @@
 #include "atp.h"
 #endif
 
-#define OUTPUT 1
-
-char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
-char const *fhashof(unsigned level, char const *__tohash);
-ulong str_rwings(char const *string);
-unsigned int pack(uchar *bufin, char const *buffmt, ...);
-
-#define __AT_DEFINED '@'
-#if __AT_DEFINED!=64
-	#define AT_DEFINED 64
-#else
-	#define AT_DEFINED __AT_DEFINED
-#endif
-
-#define __P_LEN 8
-#define __I_LEN 64
-#define __A_LEN 512
-#define __API_LEN (__P_LEN+__I_LEN+__A_LEN)
-
-#define __PASS_MAX_C 24
-#define __PASS_MID_C 16
-#define __PASS_MIN_C 8
-
-#define __read_hash__ ((char const *)hashof(0, "read\0", 4))
-#define __write_hash__ ((char const *)hashof(0, "write\0", 4))
-#define __execute_hash__ ((char const *)hashof(0, "execute\0", 4))
-#define __connect_hash__ ((char const *)hashof(0, "connect\0", 4))
-#define __send_hash__ ((char const *)hashof(0, "send\0", 4))
-#define __listen_hash__ ((char const *)hashof(0, "listen\0", 4))
-
-#define d_atpointer "@193rfzd193<python3>{ print('hello world') }\0"
-#define d_atpoint "@charms/lbb/193rfzd193\0"
-#define d_atbase "@charms/\0"
-#define d_atlbb "@charms/.lbb\0"
-#define __LBB_BASE_LEN str_rwings(__lbb_convdir)
-
-
-
-
 
 ulong str_rwings(char const *__str) {
 	ulong temp=0;
@@ -66,7 +27,6 @@ int __stres(char const *__cpath){
 /**
  * count spaces and tabs in `word`
 **/
-
 int spaces_and_tabs(char *word){
 	int count=0, x=0;
 	while(word[x]!='\0'){
@@ -95,9 +55,8 @@ char *__stn(char const *word, ulong len) {
 };
 
 /**
- * find `seperator` in `string`
+ * find the first `seperator` in `string`
 **/
-
 ulong sep_offset(char const *string,char *seperator) {
 	long x=0,y=0,len_count=0,offset_at=-1;
 	while(string[x]!='\0'){
@@ -171,8 +130,6 @@ void *__statusof(char const *__file) {
     return NULL;
 };
 
-
-
 void *__mstat__(m_stat st) {
 
 	return memset(&st, 0, sizeof(m_stat));
@@ -202,67 +159,6 @@ int get_mstat(char const *__path, m_stat *mfile) {
 	mfile->m_inn=inn_st(&temp);
 	return 0;
 };
-
-enum __p_types {
-	__nul,
-	__unk,
-	__ptr,
-	__pnt
-};
-typedef enum __p_types p_type;
-
-struct __into {
-	char const *argument;
-	p_type arg_t;
-};
-
-typedef struct __into into_st;
-
-void *__into__(into_st st) {
-
-	return memset(&st, 0, sizeof(into_st));
-};
-
-#define i_argument(i) (i->argument)
-#define i_ptype(i) (i->arg_t)
-
-struct __in_pia {
-	char pointer[__P_LEN];
-	char interpreter[__I_LEN];
-	char entry_p[__P_LEN];
-	char args[__A_LEN];
-};
-typedef struct __in_pia pia_st;
-
-void *__pia__(pia_st st) {
-
-	return memset(&st, 0, sizeof(pia_st));
-};
-#define __p_args(p) ((void *)(&(p.args)))
-#define p_args(p) ((char const *)(p.args))
-#define _p_args_len(p) ((ulong)(str_rwings(p_args(p))))
-#define pst_args(p) ((char const *)(p->args))
-#define pst_args_len(p) ((ulong)str_rwings(pst_args(p)))
-
-#define __p_pointer(p) ((void *)(&(p.pointer)))
-#define p_pointer(p) ((char const *)((p.pointer)))
-#define _p_pointer_len(p) ((ulong)(str_rwings(p_pointer(p))))
-
-#define __p_interpreter(p) ((void *)(&(p.interpreter)))
-#define p_interpreter(p) ((char const *)(p.interpreter))
-#define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
-
-#define _p_pointerinterpreter_len(p) (_p_interpreter_len(p)+_p_pointer_len(p))
-
-#define socket_fd(x) (ulong)(x.aip_sockfd)
-#define sock_fd(x) (ulong)(x->aip_sockfd)
-#define socket_len(x) (ulong)(x.aip_socklen)
-#define sock_len(x) (ulong)(x->aip_socklen)
-#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
-
-#define srwings(x) str_rwings(x)
-
-#define d_atbase_rwings srwings(d_atbase)
 
 p_type __decode_p(into_st *into) {
 	char const *point_buffer=into->argument;
@@ -312,7 +208,6 @@ char const *__pia_http(pia_st *pst) {
 	return strdup(__);
 };
 
-
 /**
  * d-lbb GET some_handler||path/to
  * 
@@ -320,19 +215,21 @@ char const *__pia_http(pia_st *pst) {
  * 
  * d-lbb text_out __TEXT
  */ 
-
 lbb_t get_lbb_type(char const *bufin) {
 	/**
 	 * payloads must start with the actual 
-	 * address in lbb
+	 * numbered-address in lbb
 	 */
 	if((*bufin>=0x30)&&(*bufin<=0x39)){
 		return __payld_entr;
 	}
 	/**
-	 * protocol calls must be used as in the
-	 * standard pre-defined by the https
-	 * GET/POST/LBB/ATP
+	 * protocol calls are always capitalized
+	 * including the standard http ones
+	 * GET & POST
+	 * 
+	 * and new ones defined by ATP like
+	 * LBB & ATP & ATM ...
 	 */
 	else if((*bufin>=0x41)&&(*bufin<=0x5a)){
 		return __proto_call;
@@ -340,8 +237,8 @@ lbb_t get_lbb_type(char const *bufin) {
 	/**
 	 * interpreters are called by using the entire
 	 * suite of the call, so an interpreter doesn't
-	 * have to be a specific call, could be a prg
-	 * entry point.
+	 * have to be a specific call, could be a * 
+	 * such as a prg, or a prg entry point.
 	 */
 	else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
 		return __intrp_decl;
@@ -351,7 +248,6 @@ lbb_t get_lbb_type(char const *bufin) {
 	 */
 	return __unknown;
 };
-
 
 int __check_allowed(char const *__){ 
 	int __nallowed[]={'\\', '/', '.'};
@@ -590,8 +486,7 @@ int __point_run() {
 	return 0;
 };
 
-
-enum __atypes_ stype_to_atype(enum __stypes __stype) {
+at_t stype_to_atype(sAF_type __stype) {
 	switch(__stype) {
 		case __sAF_INET: return at4;
 		case __sAF_INET6: return at6;
@@ -599,7 +494,7 @@ enum __atypes_ stype_to_atype(enum __stypes __stype) {
 	}
 };
 
-enum __stypes a2s_type(enum __atypes_ _atype) {
+sAF_type a2s_type(at_t _atype) {
 	switch(_atype) {
 		case at4: return __sAF_INET;
 		case at6: return __sAF_INET6;
@@ -614,7 +509,7 @@ struct __socket_address {
 	char ascii_addr[INET6_ADDRSTRLEN];
 };
 
-typedef struct __socket_address aip_saddr;
+typedef struct __socket_address aip_addr;
 
 void _socket_free_fd(struct __sok_t *sok_t) {
 	close(sok_t->aip_sockfd);
@@ -805,7 +700,6 @@ void ___associate(void *__buffer) {
 	memset(&__nifty,0,sizeof(struct __buffin));
 	__nifty._org=(char *)__buffer;
 	init_nifty(&__nifty);
-
 };
 
 int __incheck(char c){   
@@ -855,7 +749,6 @@ void sock_errs(){
 	printf("value of EBADF = %d\n", EBADF);
 	printf("value of ENOTSOCK = %d\n", ENOTSOCK);
 };
-
 
 void __ellrun(ulong __fd) {
 
@@ -958,7 +851,6 @@ void __ellget(ulong __sockfd, char *reusable, ulong reu_size) {
 	#if DEBUG
 		printf("client: received '%s'\n",reusable);
 	#endif
-
 };
 
 void __arcfork(){
@@ -985,7 +877,7 @@ struct sockaddr *__aipsock_addr_sa(){
 	return sock_aip_to_sa(&__sok);
 };
 
-aip_saddr __aipsock_addr(){
+aip_addr __aipsock_addr(){
 	return __sock_addr(__aipsock_addr_sa());
 };
 
@@ -1019,7 +911,6 @@ void free_args() {
 	free_arcs();
 	free_sok();
 };
-
 
 int mor(void *args) {
 	printf("d-cloud : atp {mor} :: %p\n", args);
@@ -1081,7 +972,6 @@ int mor(void *args) {
 	return 0;
 };
 
-
 int les(void *args) {
 	printf("d-cloud : atp {les}\n");
 
@@ -1129,41 +1019,41 @@ int les(void *args) {
 
 	return 0;
 };
-#define ARG_DEBUG 1
+
 void *__arcstp(stp_size stsize){
 	void *stp;
 	if(stsize<=__step_point) {
 		__arcpid();
-		#ifdef ARG_DEBUG
+		#ifdef DEBUG
 			printf("{ ARC } => pid: \n");
 		#endif            
 		stp=malloc(0x8);
-		#ifdef ARG_DEBUG
+		#ifdef DEBUG
 			printf("stp @%p", stp);
 		#endif
 	}
 	else if (stsize<=__step_addr) {
 		__arcfork();
-		#ifdef ARG_DEBUG
+		#ifdef DEBUG
 			printf("{ ARC } => fork: \n");
 		#endif
 		return __arcstp(6);
 	}
 	else if(stsize==__step_sok) {
 		__arcsok();
-		#ifdef ARG_DEBUG
+		#ifdef DEBUG
 			printf("{ ARC } => socket: \n");
 		#endif
 		return __arcstp(6);
 	}
 	else if(stsize==__step_start) {
-		#ifdef ARG_DEBUG
+		#ifdef DEBUG
 			printf("ARC : listen :: \n");
 		#endif
 		return __arcstart(__arcstp(6));
 	}
 	else if(stsize==__step_mor) {
-		#ifdef ARG_DEBUG
+		#ifdef DEBUG
 			printf("ARC : send :: \n");
 		#endif
 		 mor(__arcstp(6));
@@ -1336,7 +1226,6 @@ int __read_ft(char *dbuffer, ulong dbuf_len) {
     return 0;
 };
 
-
 unsigned get_hlevel(char *href) {
     ulong c=str_rwings(href);
     unsigned res=((c)>>3);
@@ -1354,13 +1243,12 @@ char const *__kaddress(char const *__hash) {
     case 8:  temp[1]='C'; break; // command 
     case 16: temp[1]='I'; break; // interpreter
     case 32: temp[1]='P'; break; // payload
-    default: temp[1]='K'; break; // K-address
-    }
+    default: temp[1]='-'; break; // K-address
+    };
     memmove((temp+2), __hash, __len);
     temp[__len]='\0';
     return (char const *)strdup(temp);
 };
-
 
 char const *kaddress(char const *__name, lbb_t __type) {
 	ulong __len=str_rwings(__name);
@@ -1375,40 +1263,5 @@ char const *kaddress(char const *__name, lbb_t __type) {
     return NULL;
 };
 
-dpoint *__stpoint(char const *st_name, char const *st_val) {
-    if(st_name==NULL){
-        return NULL;
-    };
-    ulong __len=str_rwings(st_name);
-    dpoint *d_stpoint=(dpoint *)malloc(sizeof(dpoint));
-
-    if(st_name[0]!='k') {
-    	d_stpoint->__name=st_name;
-		d_stpoint->__ref=kaddress(st_val, get_lbb_type(st_name));
-		d_stpoint->__index=__cindex;
-		
-    }
-    else {
-      switch(st_name[1]){
-	    case 'C': break;
-	    case 'I': break;
-	    case 'P': break;
-	    case 'K': break;
-	    default: break;
-	    }
-	    return NULL;
-    };
-    return d_stpoint;
-};
 
 
-
-// __TEXT(Hello World); //valid in ATP
-#ifdef __AT_PROTOCOL__
-int main(int argc, char **argv) {
-	spec var;
-	spec_set_type(&var, KV);
-	OUT_ASCII(0,var.g_delim);
-	return 0;
-};
-#endif

@@ -14,7 +14,106 @@
 	#define __ATP_AE "Aether(cid)"
 	#define __ATP_A4 "localhost"
 	#define __ATP_A6 "::1"
+	
+	#define __D_CLOUD return 0;
 
+	#define OUTPUT 1
+
+	#define __AT_DEFINED '@'
+	#if __AT_DEFINED!=64
+		#define AT_DEFINED 64
+	#else
+		#define AT_DEFINED __AT_DEFINED
+	#endif
+
+	#define __P_LEN 8
+	#define __I_LEN 64
+	#define __A_LEN 512
+	#define __API_LEN (__P_LEN+__I_LEN+__A_LEN)
+
+	#define __PASS_MAX_C 24
+	#define __PASS_MID_C 16
+	#define __PASS_MIN_C 8
+
+	#define __read_hash__ ((char const *)hashof(0, "read\0", 4))
+	#define __write_hash__ ((char const *)hashof(0, "write\0", 4))
+	#define __execute_hash__ ((char const *)hashof(0, "execute\0", 4))
+	#define __connect_hash__ ((char const *)hashof(0, "connect\0", 4))
+	#define __send_hash__ ((char const *)hashof(0, "send\0", 4))
+	#define __listen_hash__ ((char const *)hashof(0, "listen\0", 4))
+
+	#define d_atpointer "@193rfzd193<python3>{ print('hello world') }\0"
+	#define d_atpoint "@charms/lbb/193rfzd193\0"
+	#define d_atbase "@charms/\0"
+	#define d_atlbb "@charms/.lbb\0"
+	#define __LBB_BASE_LEN str_rwings(__lbb_convdir)
+
+
+	char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
+	char const *fhashof(unsigned level, char const *__tohash);
+	ulong str_rwings(char const *string);
+	unsigned int pack(uchar *bufin, char const *buffmt, ...);
+
+	enum __p_types {
+		__nul,
+		__unk,
+		__ptr,
+		__pnt
+	};
+	typedef enum __p_types p_type;
+
+	struct __into {
+		char const *argument;
+		p_type arg_t;
+	};
+
+	typedef struct __into into_st;
+
+	void *__into__(into_st st) {
+
+		return memset(&st, 0, sizeof(into_st));
+	};
+
+	#define i_argument(i) (i->argument)
+	#define i_ptype(i) (i->arg_t)
+
+	struct __in_pia {
+		char pointer[__P_LEN];
+		char interpreter[__I_LEN];
+		char entry_p[__P_LEN];
+		char args[__A_LEN];
+	};
+	typedef struct __in_pia pia_st;
+
+	void *__pia__(pia_st st) {
+
+		return memset(&st, 0, sizeof(pia_st));
+	};
+	#define __p_args(p) ((void *)(&(p.args)))
+	#define p_args(p) ((char const *)(p.args))
+	#define _p_args_len(p) ((ulong)(str_rwings(p_args(p))))
+	#define pst_args(p) ((char const *)(p->args))
+	#define pst_args_len(p) ((ulong)str_rwings(pst_args(p)))
+
+	#define __p_pointer(p) ((void *)(&(p.pointer)))
+	#define p_pointer(p) ((char const *)((p.pointer)))
+	#define _p_pointer_len(p) ((ulong)(str_rwings(p_pointer(p))))
+
+	#define __p_interpreter(p) ((void *)(&(p.interpreter)))
+	#define p_interpreter(p) ((char const *)(p.interpreter))
+	#define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
+
+	#define _p_pointerinterpreter_len(p) (_p_interpreter_len(p)+_p_pointer_len(p))
+
+	#define socket_fd(x) (ulong)(x.aip_sockfd)
+	#define sock_fd(x) (ulong)(x->aip_sockfd)
+	#define socket_len(x) (ulong)(x.aip_socklen)
+	#define sock_len(x) (ulong)(x->aip_socklen)
+	#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
+
+	#define srwings(x) str_rwings(x)
+
+	#define d_atbase_rwings srwings(d_atbase)
 
 	static arc_t __arc;
 	static struct __sok_t __sok;

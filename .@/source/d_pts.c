@@ -15,9 +15,7 @@
 #endif
 
 int main(int argc, char **argv) {
-#define __ARGC__ argc
-#define __ARGV__ *argv
-
+    __LBB_START__
     m_stat mst;memset(&mst, 0, sizeof(m_stat));
     get_mstat("api.d", &mst);
     log_mstat(&mst);

@@ -67,7 +67,7 @@ unsigned int pack(uchar *buf,char const *fmt,...);
 
 #define PACK_IN(fld,siz,fmt,...) do {\
     uchar __[siz];memset(&__,0,siz);\
-    ulong sz=(ulong)pack(__,fmt,##__VA_ARGS__);\
+    ulong sz=(ulong)pack(__,fmt,#__VA_ARGS__);\
     write(fld,__,sz);\
 } while (1!=1);
 
@@ -195,14 +195,43 @@ if(!checkef_lo) {__ap_fifo(__lbb_locking);};\
 r_start_ap();\
 }while(1!=1);
 
-#define __LBB_START__ do{\
+
+#define __dPRG int main(int argc, char const*argv[]) 
+
+
+#define __LBB__(rx,vx) {\
 memset(lbb_mstat, 0, sizeof(struct __m_stat));\
 memset(l_shard,0,sizeof(struct __lbb_shard));\
 printf("getting shard .:%s:. \n",__lbb_indexfile);\
 get_mstat(__lbb_indexfile,lbb_mstat);\
 if(!checkef_file){INDEXER(NULL);}\
-	else{INDEXER("TheBook");};\
-}while(1!=1);
+if(vx==NULL){R_INDEXER(rx,&rx);}\
+else {R_INDEXER(rx,vx);};\
+}
+
+#define __ARGS__ {\
+#define __ARGC__ argc\
+#define __ARGV__ **argv\
+	char *__ref_out;
+
+
+#define __dRUN(x,a) __dPRG __ARGS__ &x 
+
+#define __dPER (1!=1);
+
+#define __dLBB(x) __LBB_START__(&x,#x)
+
+#define d(...) __dLBB(#__VA_ARGS__)
+
+
+#define __LBB_START__ do {\
+memset(lbb_mstat, 0, sizeof(struct __m_stat));\
+memset(l_shard,0,sizeof(struct __lbb_shard));\
+printf("getting shard .:%s:. \n",__lbb_indexfile);\
+get_mstat(__lbb_indexfile,lbb_mstat);\
+if(!checkef_file){INDEXER(NULL);}\
+INDEXER("TheBook");\
+}while __dPER;
 
 #define __LBB_WRITER__ do {\
 memset(l_shard,0,sizeof(struct __lbb_shard));\
