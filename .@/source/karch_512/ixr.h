@@ -20,8 +20,6 @@ The indexer
 	#define ustr_wsize(x) (str_rwings(x)*sizeof(uchar))
     #define KV_FORMAT(...) __generic_fmt(__key_value, ##__VA_ARGS__) 
 
-	
-
 	static ulong __cindex=0;
 	#define IDXR (const ulong) __cindex
 	static ulong __ixr_fd=0x228;
@@ -38,6 +36,7 @@ The indexer
 	#define stres(x) __stres(x)
 
 	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
+	#define R_INDEXER(x,y) refer_index(x,y,#x)
 	#define INDEX_AT (ulong)IDXR
 	#define INDEX_END(x) return __set_next(x);
 
@@ -61,7 +60,7 @@ The indexer
 		if(pack_sz>0){write(fd,__,pack_sz);}\
 	}while(1!=1)
 
-	#define Display(...) OUT_ASCII(0,#__VA_ARGS__);return 0;
+	#define Display(...) printf("%s\n",##__VA_ARGS__);
 
 	#define __ARGS(...) #__VA_ARGS__
 

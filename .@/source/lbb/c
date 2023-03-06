@@ -9,20 +9,32 @@ little black book
 #ifndef __lbb_name
 	#define __lbb_name "linked binary book"
 
+
 void unpack(uchar *buf,char const *fmt,...);
 
 
-
+// try to create a { SHARED } file
+// get the mounted status of said file
+// load into `lbb_shard`
 int __ap_file(char const *__path){
 	int __fd=open(__path,__lbb_shard_flags);
 	if(__fd==-1){
+		#ifdef LOG_ERR
+			printf("cannot create share file, %s\n", __path);
+		#endif
 		return __fd;
 	}
 	lbb_shard.lbb_fd=__fd;
-
+	if(get_mstat(__path, lbb_mstat)) {
+		#ifdef LOG_ERR
+			printf("cannot get the mounted status of file %s\n", __path);
+		#endif
+		return -1;
+	};
 	return __fd;
 };
 
+// try to create an FIFO engine 
 int __ap_fifo(char const *__path){
 	if(mkfifo(__path,__lbb_mode__)==0){
 		return 1;
@@ -30,68 +42,64 @@ int __ap_fifo(char const *__path){
 	return -1;
 };
 
+// try to open a previously created
+// engine as a writer, this can be any
+// socket connections or commands , etc..
 ulong __ap_writer() {
+	ulong retres;
 	int __fd=open(__lbb_locking,__lbb_lock_writer);
 	if(__fd==-1){
-		printf("cannot open writer\n");
-		return (ulong)0;
+		#ifdef LOG_ERR
+			printf("cannot open writer\n");
+		#endif
+		retres=0;
+		_exit(2);
 	};
 	ulong _fd=(ulong)__fd;
-	// __TEXT(Writer Lock);
 	#ifdef DEBUG
 		printf("Writer : fifo opened :: %lu\n",_fd);
 	#endif
 	lbb_shard.lbb_fd=_fd;
+	if(get_mstat(__lbb_locking, lbb_mstat)) {
+		#ifdef LOG_ERR
+			printf("cannot obtain mounted status for Writer on FIFO\n");
+		#endif
+		_exit(1);
+	}
 	return _fd;	
 };
 
+// try to open a recently created engine \
+MUST NOT HAVE ANY LOCKING BITS
 ulong __ap_reader() {
+	ulong retres=0;
 	int __fd=open(__lbb_locking,__lbb_lock_reader);
 	if(__fd==-1){
 		printf("cannot open reader\n");
-		return (ulong)0;
+		_exit(1);
 	};
 	ulong _fd=(ulong)__fd;
-	// __TEXT(Reader Lock)
 	#ifdef DEBUG
 		printf("Reader : fifo opened :: %lu\n",_fd);
 	#endif
 	lbb_shard.lbb_fd=_fd;
+	if(get_mstat(__lbb_locking, lbb_mstat)) {
+		#ifdef LOG_ERR
+			printf("cannot obtain mounted status for READER on FIFO\n");
+		#endif
+		_exit(2);
+	};
 	return _fd;
 };
 
-void magic_shard() {
-	printf("closing lbbfd :: %lu\n",lbb_shard.lbb_fd);
+// close the lbb filedescriptor currently
+// opened under the lbb_shard structure
+void purge_shard() {
+	#ifdef DEBUG
+		printf("Purging lbb shard\n");
+	#endif
 	close(lbb_shard.lbb_fd);
 };
-
-void *__lbb_get(char **cert, char *name, ulong cid) {
-
-	printf("cert :: %s\n", cert[0]);
-	printf("name : %s\n", name);
-	printf("cid = %lu\n", cid);
-	return name;
-}
-
-// int init_generic(struct __pr_generic prg_dcloud){
-//     memset(&prg_dcloud,0,sizeof(prg_dcloud));
-//     prg_dcloud.path=((char const*)(lfiles[1]));
-//     if(__ap_fifo(prg_dcloud.path)==-1){
-//         printf("error :: cannot make fifo\n");
-//         return 1;
-//     }
-//     void *res=status(prg_dcloud.path);
-//     if(res==NULL){
-//         printf("error :: cannot obtain status ::: status()returned null\n");
-//         return 1;
-//     }
-//     printf("path :: %s\n",prg_dcloud.path);
-//     printf("inum :: %lu\n",inodenum);
-//     printf("____\n");
-//     return 0;
-// };
-
-
 
 /*******************************************************************/
 
@@ -108,10 +116,9 @@ ulong __writeb(uchar *content,ulong c_size) {
 	return 0;
 };
 
-
 int __dgetfd(char *__fpath) {
 	return open(__fpath, __lbb_lock_reader);
-}
+};
 
 #define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
 
@@ -136,7 +143,6 @@ char *__readb(ulong f_size, ulong f_d,ulong r_o){
 	return strdup((char*)lbb_content);
 };
 
-
 void __readin(char *buffer, ulong size, ulong stfd) {
 	ulong __res=0,__fsz=size,__fd=stfd;
 	int __tempres=0;
@@ -157,7 +163,6 @@ void __closeb(){
 	close(shd_fd);
 	memset(&lbb_shard,0,sizeof(struct __lbb_shard));
 };
-
 
 ulong write_book(char *content, ulong csize) {
 
@@ -406,9 +411,6 @@ int get_kstat(char const *__path, k_stat *kfile) {
 };
 
 
-
-
-
 /*******************************************************************/
 
 void log_dpoint(dpoint *dst_point) {
@@ -481,7 +483,6 @@ void log_process_schema(ulong p_pid, ulong c_pid) {
 };
 
 
-
 /*******************************************************************/
 
 
@@ -514,6 +515,14 @@ char *__get_fcontents(char *__conts, ulong __size) {
 	memset(&__,0,__size);
 	sprintf(__,"{%s}",__conts);
 	return strdup(__);
+};
+
+void free_fields(fields flds){
+	ulong c=0;
+	while(flds[c]){
+		free(flds[c]);
+		c+=1;
+	};
 };
 
 char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
@@ -583,19 +592,9 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	close(__fd);
 	close(lbb_dd);
 
-
-
 	return strdup(fieldname);
 };
 
-void free_fields(fields flds){
-	#include <stdlib.h>
-	ulong c=0;
-	while(flds[c]){
-		free(flds[c]);
-		c+=1;
-	};
-};
 
 char *conv_fields(m_stat *m_st){
 	ulong __fd=open(m_st->m_path,__lbb_share_flags), __count=0, __size=(m_st->m_size), c=__size;
@@ -623,7 +622,7 @@ ulong __run_ap(ulong __size){
 			};
 			r_bytes=0;memset(&__buffer,0,sizeof(__buffer));
 		};
-		magic_shard();
+		purge_shard();
 		return __FLAG;		
 	}
 	else {
@@ -638,17 +637,21 @@ ulong __run_ap(ulong __size){
 			};
 			w_bytes=0;memset(&__buffer,0,sizeof(__buffer));
 		};
-		magic_shard();
+		purge_shard();
 		return __FLAG;				
 	}
 
-}
+};
 
 
-
-
-
-
+void log_lbb_type(lbb_t lbbt) {
+	switch(lbbt) {
+	case __proto_call: printf("lbb type {Protocol}\n"); break;
+	case __intrp_decl: printf("lbb type {Interpreter}\n"); break;
+	case __payld_entr: printf("lbb type {Payload}\n"); break;
+	default: printf("lbb type {Unknown}\n"); break;
+	};
+};
 
 
 

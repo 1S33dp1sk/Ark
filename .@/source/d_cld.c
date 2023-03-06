@@ -17,8 +17,6 @@
 
 
 int main(int argc, char **argv) {
-#define __ARGC__ argc
-#define __ARGV__ *argv
 __LBB_START__ 
     __arcstp(256);
     

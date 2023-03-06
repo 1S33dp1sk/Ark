@@ -27,7 +27,7 @@ K512-architecture
 #endif
 
 #define DEBUG 1
-
+#define LOG_ERR 1
 /************************ defintions ************************/
 
 #define __Karch_512__ 
@@ -606,8 +606,6 @@ int arch_cenv(){
 	return 0;
 };
 
-
-
 /********* indexing *********/
 static ixr_h ___header;
 static void *hixr=(void *)&___header;
@@ -706,7 +704,8 @@ void log_ixrh(ixr_h *ixrh) {
 };
 // read the indexer header \\
 OFFSET ALWAYS 0
-int __rd_ixrh(ixr_h *ixrh) {
+int __rd_ixrh() {
+	ixr_h *ixrh=(ixr_h*)hixr;
 	#ifdef LOG_PROCESS
 		printf("reading :::\n");
 	#endif
@@ -735,7 +734,8 @@ int __rd_ixrh(ixr_h *ixrh) {
 };
 // write the indexer header \\
 OFFSET ALWAYS 0
-int __wt_ixrh(ixr_h *ixrh) {
+int __wt_ixrh() {
+	ixr_h *ixrh=(ixr_h*)hixr;
 	uchar __head[29];ulong __hsz=sizeof(__head);memset(&__head, 0, __hsz);
 	#ifdef LOG_PROCESS
 		printf("writing :::");
@@ -758,7 +758,8 @@ int __wt_ixrh(ixr_h *ixrh) {
 	return 0;
 };
 // obtain header properties { ENVIROMENT }
-int refresh_h(ixr_h *ixrh) {
+int refresh_h() {
+	ixr_h *ixrh=(ixr_h*)hixr;
 	if(!__stres(__lbb_indexfile)) {
 		#ifdef LOG_ERR
 			printf("indexfile does not exist\n");
@@ -770,13 +771,18 @@ int refresh_h(ixr_h *ixrh) {
 	ixrh->checksum=fhash16(1, __lbb_indexfile);
 	return 0;
 };
+// initiate and set memory to zero for header struct
+void *__header__() {
+	return memset(&___header, 0, sizeof(struct __ixr_h));
+};
 // start the indexer 
 int indexer_start() {
 	// if the indexer has not been instantiated but has
 	// a different value than the original constant
+
 	if(__ixr_fd!=0x228){
 		#ifdef LOG_ERR
-			printf("trying to instantiate indexer that is not on %lu", 0x228);
+			printf("trying to instantiate indexer that is not on %d", 0x228);
 		#endif
 		return -1;
 	};
@@ -799,13 +805,22 @@ int indexer_start() {
 		printf("Indexer started :::\n");
 		printf(" cfd :: %lu\n",__ixr_fd);
 	#endif
-	if(refresh_h(&___header)) {
+	if(refresh_h()) {
 		#ifdef LOG_ERR
 			printf("cannot refresh header\n");
 		#endif
 		return -1;
 	};
-	return __wt_ixrh(&___header);
+	if(__wt_ixrh()) {
+		#ifdef LOG_ERR
+			printf("cannot write indexer header\n");
+		#endif
+		return -1;
+	};
+	#ifdef DEBUG
+		printf("@offset %lu\n",___offset);
+	#endif
+	return 0;
 };
 // index any incoming idrs
 int __indexer__(char const *idr) {
@@ -830,15 +845,27 @@ int __indexer__(char const *idr) {
 			printf("file descriptor :open::%d\n",ixr_fd);
 		#endif
 	};
-	memset(&___header, 0, sizeof(ixr_h));
-	if(!__rd_ixrh(&___header)) {
+	__header__();
+	if(__rd_ixrh()) {
 		#ifdef LOG_ERR
 			printf("cannot read indexer header\n");
 		#endif
 		return -1;
 	};
+	#ifdef DEBUG
+		printf("@offset %lu\n",___offset);
+	#endif
 	return 0;
 };
+int refer_index(void *rix, void *__rxdr, char *__rnr) {
+
+	printf("referernce indecies :) \n");
+	printf("rnr %s", __rnr);
+
+
+
+	return 0;
+}
 // log the format type specifications
 void log_fmt_t(fmt_t __format) {
 	switch(__format) {
@@ -924,6 +951,59 @@ char *flds(char const *__fldname) {
 
 	return strdup(cflds_head);
 };
+
+dpoint *__stpoint(char const *st_name, char const *st_val) {
+    if(st_name==NULL){
+        return NULL;
+    };
+    ulong __len=str_rwings(st_name);
+    dpoint *d_stpoint=(dpoint *)malloc(sizeof(dpoint));
+
+    if(st_name[0]!='k') {
+    	d_stpoint->__name=st_name;
+		d_stpoint->__ref=kaddress(st_val, get_lbb_type(st_name));
+		d_stpoint->__index=__cindex;	
+    }
+    else {
+      switch(st_name[1]){
+	    case 'C': break;
+	    case 'I': break;
+	    case 'P': break;
+	    case 'K': break;
+	    default: break;
+	    };
+	    return NULL;
+    };
+    return d_stpoint;
+};
+
+
+void *__search_r(char const *rname, lbb_t entry_type) {
+
+
+	return NULL;
+};
+
+
+void *__lbb_ref(char const *__rname) {
+	lbb_t __ltype=get_lbb_type(__rname);
+	void *temp=__search_r(__rname, __ltype);
+	return temp;
+};
+
+
+void *__lbb_addref(char const *__rname, char const *__rval) {
+	dpoint *__dst=__stpoint(__rname, __rval);
+	if(__dst!=NULL){
+		__index_point(__dst);
+		log_dpoint(__dst);
+		return __dst;
+	};
+	free(__dst);	
+	return NULL;
+};
+
+
 
 #endif
 
