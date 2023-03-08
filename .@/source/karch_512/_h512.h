@@ -46,22 +46,75 @@ K512-architecture
 
 /************************ naming ************************/
 
+ulong __fsize(char const *__fpath);
+ulong __iosize(char const *__fpath);
+ulong __inodenum(char const *__fpath);
+uns __dmode(char const *__fpath);
+ulong __file_r(char const *__fpath);
+ulong __file_w(char const *__fpath);
+ulong __file_x(char const *__fpath);
+uns __8sz(uns __8to);
+fld_sz fld_type2sz(fld_t __ftype);
+int __get_fd(char const *__fpath, int __flag);
 int __get_process_flags(char const *__cpath);
-int __get_fd(char const *__cpath, int __flag);
 int __check_fld(char const *__cpath, fld_t ftype);
+char const *__getcaller();
+char const *__charm_call(char const *__ffrom);
+int __init_3ci();
+int arch_3ci();
+void log_arcs();
+char const *__gdelim(fmt_t g_fmt);
+char const *__gfmt(fmt_t gt);
+char const *__generic_fmt(fmt_t g_fmt, char const *__key, char const *__value);
+ulong __env_hash(char **__envvar);
+char const *__h_passcode(char *udef_pass);
+char const *__kgev(uchar *__udef_pnop);
+void k1_addr(ulong _h8res, ulong _count, char *_kval);
+char const *__keys_hash(char **__envvar, uns __varc);
+
+fld_t __size_switch(char const *__cpath);
+char const *ccopy_to_path(char const *cc, char const *__cpath);
+char const *arch_gfile(char const *__cpath);
 fld_sz arch_tfile(char const *__cpath);
 ulong arch_cfile(fld_t fld_type);
-ulong arch_fpermissions(char const *__cpath);
-ulong arch_foffset(char const *__fpath, ulong f_field);
 ulong attsize(ulong __sz);
 ulong fldatt(uns level, ulong szatt);
-ulong fsz8(fld_t __);
-char const *ccopy_to_path(char const *cc, char const *path);
-char const *tochar(ulong inp_u);
-char const *arch_gfile(char const *__cpath);
+ulong arch_fpermissions(char const *__cpath);
+char const *tochar(ulong num_in);
+ulong arch_foffset(char const *__fpath, ulong f_field);
 static ulong arch_fname(char const *__fpath, ulong fsize);
 int arch_mods(char const *__cpath);
 int arch_cenv();
+
+char const *__irv(char const *__key, char const *__val);
+ulong __index_increment();
+ulong __set_next(char const *__head);
+ulong __idx_start();
+
+char const *__xreference(char const *__);
+int __index_r(char const *idxnr);
+int __index_irn(char const *key, char const *val);
+int __index_ixn(char const *key);
+int __index_caller();
+int __index_point(dpoint *dst);
+void log_ixrh(ixr_h *ixrh);
+int __rd_ixrh();
+int __wt_ixrh();
+int refresh_h();
+void *__header__();
+int indexer_start();
+int __indexer__(char const *__id);
+int refer_index(void *__ptr, void *__ref, char *__prname);
+void log_fmt_t(fmt_t __format);
+void log_keyvalue(char *key, char *value);
+void lbb_usage();
+int get_allstats(char *__mountpoint, char *__socketaddr, char *__fieldshare);
+char *flds(char const *__fldname);
+dpoint *__stpoint(char const *__stname, char const *__stval);
+void *__search_r(char const *__rname, lbb_t entry_type);
+void *__lbb_ref(char const *__rname);
+void *__lbb_addref(char const *__rname, char const *__rval);
+
 
 /************************ functions ************************/
 
@@ -326,7 +379,7 @@ char const *__gfmt(fmt_t gt) {
 	case __idxr__: return "_Q_Q_Q_\n";
 	case hdr_t: return "_U_";
 	case __keyval__: return "Q:s:s\n";
-	case kvi_t: return "Q:s:s\n";
+	case kvi_t: return "Q:s:s";
 	default: return ((void *)(__nofmt__));
 	};
 };
@@ -424,14 +477,11 @@ char const *__keys_hash(char **__var, uns __varc){
 
 
 /********* utilities *********/
-ulong __arch_fsize(char const *__cpath){
 
-	return fsze(__cpath);     
-};
 // gets file size in increments ( 8 << n+2 )
 fld_t __size_switch(char const *__cpath) {
-	ulong __fsize=__arch_fsize(__cpath);
-	switch(__fsize){
+	ulong _fsize=__fsize(__cpath);
+	switch(_fsize){
 		case __freader_sz:return f_reader;
 		case __fsocket_sz: return f_socket;
 		case __ffield_sz: return f_field;
@@ -457,7 +507,7 @@ char const *ccopy_to_path(char const *cc, char const *path){
 };
 // free after 
 char const *tochar(ulong inp_u){
-	char __[9];
+	char __[LONG_MAX_COMPUTED_N_DIGITS];
 	memset(&__,0,sizeof(__));
 	sprintf(__,"%lu",inp_u);
 	return (char const *)strdup(__);
@@ -465,7 +515,39 @@ char const *tochar(ulong inp_u){
 // gets file size in characters
 char const *arch_gfile(char const *__cpath){
 
-	return tochar(__arch_fsize(__cpath));
+	return tochar(__fsize(__cpath));
+};
+// returns the numbered increment of the file size
+fld_sz arch_tfile(char const *__cpath){
+	ulong _fsize=__fsize(__cpath), res=0;
+	while((_fsize>>3)>8){
+		res+=1;
+	};
+	switch(res){
+		case 1:return __freader_sz;
+		case 2: return __fsocket_sz;
+		case 3: return __ffield_sz;
+		case 4: return __fdir_sz;
+		case 5: return __fld1_sz;
+		case 6: return __fld2_sz;
+		case 7: return __fld3_sz;
+		case 8: return __fld4_sz;
+		default: return 0; 
+	};
+};
+// creates the arch file needed
+ulong arch_cfile(fld_t _){
+	switch(_){
+		case f_reader:return attsize(__8sz(1));
+		case f_socket:return attsize(__8sz(2));
+		case f_field:return attsize(__8sz(3));
+		case f_dir:return attsize(__8sz(4));
+		case fld_1:return fldatt(1,__8sz(5));
+		case fld_2:return fldatt(2,__8sz(6));
+		case fld_3:return fldatt(3,__8sz(7));
+		case fld_4:return fldatt(4,__8sz(8));
+		default:return 0;
+	};
 };
 // creates a file of a particular increment size
 ulong attsize(ulong __size){
@@ -487,7 +569,7 @@ ulong attsize(ulong __size){
 		__set+=temp;temp=0;
 	};
 	return fd;
-}
+};
 // fills up the file created 
 ulong fldatt(uns level,ulong sizeatt){
 	int fd=open(arch_filename,(O_RDWR|O_CREAT), S_IRWXU);
@@ -510,38 +592,6 @@ ulong fldatt(uns level,ulong sizeatt){
 		total+=temp;temp=0;blk++;
 	};
 	return fd;
-};
-// returns the numbered increment of the file size
-fld_sz arch_tfile(char const *__cpath){
-	ulong __fsize=__arch_fsize(__cpath), res=0;
-	while((__fsize>>3)>8){
-		res+=1;
-	}
-	switch(res){
-		case 1:return __freader_sz;
-		case 2: return __fsocket_sz;
-		case 3: return __ffield_sz;
-		case 4: return __fdir_sz;
-		case 5: return __fld1_sz;
-		case 6: return __fld2_sz;
-		case 7: return __fld3_sz;
-		case 8: return __fld4_sz;
-		default: return 0; 
-	}
-}
-// creates the arch file needed
-ulong arch_cfile(fld_t _){
-	switch(_){
-		case f_reader:return attsize(__8sz(1));
-		case f_socket:return attsize(__8sz(2));
-		case f_field:return attsize(__8sz(3));
-		case f_dir:return attsize(__8sz(4));
-		case fld_1:return fldatt(1,__8sz(5));
-		case fld_2:return fldatt(2,__8sz(6));
-		case fld_3:return fldatt(3,__8sz(7));
-		case fld_4:return fldatt(4,__8sz(8));
-		default:return 0;
-	};
 };
 // checks the arch permissions for the requested path
 ulong arch_fpermissions(char const *__cpath){
@@ -616,6 +666,22 @@ static void *hixr=(void *)&___header;
 #define __ixr_start_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
 #define __ixr_access_flags (O_RDWR|O_NOFOLLOW_ANY)
 #define __ixr_pmode (S_IRWXU|S_IXGRP|S_IXOTH)
+
+void *__erv(char const *__key,char const *__val) {
+	ulong __sz=str_rwings(__key)+str_rwings(__val)+5;
+	ulong __len=len_ustrze(__sz);
+	void *__=malloc(__len);
+	memset(__, 0, __len);
+	uns psz=pack(__, __gfmt(__keyval__), __cindex, __key, __val);
+	return __;
+};
+
+ulong __set_next_p(void *__) {
+	ulong retres=__set_next((char const *)(__));
+	free(__);
+	return retres;
+};
+
 // irv
 char const *__irv(char const *__key, char const *__value) {
 	char const *__rv=__generic_fmt(__keyval__, __key, __value);
@@ -647,22 +713,14 @@ ulong __set_next(char const *__head){
 		printf("result :: %ld\n", _res);
 		printf("offset ::: %lu\n", ___offset);
 	#endif
-	return __cindex+=1;
+	return __index_increment();
 };
 // start the indexer
-ulong __idx_start(char const *idxr){
+ulong __idx_start(){
 	if(__cindex!=0){
 		return 0;
 	};
 	return __index_increment();
-};
-// load the stpts into flds
-int __parse_fld() {
-	int __tempres=0;
-	ulong __fldsize=fsze(__lbb_indexfile);
-	printf("fld size :: %lu", __fldsize);
-
-	return 0;
 };
 // create a xreference for the current indexer
 char const *__xreference(char const *__) {
@@ -857,13 +915,17 @@ int __indexer__(char const *idr) {
 	#endif
 	return 0;
 };
-int refer_index(void *rix, void *__rxdr, char *__rnr) {
 
-	printf("referernce indecies :) \n");
-	printf("rnr %s", __rnr);
+int refer_index(void *__ptr, void *__ref, char *__prname) {
+	char *rname=(char *)__ref;
+	if(__exact_match(rname, __prname)) {
+		printf("exact match\n");
+	};
 
-
-
+	printf("ptr  : %p\n", __ptr);
+	printf("lbbr : %p\n", __ref);
+	printf("ref  : %s\n", rname);
+	printf("name : %s\n", __prname);
 	return 0;
 }
 // log the format type specifications
@@ -977,20 +1039,17 @@ dpoint *__stpoint(char const *st_name, char const *st_val) {
     return d_stpoint;
 };
 
-
 void *__search_r(char const *rname, lbb_t entry_type) {
 
 
 	return NULL;
 };
 
-
 void *__lbb_ref(char const *__rname) {
 	lbb_t __ltype=get_lbb_type(__rname);
 	void *temp=__search_r(__rname, __ltype);
 	return temp;
 };
-
 
 void *__lbb_addref(char const *__rname, char const *__rval) {
 	dpoint *__dst=__stpoint(__rname, __rval);
@@ -1002,6 +1061,7 @@ void *__lbb_addref(char const *__rname, char const *__rval) {
 	free(__dst);	
 	return NULL;
 };
+
 
 
 

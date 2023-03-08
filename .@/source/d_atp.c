@@ -18,7 +18,6 @@ int main(int argc, char const *argv[]) {
 
 }
 #else
-#define ATP "@ATP"
 __dPRG
 	__LBB__(
 		ATP,NULL

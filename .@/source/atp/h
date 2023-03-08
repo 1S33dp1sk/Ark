@@ -1,23 +1,61 @@
 #ifndef __ATP__H
+	#define OUTPUT 1
 	#include "utypes.h"
 	#include "standard.h"
 	#include "ixr.h"
+	
+	#define ATP __atp__
+
+	extern char **environ;
+	static char *_h_base="HTTP/1.1";
+	static char *_hm_get="GET";
+	static char *_hm_post="POST";
+	static char *wss_key_h="Sec-WebSocket-Key: ";
+	static char *wss_acc_h="Sec-WebSocket-Accept: ";		
+	static char *__reph="HTTP/1.1 200 OK\r\nContent-Type: text;\r\nContent-Length: 10\r\n\r\nHello Raed\r\n";
+	static char *__upgrade="HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nCache-Control: no-cache\r\nSec-WebSocket-Protocol: @-Protocol\r\n";
+	static char *__cwss="258EAFA5-E914-47DA-95CA-C5AB0DC85B11\0";
+	char const *hfmt_base="P S R";
+	#define HTTP_ACCEPT http_header(200, "OK")
+	#define HTTP_SWITCH http_header(101, "Switching Protocols")
+	#define HTTP_FORBID http_header(404, "Forbidden")
+
+	enum __http_protomethods {
+		__http_request,
+		__http_accept,
+		__http_post,
+		__http_switch,
+	};
+
+	int __dgetfd(char *__fpath);
+	char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
+	char const *fhashof(unsigned level, char const *__tohash);
+	ulong str_rwings(char const *string);
+	unsigned int pack(uchar *bufin, char const *buffmt, ...);
+	void *__arc_stpoints(ulong __stindex, char const *__stname);
+	void *__arcstp(stp_size __stpsize);
+	void __arcpid();
+	void __arcfork();
+	void __arcsok();
+	void *__arcstart(void *__arc);
+	int mor(void *args);
+	int les(void *args);
+	char *str_a4offset(char const *__string, ulong __offset);
+	char *str_b4offset(char const *__string, ulong __offset);
+	ulong sep_offset(char const *__string, char *__seperator);
+	int __stres(char const *__fpath);
+	int get_mstat(char const *__fpath, m_stat *mst);
+
 	#define ATP_SPEC_SIZE (8<<0x3)
 	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
 	#define ATP_PORT "9999" // The common ATP port
 	#define ATP_BACKLOG 10 // instances of the same id
-	#define arr_size(x) ((ulong)(sizeof(x)/sizeof(x[0])))
-
 	#define __ATP_ENV "="
 	#define __ATP_KEY ":"
 	#define __ATP_AT "@"
 	#define __ATP_AE "Aether(cid)"
 	#define __ATP_A4 "localhost"
 	#define __ATP_A6 "::1"
-	
-	#define __D_CLOUD return 0;
-
-	#define OUTPUT 1
 
 	#define __AT_DEFINED '@'
 	#if __AT_DEFINED!=64
@@ -25,11 +63,8 @@
 	#else
 		#define AT_DEFINED __AT_DEFINED
 	#endif
-
-	#define __P_LEN 8
-	#define __I_LEN 64
-	#define __A_LEN 512
-	#define __API_LEN (__P_LEN+__I_LEN+__A_LEN)
+	
+	#define __D_CLOUD return 0;
 
 	#define __PASS_MAX_C 24
 	#define __PASS_MID_C 16
@@ -42,53 +77,18 @@
 	#define __send_hash__ ((char const *)hashof(0, "send\0", 4))
 	#define __listen_hash__ ((char const *)hashof(0, "listen\0", 4))
 
+	#define __self_file ((void const *)(__FILE__))
+	#define __self_flen (ulong)str_rwings(__FILE__)
+
 	#define d_atpointer "@193rfzd193<python3>{ print('hello world') }\0"
 	#define d_atpoint "@charms/lbb/193rfzd193\0"
 	#define d_atbase "@charms/\0"
 	#define d_atlbb "@charms/.lbb\0"
 	#define __LBB_BASE_LEN str_rwings(__lbb_convdir)
+	#define arr_size(x) ((ulong)(sizeof(x)/sizeof(x[0])))
+	#define srwings(x) str_rwings(x)
+	#define d_atbase_rwings srwings(d_atbase)
 
-
-	char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
-	char const *fhashof(unsigned level, char const *__tohash);
-	ulong str_rwings(char const *string);
-	unsigned int pack(uchar *bufin, char const *buffmt, ...);
-
-	enum __p_types {
-		__nul,
-		__unk,
-		__ptr,
-		__pnt
-	};
-	typedef enum __p_types p_type;
-
-	struct __into {
-		char const *argument;
-		p_type arg_t;
-	};
-
-	typedef struct __into into_st;
-
-	void *__into__(into_st st) {
-
-		return memset(&st, 0, sizeof(into_st));
-	};
-
-	#define i_argument(i) (i->argument)
-	#define i_ptype(i) (i->arg_t)
-
-	struct __in_pia {
-		char pointer[__P_LEN];
-		char interpreter[__I_LEN];
-		char entry_p[__P_LEN];
-		char args[__A_LEN];
-	};
-	typedef struct __in_pia pia_st;
-
-	void *__pia__(pia_st st) {
-
-		return memset(&st, 0, sizeof(pia_st));
-	};
 	#define __p_args(p) ((void *)(&(p.args)))
 	#define p_args(p) ((char const *)(p.args))
 	#define _p_args_len(p) ((ulong)(str_rwings(p_args(p))))
@@ -103,23 +103,23 @@
 	#define p_interpreter(p) ((char const *)(p.interpreter))
 	#define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
 
-	#define _p_pointerinterpreter_len(p) (_p_interpreter_len(p)+_p_pointer_len(p))
-
 	#define socket_fd(x) (ulong)(x.aip_sockfd)
 	#define sock_fd(x) (ulong)(x->aip_sockfd)
 	#define socket_len(x) (ulong)(x.aip_socklen)
 	#define sock_len(x) (ulong)(x->aip_socklen)
 	#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
 
-	#define srwings(x) str_rwings(x)
-
-	#define d_atbase_rwings srwings(d_atbase)
+	#define addr_args(x) ((x->ptr),(x->addr), #x)
 
 	static arc_t __arc;
 	static struct __sok_t __sok;
 	static ulong step_c=0;
 	const arc_t* arc=&__arc;
 	static ulong points_c=0;
+	static ulong p_pid;
+	static ulong c_pid;
+
+	#define __dPER while(1!=1);
 
 	#define NOFB_TYPE(x) _Generic((x), \
 										signed char: (char)x, \
@@ -131,6 +131,18 @@
 										long long int:(tlong)x, \
 										unsigned long long int:(tlong)x, \
 										default:NULL)
+	// printf friendly
+    #define FMT_ASCII_SPEC(__) _Generic((__), \
+                                            int: "%d",\
+                                            uns: "%u",\
+                                            char: "%c",\
+                                            long: "%ld",\
+                                            ulong: "%lu",\
+                                            tlong: "%llu",\
+                                            char *: "%s",\
+                                            char const *:"%s",\
+                                            long long: "%lld",\
+                                            default: "%x")
 
 	#define FMT_HEXA_SPEC(__) _Generic((__), \
 												char: "c",\
@@ -144,33 +156,30 @@
 												tlong: "Q",\
 												char *: "s",\
 												default: "_")
+    #define OUT_ASCII(fd,x) do { \
+        char __[512];\
+        memset(&__,0,sizeof __);\
+        snprintf(__,sizeof __,"%s\n", FMT_ASCII_SPEC(x));\
+        dprintf(fd,__,(x));\
+    } __dPER
 
-	static ulong p_pid;
-	static ulong c_pid;
+	void *__into__(into_st st) {
 
-	#define CALL_SUCC(x) x==(ulong)0?1:0
-	#define CALL_INST(x) x==(ulong)1?1:0
-	#define CALL_NSUC(x) x==(ulong)-1?1:0
-	#define CALL_NEXT(x) x<(ulong)-1?x>(ulong)1?1:x:0
+		return memset(&st, 0, sizeof(into_st));
+	};
+
+	void *__pia__(pia_st st) {
+
+		return memset(&st, 0, sizeof(pia_st));
+	};
+	#define R_INDEXER(x,y) {\
+		if(x==y) { refer_index(x,#x,#x); }\
+		else { refer_index(x,y,#x); }\
+	}
+
 
 	
-	int __file_att(char **__args,...);
-	int __lock_att();
-	int __fifo_att(char **__args,...);
 
-	void *__arc_stpoints(ulong __stindex, char const *__stname);
-	void *__arcstp(stp_size __stpsize);
-	void __arcpid();
-	void __arcfork();
-	void __arcsok();
-	void *__arcstart(void *__arc);
-	int mor(void *args);
-	int les(void *args);
-	char *str_a4offset(char const *__string, ulong __offset);
-	char *str_b4offset(char const *__string, ulong __offset);
-	ulong sep_offset(char const *__string, char *__seperator);
-	int __stres(char const *__fpath);
-	int get_mstat(char const *__fpath, m_stat *mst);
 
 	#define __ATP__H 1
 #endif

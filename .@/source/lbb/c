@@ -10,9 +10,6 @@ little black book
 	#define __lbb_name "linked binary book"
 
 
-void unpack(uchar *buf,char const *fmt,...);
-
-
 // try to create a { SHARED } file
 // get the mounted status of said file
 // load into `lbb_shard`
@@ -101,6 +98,40 @@ void purge_shard() {
 	close(lbb_shard.lbb_fd);
 };
 
+
+ulong __run_ap(ulong __size){
+	if(__size>=512){
+		ulong r_bytes=0,__FLAG=0;
+		char __buffer[512];
+		while(!__FLAG) {
+			r_bytes=read(lbb_shard.lbb_fd,__buffer,512);
+			if(r_bytes<=2){
+				printf("read less than 3 bytes :: %s\n",__buffer);
+				__FLAG=1;
+			};
+			r_bytes=0;memset(&__buffer,0,sizeof(__buffer));
+		};
+		purge_shard();
+		return __FLAG;		
+	}
+	else {
+		ulong w_bytes=0,__FLAG=0;
+		char *__buffer="hello world";
+		memset(&__buffer,0,sizeof(__buffer));
+		while(!__FLAG) {
+			w_bytes=write(lbb_shard.lbb_fd,__buffer,64);
+			if(w_bytes<=2){
+				printf("write less than 3 bytes :: %s\n",__buffer);
+				__FLAG=1;
+			};
+			w_bytes=0;memset(&__buffer,0,sizeof(__buffer));
+		};
+		purge_shard();
+		return __FLAG;				
+	}
+};
+
+
 /*******************************************************************/
 
 
@@ -120,8 +151,6 @@ int __dgetfd(char *__fpath) {
 	return open(__fpath, __lbb_lock_reader);
 };
 
-#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
-
 char *__readb(ulong f_size, ulong f_d,ulong r_o){
 	ulong __res=r_o,__fsz=f_size,__fd=f_d;
 	uchar lbb_content[__fsz+1];
@@ -137,9 +166,7 @@ char *__readb(ulong f_size, ulong f_d,ulong r_o){
 		// for some reason, like a pipe or sig
 		// so we can read from where we left off
 		__res=pread(__fd,(lbb_content+__res),(__fsz-__res),__res);
-	}
-
-
+	};
 	return strdup((char*)lbb_content);
 };
 
@@ -418,7 +445,7 @@ void log_dpoint(dpoint *dst_point) {
 	printf("@%lu\n", dst_point->__index);
 	printf("name :%s\n",dst_point->__name);
 	printf("ref  :%s\n",dst_point->__ref);
-}
+};
 
 void log_kstat(k_stat *kfile) {
 	printf("dcloud : K\n");
@@ -482,10 +509,16 @@ void log_process_schema(ulong p_pid, ulong c_pid) {
     printf("call next ? %lu\n",CALL_NEXT(c_pid));
 };
 
+void log_lbb_type(lbb_t lbbt) {
+	switch(lbbt) {
+	case __proto_call: printf("lbb type {Protocol}\n"); break;
+	case __intrp_decl: printf("lbb type {Interpreter}\n"); break;
+	case __payld_entr: printf("lbb type {Payload}\n"); break;
+	default: printf("lbb type {Unknown}\n"); break;
+	};
+};
 
 /*******************************************************************/
-
-
 
 ulong __get_long_digits(ulong num) {
 	ulong cnum=((ulong)(num/10));
@@ -595,7 +628,6 @@ char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	return strdup(fieldname);
 };
 
-
 char *conv_fields(m_stat *m_st){
 	ulong __fd=open(m_st->m_path,__lbb_share_flags), __count=0, __size=(m_st->m_size), c=__size;
 	while(c>512){
@@ -607,51 +639,6 @@ char *conv_fields(m_stat *m_st){
 	return __conv_fields(hashof(1,m_st,sizeof(m_stat)),__fd,__count);
 };
 
-
-/*******************************************************************/
-
-ulong __run_ap(ulong __size){
-	if(__size>=512){
-		ulong r_bytes=0,__FLAG=0;
-		char __buffer[512];
-		while(!__FLAG) {
-			r_bytes=read(lbb_shard.lbb_fd,__buffer,512);
-			if(r_bytes>2){
-				printf("read more than 2 bytes :: %s\n",__buffer);
-				__FLAG=1;
-			};
-			r_bytes=0;memset(&__buffer,0,sizeof(__buffer));
-		};
-		purge_shard();
-		return __FLAG;		
-	}
-	else {
-		ulong w_bytes=0,__FLAG=0;
-		char *__buffer="hello world";
-		memset(&__buffer,0,sizeof(__buffer));
-		while(!__FLAG) {
-			w_bytes=write(lbb_shard.lbb_fd,__buffer,64);
-			if(w_bytes>2){
-				printf("write more than 2 bytes :: %s\n",__buffer);
-				__FLAG=1;
-			};
-			w_bytes=0;memset(&__buffer,0,sizeof(__buffer));
-		};
-		purge_shard();
-		return __FLAG;				
-	}
-
-};
-
-
-void log_lbb_type(lbb_t lbbt) {
-	switch(lbbt) {
-	case __proto_call: printf("lbb type {Protocol}\n"); break;
-	case __intrp_decl: printf("lbb type {Interpreter}\n"); break;
-	case __payld_entr: printf("lbb type {Payload}\n"); break;
-	default: printf("lbb type {Unknown}\n"); break;
-	};
-};
 
 
 
