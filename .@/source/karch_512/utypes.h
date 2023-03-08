@@ -2,6 +2,10 @@
 
 
 #ifndef __UTYPES__H
+	#define __A_LEN 512
+	#define __P_LEN 8
+	#define __I_LEN 64
+	#define __API_LEN (__A_LEN+__P_LEN+__I_LEN)
 	#ifndef uns
 		#define uns unsigned int
 	#endif
@@ -28,7 +32,6 @@
 		F_FIFO_LD=1,
 		FL_LOCK_D=2,
 	};
-
 	typedef enum __types_f type_f;
 
 	enum __atypes_ {
@@ -86,7 +89,6 @@
 	    ulong m_inn;
 	    char m_path[512];
 	};
-
 	typedef struct __m_stat m_stat;
 
 	struct __ixr_h {
@@ -151,7 +153,7 @@
 	typedef struct __dpoint_indicies dices;
 
 	// supported file types
-		enum __ftypes {
+	enum __ftypes {
 		/**
 		{a.k.a} FIFO **/
 		    f_reader=1,
@@ -174,7 +176,7 @@
 	typedef enum __ftypes fld_t;
 
 	// supported file sizes
-		enum __ftypes__size {
+	enum __ftypes__size {
 		    __freader_sz=8,
 		    __fsocket_sz=64,
 		    __ffield_sz=512,
@@ -186,6 +188,151 @@
 		};
 	typedef enum __ftypes__size fld_sz;
 
+
+	/**
+	 * string manipulation **
+							*/
+	struct __str {
+		int len;
+		char *data;
+	};
+	typedef struct __str strld;
+
+	struct sepstr {
+		char *str;
+		int str_length;
+		char *sep;
+		int sep_offs;	
+	};
+	typedef struct sepstr spstr;
+
+	/**
+	 * K-structture **
+					 */
+	struct __ptrdx {
+		ulong pidx;
+		ulong tri;
+	};
+	union __exs_ptr {
+		ulong *esptr;
+		struct __ptrdx ptrdx;
+	};
+	struct __k_stat {
+		char u_name[8];
+		union __exs_ptr exsp;
+		char i_addr[512];
+	};
+	typedef struct __k_stat k_stat;
+
+	/**
+	 * S-structure {a.k.a socket} **
+								   */
+	enum __sterm {
+		__pub=0,
+		__pvt
+	};
+
+	struct __s_stat {
+		char s_path[256];
+		char s_ipv[16];
+		ulong sa_len;
+		char s_addr[64];
+		ulong se_len;
+	#define __s_port "9999"
+		enum __sterm s_term;
+	};
+	typedef struct __s_stat s_stat;
+
+	struct __contents {
+	    ulong len;
+	    uchar et[512];
+	};
+	typedef struct __contents __ucont;
+	typedef char __uname[24];
+	struct __ucname__ {
+	    __uname uname;
+	    __ucont contents;
+	};
+	typedef struct __ucname__ field;
+	typedef field* fld;
+	typedef fld* fields;
+
+	struct __shard {
+		m_stat sd_mstat;
+		field sd_fld;
+	};
+	typedef struct __shard shard;
+
+	struct __lbb_shard {
+		struct __m_stat lbb_mst;
+		ulong lbb_fd;
+	};
+	typedef struct __lbb_shard lshard;
+
+	struct __in_pia {
+		char pointer[__P_LEN];
+		char interpreter[__I_LEN];
+		char args[__A_LEN];
+	};
+	typedef struct __in_pia pia_st;
+
+	enum __p_types {
+		__nul,
+		__unk,
+		__ptr,
+		__pnt
+	};
+	typedef enum __p_types p_type;
+
+	struct __into {
+		char const *argument;
+		p_type arg_t;
+	};
+	typedef struct __into into_st;
+
+	struct __socket_address {
+		enum __atypes_ _atype;
+		void *_sokaddr;
+		char _sockaddr[128];
+		char ascii_addr[__I_LEN];
+	};
+	typedef struct __socket_address aip_addr;
+
+    enum __sha3_return {
+        __sha3_u_ok = 0,
+        __sha3_u_n = 1
+    };
+    typedef enum __sha3_return sha3_return_t;
+
+    enum __sha3_flags {
+        __sha3_flag_none__ = 0,
+        __sha3_flag_keccak__ = 1
+    };
+    typedef enum __sha3_flags sha3_config_t;
+    struct __ptr_addr {
+	    void *m_ace;//memory access
+	    char address[__P_LEN];
+	};
+
+	struct __intr_addr { 
+		void *s_mnt;
+		char address[__I_LEN];
+	};
+
+	struct __payld_addr {
+		void *a_sok;
+		char address[__A_LEN];
+	};
+
+	struct __paddr {
+		void *ptr;
+		char *addr;
+	};
+
+	typedef struct __paddr addr_p;
+
+	#define i_argument(i) (i->argument)
+	#define i_ptype(i) (i->arg_t)
 
 static const char *__lbb_indexfile = "@charms/lbb/.lbb\0";
 static const char *__lbb_convdir = "@charms/lbb\0";

@@ -161,8 +161,8 @@ lbb_atp_ml:
 3c: 
 	@printf "\n{{{ccc}}}\n"
 	if [ ! -d ${@3c} ]; then mkdir ${@3c}; fi
-	cp ${__src}/d_*.c ${@3c}
-	cp ${__src}/*.d ${@3c}
+	if [ -f ${__src}/d_atp.c ]; then cp ${__src}/d_*.c ${@3c}; fi
+	if [ -f ${__src}/api.d ]; then cp ${__src}/*.d ${@3c}; fi
 
 #compiled
 @2c:=${@3c}/2c
@@ -193,12 +193,10 @@ lbb_atp_ml:
 
 build_3c: 3c 2c 1c 3c_out
 
-test_karch:
-	./k512 ${@charms}
-
-test_cloud:
-	./d-cloud
-
+dprg:
+	cp ${@3c}/d_prg.c .
+	cc d_prg.c -o runnable ${atherlib}
+	rm d_prg.c 
 
 
 #####################################

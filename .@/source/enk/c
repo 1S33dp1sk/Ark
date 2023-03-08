@@ -5,20 +5,6 @@
 #endif
 #ifndef __enk_name
 	#define __enk_name "encoding_number_k"
-    #define packi16 pack_i_16
-    #define packi32 pack_i_32
-    #define packi64 pack_i_64
-
-    #define unpacki16 unpack_i_16
-    #define unpacki32 unpack_i_32
-    #define unpacki64 unpack_i_64
-    
-    #define unpacku16 unpack_u_16
-    #define unpacku32 unpack_u_32
-    #define unpacku64(x) ((ulong *)unpack_u_64(x))
-
-
-
 
     void enc_unum(ulong base, uchar *buf, ulong i) {
         while (base>0) {
@@ -427,7 +413,6 @@
                     printf("U2 : %lu\n", u[2]);
                 #endif
                 break;
-
 
             case 's': // string
                 s = va_arg(ap, char*);

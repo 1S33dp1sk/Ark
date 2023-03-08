@@ -14,18 +14,39 @@
 #define __RUN_C 256
 #endif
 
-int main(int argc, char **argv) {
-    __LBB_START__
-    m_stat mst;memset(&mst, 0, sizeof(m_stat));
-    get_mstat("api.d", &mst);
-    log_mstat(&mst);
 
-    char __dbuf[mst.m_size];memset(&__dbuf, 0, sizeof(__dbuf));
-    __readin(__dbuf, mst.m_size, __dgetfd("api.d"));
-    __read_ft(__dbuf, mst.m_size);
 
-    return 0;
+char *__address() {
+    char *addr=(char *)__arcstp(0);
+    return strdup(addr); 
 };
+
+char const *generate_pointer() {
+    char const *__addr=(char const *)__address();
+    return __addr;
+};
+
+
+
+__dPRG
+    __TYPD__(
+        struct __payld_addr
+    )
+
+
+// int main(int argc, char **argv) {
+//     if(argc<=1) {
+//         void *gptr=generate_pointer();
+//         #ifdef OUTPUT
+//             __ASCII(__address(gptr))
+//         #endif
+//         return 0;
+//     };
+
+
+
+//     return 0;
+// };
 
 
 

@@ -1,5 +1,3 @@
-
-
 #ifndef __Karch_512__
 #include "2c/_h512.h"
 #include "2c/lbb.h"
@@ -8,41 +6,14 @@
 #define LOG_ERR 1
 #endif
 
+extern char **environ;
 
-ulong get_points(int i) {
-	ulong retres=0;
-	if(i!=0) {
-		return retres+=(ulong)i;
-	}
-	return retres;
+
+
+int main(int argc, char **argv) {
+	http_content *hc=crt_http_content("This is some cool text for the http header\n", __hct_text);
+	log_content(hc);
 };
-
-
-#define load_etc() "The Book"
-
-
-
-
-__dPRG
-	__LBB__(
-		get_points,NULL
-	)
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
