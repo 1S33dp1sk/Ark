@@ -26,7 +26,6 @@ K512-architecture
 #define __k_arch512__h 1
 #endif
 
-#define DEBUG 1
 #define LOG_ERR 1
 /************************ defintions ************************/
 
