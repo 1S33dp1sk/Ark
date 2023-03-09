@@ -44,7 +44,9 @@
 	ulong sep_offset(char const *__string, char *__seperator);
 	int __stres(char const *__fpath);
 	int get_mstat(char const *__fpath, m_stat *mst);
+	void log_mstat(m_stat *mst);
 
+	
 	#define ATP_SPEC_SIZE (8<<0x3)
 	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
 	#define ATP_PORT "9999" // The common ATP port
