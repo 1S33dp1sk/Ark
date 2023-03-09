@@ -5,7 +5,6 @@
 #include "atp.h"
 #endif
 
-
 #ifndef __atp_name
 	#define __atp_name "@-Protocol"
 
@@ -24,14 +23,20 @@
 		}while(*__p++);
 		return __c;
 	};
-
 	ulong str_rwings(char const *__str) {
 		ulong temp=0;
+		if(__str==NULL){
+			return temp;
+		}
 		do {
-			if(*__str!='\0'){
-				temp+=1;
+			if(*__str=='\0'){
+				break;
 			};
-		}while(*__str++);
+			temp+=1;
+		}while((*__str++)&&(temp<4096));
+		#ifdef DEBUG
+			printf("str : %s =: %lu\n",(char const *)(__str-temp),temp);
+		#endif
 		return temp;
 	};
 
@@ -825,6 +830,7 @@
 	char const *__http_request_base="M P V\r\n";
 	char const *__http_response_base="B S R\r\n";
 
+	#define kvs_id(x) (kvs__.keys[x], kvs__.values[x], kvs__.seperator, kvs__.__line_ends)
 
 	struct __kvs {
 		char const**keys;
@@ -836,59 +842,12 @@
 	typedef struct __kvs keyvals;
 	static keyvals kvs__;
 
-	#define kvs_id(x) (kvs__.keys[x], kvs__.values[x], kvs__.seperator, kvs__.__line_ends)
-
-	struct __liner {
-		ulong __size;
-		char const *__cptr;
-	};
-
-	void *__kvs__(char const *sep, char const *lds) {
-		ulong seplen=str_rwings(sep), ldslen=str_rwings(lds);
-		char *__sep=(char *)malloc(len_strze(seplen));
-		char *__lends=(char *)malloc(len_strze(ldslen));
-		memmove(__sep, sep, seplen);
-		memmove(__lends, lds, ldslen);
-		keyvals *__=memset(&kvs__, 0, sizeof(keyvals));
-		__->seperator=(char const *)__sep;
-		__->__line_ends=(char const *)__lends;
-		__->kvs_c=0;
-		__->keys=malloc(sizeof(NULL));
-		__->values=malloc(sizeof(NULL));
-		__->keys[0]=NULL;
-		__->values[0]=NULL;
-		return __;
-	};
-
-	void __add_pair(char const *__keyp, char const *__valp) {
-		ulong c=0,c_count=kvs__.kvs_c;
-		char const**__keys=calloc(c_count+1, sizeof(char*));
-		char const**__values=calloc(c_count+1, sizeof(char*));
-		do {
-			__keys[c]=kvs__.keys[c];
-			__values[c]=kvs__.values[c];
-			c+=1;
-		}while(c<c_count);
-		__keys[c_count]=__keyp;
-		__values[c_count]=__valp;
-		kvs__.kvs_c+=1;
-		free(kvs__.keys);
-		free(kvs__.values);
-		kvs__.keys=__keys;
-		kvs__.values=__values;
-	};
-
-	int kvs_add_pair(char const *key, char const *val) {
-		ulong keylen=str_rwings(key), vallen=str_rwings(val);
-		char const *__key=(char const *)malloc(len_strze(keylen));
-		char const *__val=(char const *)malloc(len_strze(vallen));
-		memmove((void *)__key, key, keylen);
-		memmove((void *)__val, val, vallen);
-		#ifdef DEBUG
-			printf("adding pair :: (%s,%s)\n",__key, __val);
-		#endif
-		__add_pair(__key, __val);
-		return 0;
+	void free_kv(keyvals *__) {
+		printf("total count = %lu \n", __->kvs_c);
+		for(int i=0; i<(__->kvs_c-1);i++) {
+			free((void *)__->keys[i]);
+			free((void *)__->values[i]);
+		};
 	};
 
 	void free_kvs(keyvals *__) {
@@ -912,8 +871,97 @@
 			count+=1;
 		}while(count<__c);
 	};
+	
+	void log_kv(keyvals *__) {
+		printf("total count = %lu \n", __->kvs_c);
+		for(int i=0; i<(__->kvs_c-1);i++) {
+			printf("k-> %s\n v-> %s\n",__->keys[i],__->values[i]);
+		};
+	};
 
-	struct __liner kvs_liner(char const *__key, char const *__val, char const *__dlm, char const *__lds) {
+	static const ulong mem_sz=sizeof(char*);
+
+	#define _kvs_keys(x) ((const char *)(&(kvs__.keys)[x]))
+	#define _kvs_vals(x) ((const char *)(&(kvs__.values)[x]))
+
+	#define kvs_key(x,p) ((const char *)((x->keys)[p]))
+	#define kvs_val(x,p) ((const char *)((x->values)[p]))
+
+
+	#define __keys__(x) ((char const **)(x->keys))
+	#define vals__(x) ((const *char *)(&x))
+
+
+	void __add_pair(keyvals *__kvs, char const *__keyp, char const *__valp) {
+		ulong c=0,c_count=kvs__.kvs_c, __ccsize=((c_count+1)*(sizeof(char*))), nc_count=c_count+2;;
+		char const **__keys=calloc(nc_count, mem_sz);
+		char const **__values=calloc(nc_count, mem_sz);
+		char const **_keys=__keys, **_vals=__values;
+		_keys[nc_count]=NULL;_vals[nc_count]=NULL;
+		(__kvs->keys)[c_count]=kvs__.keys[0];
+		(__kvs->values)[c_count]=kvs__.vals[0];
+		printf("\n\n\n\n %s : %lu \n\n\n\n", __kvs->keys[c_count], c_count);
+		// if(c_count){
+		// 	printf("adding pair :: %s,%s\n",__keyp, __valp);
+		// 	do {
+		// 		*(_keys)++=_kvs_keys(c);
+		// 		printf("keys <ptr> : %s\n", kvs__.keys[c]);
+		// 		*(_vals)++=_kvs_vals(c);
+		// 		printf("vals <ptr> : %s\n", kvs__.values[c]);
+		// 		c+=1;
+		// 	}while(c<c_count);
+		// 	// free_kv(&kvs__);
+		// };
+		*(_keys)++=__keyp;
+		*(_vals)++=__valp;
+		kvs__.kvs_c+=1;
+		kvs__.keys=(char const **)__keys;
+		kvs__.values=(char const **)__values;
+		log_kvs(__kvs);
+	};
+
+	void *__kvs__(char const *sep, char const *lds) {
+		ulong seplen=str_rwings(sep), ldslen=str_rwings(lds);
+		char *__sep=(char *)malloc(len_strze(seplen));
+		char *__lends=(char *)malloc(len_strze(ldslen));
+		memmove(__sep, sep, seplen);
+		memmove(__lends, lds, ldslen);
+		keyvals *__=memset(&kvs__, 0, sizeof(keyvals));
+		__->seperator=(char const *)__sep;
+		__->__line_ends=(char const *)__lends;
+		__->keys=malloc(mem_sz);
+		__->values=malloc(mem_sz);
+		__->keys[0]=NULL;
+		__->values[0]=NULL;
+		__->kvs_c=0;
+		return __;
+	};
+
+	int kvs_add_pair(char const *key, char const *val) {
+		ulong keylen=str_rwings(key), vallen=str_rwings(val);
+		char const *__key=(char const *)malloc(len_strze(keylen));
+		char const *__val=(char const *)malloc(len_strze(vallen));
+		memmove((void *)__key, key, keylen);
+		memmove((void *)__val, val, vallen);
+		keyvals *temp;
+		#ifdef DEBUG
+			printf("adding pair :: (%s,%s)\n",key, val);
+		#endif
+		__add_pair(temp, __key, __val);
+
+		return 0;
+	};
+
+	
+
+	struct __liner {
+		ulong __size;
+		char const *__cptr;
+	};
+	typedef struct __liner s_line;
+	static const ulong size_sline=sizeof(struct __liner);
+
+	s_line*kvs_liner(char const *__key, char const *__val, char const *__dlm, char const *__lds) {
 		ulong keylen=str_rwings(__key), vallen=str_rwings(__val), dlmlen=str_rwings(__dlm), ldslen=str_rwings(__lds);
 		ulong __size=keylen+vallen+dlmlen+ldslen;
 		void *__=malloc(len_strze(__size));
@@ -921,34 +969,45 @@
 		memmove((__+keylen), __dlm, dlmlen);
 		memmove((__+keylen+dlmlen), __val, vallen);
 		memmove((__+keylen+dlmlen+vallen), __lds, ldslen);
-		struct __liner __line = {
-			.__size=__size,
-			.__cptr=__
-		};
-		return __line;
+		s_line *_=(s_line *)malloc(size_sline);
+		_->__size=__size;
+		_->__cptr=__;
+		return _;
 	};
+
+	void free_kv_sline(s_line *kv_sline);
 
 	char const *kvs_traverse(keyvals *kvs) {
 		ulong __size=0, c=0, count=kvs->kvs_c;
-		while(c<count) {
+		do {
+			#ifdef DEBUG
+				printf("kvs->key : %lu :: %s\n", c, kvs_key(kvs,c));
+				printf("kvs->val : %lu :: %s\n", c, kvs_val(kvs,c));
+			#endif
 			__size+=str_rwings(kvs->keys[c]);
 			__size+=str_rwings(kvs->values[c]);
 			c+=1;
-		};
-		char __[__size];
-		memset(&__, 0, sizeof(__));
-		struct __liner temp;
-		c=0;__size=0;
+		} while(c<count);
+		ulong __len=len_strze(__size);
+		printf("size : %lu\n", __size);
+		char *__=(char *)malloc(__len);
+		memset(__, '\0', sizeof(__len));
+		c=1;__size=0;
 		while(c<count){
-			temp=kvs_liner kvs_id(c);
-			memmove((__+__size), temp.__cptr, temp.__size);
-			__size+=temp.__size;
-			free((void *)temp.__cptr);
+			s_line *temp=kvs_liner kvs_id(c);
+			memmove((__+__size), (void *)temp->__cptr, temp->__size);
+			__size+=(temp->__size);
+			free_kv_sline(temp);
 			c+=1;
 		};
 
 		return strdup(__);
 	};
+
+	void free_kv_sline(s_line *kvs_sl) {
+		free((void *)kvs_sl->__cptr);
+		free(kvs_sl);
+	}
 
 	enum __http_protomethods __get_from_http_status(ulong __http_status) {
 		switch(__http_status) {
