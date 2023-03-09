@@ -22,7 +22,6 @@
     #define packu32(ubuf,num) (enc_unum(3,ubuf,num))
     #define packu64(ubuf,num) (enc_unum(7,ubuf,num))
     #define unpacku64(x) ((ulong *)unpack_u_64(x))
-    #define len_strze(x) (((ulong)x)*(sizeof(char)))
     #define len_ustrze(x) (((ulong)x)*(sizeof(uchar)))
 
     unsigned int pack(uchar *buf,char const *fmt,...);

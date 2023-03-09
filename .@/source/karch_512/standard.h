@@ -7,7 +7,6 @@
 **/
 #define __ANET_IDX 2
 
-
 #ifndef __anet_unistd
 #include <unistd.h>
 #define __anet_unistd __ANET_IDX
@@ -82,16 +81,6 @@
 #include <arpa/inet.h>
 #define __anet_arpa_inet __ANET_IDX
 #endif
-
-
-
-
-
-
-
-
-
-
 
 #define __ANETSTD__H __ANET_IDX
 #endif

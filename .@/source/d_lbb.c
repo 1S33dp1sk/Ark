@@ -5,7 +5,6 @@
 #include "2c/lbb.h"
 #include "2c/ixr.h"
 #define OUTPUT 1
-#define DEBUG 1
 #define LOG_ERR 1
 #endif
 

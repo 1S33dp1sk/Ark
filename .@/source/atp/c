@@ -1,5 +1,5 @@
 /// ATP \\\
-@ protocol
+@-protocol
 
 #ifndef __ATP__H
 #include "atp.h"
@@ -819,25 +819,147 @@
 		};
 	};
 
+
+	char const *__http_protocol_version="HTTP/1.1";
+
+	char const *__http_request_base="M P V\r\n";
+	char const *__http_response_base="B S R\r\n";
+
+
+	struct __kvs {
+		char const**keys;
+		char const**values;
+		char const *seperator;
+		char const *__line_ends;
+		ulong kvs_c;
+	};
+	typedef struct __kvs keyvals;
+	static keyvals kvs__;
+
+	#define kvs_id(x) (kvs__.keys[x], kvs__.values[x], kvs__.seperator, kvs__.__line_ends)
+
+	struct __liner {
+		ulong __size;
+		char const *__cptr;
+	};
+
+	void *__kvs__(char const *sep, char const *lds) {
+		ulong seplen=str_rwings(sep), ldslen=str_rwings(lds);
+		char *__sep=(char *)malloc(len_strze(seplen));
+		char *__lends=(char *)malloc(len_strze(ldslen));
+		memmove(__sep, sep, seplen);
+		memmove(__lends, lds, ldslen);
+		keyvals *__=memset(&kvs__, 0, sizeof(keyvals));
+		__->seperator=(char const *)__sep;
+		__->__line_ends=(char const *)__lends;
+		__->kvs_c=0;
+		__->keys=malloc(sizeof(NULL));
+		__->values=malloc(sizeof(NULL));
+		__->keys[0]=NULL;
+		__->values[0]=NULL;
+		return __;
+	};
+
+	void __add_pair(char const *__keyp, char const *__valp) {
+		ulong c=0,c_count=kvs__.kvs_c;
+		char const**__keys=calloc(c_count+1, sizeof(char*));
+		char const**__values=calloc(c_count+1, sizeof(char*));
+		do {
+			__keys[c]=kvs__.keys[c];
+			__values[c]=kvs__.values[c];
+			c+=1;
+		}while(c<c_count);
+		__keys[c_count]=__keyp;
+		__values[c_count]=__valp;
+		kvs__.kvs_c+=1;
+		free(kvs__.keys);
+		free(kvs__.values);
+		kvs__.keys=__keys;
+		kvs__.values=__values;
+	};
+
+	int kvs_add_pair(char const *key, char const *val) {
+		ulong keylen=str_rwings(key), vallen=str_rwings(val);
+		char const *__key=(char const *)malloc(len_strze(keylen));
+		char const *__val=(char const *)malloc(len_strze(vallen));
+		memmove((void *)__key, key, keylen);
+		memmove((void *)__val, val, vallen);
+		#ifdef DEBUG
+			printf("adding pair :: (%s,%s)\n",__key, __val);
+		#endif
+		__add_pair(__key, __val);
+		return 0;
+	};
+
+	void free_kvs(keyvals *__) {
+		free((void *)__->seperator);
+		free((void *)__->__line_ends);
+		free((void *)__->keys);
+		free((void *)__->values);
+	};
+
+	void log_kvs(keyvals *__) {
+		printf("kvs :: \n");
+		printf("seperator (%s)\n", __->seperator);
+		printf("line endings -> %s\n", __->__line_ends);
+		ulong count=0,__c=__->kvs_c;
+		char const *_k,*_v;
+		printf("total kvs = %lu\n", __c);
+		do {
+			_k=__->keys[count];
+			_v=__->values[count];
+			printf("%s,%s   =: %lu\n", _k,_v,count);
+			count+=1;
+		}while(count<__c);
+	};
+
+	struct __liner kvs_liner(char const *__key, char const *__val, char const *__dlm, char const *__lds) {
+		ulong keylen=str_rwings(__key), vallen=str_rwings(__val), dlmlen=str_rwings(__dlm), ldslen=str_rwings(__lds);
+		ulong __size=keylen+vallen+dlmlen+ldslen;
+		void *__=malloc(len_strze(__size));
+		memmove(__, __key, keylen);
+		memmove((__+keylen), __dlm, dlmlen);
+		memmove((__+keylen+dlmlen), __val, vallen);
+		memmove((__+keylen+dlmlen+vallen), __lds, ldslen);
+		struct __liner __line = {
+			.__size=__size,
+			.__cptr=__
+		};
+		return __line;
+	};
+
+	char const *kvs_traverse(keyvals *kvs) {
+		ulong __size=0, c=0, count=kvs->kvs_c;
+		while(c<count) {
+			__size+=str_rwings(kvs->keys[c]);
+			__size+=str_rwings(kvs->values[c]);
+			c+=1;
+		};
+		char __[__size];
+		memset(&__, 0, sizeof(__));
+		struct __liner temp;
+		c=0;__size=0;
+		while(c<count){
+			temp=kvs_liner kvs_id(c);
+			memmove((__+__size), temp.__cptr, temp.__size);
+			__size+=temp.__size;
+			free((void *)temp.__cptr);
+			c+=1;
+		};
+
+		return strdup(__);
+	};
+
 	enum __http_protomethods __get_from_http_status(ulong __http_status) {
 		switch(__http_status) {
 		case 200:
-			return __http_accept;
+			return __http_request;
 		case 101:
 			return __http_switch;
 		default:
 			return __http_request;
 		}
 		return __http_request;
-	};
-
-	char const *__http_hdr(enum __http_protomethods hfmt_t) {
-		switch(hfmt_t) {
-		case __http_accept: return "B S R\r\n";
-		case __http_switch: return "B S R\r\n";
-		default: return NULL;
-		};
-		return NULL;
 	};
 
 	char const *__config_prop(char const *str1, char const *str2) {
@@ -850,8 +972,7 @@
 		memmove((__+_lstr1), str2, _lstr2);
 		return strdup(__);
 	};
-
-#ifndef ATP_HTTP_CONTENT
+	
 	enum __http_content_types {
 		__hct_text,
 		__hct_html,
@@ -905,8 +1026,6 @@ typedef struct __http_content http_content;
 		printf("data    : %s\n",(char *)content->__content);
 		printf("size    : %lu\n",content->__size);
 	};
-#define ATP_HTTP_CONTENT 1
-#endif
 
 	char const *http_config(char const *c_key, char const *c_val) {
 
@@ -945,18 +1064,57 @@ typedef struct __http_content http_content;
 		return (char const *)strdup(__);
 	};
 
-	char const *http_header(ulong http_status, char const *http_result) {
-		char const *hdr_fmt=__http_hdr(__get_from_http_status(http_status));
-		if(hdr_fmt==NULL){
+	enum __http_request_types {
+		__http_get,
+		__http_post,
+	};
+
+	typedef enum __http_request_types http_request_t;
+
+	char const *__request_name(http_request_t __type) {
+		switch(__type) {
+		case __http_get: return "GET";
+		case __http_post: return "POST";
+		default: return NULL;
+		};
+	};
+
+	char const *form_http_request(http_request_t req_type, char const *__path) {
+		if(__path==NULL){
+			#ifdef LOG_ERR
+				printf("unable to create request : path is null\n");
+			#endif
 			return NULL;
 		};
-			ulong b_offset=sep_offset(hdr_fmt, "B");
-		char const *temp=expand_atoffset(hdr_fmt, _h_base, b_offset);
+		char const *request_name=__request_name(req_type);
+		if(request_name==NULL){
+			#ifdef LOG_ERR
+				printf("unable to create request : request type is unknown\n");
+			#endif
+			return NULL;
+		};
+		char const *temp=expand_atoffset(__http_request_base, request_name, 0);
+		ulong p_offset=sep_offset(temp, "P");
+		temp=expand_atoffset(temp, __path, p_offset);
+		ulong v_offset=sep_offset(temp, "V");
+		temp=expand_atoffset(temp, __http_protocol_version, v_offset);
+		return strdup(temp);
+	};
+
+
+	char const *form_http_response(ulong res_type, char const *req_result) {
+			ulong b_offset=sep_offset(__http_response_base, "B");
+		char const *temp=expand_atoffset(__http_response_base, __http_protocol_version, b_offset);
 			ulong s_offset=sep_offset(temp, "S");
-			temp=expand_atoffset(temp, numtochar(http_status), s_offset);
+			temp=expand_atoffset(temp, numtochar(res_type), s_offset);
 			ulong r_offset=sep_offset(temp, "R");
-			temp=expand_atoffset(temp, http_result, r_offset);
+			temp=expand_atoffset(temp, req_result, r_offset);
 			return strdup(temp);
+	};
+
+	char const *http_response(ulong http_status, char const *http_result) {
+		
+		return form_http_response(http_status, http_result);
 	};
 
 	void *aip_send(aipsock *sock, char *msg_to_send){

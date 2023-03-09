@@ -16,14 +16,13 @@
 	static char *__upgrade="HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nCache-Control: no-cache\r\nSec-WebSocket-Protocol: @-Protocol\r\n";
 	static char *__cwss="258EAFA5-E914-47DA-95CA-C5AB0DC85B11\0";
 	char const *hfmt_base="P S R";
-	#define HTTP_ACCEPT http_header(200, "OK")
-	#define HTTP_SWITCH http_header(101, "Switching Protocols")
-	#define HTTP_FORBID http_header(404, "Forbidden")
+	#define HTTP_ACCEPT http_response(200, "OK")
+	#define HTTP_SWITCH http_response(101, "Switching Protocols")
+	#define HTTP_FORBID http_response(404, "Forbidden")
 
 	enum __http_protomethods {
 		__http_request,
-		__http_accept,
-		__http_post,
+		__http_response,
 		__http_switch,
 	};
 
@@ -110,6 +109,8 @@
 	#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
 
 	#define addr_args(x) ((x->ptr),(x->addr), #x)
+
+    #define len_strze(x) (((ulong)x)*(sizeof(char)))
 
 	static arc_t __arc;
 	static struct __sok_t __sok;
