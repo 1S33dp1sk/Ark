@@ -12,14 +12,7 @@
 
 
 
-#ifdef PROTO_TESTS
 int main(int argc, char const *argv[]) {
 
 
 }
-#else
-__dPRG
-	__LBB__(
-		ATP,NULL
-	)
-#endif

@@ -7,10 +7,47 @@
 
 #ifndef __atp_name
 	#define __atp_name "@-Protocol"
+	
+	int __incheck(char c){   
+		if( (c>=0x30)&&(c<=0x39)){
+			#ifdef DDEBUG
+				printf("char %c has a value of %d\n",c,c);  
+			#endif
+			return 1;
+		};
+		return 0;
+	};
 
-	char const *__atp__() {
-
-		return NULL;
+	ulong __tonum(char const *var){
+		ulong d=1,__c=0,res=0,__len=strlen(var);
+		int c;
+		if(var[__len]=='\0'){
+			while(__incheck(var[__c])){
+				d*=10;
+				__c+=1;
+			};
+			__c=0;
+			if(d>=10){d/=10;}
+			#ifdef DDEBUG
+				printf("digits count :: %lu\n",d);
+			#endif
+			while(__incheck(var[__c])){
+				res+=(d*(var[__c]-0x30));
+				__c+=1;d/=10;
+			}
+			#ifdef DDEBUG
+				printf("result is :: %lu\n", res);
+			#endif
+		};
+		return res;
+	};
+	ulong tonum(int i){
+		ulong res=0;
+		if(i>0){
+			res+=i;
+			return res;
+		};
+		return 0;
 	};
 
 	ulong __rwings(void *__) {
@@ -610,7 +647,7 @@
 		free(aip_sa->_sokaddr);
 	};
 
-	enum __atypes_ get_atype(struct __socket_address *aip_sa) {
+	at_t get_atype(struct __socket_address *aip_sa) {
 		return aip_sa->_atype;
 	};
 
@@ -632,7 +669,7 @@
 		return NULL;
 	};
 
-	struct __buffin {
+struct __buffin {
 		char __pname[8];
 		char __intrpt[64];
 		char __effective[440];
@@ -652,49 +689,6 @@
 		memset(&__nifty,0,sizeof(struct __buffin));
 		__nifty._org=(char *)__buffer;
 		init_nifty(&__nifty);
-	};
-
-	int __incheck(char c){   
-		if( (c>=0x30)&&(c<=0x39)){
-			#ifdef DDEBUG
-				printf("char %c has a value of %d\n",c,c);  
-			#endif
-			return 1;
-		};
-		return 0;
-	};
-
-	ulong __tonum(char const *var){
-		ulong d=1,__c=0,res=0,__len=strlen(var);
-		int c;
-		if(var[__len]=='\0'){
-			while(__incheck(var[__c])){
-				d*=10;
-				__c+=1;
-			};
-			__c=0;
-			if(d>=10){d/=10;}
-			#ifdef DDEBUG
-				printf("digits count :: %lu\n",d);
-			#endif
-			while(__incheck(var[__c])){
-				res+=(d*(var[__c]-0x30));
-				__c+=1;d/=10;
-			}
-			#ifdef DDEBUG
-				printf("result is :: %lu\n", res);
-			#endif
-		};
-		return res;
-	};
-
-	ulong tonum(int i){
-		ulong res=0;
-		if(i>0){
-			res+=i;
-			return res;
-		};
-		return 0;
 	};
 
 	// get sockaddr, IPv4 or IPv6:
@@ -824,27 +818,20 @@
 		};
 	};
 
-
-	char const *__http_protocol_version="HTTP/1.1";
-
-	char const *__http_request_base="M P V\r\n";
-	char const *__http_response_base="B S R\r\n";
-
-	#define kvs_id(x) (kvs__.keys[x], kvs__.values[x], kvs__.seperator, kvs__.__line_ends)
-
-	struct __kvs {
-		char const**keys;
-		char const**values;
-		char const *seperator;
-		char const *__line_ends;
-		ulong kvs_c;
-	};
-	typedef struct __kvs keyvals;
-	static keyvals kvs__;
+struct __kvs {
+	char const**keys;
+	char const**values;
+	char const *seperator;
+	char const *__line_ends;
+	ulong count;
+};
+typedef struct __kvs keyvals;
+	#define kvs_id(s,x) (s->keys[x], s->values[x], s->seperator, s->__line_ends)
 
 	void free_kv(keyvals *__) {
-		printf("total count = %lu \n", __->kvs_c);
-		for(int i=0; i<(__->kvs_c-1);i++) {
+		ulong __count=__->count;
+		printf("total count = %lu \n", __count);
+		for(int i=0; i<__count;i++) {
 			free((void *)__->keys[i]);
 			free((void *)__->values[i]);
 		};
@@ -861,7 +848,7 @@
 		printf("kvs :: \n");
 		printf("seperator (%s)\n", __->seperator);
 		printf("line endings -> %s\n", __->__line_ends);
-		ulong count=0,__c=__->kvs_c;
+		ulong count=0,__c=__->count;
 		char const *_k,*_v;
 		printf("total kvs = %lu\n", __c);
 		do {
@@ -873,16 +860,14 @@
 	};
 	
 	void log_kv(keyvals *__) {
-		printf("total count = %lu \n", __->kvs_c);
-		for(int i=0; i<(__->kvs_c-1);i++) {
+		ulong __count=__->count;
+		printf("total count = %lu \n", __count);
+		for(int i=0; i<__count;i++) {
 			printf("k-> %s\n v-> %s\n",__->keys[i],__->values[i]);
 		};
 	};
 
 	static const ulong mem_sz=sizeof(char*);
-
-	#define _kvs_keys(x) ((const char *)(&(kvs__.keys)[x]))
-	#define _kvs_vals(x) ((const char *)(&(kvs__.values)[x]))
 
 	#define kvs_key(x,p) ((const char *)((x->keys)[p]))
 	#define kvs_val(x,p) ((const char *)((x->values)[p]))
@@ -891,74 +876,52 @@
 	#define __keys__(x) ((char const **)(x->keys))
 	#define vals__(x) ((const *char *)(&x))
 
-
-	void __add_pair(keyvals *__kvs, char const *__keyp, char const *__valp) {
-		ulong c=0,c_count=kvs__.kvs_c, __ccsize=((c_count+1)*(sizeof(char*))), nc_count=c_count+2;;
-		char const **__keys=calloc(nc_count, mem_sz);
-		char const **__values=calloc(nc_count, mem_sz);
-		char const **_keys=__keys, **_vals=__values;
-		_keys[nc_count]=NULL;_vals[nc_count]=NULL;
-		(__kvs->keys)[c_count]=kvs__.keys[0];
-		(__kvs->values)[c_count]=kvs__.vals[0];
-		printf("\n\n\n\n %s : %lu \n\n\n\n", __kvs->keys[c_count], c_count);
-		// if(c_count){
-		// 	printf("adding pair :: %s,%s\n",__keyp, __valp);
-		// 	do {
-		// 		*(_keys)++=_kvs_keys(c);
-		// 		printf("keys <ptr> : %s\n", kvs__.keys[c]);
-		// 		*(_vals)++=_kvs_vals(c);
-		// 		printf("vals <ptr> : %s\n", kvs__.values[c]);
-		// 		c+=1;
-		// 	}while(c<c_count);
-		// 	// free_kv(&kvs__);
-		// };
-		*(_keys)++=__keyp;
-		*(_vals)++=__valp;
-		kvs__.kvs_c+=1;
-		kvs__.keys=(char const **)__keys;
-		kvs__.values=(char const **)__values;
-		log_kvs(__kvs);
-	};
-
-	void *__kvs__(char const *sep, char const *lds) {
+	void *__kvs__(keyvals *__, char const *sep, char const *lds) {
 		ulong seplen=str_rwings(sep), ldslen=str_rwings(lds);
 		char *__sep=(char *)malloc(len_strze(seplen));
 		char *__lends=(char *)malloc(len_strze(ldslen));
 		memmove(__sep, sep, seplen);
 		memmove(__lends, lds, ldslen);
-		keyvals *__=memset(&kvs__, 0, sizeof(keyvals));
+		memset(__, 0, sizeof(keyvals));
 		__->seperator=(char const *)__sep;
 		__->__line_ends=(char const *)__lends;
 		__->keys=malloc(mem_sz);
 		__->values=malloc(mem_sz);
 		__->keys[0]=NULL;
 		__->values[0]=NULL;
-		__->kvs_c=0;
+		__->count=0;
 		return __;
 	};
 
-	int kvs_add_pair(char const *key, char const *val) {
+	void __free_str(char const *__) {
+		free((void *)__);
+	};
+
+	int __add_pair(keyvals *kvs, char const *key, char const *val) {
+
+		log_kvs(kvs);
+
+		return 0;
+	}
+
+	int kvs_pair(keyvals *kvs, char const *key, char const *val) {
 		ulong keylen=str_rwings(key), vallen=str_rwings(val);
 		char const *__key=(char const *)malloc(len_strze(keylen));
 		char const *__val=(char const *)malloc(len_strze(vallen));
 		memmove((void *)__key, key, keylen);
 		memmove((void *)__val, val, vallen);
-		keyvals *temp;
 		#ifdef DEBUG
 			printf("adding pair :: (%s,%s)\n",key, val);
 		#endif
-		__add_pair(temp, __key, __val);
-
-		return 0;
+		return __add_pair(kvs, __key, __val);
 	};
 
-	
 
-	struct __liner {
-		ulong __size;
-		char const *__cptr;
-	};
-	typedef struct __liner s_line;
+struct __liner {
+	ulong __size;
+	char const *__cptr;
+};
+typedef struct __liner s_line;
 	static const ulong size_sline=sizeof(struct __liner);
 
 	s_line*kvs_liner(char const *__key, char const *__val, char const *__dlm, char const *__lds) {
@@ -978,7 +941,7 @@
 	void free_kv_sline(s_line *kv_sline);
 
 	char const *kvs_traverse(keyvals *kvs) {
-		ulong __size=0, c=0, count=kvs->kvs_c;
+		ulong __size=0, c=0, count=kvs->count;
 		do {
 			#ifdef DEBUG
 				printf("kvs->key : %lu :: %s\n", c, kvs_key(kvs,c));
@@ -989,12 +952,14 @@
 			c+=1;
 		} while(c<count);
 		ulong __len=len_strze(__size);
-		printf("size : %lu\n", __size);
+		#ifdef DEBUG
+			printf("size : %lu\n", __size);
+		#endif
 		char *__=(char *)malloc(__len);
 		memset(__, '\0', sizeof(__len));
 		c=1;__size=0;
 		while(c<count){
-			s_line *temp=kvs_liner kvs_id(c);
+			s_line *temp=kvs_liner kvs_id(kvs,c);
 			memmove((__+__size), (void *)temp->__cptr, temp->__size);
 			__size+=(temp->__size);
 			free_kv_sline(temp);
@@ -1031,14 +996,19 @@
 		memmove((__+_lstr1), str2, _lstr2);
 		return strdup(__);
 	};
-	
-	enum __http_content_types {
-		__hct_text,
-		__hct_html,
-		__hct_json,
-		__hct_img,
-	};
+
+
+enum __http_content_types {
+	__hct_text,
+	__hct_html,
+	__hct_json,
+	__hct_img,
+};
 typedef enum __http_content_types content_type;
+
+	static const char *__http_protocol_version="HTTP/1.1";
+	static const char *__http_request_base="M P V\r\n";
+	static const char *__http_response_base="B S R\r\n";
 
 	char const *__http_hc_typed(content_type cont_t) {
 		switch(cont_t) {
@@ -1050,11 +1020,12 @@ typedef enum __http_content_types content_type;
 		};
 	};
 
-	struct __http_content {
-		ulong __size;
-		void *__content;
-		char const *__type;
-	};
+
+struct __http_content {
+	ulong __size;
+	void *__content;
+	char const *__type;
+};
 typedef struct __http_content http_content;
 
 	http_content *crt_http_content(char const *__, content_type __type) {
@@ -1781,6 +1752,5 @@ typedef struct __http_content http_content;
 	    };
 	    return NULL;
 	};
-
 
 #endif

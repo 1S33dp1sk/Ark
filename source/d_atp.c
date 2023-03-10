@@ -11,16 +11,16 @@
 
 
 char const *dummy_data(){
-	keyvals *kvs=__kvs__(": ", "\r\n");
-	kvs_add_pair("_keynumber1\0","value_number8\0");
-	kvs_add_pair("_keynumber2\0","value_number64\0");
-	kvs_add_pair("_keynumber3\0","value_number512\0");
-	kvs_add_pair("_keynumber4\0","value_number4096\0");
-	kvs_add_pair("_keynumber5\0","value_number32k\0");
-	kvs_add_pair("_keynumber6\0","value_number262k\0");
-	kvs_add_pair("_keynumber7\0","value_number2m\0");
-	kvs_add_pair("_keynumber8\0","value_number17m\0");
-	kvs_add_pair("_keynumber9\0","value_number134m\0");
+	keyvals kvs_st, *kvs=__kvs__(&kvs_st, ": ", "\r\n");
+	kvs_pair(kvs,"_keynumber1\0","value_number8\0");
+	// kvs_pair(kvs,"_keynumber2\0","value_number64\0");
+	// kvs_pair(kvs,"_keynumber3\0","value_number512\0");
+	// kvs_pair(kvs,"_keynumber4\0","value_number4096\0");
+	// kvs_pair(kvs,"_keynumber5\0","value_number32k\0");
+	// kvs_pair(kvs,"_keynumber6\0","value_number262k\0");
+	// kvs_pair(kvs,"_keynumber7\0","value_number2m\0");
+	// kvs_pair(kvs,"_keynumber8\0","value_number17m\0");
+	// kvs_pair(kvs,"_keynumber9\0","value_number134m\0");
 	char const *all_lines=kvs_traverse(kvs);
 	return all_lines;
 };

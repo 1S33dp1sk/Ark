@@ -4,8 +4,6 @@
 	#include "standard.h"
 	#include "ixr.h"
 	
-	#define ATP __atp__
-
 	extern char **environ;
 	static char *_h_base="HTTP/1.1";
 	static char *_hm_get="GET";
