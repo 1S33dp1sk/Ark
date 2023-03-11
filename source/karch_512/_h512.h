@@ -115,8 +115,9 @@ void *__lbb_ref(char const *__rname);
 void *__lbb_addref(char const *__rname, char const *__rval);
 
 
-/************************ functions ************************/
+// static const char *__os_delim="/\0";
 
+/************************ functions ************************/
 /********* files *********/
 
 ulong __fsize(char const *__fpath){
@@ -666,6 +667,36 @@ static void *hixr=(void *)&___header;
 #define __ixr_access_flags (O_RDWR|O_NOFOLLOW_ANY)
 #define __ixr_pmode (S_IRWXU|S_IXGRP|S_IXOTH)
 
+
+char const *__kaddress(char const *__hash) {
+    ulong __len=str_rwings(__hash)+3;
+    char temp[__len];memset(&temp, 0, sizeof(temp));
+    temp[0]='k';
+    switch((__len-3)) {
+    case 8:  temp[1]='C'; break; // command 
+    case 16: temp[1]='I'; break; // interpreter
+    case 32: temp[1]='P'; break; // payload
+    default: temp[1]='-'; break; // K-address
+    };
+    memmove((temp+2), __hash, __len);
+    temp[__len]='\0';
+    return (char const *)strdup(temp);
+};
+
+char const *kaddress(char const *__name, lbb_t __type) {
+	ulong __len=str_rwings(__name);
+    switch(__type){
+    case __unknown: break;
+    case __path_sys: return __kaddress(fhashof(0, __name));
+    case __proto_call: return __kaddress(hashof(1, __name, __len));
+    case __intrp_decl: return __kaddress(hashof(2, __name, __len));
+    case __payld_entr: return __kaddress(hashof(3, __name, __len));
+    default: break;
+    };
+    return NULL;
+};
+
+
 void *__erv(char const *__key,char const *__val) {
 	ulong __sz=str_rwings(__key)+str_rwings(__val)+5;
 	ulong __len=len_ustrze(__sz);
@@ -997,7 +1028,7 @@ char *flds(char const *__fldname) {
 	#endif
 
 
-	char *cflds_head=conv_fields(__cm_st);
+	char const *cflds_head=conv_fields(__cm_st);
 	if(cflds_head==NULL){
 		#ifdef LOG_ERR
 			printf("cflds header is null\n");
@@ -1059,6 +1090,15 @@ void *__lbb_addref(char const *__rname, char const *__rval) {
 	};
 	free(__dst);	
 	return NULL;
+};
+
+unsigned get_hlevel(char *href) {
+    ulong c=str_rwings(href);
+    unsigned res=((c)>>3);
+    if (res>3){
+        return 3;
+    };
+    return res;
 };
 
 

@@ -5,9 +5,47 @@ little black book
 #include "lbb.h"
 #endif
 
+#define OUTPUT 1
+#define LOG_ERR 1
+
+#ifndef __os_name
+#define __os_delim "/"
+	#if HAVE_TARGET_CONDITIONALS_H
+		#include <targetConditionals.h>
+	#endif
+	#if _WIN64
+		#define __os_name "windows:64b\0"
+		#undef __os_delim
+		#define __os_delim '\\'
+	#elif _WIN32
+		#define __os_name "windows\0"
+		#undef __os_delim
+		#define __os_delim "\\"
+	#elif defined(TARGET_OS_IPHONE)
+		#define __os_name "apple:iphone\0"
+	#elif defined(TARGET_OS_MAC)
+		#define __os_name "apple:macos\0"
+	#elif __APPLE__!=0
+		#define __os_name "apple\0"
+	#elif __linux__!=0
+		#define __os_name "unix:linux\0"
+	#elif __ANDROID__!=0
+		#define __os_name "unix:android\0"
+	#elif BSD
+		#define __os_name "bsd\0"
+	#elif __unix__
+		#define __os_name "unix\0"
+	#else
+		#define __os_name "\0"
+	#endif
+#endif
+
 
 #ifndef __lbb_name
 	#define __lbb_name "linked binary book"
+
+
+ulong str_rwings(char const *__);
 
 
 // try to create a { SHARED } file
@@ -88,6 +126,72 @@ ulong __ap_reader() {
 	};
 	return _fd;
 };
+
+ulong __lbb_file_r(char const *__fpath) {
+	ulong retres=0;
+	int __fd=open(__fpath,__lbb_lock_reader);
+	if(__fd==-1){
+		#ifdef LOG_ERR
+			printf("cannot open reader\n");
+		#endif
+		_exit(1);
+	};
+	retres=(ulong)__fd;
+	#ifdef DEBUG
+		printf("Reader : fifo opened :: %lu\n",retres);
+	#endif
+	return retres;
+};
+
+ulong __lbb_file_w(char const *__fpath) {
+	ulong retres=0;
+	int __fd=open(__fpath,__lbb_lock_writer);
+	if(__fd==-1){
+		#ifdef LOG_ERR
+			printf("cannot open reader\n");
+		#endif
+		_exit(1);
+	};
+	retres=(ulong)__fd;
+	#ifdef DEBUG
+		printf("Reader : fifo opened :: %lu\n",retres);
+	#endif
+	return retres;
+};
+
+#define LOG_ERR 1
+ulong __lbb_file_n(char const *__fpath) {
+	ulong retres=0;
+	ulong temp=str_rwings(__fpath), __total=temp;
+	__total+=str_rwings(__FILE__);
+	ulong __offset_f=sep_offset(__fpath, "@charms");
+	ulong __offset_p=sep_offset(__FILE__, "@charms")+1;
+
+	char const *__=__combine_str(str_b4offset(__FILE__, __offset_p), str_a4woffset(__fpath, __offset_f));
+
+	printf("__ ::: %s\n", __);
+
+	if((__offset_f)) {
+		#ifdef LOG_ERR
+			printf("cannot obtain dual offset\n");
+		#endif
+		_exit(2);
+	};
+
+	int __fd=open(__,__lbb_shard_flags);
+	if(__fd==-1){
+		#ifdef LOG_ERR
+			printf("cannot open reader\n");
+		#endif
+		_exit(1);
+	};
+	retres=(ulong)__fd;
+	#ifdef DEBUG
+		printf("shard : file opened :: %lu\n",retres);
+	#endif
+	return retres;
+};
+
 
 // close the lbb filedescriptor currently
 // opened under the lbb_shard structure
@@ -182,14 +286,11 @@ void __readin(char *buffer, ulong size, ulong stfd) {
 
 ulong __fillb(){ // create &-> fill the book
 	ulong __res=__writeb((uchar*)shd_key,LBB_BUFFER_SIZE);
-	__closeb();
+	lbb_close();
 	return __res;
 };
 
-void __closeb(){
-	close(shd_fd);
-	memset(&lbb_shard,0,sizeof(struct __lbb_shard));
-};
+
 
 ulong write_book(char *content, ulong csize) {
 
@@ -206,7 +307,8 @@ char *read_book(char *__bpath){
 };
 
 void lbb_close(){
-	__closeb();
+	close(shd_fd);
+	memset(&lbb_shard,0,sizeof(struct __lbb_shard));
 };
 
 ulong reset_book(){
@@ -215,7 +317,7 @@ ulong reset_book(){
 };
 
 ulong lbb_print(char *kaddr){
-	ulong res=__writeb((uchar *)kaddr,strlen(kaddr));
+	ulong res=__writeb((uchar *)kaddr,str_rwings(kaddr));
 	return res;
 };
 
@@ -226,8 +328,8 @@ int lbb(char const *__cpath,ulong __lock){
 		SET_LBB_FD(__lock);
 	#endif
 	char *LOCKING="locked\n";
-	__writeb((uchar *)LOCKING,strlen(LOCKING));
-	__closeb();
+	__writeb((uchar *)LOCKING,str_rwings(LOCKING));
+	lbb_close();
 	return res;
 };
 
@@ -239,19 +341,19 @@ int lbb(char const *__cpath,ulong __lock){
 struct __ptrdx __iptridx(char const *__ptr_index) {
 	char *_ptr_idx=(char *)__ptr_index;
 
-	ulong plen=strlen(_ptr_idx);
+	ulong plen=str_rwings(_ptr_idx);
 	ulong lcount=0;
 
 	ulong off_at=sep_offset(_ptr_idx,"ae");
 
 	char *_pidx=str_b4offset(_ptr_idx,off_at);
-	ulong pidx,_pxlen=strlen(_pidx);
+	ulong pidx,_pxlen=str_rwings(_pidx);
 	uchar *pidx_=(uchar *)_pidx;
 	unpack(pidx_,"L",pidx);
 
 
 	char *_tri=str_a4offset(_ptr_idx,off_at);
-	ulong tri,_tilen=strlen(_tri);
+	ulong tri,_tilen=str_rwings(_tri);
 	uchar *tri_=(uchar *)_tri;
 	unpack(tri_,"L",tri);
 
@@ -264,7 +366,7 @@ struct __ptrdx __iptridx(char const *__ptr_index) {
 };
 
 void *___exsptr(char const *__ptr_index) {
-	ulong lcount=0, lcpy=0, plen=strlen(__ptr_index), comb_len=plen;
+	ulong lcount=0, lcpy=0, plen=str_rwings(__ptr_index), comb_len=plen;
 	char *_ptr_idx=(char *)__ptr_index;
 	uchar *__pind=(uchar *)_ptr_idx;
 
@@ -380,7 +482,7 @@ int main_atoff(){
 
 int get_sstat(char const *__path, s_stat *sfile) {
 	memset(sfile,0,sizeof(s_stat));
-	ulong path_len=strlen(__path);
+	ulong path_len=str_rwings(__path);
 	if(path_len>512){
 		return -1;
 	};
@@ -395,10 +497,10 @@ int get_sstat(char const *__path, s_stat *sfile) {
 	#endif
 
 	char *faddr=str_b4offset(_path,off_at);
-	sfile->sa_len=strlen(faddr);
+	sfile->sa_len=str_rwings(faddr);
 
 	char *fipat=str_a4offset(_path,off_at);
-	sfile->se_len=strlen(fipat);
+	sfile->se_len=str_rwings(fipat);
 
 	memmove((&sfile->s_addr),faddr,sfile->sa_len);
 	memmove((&sfile->s_ipv),fipat,sfile->se_len);
@@ -419,10 +521,10 @@ int get_kstat(char const *__path, k_stat *kfile) {
 
 
 	char *uname=str_b4offset(_path,off_at);
-	ulong unlen=strlen(uname);
+	ulong unlen=str_rwings(uname);
 
 	char *ixes=str_a4offset(_path,off_at);
-	ulong ixlen=strlen(ixes);
+	ulong ixlen=str_rwings(ixes);
 
 	memmove((&kfile->u_name),uname,unlen);
 	memmove((&kfile->i_addr),ixes,ixlen);
@@ -529,25 +631,21 @@ ulong __get_long_digits(ulong num) {
 	};
 	return res+=1;
 };
-
 char *__get_cfname(char const *__fname, ulong __iter) {
-	ulong __flen=strlen(__fname);
-	if(__flen<=40){
-		#ifdef LOG_ERR
-			printf("file name cannot be longer than 40 bytes\n");
-		#endif
-		return NULL;
-	}
+	#ifdef DEBUG
+		printf("cfname : %s :: %lu", __fname, __iter);
+	#endif
+	ulong __flen=str_rwings(__fname);
 	char __[64];memset(&__,0,sizeof(__));
 	sprintf(__,"%s:%lu",__fname,__iter);
 	return strdup(__);
 };
 
-char *__get_fcontents(char *__conts, ulong __size) {
+char const *__get_fcontents(char *__conts, ulong __size) {
 	char __[__size];
 	memset(&__,0,__size);
 	sprintf(__,"{%s}",__conts);
-	return strdup(__);
+	return (char const *)strdup(__);
 };
 
 void free_fields(fields flds){
@@ -557,87 +655,285 @@ void free_fields(fields flds){
 		c+=1;
 	};
 };
+struct __conv_header {
+	ulong chksize;
+	char const *chkname;
+	char const *chksum;
+	char const *chkcont;
+};
+typedef struct __conv_header chk_st;
 
-char *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
+static const ulong size_fld=sizeof(field);
+char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
+	#ifdef DEBUG
+		printf("fld ((conv)) ::\n");
+		printf("fld name  : %s\n", __fn);
+		printf("fld file  : %lu\n", __fd);
+		printf("fld count : %lu\n", __fld_count);
+	#endif
 	ulong const field_size=sizeof(field);
-	ulong const lf_size=strlen(__lbb_convdir);
-	ulong const fn_size=strlen(__fn);
+	ulong const lf_size=str_rwings(__lbb_convdir);
+	ulong const fn_size=str_rwings(__fn);
 	ulong c=0,_res=0,__offset=0;
 
 	// create entry in lbb/
-	char fieldname[fn_size+lf_size+1];
-	memset(&fieldname,0,fn_size+lf_size);
-	memmove(fieldname,__lbb_convdir,lf_size);
-	memmove((fieldname+lf_size),__fn,fn_size);
+	char const *fld_name=__combine_str(__lbb_convdir, __fn);
 
-	int lbb_dd=open(fieldname,__lbb_shard_flags,__lbb_public_mode);
-	if(lbb_dd==-1){
-		printf("open failed\n");
-		return NULL;
-	};
+	ulong lbb_dd=__lbb_file_n(fld_name);
 
-	field e_field;
-	memset(&e_field,0,field_size);
-	char *__buffer=(char *)&(e_field.contents.et);
+
+	field _field; memset(&_field,0,size_fld);
+	char *__buffer=(char *)&(_field.ucon.et);
+	__buffer[4096]='\0';
+
+	chk_st cst;
+
+
 	while(c<__fld_count){
-		memset(__buffer,0,512);
+		memset(&cst, 0, sizeof(chk_st));
+		memset(__buffer,0,4096);
 		#ifdef DEBUG
 			printf("Conv Fields DEBUG :: %lu\n", c);
 		#endif
 		// read size
-		int __tempres=pread(__fd,__buffer,512,__offset);
-		if(__tempres>=1){
-			_res=(ulong)__tempres;
-			__offset+=_res;
+		int __tempres=pread(__fd,__buffer,4096,__offset);
+		if(__tempres==-1) {
+			#ifdef LOG_ERR
+				printf("could not read file : %s\n", shd_path);
+			#endif
+			return NULL;
 		}
-		_OUT_ASCII(lbb_dd,_res);
+		else if (__tempres==0) {
+			break;
+		}
+		else {
+			cst.chksize=(ulong)__tempres;
+			__offset+=cst.chksize;		
+		};
 		#ifdef DEBUG
-			printf("read size :: %lu\n", _res);
+			printf("read size :: %lu\n", cst.chksize);
 		#endif
+
 		// file path
-		char *__fcharm=__get_cfname(__fn,c);
-		OUT_ASCII(lbb_dd,__fcharm);
-		#ifdef DEBUG
-			printf("file path :: %s\n", __fcharm);
-		#endif
+		cst.chkname=__get_cfname(__fn, c);
+		OUT_ASCII(lbb_dd,cst.chkname);
+		// #ifdef DEBUG
+		printf("file path :: %s\n", cst.chkname);
+		// #endif
+
 		// get checksum for entire file
-		char *checksum=(char *)hashof(1,e_field.contents.et,e_field.contents.len);
-		_OUT_ASCII(lbb_dd,checksum);
-		#ifdef DEBUG
-			printf("file checksum :: %s\n", checksum);
-		#endif		
-		// get the content size of the buffer
-		ulong buflen=strlen(__buffer);
-		_OUT_ASCII(lbb_dd,buflen);
-		#ifdef DEBUG
-			printf("buflen :: %lu\n", buflen);
-		#endif	
+		cst.chksum=(char *)hashof(1,field_content(_field),field_length(_field));
+		OUT_ASCII(lbb_dd,cst.chksum);
+		// #ifdef DEBUG
+		printf("file checksum :: %s\n", cst.chksum);
+		// #endif		
+
 		// pack the contents as binary with s indicator
-		char *contents=__get_fcontents(__buffer,buflen);
-		ulong conbuf_len=strlen(contents);
-		PACK_IN(lbb_dd,conbuf_len,"%s\0",contents);
-		#ifdef DEBUG
-			printf("contents : start content --->%s<---end contents\n", contents);
-		#endif
+		OUT_ASCII(lbb_dd, field_content(_field));
+
 		c+=1;
 	};
 	
-	close(__fd);
 	close(lbb_dd);
 
-	return strdup(fieldname);
+	return strdup(fld_name);
 };
 
-char *conv_fields(m_stat *m_st){
-	ulong __fd=open(m_st->m_path,__lbb_share_flags), __count=0, __size=(m_st->m_size), c=__size;
-	while(c>512){
-		__count+=1;
-		c-=512;
-	};
-	__count+=1;
+
+ulong __flds_count(int c) {
+	int __c=(int)c;
+	ulong count=0;
+	do {
+		count+=1;
+		__c-=4096;
+	}while(__c>4096);
+	return count;
+}
+
+char const *conv_fields(m_stat *m_st){
+	ulong __fd=open(m_st->m_path,__lbb_share_flags), __size=(m_st->m_size), __count=__flds_count(__size);
 
 	return __conv_fields(hashof(1,m_st,sizeof(m_stat)),__fd,__count);
 };
+
+/*******************************************************************/
+
+
+enum __lbb_add_t {
+	__command, 
+	__filepath, 
+	__function,
+	__field,
+	__addr
+};
+typedef enum __lbb_add_t lbb_at;
+
+static void *__ne=(void *)'\0';
+static const void *ne=(char const *)(void *)'\0';
+
+#define __lbb_command_args (char const *, char const *)
+#define __lbb_filepath_args (char const *, sterm)
+#define __lbb_function_args (char const *, void *, void *)
+#define __lbb_field_args (void const *)
+#define __lbb_cc char const *
+#define __lbb_vp void *
+
+#define __lbb_call_args(...) __VA_ARGS__
+#define lbb_add(x,...) __lbb_typd_args(x)
+
+#define __lbb_call_generic(__) \
+	_Generic((__),\
+		ptr_st:"lbb command",\
+		intr_st: "lbb interpreter",\
+		payld_st: "lbb payload",\
+		cis_st: "lbb field",\
+	default:"lbb call")
+
+#define __lbb_resp_generic(__) \
+	_Generic((__),\
+		ptr_st*:"command response",\
+		intr_st*: "interpreter reply",\
+		payld_st*: "payload retrieve",\
+		cis_st*: "field return",\
+	default:"unknown args")
+
+#define __lbb_generic(__) \
+	_Generic((__),\
+		char[8]:(ptr_st *) &__,\
+		char[64]:(intr_st *) &__,\
+		char[512]:(payld_st *) &__,\
+		char[4096]:(cis_st *) &__,\
+		default:"unknown")
+
+#define __lbb_typd(__) \
+	_Generic((__),\
+		ptr_st * : char[8],\
+		intr_st * : char[64],\
+		payld_st * : char[512],\
+		cis_st * : char[4096],\
+		default:"unknown")
+
+int get_freader(m_stat *mst) {
+	int _fd=open(mst->m_path,__lbb_lock_reader);
+	if(_fd==-1){
+		#ifdef LOG_ERR
+			printf("cannot open reader for : %s\n", mst->m_path);
+		#endif
+		return -1;
+	};
+	ulong __fd=(ulong)_fd;
+	lbb_shard.lbb_fd=__fd;
+	#ifdef DEBUG
+		printf("Reader : file opened :: %lu\n",shd_fd);
+	#endif
+	return 0;
+};
+
+
+char const *__lbb_command(char const *__cpath, char const *__args) {
+	printf("lbb command @%s<%s>\n", __cpath, __args);
+	int __res=-1;
+	__res=get_mstat(__cpath, lbb_mstat);
+	if(__res==-1) {
+		#ifdef LOG_ERR
+			printf("cannot obtain file @%s\n", __cpath);
+		#endif
+		return NULL;
+	};
+	return __args;
+};
+
+
+char const *__lbb_filepath(char const *__fpath, sterm __term) {
+	printf("lbb filepath :%s+%u\n", __fpath, __term);
+	int __res=-1;
+	__res=get_mstat(__fpath, lbb_mstat);
+	if(__res==-1) {
+		#ifdef LOG_ERR
+			printf("cannot obtain file @%s\n", __fpath);
+		#endif
+		return NULL;
+	};
+
+	__res=get_freader(lbb_mstat);
+	if(__res==-1) {
+		#ifdef LOG_ERR
+			printf("result is = %d\n", __res);
+		#endif
+		return NULL;
+	};
+	#ifdef DEBUG
+		printf("lbb@%lu<%lu>\n", shd_fd, shd_sze);
+	#endif
+	
+	ulong count=__flds_count(shd_sze);
+
+	char const *convres=__conv_fields(shd_key,shd_fd,count);
+
+	lbb_close();
+
+	if(convres!=NULL) {
+		#ifdef OUTPUT
+			printf("@lbb%s\n filepath : %s\n", shd_key, __fpath);
+		#endif
+		return shd_key;
+	};
+	#ifdef OUTPUT
+		printf("could not convert filepath : %s\n", __fpath);
+	#endif
+	return shd_path;
+};
+
+void const *__lbb_function(char const *__name, void const *__intype, void const *__castout) {
+
+	printf("lbb function ::%s(%s)=%s\n", __name, __lbb_call_generic(__intype), __lbb_resp_generic(__castout));
+
+	return __ne;
+};
+
+void __free_ptr(void const *__) {
+	free((void *)__);
+}
+
+void const *__lbb_field(char const *__keyname, void const *__content) {
+
+	printf("lbb field <%s> ::: %p \n", __keyname, __content);
+
+	__free_ptr(__content);
+	return __ne;
+};
+
+void const *__lbb_address(void *__) {
+
+	printf("lbb address @%p", __);
+
+	return __ne;
+};
+
+void const *__lbb_type_args(lbb_at __atype) {
+	switch(__atype){
+
+	case __command: return (char const *(*)(char const *, char const *))&__lbb_command;
+
+	case __filepath: return (char const *(*)(char const *, sterm))&__lbb_filepath;
+
+	case __function: return (void *(*)(char const *, void *, void *))&__lbb_function;
+
+	case __field: return (void *(*)(char const *))&__lbb_field;
+
+	default: return (void *(*)(__lbb_vp))&__lbb_address;
+
+	};
+	return __ne;
+};
+
+
+
+
+
+
+
+
 
 
 

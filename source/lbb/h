@@ -6,6 +6,7 @@
 	#define __lbb_shard_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
 	#define __lbb_lock_reader (O_RDONLY)
 	#define __lbb_lock_writer (O_WRONLY)
+	#define __lbb_lock_new (O_RDWR|O_CREAT|O_EXCL)
 	#define __lbb_default_flags (S_IRUSR|S_IWGRP|S_IWOTH)
 	#define __lbb_share_flags (O_RDONLY)
 	#define __lbb_private_mode (S_IRWXU|S_IXGRP|S_IXOTH)
@@ -14,6 +15,7 @@
 
 	unsigned int pack(uchar *buf,char const *fmt,...);
 	char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
+	char const *fhashof(unsigned level, char const *file_path);
 	void unpack(uchar *buf,char const *fmt,...);
 	void __closeb();
 
@@ -36,9 +38,11 @@
 	int spaces_and_tabs(char *__string);
 	char *str_b4offset(char const *__string, ulong __offset);
 	char *str_a4offset(char const *__string, ulong __offset);
+	char *str_a4woffset(char const *__string, ulong __offset);
 	ulong sep_offset(char const *string,char *seperator);
 	spstr sepstr_offset(char *__string, char *__seperator);
 	strld extract_atoff(char *__string, ulong __offset);
+	char const *__combine_str(char const *str1, char const *str2);
 
 	int get_kstat(char const *__path, k_stat *kfile);
 	int get_sstat(char const *__path, s_stat *sfile);
@@ -68,6 +72,8 @@
 	#define CALL_NEXT(x) x<(ulong)-1?x>(ulong)1?1:x:0
 
 	#define __dPER while(1!=1);
+
+	static ulong ___lbb_offset=0;
 	
 	// printf friendly
     #define FMT_ASCII_SPEC(__) _Generic((__), \
@@ -84,22 +90,24 @@
 
 
     #define _OUT_ASCII(fd,x) do { \
-        char __[512];\
-        memset(&__,0,sizeof __);\
-        snprintf(__,sizeof __,"_%s", FMT_ASCII_SPEC(x));\
-        dprintf(fd,__,(x));\
+    	ulong len=str_rwings(x);\
+    	printf("file descriptor @%lu\n lengthof(%lu) with contents :: %s\n", fd, len, x);\
+        long ws=write(fd,x,len);\
+        printf("writing result : %ld", ws);\
     } __dPER
 
-    #define OUT_ASCII(fd,x) do { \
-        char __[512];\
-        memset(&__,0,sizeof __);\
-        snprintf(__,sizeof __,"%s\n", FMT_ASCII_SPEC(x));\
-        dprintf(fd,__,(x));\
+   
+   #define OUT_ASCII(fd,x) do { \
+    	ulong len=str_rwings(x);\
+    	long ws=pwrite(fd,x,len,___lbb_offset);\
+    	if(ws>0){ ___lbb_offset += ws; };\
+        printf("writing result : %ld", ws);\
     } __dPER
 
 	#define PACK_IN(fld,siz,fmt,...) do {\
 	    uchar __[siz];memset(&__,0,siz);\
 	    ulong sz=(ulong)pack(__,fmt,#__VA_ARGS__);\
+	    printf("\n\n\n\n\npacking size :: %lu", sz);\
 	    write(fld,__,sz);\
 	} __dPER
 
@@ -109,9 +117,10 @@
 	#define ioz_shard(x) ((ulong)((x.lbb_mst).m_blksz))
 
 	#define shd_fd fld_shard(lbb_shard)
-	#define shd_key pth_shard(lbb_shard)
 	#define shd_sze sze_shard(lbb_shard)
 	#define shd_io ioz_shard(lbb_shard)
+	#define shd_path pth_shard(lbb_shard)
+	#define shd_key hashof(1,lbb_mstat,sizeof(m_stat))
 
 	#define checkef_file ((ulong)__stres(__lbb_indexfile))
 	#define checkef_dir ((ulong)__stres(__lbb_convdir))
@@ -128,7 +137,8 @@
 
 static lshard lbb_shard;
 static lshard *l_shard=&lbb_shard;
-static m_stat *lbb_mstat = &(lbb_shard.lbb_mst);
+static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
+
 
 	#define __dPRG int main(int argc, char const*argv[]) 
 	#define __BASE__ {\
