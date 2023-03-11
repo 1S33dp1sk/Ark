@@ -25,60 +25,9 @@ char const *dummy_data(){
 	return all_lines;
 };
 
-struct __kvp {
-	char const *key;
-	char const *val;
-	struct __kvp *(*kv_memit)(char const *,char const *);
-	struct __kvp *next;
-	char offseter;
-};
-typedef struct __kvp kv_ptr;
-static const ulong size_kv=sizeof(kv_ptr);
-static const ulong size_kvp=sizeof(kv_ptr*);
-
-kv_ptr *kv_memit(char const *key, char const *val) {
-	ulong keylen=str_rwings(key), vallen=str_rwings(val);
-	kv_ptr *__=(kv_ptr*)malloc(size_kv);
-	void *__key=malloc(len_strze(keylen));
-	void *__val=malloc(len_strze(vallen));
-	memmove(__key, key, keylen);
-	memmove(__val, val, vallen);
-	__ -> key=(char const *)__key;
-	__ -> val=(char const *)__val;
-	__ -> offseter='\0';
-	return __;
-};
-
-
-int kv_offset(kv_ptr *kv, char const *data, ulong offset_at) {
-	memset((void *)kv, 0, size_kvp);
-	kv->key=str_b4offset(data, offset_at);
-	kv->val=str_a4offset(++data, offset_at);
-	kv->offseter=data[offset_at];
-	return 0;
-};
-
-kv_ptr *kv_at(char const *data, char *delim) {
-	ulong __offset=sep_offset(data, delim);
-	if(!__offset){
-		return NULL;
-	};
-	kv_ptr *res=(kv_ptr*)malloc(size_kvp);
-	kv_offset(res, data, __offset);
-	return res;
-};
-
-
-void log_kvp(kv_ptr *res){
-	printf("kv :'rn\n");
-	printf("dlm -> %c\n", res->offseter);
-	printf("key -> %s\n", res->key);
-	printf("val -> %s\n", res->val);
-}
-
-void enumerate_kv(kv_ptr *__kvss, char const *__data, char *kv_sep, char *line_endings) {
+void enumerate_kv(kvptr *__kvss, char const *__data, char *kv_sep, char *line_endings) {
 	int __flag=0;
-	kv_ptr *res_cont;
+	kvptr *res_cont;
 	char const *temp=__data;
 	while(!__flag) {
 		res_cont=kv_at(temp, line_endings);
@@ -102,7 +51,7 @@ int main() {
 
 	char const *dummy=dummy_data();
 	printf("data :: \n%s\n", dummy);
-	// kv_ptr *ksvs;
+	// kvptr *ksvs;
 	// enumerate_kv(ksvs, dummy, ":", "\r\n");
 
 

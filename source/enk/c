@@ -24,7 +24,6 @@
         };
     };
 
-    
     // 16 bit integer
     void pack_i_16(uchar*buf , unsigned int i ) {
 
@@ -115,9 +114,9 @@
         #endif
         return __;
     };
-
+    // 
     pt2s unpack_k512(uchar *buf, ulong div) {
-        memset(up, 0, sizeof(struct _u2st));
+        memset(up, 0, sizeof(u2s));
         ulong __=0,_c=div,__c=8;
         do {
             do {
@@ -291,7 +290,7 @@
         ulong *Q;
 
 
-        struct _u2st U={
+        u2s U={
             ._1=0,
             ._2=0,
         };

@@ -43,48 +43,6 @@ The indexer
 	#define ULONG_SIZE ((ulong)(sizeof(ulong)))
 	#define uc_size(x) ((ulong)(x*sizeof(uchar)))
 
-	#define __ASCII(x) OUT_ASCII(0,x)
-
-	#define __TEXT(x) OUT_ASCII(0,#x);
-
-	#define OUT_HEXA(fd,x) do { \
-		char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
-		memset(&_,0,sizeof _);memset(&__,0,sizeof __);\
-		snprintf(_,sizeof _,"%s",FMT_HEXA_SPEC(x));\
-		ulong pack_sz=pack(__,_,x);\
-		if(pack_sz>0){write(fd,__,pack_sz);}\
-	}while(1!=1)
-
-	#define Display(...) printf("%s\n",##__VA_ARGS__);
-
-	#define __ARGS(...) #__VA_ARGS__
-
-	#ifndef __os_name
-		#if HAVE_TARGET_CONDITIONALS_H
-			#include <targetConditionals.h>
-		#endif
-		#if _WIN64
-			#define __os_name "windows:64b\0"
-		#elif _WIN32
-			#define __os_name "windows\0"
-		#elif defined(TARGET_OS_IPHONE)
-			#define __os_name "apple:iphone\0"
-		#elif defined(TARGET_OS_MAC)
-			#define __os_name "apple:macos\0"
-		#elif __APPLE__!=0
-			#define __os_name "apple\0"
-		#elif __linux__!=0
-			#define __os_name "unix:linux\0"
-		#elif __ANDROID__!=0
-			#define __os_name "unix:android\0"
-		#elif BSD
-			#define __os_name "bsd\0"
-		#elif __unix__
-			#define __os_name "unix\0"
-		#else
-			#define __os_name "\0"
-		#endif
-	#endif
 
 	void log_fmt_t(fmt_t __format);
 	char const *__gdelim(fmt_t __gtype);
