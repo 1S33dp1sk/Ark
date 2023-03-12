@@ -9,23 +9,11 @@
 #define LOG_ERR 1
 #endif
 
-char *tmp="/Users/mrkj/Custom/web-socket-app/public/index.html";
 
-__dPRG
-	__INDEXER__(
 
-	payld_st pyld;
-	void *ptr=malloc(8);
-
-	// __lbb_command(tmp, NULL);
-
-	__lbb_filepath(tmp, __pub);
-
-	__lbb_function(tmp, paddr(pyld), &pyld);
-
-	__lbb_field(tmp, ptr);
-
-	__lbb_address(tmp);
+dPRG(
+	ulong res=10;
+	dpoint_t point=index_reference(&res);
+	log_dpoint(&point);
 )
 	
-

@@ -45,7 +45,6 @@ little black book
 	#define __lbb_name "linked binary book"
 
 
-ulong str_rwings(char const *__);
 
 
 // try to create a { SHARED } file
@@ -509,7 +508,7 @@ int get_sstat(char const *__path, s_stat *sfile) {
 		return -1;
 	}
 
-	if(sfile->sa_len>8){sfile->s_term=__pub;}else{ sfile->s_term=__pvt;}
+	if(sfile->sa_len>8){sfile->s_term=Public;}else{ sfile->s_term=Private;}
 
 	return 0;
 };
@@ -542,11 +541,11 @@ int get_kstat(char const *__path, k_stat *kfile) {
 
 /*******************************************************************/
 
-void log_dpoint(dpoint *dst_point) {
+void log_dpoint(dpoint_t *dst_point) {
 	printf("dst point :: \n");
-	printf("@%lu\n", dst_point->__index);
-	printf("name :%s\n",dst_point->__name);
-	printf("ref  :%s\n",dst_point->__ref);
+	printf("@%lu\n", dst_point->c_index);
+	printf("name :%s\n",dst_point->c_name);
+	printf("ref  :%s\n",dst_point->c_ref);
 };
 
 void log_kstat(k_stat *kfile) {
@@ -648,9 +647,9 @@ char const *__get_fcontents(char *__conts, ulong __size) {
 	return (char const *)strdup(__);
 };
 
-void free_fields(fields flds){
+void free_fields(fld **flds){
 	ulong c=0;
-	while(flds[c]){
+	while(*flds++){
 		free(flds[c]);
 		c+=1;
 	};
@@ -663,7 +662,6 @@ struct __conv_header {
 };
 typedef struct __conv_header chk_st;
 
-static const ulong size_fld=sizeof(field);
 char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	#ifdef DEBUG
 		printf("fld ((conv)) ::\n");
@@ -671,7 +669,7 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		printf("fld file  : %lu\n", __fd);
 		printf("fld count : %lu\n", __fld_count);
 	#endif
-	ulong const field_size=sizeof(field);
+	ulong const field_size=size_fld;
 	ulong const lf_size=str_rwings(__lbb_convdir);
 	ulong const fn_size=str_rwings(__fn);
 	ulong c=0,_res=0,__offset=0;
@@ -682,8 +680,8 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	ulong lbb_dd=__lbb_file_n(fld_name);
 
 
-	field _field; memset(&_field,0,size_fld);
-	char *__buffer=(char *)&(_field.ucon.et);
+	fld field; memset(&field,0,size_fld);
+	char *__buffer=(char *)&(field.fld_con.etc);
 	__buffer[4096]='\0';
 
 	chk_st cst;
@@ -722,14 +720,14 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		// #endif
 
 		// get checksum for entire file
-		cst.chksum=(char *)hashof(1,field_content(_field),field_length(_field));
+		cst.chksum=(char *)hashof(1,field_content(field),field_length(field));
 		OUT_ASCII(lbb_dd,cst.chksum);
 		// #ifdef DEBUG
 		printf("file checksum :: %s\n", cst.chksum);
 		// #endif		
 
 		// pack the contents as binary with s indicator
-		OUT_ASCII(lbb_dd, field_content(_field));
+		OUT_ASCII(lbb_dd, field_content(field));
 
 		c+=1;
 	};

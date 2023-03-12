@@ -143,7 +143,7 @@
         **
         **  (16-bit unsigned length is automatically prepended to strings)
     */ 
-    unsigned int pack( unsigned char *buf , char const*format , ... ) {
+    unsigned int pack(unsigned char *buf, char const *format, ...) {
         va_list ap;
 
         signed char c;              // 8-bit

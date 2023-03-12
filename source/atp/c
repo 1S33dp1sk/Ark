@@ -58,7 +58,7 @@
 		return (char const *)strdup(__);
 	};
 
-	ulong __rwings(void *__) {
+	ulong __rwings(void const *__) {
 		char const *__p=(char const *)__;
 		ulong __c=0;
 		do {
@@ -771,25 +771,25 @@
 	};
 
 	void *__arc_stpoints(ulong __stindex, char const *__stname) {
-		dpoint *__point=__arcstp(0x8);
+		dpoint_t *__point=__arcstp(0x8);
 		memset(__point,0,sizeof(ulong));
-		__point->__index=__stindex;
+		__point->c_index=__stindex;
 		
 		ulong length=str_rwings(__stname);
 		char *stname=(char *)malloc(length);
 		memset(stname,0,length);
 		memmove(stname,__stname,length);
-		__point->__name=stname;
+		__point->c_name=stname;
 
 		char const *__stref=hashof(1, __stname, length);
 		ulong ref_length=str_rwings(__stref);
 		char *stref=(char *)malloc(ref_length);
 		memset(stref,0,ref_length);
 		memmove(stref,__stref,ref_length);
-		__point->__ref=stref;
+		__point->c_ref=(uchar const*)stref;
 
 		// points_c+=1;
-		return (dpoint *)__point;
+		return (dpoint_t *)__point;
 	};
 
 	int decode_point(into_st *into) {
@@ -1566,7 +1566,7 @@ struct __arc_t {
 	ulong __pid;
 	int __fork;
 	ulong __next;
-	dpoint **__points;
+	dpoint_t **__points;
 };
 typedef struct __arc_t arc_t;
 	static arc_t __arc;
@@ -1610,7 +1610,7 @@ typedef struct __arc_t arc_t;
 	void free_arcs() {
 		void *d2ptr, *dptr=arc->__points;
 		for(ulong i=0;i<points_c;i++){
-			d2ptr=(dpoint *)dptr;
+			d2ptr=(dpoint_t *)dptr;
 			free((d2ptr+i));
 		};
 	};
@@ -1744,17 +1744,17 @@ typedef struct __arc_t arc_t;
 			#ifdef DEBUG
 				printf("{ ARC } => pid: %lu\n", __arc.__pid);
 			#endif
-			p_stp.m_ace=malloc(8);
+			p_stp.ptr=malloc(8);
 			ulong thsz=sizeof(void *)+sizeof(ulong);
 			char temp[thsz];
-			sprintf(temp, "%p-%lu", (p_stp.m_ace), (__arc.__pid));
+			sprintf(temp, "%p-%lu", (p_stp.ptr), (__arc.__pid));
 			char const *__=hashof(0,temp,thsz);
-			p_stp.m_ace=(char *)(__);
+			p_stp.ptr=(char *)(__);
 			#ifdef DEBUG
-				printf("ace @%p", p_stp.m_ace);
+				printf("ace @%p", p_stp.ptr);
 				printf("__hashof : %s\n", __);
 			#endif
-			return p_stp.m_ace;
+			return p_stp.ptr;
 		}
 		else if (stsize<=__step_addr) {
 			__arcfork();
