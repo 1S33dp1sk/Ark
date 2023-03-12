@@ -53,10 +53,10 @@ ulong __file_r(char const *__fpath);
 ulong __file_w(char const *__fpath);
 ulong __file_x(char const *__fpath);
 uns __8sz(uns __8to);
-fld_sz fld_type2sz(fld_t __ftype);
+fms_s fms_type2sz(fms_t __ftype);
 int __get_fd(char const *__fpath, int __flag);
 int __get_process_flags(char const *__cpath);
-int __check_fld(char const *__cpath, fld_t ftype);
+int __check_fld(char const *__cpath, fms_t ftype);
 char const *__getcaller();
 char const *__charm_call(char const *__ffrom);
 int __init_3ci();
@@ -71,11 +71,11 @@ char const *__kgev(uchar *__udef_pnop);
 void k1_addr(ulong _h8res, ulong _count, char *_kval);
 char const *__keys_hash(char **__envvar, uns __varc);
 
-fld_t __size_switch(char const *__cpath);
+fms_t __size_switch(char const *__cpath);
 char const *ccopy_to_path(char const *cc, char const *__cpath);
 char const *arch_gfile(char const *__cpath);
-fld_sz arch_tfile(char const *__cpath);
-ulong arch_cfile(fld_t fld_type);
+fms_s arch_tfile(char const *__cpath);
+ulong arch_cfile(fms_t fms_type);
 ulong attsize(ulong __sz);
 ulong fldatt(uns level, ulong szatt);
 ulong arch_fpermissions(char const *__cpath);
@@ -178,7 +178,7 @@ uns __8sz(uns _){
 
 /********* fld *********/
 
-fld_sz fld_type2sz(fld_t type){
+fms_s fms_type2sz(fms_t type){
 	switch(type){
 	case f_reader: return __freader_sz;
 	case f_socket: return __fsocket_sz;
@@ -203,8 +203,8 @@ int __get_process_flags(char const *__cpath){
 	return dmde(__cpath);
 };
 
-int __check_fld(char const *__cpath, fld_t __ftype){
-	if(fsze(__cpath)<fld_type2sz(__ftype)){
+int __check_fld(char const *__cpath, fms_t __ftype){
+	if(fsze(__cpath)<fms_type2sz(__ftype)){
 		return 0;
 	}
 	return 1;
@@ -479,7 +479,7 @@ char const *__keys_hash(char **__var, uns __varc){
 /********* utilities *********/
 
 // gets file size in increments ( 8 << n+2 )
-fld_t __size_switch(char const *__cpath) {
+fms_t __size_switch(char const *__cpath) {
 	ulong _fsize=__fsize(__cpath);
 	switch(_fsize){
 		case __freader_sz:return f_reader;
@@ -518,7 +518,7 @@ char const *arch_gfile(char const *__cpath){
 	return tochar(__fsize(__cpath));
 };
 // returns the numbered increment of the file size
-fld_sz arch_tfile(char const *__cpath){
+fms_s arch_tfile(char const *__cpath){
 	ulong _fsize=__fsize(__cpath), res=0;
 	while((_fsize>>3)>8){
 		res+=1;
@@ -536,7 +536,7 @@ fld_sz arch_tfile(char const *__cpath){
 	};
 };
 // creates the arch file needed
-ulong arch_cfile(fld_t _){
+ulong arch_cfile(fms_t _){
 	switch(_){
 		case f_reader:return attsize(__8sz(1));
 		case f_socket:return attsize(__8sz(2));

@@ -134,8 +134,8 @@ enum __fmt_cats {
 };
 typedef enum __fmt_cats cfmt;
 
-// supported file types
-enum __ftypes {
+// file mount structure types
+enum __fms_types {
 	/**
 	{a.k.a} FIFO **/
 	    f_reader=1,
@@ -155,10 +155,10 @@ enum __ftypes {
 	    fld_3,
 	    fld_4
 	};
-typedef enum __ftypes fld_t;
+typedef enum __fms_types fms_t;
 
 // supported file sizes
-enum __ftypes__size {
+enum __fms_sizes {
 	    __freader_sz=8,
 	    __fsocket_sz=64,
 	    __ffield_sz=512,
@@ -168,7 +168,7 @@ enum __ftypes__size {
 	    __fld3_sz=2097152,
 	    __fld4_sz=16777216
 	};
-typedef enum __ftypes__size fld_sz;
+typedef enum __fms_sizes fms_s;
 
 /*** string manipulation ***/
 struct __str {
@@ -355,6 +355,66 @@ static pt2s up=(pt2s)&ua;
 #define u2__ ua._2
 #define u3__ ua._3
 static __ul u;
+
+
+
+
+
+
+
+
+#define ist_index(x) ((ulong)(x.c_index))
+#define ist_refer(x) ((char const *)(x.c_refer))
+
+struct __value_t {
+	ulong c_index;
+	char const *c_refer;
+	char const *name;
+};
+typedef struct __value_t val_t;
+#define value_name(x) ((char const *)x.name)
+
+struct __path_t {
+	ulong c_index;
+	char const *c_refer;
+	char const *checksum;
+	ulong offset;
+};
+typedef struct __path_t path_t;
+#define path_checksum(x) ((char const *)x.checksum)
+#define path_offset(x) ((ulong)x.offset)
+
+struct __dprg_t {
+	ulong c_index;
+	char const *c_refer;
+	char const *fmt_in;
+	char const *fmt_out;
+	char const *handler;
+};
+typedef struct __dprg_t dprg_t;
+#define dprg_in(x) ((char const *)x.fmt_in)
+#define dprg_out(x) ((char const *)x.fmt_out)
+#define dprg_handler(x) ((char const *)x.handler)
+
+struct __fld_t {
+	ulong c_index;
+	char const *c_refer;
+	char const *address;
+	char const *dname;
+	int flags;
+};
+typedef struct __fld_t fld_t;
+#define fld_address(x) ((char const *)x.address)
+#define fld_dname(x) ((char const *)x.dname)
+#define fld_flags(x) ((int)x.flags)
+
+
+
+
+
+
+
+
 
 
 #define __UTYPES__H 1
