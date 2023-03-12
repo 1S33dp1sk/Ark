@@ -1,9 +1,9 @@
 /// d-lbb \\\
 
 #ifndef __Karch_512__
-#include "2c/_h512.h"
-#include "2c/lbb.h"
-#include "2c/ixr.h"
+#include "headers/_h512.h"
+#include "headers/lbb.h"
+#include "headers/ixr.h"
 #define OUTPUT 1
 #define LOG_ERR 1
 #endif
