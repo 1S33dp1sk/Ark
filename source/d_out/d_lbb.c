@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]) {
 
 // __lbb_command(tmp, NULL);
 
-__lbb_filepath(tmp, __pub);
+__lbb_filepath(tmp, Public);
 
 __lbb_function(tmp, paddr(pyld), &pyld);
 

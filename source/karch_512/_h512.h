@@ -45,26 +45,16 @@ K512-architecture
 
 /************************ naming ************************/
 
-ulong __fsize(char const *__fpath);
-ulong __iosize(char const *__fpath);
-ulong __inodenum(char const *__fpath);
-uns __dmode(char const *__fpath);
-ulong __file_r(char const *__fpath);
-ulong __file_w(char const *__fpath);
-ulong __file_x(char const *__fpath);
+
 uns __8sz(uns __8to);
 fms_s fms_type2sz(fms_t __ftype);
 int __get_fd(char const *__fpath, int __flag);
 int __get_process_flags(char const *__cpath);
 int __check_fld(char const *__cpath, fms_t ftype);
-char const *__getcaller();
 char const *__charm_call(char const *__ffrom);
 int __init_3ci();
 int arch_3ci();
 void log_arcs();
-char const *__gdelim(fmt_t g_fmt);
-char const *__gfmt(fmt_t gt);
-char const *__generic_fmt(fmt_t g_fmt, char const *__key, char const *__value);
 ulong __env_hash(char **__envvar);
 char const *__h_passcode(char *udef_pass);
 char const *__kgev(uchar *__udef_pnop);
@@ -85,89 +75,17 @@ static ulong arch_fname(char const *__fpath, ulong fsize);
 int arch_mods(char const *__cpath);
 int arch_cenv();
 
-char const *__irv(char const *__key, char const *__val);
-ulong __index_increment();
-ulong __set_next(char const *__head);
-ulong __idx_start();
 
-char const *__xreference(char const *__);
-int __index_r(char const *idxnr);
-int __index_irn(char const *key, char const *val);
-int __index_ixn(char const *key);
-int __index_caller();
-int __index_point(dpoint *dst);
-void log_ixrh(ixr_h *ixrh);
-int __rd_ixrh();
-int __wt_ixrh();
-int refresh_h();
-void *__header__();
-int indexer_start();
-int __indexer__(char const *__id);
-int refer_index(void *__ptr, void *__ref, char *__prname);
 void log_fmt_t(fmt_t __format);
 void log_keyvalue(char *key, char *value);
 void lbb_usage();
 int get_allstats(char *__mountpoint, char *__socketaddr, char *__fieldshare);
 char *flds(char const *__fldname);
-dpoint *__stpoint(char const *__stname, char const *__stval);
+dpoint_t *__stpoint(char const *__stname, char const *__stval);
 void *__search_r(char const *__rname, lbb_t entry_type);
 void *__lbb_ref(char const *__rname);
 void *__lbb_addref(char const *__rname, char const *__rval);
 
-
-// static const char *__os_delim="/\0";
-
-/************************ functions ************************/
-/********* files *********/
-
-ulong __fsize(char const *__fpath){
-	struct stat __;
-	memset(&__,0,sizeof(struct stat));
-	if(stat(__fpath,&__)!=0){return 0;}
-	return __.st_size;
-};
-
-ulong __iosize(char const *__fpath){
-	struct stat __;
-	memset(&__,0,sizeof(struct stat));
-	if(stat(__fpath,&__)!=0){return 0;}
-	return __.st_blksize;
-};
-
-ulong __inodenum(char const *__fpath){
-	struct stat __;
-	memset(&__,0,sizeof(struct stat));
-	if(stat(__fpath,&__)!=0){return 0;}
-	return __.st_ino;
-};
-
-uns __dmode(char const *__fpath){
-	struct stat __;
-	memset(&__,0,sizeof(struct stat));
-	if(stat(__fpath,&__)!=0){return 0;}
-	return __.st_mode;
-};
-
-ulong __file_r(char const *__cpath){
-	if (access(__cpath,R_OK)==0){
-		return 1;
-	}
-	return 0;
-};
-
-ulong __file_w(char const *__cpath){
-	if (access(__cpath,W_OK)==0){
-		return 2; 
-	}
-	return 0;
-};
-
-ulong __file_x(char const *__cpath){
-	if (access(__cpath,X_OK)==0){
-		return fsze(__cpath);
-	}
-	return 0;
-};
 
 /********* base8 *********/
 
@@ -210,10 +128,6 @@ int __check_fld(char const *__cpath, fms_t __ftype){
 	return 1;
 };
 
-char const *__getcaller(){
-
-	return (char const *)__FILE__;
-};
 
 char const *__charm_call(char const *__filefrom) {
 	char const *__caller=__getcaller();
@@ -339,76 +253,6 @@ void log_arcs(){
 };
 
 
-
-/********* formatting *********/
-
-char const *__gdelim(fmt_t __gtype) {
-	char __delim[3], *_d=((char *)&__delim);
-	memset(&__delim,0,3);
-	switch(__gtype){
-		// Key : Value
-		case __keyval__:
-			memmove(_d, __ATP_KEY, sizeof(__ATP_KEY));
-			break;
-		// ENV = Variable
-		case __envvar__:
-			memmove(_d, __ATP_ENV, sizeof(__ATP_ENV));
-			break;
-		// Socket := Address
-		case __pathmut__:
-			memmove(_d, __ATP_KEY, sizeof(__ATP_KEY));
-			memmove(_d+sizeof(__ATP_KEY), __ATP_ENV, sizeof(__ATP_ENV));
-			break;
-		// Variable =: description
-		case __fld__:
-			memmove(_d, __ATP_ENV, sizeof(__ATP_ENV));
-			memmove((_d+sizeof(__ATP_ENV)), __ATP_KEY, sizeof(__ATP_KEY));
-			break;
-		default: 
-			return NULL;
-	};
-	__delim[2]='\0';
-	#ifdef DEBUG
-		printf("delimiter is '%s'\n",_d);
-	#endif
-	return strdup(__delim);
-};
-
-char const *__gfmt(fmt_t gt) {
-	switch(gt) {
-	case __idxr__: return "_Q_Q_Q_\n";
-	case hdr_t: return "_U_";
-	case __keyval__: return "Q:s:s\n";
-	case kvi_t: return "Q:s:s";
-	default: return ((void *)(__nofmt__));
-	};
-};
-
-char const *__generic_fmt(fmt_t g_type,char const *__key, char const *__value){
-	ulong klen=str_rwings(__key);
-	ulong vlen=str_rwings(__value);
-	ulong clen=klen+vlen+3;
-
-
-	char lbb_field[clen];memset(&lbb_field,0,sizeof(lbb_field));lbb_field[clen]='\0';
-
-	memmove(lbb_field,__key,klen);
-	char const *_delim=__gdelim(g_type);
-	if(_delim==NULL) {
-		#ifdef LOG_ERR
-			printf("generic format :: delimiter is null\n");
-		#endif
-		return NULL;
-	}
-	ulong __dlen=str_rwings(_delim);
-	memmove((lbb_field+klen),_delim, __dlen);
-	memmove((lbb_field+klen+__dlen),__value,vlen);
-
-	lbb_field[str_rwings(lbb_field)]='\n';    
-
-
-	return (char const *)strdup(lbb_field);
-};
 
 
 /********* env handler *********/
@@ -656,308 +500,7 @@ int arch_cenv(){
 	return 0;
 };
 
-/********* indexing *********/
-static ixr_h ___header;
-static void *hixr=(void *)&___header;
-//expanding args
-#define __eixrh(x) x->__size, x->d_count, x->checksum
-#define __ihsz(x) x->__size
-// unistd flags for `open`&`creat`
-#define __ixr_start_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
-#define __ixr_access_flags (O_RDWR|O_NOFOLLOW_ANY)
-#define __ixr_pmode (S_IRWXU|S_IXGRP|S_IXOTH)
 
-
-char const *__kaddress(char const *__hash) {
-    ulong __len=str_rwings(__hash)+3;
-    char temp[__len];memset(&temp, 0, sizeof(temp));
-    temp[0]='k';
-    switch((__len-3)) {
-    case 8:  temp[1]='C'; break; // command 
-    case 16: temp[1]='I'; break; // interpreter
-    case 32: temp[1]='P'; break; // payload
-    default: temp[1]='-'; break; // K-address
-    };
-    memmove((temp+2), __hash, __len);
-    temp[__len]='\0';
-    return (char const *)strdup(temp);
-};
-
-char const *kaddress(char const *__name, lbb_t __type) {
-	ulong __len=str_rwings(__name);
-    switch(__type){
-    case __unknown: break;
-    case __path_sys: return __kaddress(fhashof(0, __name));
-    case __proto_call: return __kaddress(hashof(1, __name, __len));
-    case __intrp_decl: return __kaddress(hashof(2, __name, __len));
-    case __payld_entr: return __kaddress(hashof(3, __name, __len));
-    default: break;
-    };
-    return NULL;
-};
-
-
-void *__erv(char const *__key,char const *__val) {
-	ulong __sz=str_rwings(__key)+str_rwings(__val)+5;
-	ulong __len=len_ustrze(__sz);
-	void *__=malloc(__len);
-	memset(__, 0, __len);
-	uns psz=pack(__, __gfmt(__keyval__), __cindex, __key, __val);
-	return __;
-};
-
-ulong __set_next_p(void *__) {
-	ulong retres=__set_next((char const *)(__));
-	free(__);
-	return retres;
-};
-
-// irv
-char const *__irv(char const *__key, char const *__value) {
-	char const *__rv=__generic_fmt(__keyval__, __key, __value);
-	ulong irv_len=str_rwings(__rv)+LONG_MAX_COMPUTED_N_DIGITS;
-	char irv[irv_len];memset(&irv, 0, sizeof(irv));
-	sprintf(irv, "%lu:%s", __cindex, __rv);
-	return (char const *)strdup(irv);
-};
-// increment the cindex
-ulong __index_increment() {
-	__cindex+=1;
-	return __cindex;
-};
-// set the next header at a new entry
-ulong __set_next(char const *__head){
-	ulong __len=str_rwings(__head);
-	if((__head==NULL)||__len==1){
-		return 0;
-	};
-	long _res=pwrite(__ixr_fd,__head,__len,___offset);
-
-	if(_res!=-1){
-		___offset+=__len;
-	};
-	#ifdef DEBUG
-		printf("\nnext -->\n");
-		printf("head   :: %s\n", __head);
-		printf("length :: %lu\n", __len);
-		printf("result :: %ld\n", _res);
-		printf("offset ::: %lu\n", ___offset);
-	#endif
-	return __index_increment();
-};
-// start the indexer
-ulong __idx_start(){
-	if(__cindex!=0){
-		return 0;
-	};
-	return __index_increment();
-};
-// create a xreference for the current indexer
-char const *__xreference(char const *__) {
-
-	return hashof(1,(void *)__,str_rwings(__));
-};
-// generic fmt -> xreference -> setnext
-int __index_r(char const *idxnr) {
-	char const *_rfmt=__generic_fmt(__keyval__,  __xreference(idxnr), idxnr);
-	return __set_next(_rfmt);
-};
-// irv -> __setnext -> (key, val)
-int __index_irn(char const *key, char const *val) {
-
-	return __set_next(__irv(key, val));;
-};
-// irv -> __setnext -> (key, __xreference)
-int __index_ixn(char const *key) {
-
-	return __index_irn(key, __xreference(key));
-};
-// irv -> __setnext -> (__xreference, caller)
-int __index_caller() {
-	char const *caller=__getcaller();
-	return __index_irn(__kaddress(__xreference(caller)), caller);
-};
-// irv -> __setnext -> (reference, name)
-int __index_point(dpoint *dst) {
-
-	return __index_irn(dst->__ref, dst->__name);
-};
-// log indexer prototype
-void log_ixrh(ixr_h *ixrh) {
-	printf("\nindexer head ::\n");
-	printf("\tfldsze=%lu", ixrh->__size);
-	printf("\tdcount=%lu", ixrh->d_count);
-	printf("\tchksum=%lu", ixrh->checksum);
-	printf("\n");
-};
-// read the indexer header \\
-OFFSET ALWAYS 0
-int __rd_ixrh() {
-	ixr_h *ixrh=(ixr_h*)hixr;
-	#ifdef LOG_PROCESS
-		printf("reading :::\n");
-	#endif
-	uchar __head[29];ulong __hsz=sizeof(__head);memset(&__head, 0, __hsz);
-	ulong __hfsize=fsze(__lbb_indexfile);
-	if(__hfsize<__hsz) {
-		__hsz=__hfsize;
-	};
-	int __tempres=pread(__ixr_fd, (void *)__head, __hsz, 0);
-	if(__tempres==-1) {
-		#ifdef LOG_ERR
-			printf("cannot read header\n");
-		#endif
-		return -1;
-	};
-	unpack(__head, __gfmt(hdr_t), __ihsz(ixrh));
-	ixrh->__size=u[0];
-	ixrh->d_count=u[1];
-	ixrh->checksum=u[2];
-	___offset=(ulong)__tempres;
-	#ifdef DEBUG
-		printf("attempting %d @indexfile: %lu\n", __tempres, __hfsize);
-		log_ixrh(ixrh);
-	#endif
-	return 0;
-};
-// write the indexer header \\
-OFFSET ALWAYS 0
-int __wt_ixrh() {
-	ixr_h *ixrh=(ixr_h*)hixr;
-	uchar __head[29];ulong __hsz=sizeof(__head);memset(&__head, 0, __hsz);
-	#ifdef LOG_PROCESS
-		printf("writing :::");
-	#endif
-	unsigned __temp=pack(__head, __gfmt(__idxr__), __eixrh(ixrh));
-	__head[__temp]='\n';
-	int _temp=pwrite(__ixr_fd, (void *)__head, __temp, 0);
-	if(_temp==-1) {
-		#if LOG_ERR
-			printf("cannot write header to indexfile\n");
-		#endif
-		return -1;
-	}
-	___offset=(ulong)_temp;
-	#ifdef DEBUG
-		printf("packed %d bytes for idx header\n", __temp);
-		printf("wrote %d bytes for idx header\n", _temp);
-		log_ixrh(ixrh);
-	#endif
-	return 0;
-};
-// obtain header properties { ENVIROMENT }
-int refresh_h() {
-	ixr_h *ixrh=(ixr_h*)hixr;
-	if(!__stres(__lbb_indexfile)) {
-		#ifdef LOG_ERR
-			printf("indexfile does not exist\n");
-		#endif
-		return -1;
-	};
-	ixrh->__size=fsze(__lbb_indexfile);
-	ixrh->d_count=__cindex;
-	ixrh->checksum=fhash16(1, __lbb_indexfile);
-	return 0;
-};
-// initiate and set memory to zero for header struct
-void *__header__() {
-	return memset(&___header, 0, sizeof(struct __ixr_h));
-};
-// start the indexer 
-int indexer_start() {
-	// if the indexer has not been instantiated but has
-	// a different value than the original constant
-
-	if(__ixr_fd!=0x228){
-		#ifdef LOG_ERR
-			printf("trying to instantiate indexer that is not on %d", 0x228);
-		#endif
-		return -1;
-	};
-	if(__stres(__lbb_indexfile)) {
-		#ifdef LOG_ERR
-			printf("indexer already exists\n");
-		#endif
-		return -1;
-	}
-	int ixr_fd=-1;
-	ixr_fd=open(__lbb_indexfile, __ixr_start_flags, __ixr_pmode);
-	if(ixr_fd==-1){
-		#ifdef LOG_ERR
-			printf("indexer fd failed on create\n");
-		#endif
-		return -1;
-	};
-	__ixr_fd=(ulong)ixr_fd;
-	#ifdef DEBUG
-		printf("Indexer started :::\n");
-		printf(" cfd :: %lu\n",__ixr_fd);
-	#endif
-	if(refresh_h()) {
-		#ifdef LOG_ERR
-			printf("cannot refresh header\n");
-		#endif
-		return -1;
-	};
-	if(__wt_ixrh()) {
-		#ifdef LOG_ERR
-			printf("cannot write indexer header\n");
-		#endif
-		return -1;
-	};
-	#ifdef DEBUG
-		printf("@offset %lu\n",___offset);
-	#endif
-	return 0;
-};
-// index any incoming idrs
-int __indexer__(char const *idr) {
-	if(idr==NULL){
-		#ifdef LOG_ERR
-			printf("requested to index NULL\n");
-		#endif
-		return -1;
-	};
-	if(__ixr_fd==0x228) {
-		int ixr_fd=-1;
-		ixr_fd=open(__lbb_indexfile, __ixr_access_flags, __ixr_pmode);
-		if(ixr_fd==-1){
-			#ifdef LOG_ERR
-				printf("Cannot open indexer file\n");
-			#endif
-			return -1;
-		};
-		__ixr_fd=(ulong)ixr_fd;
-		#ifdef DEBUG
-			printf("Parsing index file :: %s\n", __lbb_indexfile);
-			printf("file descriptor :open::%d\n",ixr_fd);
-		#endif
-	};
-	__header__();
-	if(__rd_ixrh()) {
-		#ifdef LOG_ERR
-			printf("cannot read indexer header\n");
-		#endif
-		return -1;
-	};
-	#ifdef DEBUG
-		printf("@offset %lu\n",___offset);
-	#endif
-	return 0;
-};
-
-int refer_index(void *__ptr, void *__ref, char *__prname) {
-	char *rname=(char *)__ref;
-	if(__exact_match(rname, __prname)) {
-		printf("exact match\n");
-	};
-
-	printf("ptr  : %p\n", __ptr);
-	printf("lbbr : %p\n", __ref);
-	printf("ref  : %s\n", rname);
-	printf("name : %s\n", __prname);
-	return 0;
-}
 // log the format type specifications
 void log_fmt_t(fmt_t __format) {
 	switch(__format) {
@@ -1044,17 +587,17 @@ char *flds(char const *__fldname) {
 	return strdup(cflds_head);
 };
 
-dpoint *__stpoint(char const *st_name, char const *st_val) {
+dpoint_t *__stpoint(char const *st_name, char const *st_val) {
     if(st_name==NULL){
         return NULL;
     };
     ulong __len=str_rwings(st_name);
-    dpoint *d_stpoint=(dpoint *)malloc(sizeof(dpoint));
+    dpoint_t *d_stpoint=(dpoint_t *)malloc(size_dpoint_t);
 
     if(st_name[0]!='k') {
-    	d_stpoint->__name=st_name;
-		d_stpoint->__ref=kaddress(st_val, get_lbb_type(st_name));
-		d_stpoint->__index=__cindex;	
+    	d_stpoint->c_name=st_name;
+		d_stpoint->c_ref=(uchar const *)kaddress(st_val, get_lbb_type(st_name));
+		d_stpoint->c_index=__cindex;	
     }
     else {
       switch(st_name[1]){
@@ -1082,7 +625,7 @@ void *__lbb_ref(char const *__rname) {
 };
 
 void *__lbb_addref(char const *__rname, char const *__rval) {
-	dpoint *__dst=__stpoint(__rname, __rval);
+	dpoint_t *__dst=__stpoint(__rname, __rval);
 	if(__dst!=NULL){
 		__index_point(__dst);
 		log_dpoint(__dst);

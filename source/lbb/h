@@ -58,6 +58,8 @@
 	void log_process_ids(ulong ppid, ulong cpid);
 	void log_process_schema(ulong ppid, ulong cpid);
 
+	ulong str_rwings(char const *__);
+
 	/**
 	** NNE : x :: true if x is not 0x0000
 	**/
@@ -73,6 +75,7 @@
 
 	#define __dPER while(1!=1);
 
+	static const ulong size_fld=sizeof(fld);
 	static ulong ___lbb_offset=0;
 	
 	// printf friendly
@@ -139,17 +142,7 @@ static lshard lbb_shard;
 static lshard *l_shard=&lbb_shard;
 static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
 
-
-	#define __ARGC__ argc
-	#define __ARGV__ **argv;\
-		char *__ref_out;
-	#define __dPRG int main(int argc, char const*argv[]) 
-	#define __INDEXER__(...) {\
-		if(!checkef_file){INDEXER(NULL);}\
-		__ARGC__;\
-		__ARGV__;\
-		__VA_ARGS__;\
-	}
+	
 	#define __BASE__ {\
 		static char dbuf[__A_LEN];memset(&dbuf, 0, sizeof(dbuf));\
 		memset(lbb_mstat, 0, sizeof(struct __m_stat));\
