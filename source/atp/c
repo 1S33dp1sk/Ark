@@ -265,7 +265,7 @@
 	            #endif
 	            if(dbuffer[c__]=='@') {
 	                __direction+=1;
-	                __flags|=__FLAG__;
+	                __flags|=ATP_FLAG;
 	                #ifdef DEBUG
 	                    printf(">%c__", dbuffer[c__]);
 	                #endif
@@ -275,7 +275,7 @@
 	            }
 	            else if(dbuffer[__c]=='}') {
 	                __direction-=1;
-	                __flags|=__FLAG_ES;
+	                __flags|=ATP_FLAG_ES;
 	                #ifdef DEBUG
 	                    printf("__%c<", dbuffer[__c]);
 	                #endif
@@ -290,9 +290,9 @@
 	           
 	        } else { 
 	        ulong temp;
-	           if((__flags==__flag_interpret)||(dbuffer[c__]=='@')) {
+	           if((__flags==ATP_FLAG_INTRPT)||(dbuffer[c__]=='@')) {
 	            main_offset+=c__;
-	                __flags|=__FLAG_START;
+	                __flags|=ATP_FLAG_START;
 	                #ifdef LOG_FLAGS
 	                    printf("FLAG START #%lu#\n", __flags);
 	                #endif
@@ -323,8 +323,8 @@
 	                    return 2;
 	                };
 	            }
-	            else if((__flags==__FLAG_IS)&&(dbuffer[c__]=='<')) {
-	                __flags|=FLAG;
+	            else if((__flags==ATP_FLAG_IS)&&(dbuffer[c__]=='<')) {
+	                __flags|=ATP_FLAG_C;
 	                #ifdef LOG_FLAGS
 	                    printf("INTERPRETER FLAG #%lu#\n", __flags);
 	                #endif
@@ -351,8 +351,8 @@
 	                    return 3;
 	                };
 	            }
-	            else if((__flags==__flag_handler)&&(dbuffer[c__]=='(')) {
-	                __flags|=__FLAG_IE_PS;
+	            else if((__flags==ATP_FLAG_HANDLER)&&(dbuffer[c__]=='(')) {
+	                __flags|=ATP_FLAG_IEPS;
 	                #ifdef LOG_FLAGS
 	                    printf("FLAG ARGS START #%lu#\n", __flags);
 	                #endif
@@ -369,8 +369,8 @@
 	                //     return 1;
 	                // };
 	            }
-	            else if((__flags==__flag_handler)&&(dbuffer[c__]=='{')) {
-	                __flags|=__FLAG_ES;
+	            else if((__flags==ATP_FLAG_HANDLER)&&(dbuffer[c__]=='{')) {
+	                __flags|=ATP_FLAG_ES;
 	                #ifdef LOG_FLAGS
 	                    printf("FLAG PAYLOAD START #%lu#\n", __flags);
 	                #endif

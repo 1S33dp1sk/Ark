@@ -854,6 +854,9 @@ char const *__lbb_filepath(char const *__fpath, sterm __term) {
 		#endif
 		return NULL;
 	};
+	#ifdef DEBUG
+		log_mstat(lbb_mstat);
+	#endif
 
 	__res=get_freader(lbb_mstat);
 	if(__res==-1) {
@@ -865,23 +868,21 @@ char const *__lbb_filepath(char const *__fpath, sterm __term) {
 	#ifdef DEBUG
 		printf("lbb@%lu<%lu>\n", shd_fd, shd_sze);
 	#endif
-	
+
 	ulong count=__flds_count(shd_sze);
-
 	char const *convres=__conv_fields(shd_key,shd_fd,count);
-
 	lbb_close();
 
-	if(convres!=NULL) {
-		#ifdef OUTPUT
-			printf("@lbb%s\n filepath : %s\n", shd_key, __fpath);
+	if(convres==NULL) {
+		#ifdef LOG_ERR
+			printf("could not do a convolution for path : %s\n", __fpath);
 		#endif
-		return shd_key;
+		return shd_path;
 	};
 	#ifdef OUTPUT
-		printf("could not convert filepath : %s\n", __fpath);
+		printf("@lbb%s\n filepath : %s\n", shd_key, __fpath);
 	#endif
-	return shd_path;
+	return shd_key;
 };
 
 void const *__lbb_function(char const *__name, void const *__intype, void const *__castout) {

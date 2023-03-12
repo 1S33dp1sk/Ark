@@ -2,8 +2,19 @@
 	#define OUTPUT 1
 	#include "utypes.h"
 	#include "standard.h"
-	#include "ixr.h"
-	
+
+	#define ATP_FLAG_START 0x1
+	#define ATP_FLAG_FS 0x2
+	#define ATP_FLAG_IEPS 0x3
+	#define ATP_FLAG_ES 0x4
+	#define ATP_FLAG_IS 0x5
+	#define ATP_FLAG 0x10
+	#define ATP_FLAG_C 0x100
+	#define ATP_FLAG_INTRPT 16
+	#define ATP_FLAG_HANDLER 261
+	#define ATP_FLAG_INDEXER 228
+	#define ATP_FLAG_PAYLD 273
+
 	extern char **environ;
 	static char *_h_base="HTTP/1.1";
 	static char *_hm_get="GET";
@@ -45,7 +56,9 @@
 	int get_mstat(char const *__fpath, m_stat *mst);
 	void log_mstat(m_stat *mst);
 
-	
+	#define str_wsize(x) (str_rwings(x)*sizeof(char))
+	#define ustr_wsize(x) (str_rwings(x)*sizeof(uchar))
+
 	#define ATP_SPEC_SIZE (8<<0x3)
 	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
 	#define ATP_PORT "9999" // The common ATP port
