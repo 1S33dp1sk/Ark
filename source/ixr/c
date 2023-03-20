@@ -312,7 +312,9 @@
 		#endif	
 		return __header_in();
 		return 0;		
-	}
+	};
+
+
 
 	int __rd_ixrh() {
 		#ifdef DEBUG
@@ -400,6 +402,14 @@
 		};
 		return __refresh_header();
 	};
+
+
+	ixr_h *indexer_header() {
+		ulong header_size=sizeof(___header);
+		ixr_h *temp = malloc(header_size);
+		memmove(temp, &___header, header_size);
+		return (ixr_h *)temp;
+	}
 
 
 	// start the indexer 

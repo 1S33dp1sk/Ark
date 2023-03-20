@@ -91,11 +91,25 @@
                                             long long: "%lld",\
                                             default: "%x")
 
+    #define LBB_FMT_SPEC(lbb_type) _Generic((lbb_type), \
+    	ixr_h: "%lu bytes\n %lu@%lu dpoints\n head : %s\n",\
+    	default: "no lbb_type matched\n"\
+    )
+
+    #define LBB_SPEC(lbb_arg) _Generic((lbb_arg), \
+    	ixr_h*: ixrh_size(lbb_arg), ixrh_dcount(lbb_arg), ixrh_checksum(lbb_arg), ixrh_head(lbb_arg),\
+	    default: NULL
+    )
+
+    #define LBB_HEADER indexer_header()
+    #define lbb_indexer_address ixrh_checksum(LBB_HEADER)
     #define lbb_bytes_shared 1200
 
-    #define LBB_PRINT(fd, a) __OUT_ASCII(fd, lbb__##a)
-
     #define LBB_GET(a) __OUT_ASCII(0, lbb_##a)
+
+    #define __LBB_OUT(type, arg) do {
+    	printf(LBB_FMT_SPEC(arg), LBB_SPEC(arg));\
+	} __dPER
 
     #define LBB_OUT(fd, mthd, valu) do {\
     	printf("%d@lbb<%s>{%s}\n", fd, mthd, #valu);\
