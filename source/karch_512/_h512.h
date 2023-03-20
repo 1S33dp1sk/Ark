@@ -81,10 +81,8 @@ void log_keyvalue(char *key, char *value);
 void lbb_usage();
 int get_allstats(char *__mountpoint, char *__socketaddr, char *__fieldshare);
 char *flds(char const *__fldname);
-dpoint_t *__stpoint(char const *__stname, char const *__stval);
 void *__search_r(char const *__rname, lbb_t entry_type);
 void *__lbb_ref(char const *__rname);
-void *__lbb_addref(char const *__rname, char const *__rval);
 
 
 /********* base8 *********/
@@ -587,31 +585,6 @@ char *flds(char const *__fldname) {
 	return strdup(cflds_head);
 };
 
-dpoint_t *__stpoint(char const *st_name, char const *st_val) {
-    if(st_name==NULL){
-        return NULL;
-    };
-    ulong __len=str_rwings(st_name);
-    dpoint_t *d_stpoint=(dpoint_t *)malloc(size_dpoint_t);
-
-    if(st_name[0]!='k') {
-    	d_stpoint->c_name=st_name;
-		d_stpoint->c_ref=(uchar const *)kaddress(st_val, get_lbb_type(st_name));
-		d_stpoint->c_index=__cindex;	
-    }
-    else {
-      switch(st_name[1]){
-	    case 'C': break;
-	    case 'I': break;
-	    case 'P': break;
-	    case 'K': break;
-	    default: break;
-	    };
-	    return NULL;
-    };
-    return d_stpoint;
-};
-
 void *__search_r(char const *rname, lbb_t entry_type) {
 
 
@@ -622,17 +595,6 @@ void *__lbb_ref(char const *__rname) {
 	lbb_t __ltype=get_lbb_type(__rname);
 	void *temp=__search_r(__rname, __ltype);
 	return temp;
-};
-
-void *__lbb_addref(char const *__rname, char const *__rval) {
-	dpoint_t *__dst=__stpoint(__rname, __rval);
-	if(__dst!=NULL){
-		__index_point(__dst);
-		log_dpoint(__dst);
-		return __dst;
-	};
-	free(__dst);	
-	return NULL;
 };
 
 unsigned get_hlevel(char *href) {

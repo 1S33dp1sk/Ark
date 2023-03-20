@@ -1,10 +1,10 @@
 
 #ifndef __IXR__H
+#define LOG_ERR 1
+#define OUTPUT 1
 #include "ixr.h"
 #endif
 
-#define DEBUG 1
-#define LOG_ERR 1
 
 #ifndef __ixr_name 
 
@@ -68,6 +68,14 @@
 		return 0;
 	};
 
+	char const *__getcaller(){
+
+		return (char const *)__FILE__;
+	};
+
+
+	/********* d-types *********/
+
 	dpoint_t ref_point(void const *__arg, char const *__key, char const *__format) {
 		if(__key[0]=='&') {
 			++__key;
@@ -90,22 +98,15 @@
 		switch(idx_type) {
 		case ixr_header:	return __head_fmt;
 		case ixr_point:		return __value_fmt;
-		case ixr_path:		return __path_fmt;
+		case ixr_file:		return __file_fmt;
 		case ixr_dprg:		return __dprg_fmt;
 		case ixr_fld:		return __fld_fmt;
 		default: return NULL;
 		};
 	};
 
-	char const *__getcaller(){
-
-		return (char const *)__FILE__;
-	};
-
 	char const *ixr_address(void *cis_ixr, ixr_t ixr_type) {
-		ulong _index=ist_index(cis_ixr);
-		uchar const *_ref=ist_ref(ixr_cis(cis_ixr));
-
+	
 		return NULL;
 	};
 
@@ -122,19 +123,6 @@
 	    memmove((temp+2), __hash, __len);
 	    temp[__len]='\0';
 	    return (char const *)strdup(temp);
-	};
-
-	char const *kaddress(char const *__name, lbb_t __type) {
-		ulong __len=str_rwings(__name);
-	    switch(__type){
-	    case __unknown:		break;
-	    case __path_sys: 	return __kaddress(fhashof(0, __name));
-	    case __proto_call:	return __kaddress(hashof(1, __name, __len));
-	    case __intrp_decl:	return __kaddress(hashof(2, __name, __len));
-	    case __payld_entr:	return __kaddress(hashof(3, __name, __len));
-	    default:			break;
-	    };
-	    return NULL;
 	};
 
 	void *__erv(char const *__key,char const *__val) {
@@ -174,14 +162,12 @@
 		return (char const *)strdup(irv);
 	};
 
-
 	// increment the cindex
 	ulong __index_increment() {
 		__cindex+=1;
 		return __cindex;
 	};
 	
-
 	// set the next header at a new entry
 	ulong __set_next(char const *__head){
 		ulong __len=str_rwings(__head);
@@ -279,6 +265,8 @@
 
 		return __index_urn(dst->c_ref, dst->c_name);
 	};
+
+	/********* indexer IO *********/
 
 	// read the indexer header \\
 	OFFSET ALWAYS 0
@@ -455,6 +443,7 @@
 		return 0;
 	};
 	
+
     ulong __ixr_argument(char const *__format, void const *__) {
     	char const arg_fmt=__format[0];
     	memset(pbuf, 0, sizeof(pbuffer));

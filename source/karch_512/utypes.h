@@ -35,12 +35,11 @@ typedef __t8 tlong;
 enum __ixr_types {
 	ixr_header,
 	ixr_point,
-	ixr_path,
+	ixr_file,
 	ixr_dprg,
 	ixr_fld
 };
 typedef enum __ixr_types ixr_t;
-
 
 struct __ixr_st {
 	ulong c_index;
@@ -64,6 +63,14 @@ typedef struct __dpoint_t dpoint_t;
 	static const ulong size_dpoint_t=sizeof(dpoint_t);
 	#define dpoint_p(x)		((dpoint_t *)x)
 	#define dpoint_fmt(x)	((char const *)dpoint_p(x)->d_fmt)
+
+struct __ixr_h {
+	ulong __size;
+	ulong d_count;
+	ulong checksum;
+	dpoint_t **dpoints;
+};
+typedef struct __ixr_h ixr_h;
 
 struct __path_t {
 	ulong c_index;
@@ -103,7 +110,7 @@ typedef struct __fld_t fld_t;
 	static const ulong size_fld_t=sizeof(fld_t);
 	#define fld_address(x) ((char const *)x->f_address)
 	#define fld_dname(x) ((char const *)x->f_alias)
-		#define fld_flags(x) ((int)x->f_flags)
+	#define fld_flags(x) ((int)x->f_flags)
 
 
 /**
@@ -138,20 +145,13 @@ static pt2s up=(pt2s)&ua;
 static __ul u;
 
 enum __lbb_types {
-__unknown,
-__path_sys,
-__proto_call,
-__intrp_decl,
-__payld_entr
+	lbb_none,
+	lbb_ptr,
+	lbb_intr,
+	lbb_pyld,
+	lbb_entry
 };
 typedef enum __lbb_types lbb_t;
-
-enum __types_f {
-FLD_STORAGE=0,
-F_FIFO_LD=1,
-FL_LOCK_D=2,
-};
-typedef enum __types_f type_f;
 
 // atp :: {a.k.a @-Protocol} : types
 enum __atypes_ {
@@ -184,13 +184,6 @@ enum __step_size {
 typedef enum __step_size stp_size;
 
 
-struct __dpoint_indexes {
-ulong count;
-ulong filesize;
-dpoint_t **idxrs;
-};
-typedef struct __dpoint_indicies dices;
-
 // M structure
 struct __m_stat {
 	ulong m_size;
@@ -200,16 +193,6 @@ struct __m_stat {
 	char m_path[512];
 };
 typedef struct __m_stat m_stat;
-
-
-
-struct __ixr_h {
-	ulong __size;
-	ulong d_count;
-	ulong checksum;
-	dpoint_t **dpoints;
-};
-typedef struct __ixr_h ixr_h;
 
 enum __fmt_t {
 	__nofmt__='\0',
@@ -374,9 +357,9 @@ struct __lbb_shard {
 typedef struct __lbb_shard lshard;
 
 struct __in_pia {
-char pointer[__P_LEN];
-char interpreter[__I_LEN];
-char args[__A_LEN];
+	char pointer[__P_LEN];
+	char interpreter[__I_LEN];
+	char args[__A_LEN];
 };
 typedef struct __in_pia pia_st;
 
@@ -389,8 +372,8 @@ __pnt
 typedef enum __p_types p_type;
 
 struct __into {
-char const *argument;
-p_type arg_t;
+	char const *argument;
+	p_type arg_t;
 };
 typedef struct __into into_st;
 #define i_argument(i) (i->argument)
