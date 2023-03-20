@@ -25,7 +25,7 @@ The indexer
 	#define stres(x) __stres(x)
     #define len_ustrze(x) (((ulong)x)*(sizeof(uchar)))
 	#define ixr_h_size(x) (x.__size)
-
+	
 	#define __REF__(...) ref_point(__VA_ARGS__, #__VA_ARGS__, IXR_FMT(__VA_ARGS__))
 	#define index_reference(...) __REF__(__VA_ARGS__)
     #define KV_FORMAT(...) __generic_fmt(__key_value, ##__VA_ARGS__) 

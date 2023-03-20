@@ -26,6 +26,15 @@ K512-architecture
 #define __k_arch512__h 1
 #endif
 
+/**
+ * 
+ * The following are used as outputs
+ * DEBUG	#used to display most sub-processes happening
+ * OUTPUT	#used to display any output on stdout
+ * PROCESS	#used to display the names of the sub-processes being executed
+ * LOG_ERR	#used to display the errors on stdout
+ */
+
 #define LOG_ERR 1
 /************************ defintions ************************/
 

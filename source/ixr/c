@@ -9,6 +9,10 @@
 #ifndef __ixr_name 
 
 	//expanding args
+	#define ixr_mem 	((void *)&___header.head)
+	#define ixr_ubuf	((uchar *)&___header.head)
+	#define ixr_buf		((char *)&___header.head)
+	#define ixr_head	((char const *)&___header.head)
 	#define ixr_h_args ___header.__size, ___header.d_count, ___header.checksum
 	#define __eixrh(x) x->__size, x->d_count, x->checksum
 	#define __ihsz(x) x->__size
@@ -268,8 +272,48 @@
 
 	/********* indexer IO *********/
 
+	// initiate and set memory to zero for the header struct
+	void *__header__() {
+		return memset(&___header, 0, sizeof(ixr_h));
+	};
+
 	// read the indexer header \\
 	OFFSET ALWAYS 0
+	int __header_in() {
+
+		return 0;
+	};
+
+	int __load_header() {
+		__header__();
+		#ifdef PROCESS
+			printf("read :::");
+		#endif
+		uchar *__head=ixr_ubuf;
+		unsigned __rbytes=pread(__ixr_fd, (void *)__head, __I_LEN, 0);
+		if (__rbytes==-1) {
+			#ifdef LOG_ERR
+				printf("%s : err :: cannot write header to indexfile ::: %d\n", __FILE__, errno);
+			#endif
+			return -1;
+		};
+		#ifdef DEBUG
+			printf("read %d bytes for idx header\n", __rbytes);
+		#endif
+		__head[__I_LEN-1]='\0';
+		unpack(__head, ixr_format(ixr_point), __rbytes);
+		___header.__size=u[0];
+		___header.d_count=u[1];
+		___header.checksum=u[2];
+		___offset=(ulong)__rbytes;
+		#ifdef DEBUG
+			printf("attempting %d @indexfile: %lu\n", __tempres, __hfsize);
+			log_ixrh(&___header);
+		#endif	
+		return __header_in();
+		return 0;		
+	}
+
 	int __rd_ixrh() {
 		#ifdef DEBUG
 			printf("reading :::\n");
@@ -298,33 +342,55 @@
 		return 0;
 	};
 
+
 	// write the indexer header \\
 	OFFSET ALWAYS 0
-	int __wt_ixrh() {
-		#ifdef DEBUG
-			printf("writing :::");
-		#endif
-		uchar __head[29];memset(&__head, 0, sizeof(__head));
-		unsigned __temp=pack(__head, ixr_format(ixr_header), ixr_h_args);
-		__head[__temp]='\n';
-		int _temp=pwrite(__ixr_fd, (void *)__head, __temp, 0);
-		if(_temp==-1) {
-			#if LOG_ERR
-				printf("cannot write header to indexfile\n");
+	int __header_out(uchar *__header_content, ulong __header_size) {
+		if(__header_size>__I_LEN){
+			#ifdef LOG_ERR
+				printf("cannot pack more than 64 bytes in the header\n");
 			#endif
 			return -1;
-		}
-		___offset=(ulong)_temp;
+		};
+		int __bytes_w=pwrite(__ixr_fd, (void *)__header_content, __header_size, 0);
+		if(__bytes_w==-1){
+			#if LOG_ERR
+				printf("%s : err :: cannot write header to indexfile ::: %d\n", __FILE__, errno);
+			#endif
+			return -1;
+		};
+		#ifdef DEBUG
+			printf("wrote %d bytes for idx header\n", _temp);
+		#endif
+		___offset=(ulong)__bytes_w;
+		return 0;
+	};
+
+	int __write_header() {
+		#ifdef PROCESS
+			printf("writing :::");
+		#endif
+		uchar __head[__I_LEN];memset(&__head, 0, sizeof(__head));
+		unsigned __temp=pack(__head, ixr_format(ixr_header), ixr_h_args);
+		__head[__I_LEN-1]='\0';
+		__header_out(__head, __temp);
 		#ifdef DEBUG
 			printf("packed %d bytes for idx header\n", __temp);
-			printf("wrote %d bytes for idx header\n", _temp);
-			log_ixrh(&___header);
 		#endif
 		return 0;
 	};
 
 
+
 	// obtain header properties { ENVIROMENT }
+	int __refresh_header() {
+		___header.__size=fsze(__lbb_indexfile);
+		___header.d_count=__cindex;
+		___header.checksum=fhash16(1, __lbb_indexfile);
+		return 0;
+	}
+	// check if header exsits then retain 
+	// new header properties
 	int refresh_h() {
 		if(!__stres(__lbb_indexfile)) {
 			#ifdef LOG_ERR
@@ -332,16 +398,7 @@
 			#endif
 			return 1;
 		};
-		___header.__size=fsze(__lbb_indexfile);
-		___header.d_count=__cindex;
-		___header.checksum=fhash16(1, __lbb_indexfile);
-		return 0;
-	};
-
-
-	// initiate and set memory to zero for header struct
-	void *__header__() {
-		return memset(&___header, 0, sizeof(ixr_h));
+		return __refresh_header();
 	};
 
 
@@ -360,7 +417,8 @@
 				printf("indexer already exists\n");
 			#endif
 			return -1;
-		}
+		};
+		__header__();
 		int ixr_fd=-1;
 		ixr_fd=open(__lbb_indexfile, __ixr_start_flags, __ixr_pmode);
 		if(ixr_fd==-1){
@@ -373,14 +431,8 @@
 		#ifdef DEBUG
 			printf("Indexer started ::: %lu\n",__ixr_fd);
 		#endif
-
-		if(refresh_h()) {
-			#ifdef LOG_ERR
-				printf("cannot refresh header\n");
-			#endif
-			return -1;
-		};
-		if(__wt_ixrh()) {
+		__refresh_header();
+		if(__write_header()) {
 			#ifdef LOG_ERR
 				printf("cannot write indexer header\n");
 			#endif

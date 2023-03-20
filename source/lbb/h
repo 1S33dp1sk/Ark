@@ -91,21 +91,36 @@
                                             long long: "%lld",\
                                             default: "%x")
 
+    #define lbb_bytes_shared 1200
+
+    #define LBB_PRINT(fd, a) __OUT_ASCII(fd, lbb__##a)
+
+    #define LBB_GET(a) __OUT_ASCII(0, lbb_##a)
+
+    #define LBB_OUT(fd, mthd, valu) do {\
+    	printf("%d@lbb<%s>{%s}\n", fd, mthd, #valu);\
+	} __dPER
 
     #define _OUT_ASCII(fd,x) do { \
     	ulong len=str_rwings(x);\
-    	printf("file descriptor @%lu\n lengthof(%lu) with contents :: %s\n", fd, len, x);\
         long ws=write(fd,x,len);\
-        printf("writing result : %ld", ws);\
+    	printf("lbb@<fd:%lu>(%lu) {%s} = \n", fd, len, x, ws);\
     } __dPER
 
-   
    #define OUT_ASCII(fd,x) do { \
-    	ulong len=str_rwings(x);\
-    	long ws=pwrite(fd,x,len,___lbb_offset);\
+    	ulong len=str_rwings(#x);\
+    	long ws=pwrite(fd,#x,len,___lbb_offset);\
     	if(ws>0){ ___lbb_offset += ws; };\
-        printf("writing result : %ld", ws);\
+        printf("%ld@lbb<w>{ %s } \n", ws, #x);\
     } __dPER
+
+ 	#define __OUT_ASCII(fd,x) do { \
+    	ulong len=str_rwings(#x);\
+    	long ws=pwrite(fd,#x,len,___lbb_offset);\
+    	if(ws>0){ ___lbb_offset += ws; };\
+    	LBB_OUT(0, #x, x);\
+    } __dPER
+
 
 	#define PACK_IN(fld,siz,fmt,...) do {\
 	    uchar __[siz];memset(&__,0,siz);\
@@ -148,8 +163,8 @@ static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
 		memset(lbb_mstat, 0, sizeof(struct __m_stat));\
 		memset(l_shard,0,sizeof(struct __lbb_shard));\
 		printf("getting shard .:%s:. \n",__lbb_indexfile);\
-		get_mstat(__lbb_indexfile,lbb_mstat);\
 		if(!checkef_file){INDEXER(NULL);}\
+		get_mstat(__lbb_indexfile,lbb_mstat);\
 	}
 	#define __TYPD__(d) {\
 		__BASE__\
