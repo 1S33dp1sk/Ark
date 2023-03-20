@@ -11,7 +11,7 @@ The indexer
 
 	static const char *__head_fmt="_Q_Q_Q_\n";
 	static const char *__value_fmt="_Q:s:s_\n";
-	static const char *__path_fmt="_Q:s:s#Q_\n";
+	static const char *__file_fmt="_Q:s:s#Q_\n";
 	static const char *__dprg_fmt="_Q:s>s<s$s_\n";
 	static const char *__fld_fmt="_Q:s@s=s+h_\n";
 
@@ -42,35 +42,33 @@ The indexer
 		__VA_ARGS__\
 	}
 
-	#define LONG_SIZE ULONG_SIZE
-	#define ULONG_SIZE ((ulong)(sizeof(ulong)))
 	#define uc_size(x) ((ulong)(x*sizeof(uchar)))
 	#define ULONG_MAX_DIGITS 21
+	#define ULONG_SIZE ((ulong)(sizeof(ulong)))
+	#define LONG_SIZE ULONG_SIZE
 
-    #define IXR_FMT(__) \
-        _Generic((__), \
-        	char 		: "c",\
-            char*		: "s",\
-            char const*	: "s",\
-            int*		: "h",\
-            uns*		: "H",\
-            long*		: "l",\
-            ulong*		: "L",\
-            tlong*		: "Q",\
-            default 	: "_")
+    #define IXR_FMT(__) _Generic((__), \
+		char 		: "c",\
+		char*		: "s",\
+		char const*	: "s",\
+		int*		: "h",\
+		uns*		: "H",\
+		long*		: "l",\
+		ulong*		: "L",\
+		tlong*		: "Q",\
+		default 	: "_")
 
-    #define IXR_ARG(x) \
-		_Generic((x), \
-			char*					: (char*)x,\
-			char const *			: (char const *)x,\
-			unsigned char*			: (uchar*)x,\
-			int*					: (int*)x,\
-			unsigned int*			: (uns*)x,\
-			long int*				: (ulong*)x,\
-			unsigned long int*		: (ulong*)x,\
-			long long int*			: (tlong*)x, \
-			unsigned long long int*	: (tlong*)x, \
-			default					: NULL)
+    #define IXR_ARG(__) _Generic((__), \
+		char*					: (char*)x,\
+		char const *			: (char const *)x,\
+		unsigned char*			: (uchar*)x,\
+		int*					: (int*)x,\
+		unsigned int*			: (uns*)x,\
+		long int*				: (ulong*)x,\
+		unsigned long int*		: (ulong*)x,\
+		long long int*			: (tlong*)x, \
+		unsigned long long int*	: (tlong*)x, \
+		default					: NULL)
 
 	dpoint_t ref_point(void const *__key, char const *__value, char const *__format);
 	ulong __fsize(char const *__fpath);
@@ -87,19 +85,19 @@ The indexer
 	ulong __idx_start();int __stres(char const *__cpath);
     ulong __ixr_argument(char const *__format, void const *__);
 	uns __dmode(char const *__fpath);
+    char const *__generic_fmt(fmt_t __format, ...);
+	char const *fhashof(unsigned level, char const *file_path);
+	char const *__getcaller();
+	char const *__irv(char const *__key, char const *__val);
+	char const *__xreference(char const *__);
+	char const *hashof(unsigned level, void const *to_hash, ulong hashlen);
+    char const *ixr_format(ixr_t index_type);
+	void *__header__();
 	void log_fmt_t(fmt_t __format);
 	void log_dpoint(dpoint_t *dst);
 	void log_ixrh(ixr_h *ixrh);
     void unpack(uchar *buf,char const *fmt,...);
-	void *__header__();
-    char const *__generic_fmt(fmt_t __format, ...);
-	char const *fhashof(unsigned level, char const *file_path);
-	char const *hashof(unsigned level, void const *to_hash, ulong hashlen);
-    char const *ixr_format(ixr_t index_type);
-	char const *__getcaller();
-	char const *__irv(char const *__key, char const *__val);
-	char const *__xreference(char const *__);
-	unsigned int pack(uchar *bufin, char const *buffmt, ...);
+   	unsigned int pack(uchar *bufin, char const *buffmt, ...);
 	int __rd_ixrh();
 	int __wt_ixrh();
 	int __indexer__(char const *__id);
@@ -112,6 +110,12 @@ The indexer
 	int refresh_h();
 	int indexer_start();
 	int refer_index(void *__ptr, void *__ref, char *__prname);
+
+
+
+
+
+
 
 
 

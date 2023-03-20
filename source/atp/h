@@ -3,6 +3,13 @@
 	#include "utypes.h"
 	#include "standard.h"
 
+	#define __AT_DEFINED '@'
+	#if __AT_DEFINED!=64
+		#define AT_DEFINED 64
+	#else
+		#define AT_DEFINED __AT_DEFINED
+	#endif
+	
 	#define ATP_FLAG_START 0x1
 	#define ATP_FLAG_FS 0x2
 	#define ATP_FLAG_IEPS 0x3
@@ -70,12 +77,6 @@
 	#define __ATP_A4 "localhost"
 	#define __ATP_A6 "::1"
 
-	#define __AT_DEFINED '@'
-	#if __AT_DEFINED!=64
-		#define AT_DEFINED 64
-	#else
-		#define AT_DEFINED __AT_DEFINED
-	#endif
 	
 	#define __D_CLOUD return 0;
 
@@ -130,7 +131,6 @@
 	static ulong points_c=0;
 	static ulong p_pid;
 	static ulong c_pid;
-
 
 	void *__into__(into_st st) {
 

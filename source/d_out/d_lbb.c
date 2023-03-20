@@ -9,7 +9,7 @@
 #define LOG_ERR 1
 #endif
 
-char *tmp="/Users/mrkj/Custom/web-socket-app/public/index.html";
+char *tmp="/Users/mrkj/labs_page/public/index.html";
 
 int main(int argc, char const *argv[]) {
 	payld_st pyld;
@@ -19,10 +19,10 @@ int main(int argc, char const *argv[]) {
 
 __lbb_filepath(tmp, Public);
 
-__lbb_function(tmp, paddr(pyld), &pyld);
+// __lbb_function(tmp, paddr(pyld), &pyld);
 
-__lbb_field(tmp, ptr);
+// __lbb_field(tmp, ptr);
 
-__lbb_address(tmp);
+// __lbb_address(tmp);
 };
 
