@@ -18,7 +18,7 @@
 
 int main(int argc, char **argv) {
 __LBB_START__ 
-    __arcstp(256);
+    atp_step(256);
     
 
 

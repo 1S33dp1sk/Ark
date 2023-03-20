@@ -47,7 +47,6 @@
 	char const *fhashof(unsigned level, char const *__tohash);
 	ulong str_rwings(char const *string);
 	unsigned int pack(uchar *bufin, char const *buffmt, ...);
-	void *__arc_stpoints(ulong __stindex, char const *__stname);
 	void *__arcstp(stp_size __stpsize);
 	void __arcpid();
 	void __arcfork();
@@ -94,14 +93,14 @@
 	#define __self_file ((void const *)(__FILE__))
 	#define __self_flen (ulong)str_rwings(__FILE__)
 
-	#define d_atpointer "@193rfzd193<python3>{ print('hello world') }\0"
-	#define d_atpoint "@charms/lbb/193rfzd193\0"
-	#define d_atbase "@charms/\0"
+	#define d_charms "@charms/"
+	#define d_lbb "@lbb"
 	#define d_atlbb "@charms/.lbb\0"
 	#define __LBB_BASE_LEN str_rwings(__lbb_convdir)
 	#define arr_size(x) ((ulong)(sizeof(x)/sizeof(x[0])))
 	#define srwings(x) str_rwings(x)
-	#define d_atbase_rwings srwings(d_atbase)
+	#define dlbb_rwings 4
+	#define dcharms_rwings 8
 
 	#define __p_args(p) ((void *)(&(p.args)))
 	#define p_args(p) ((char const *)(p.args))
@@ -132,9 +131,16 @@
 	static ulong p_pid;
 	static ulong c_pid;
 
-	void *__into__(into_st st) {
+	int get_atp_type(char const *proto_call);
 
-		return memset(&st, 0, sizeof(into_st));
+	void *__into__(into_st st, void *__, char const *argv[]) {
+		into_st *stp = (into_st *)__;
+		memset(__, 0, sizeof(st));
+		into_caller(st, argv[0]);
+		into_args(st, &argv[1]);
+		int p_type=get_atp_type(argv[1]);
+		into_type(st, p_type);
+		return stp;
 	};
 	void *__pia__(pia_st st) {
 
@@ -144,6 +150,8 @@
 		if(x==y) { refer_index(x,#x,#x); }\
 		else { refer_index(x,y,#x); }\
 	}
+
+
 
 
 	

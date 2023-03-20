@@ -22,8 +22,12 @@ __LBB_START__
 		// display the bytes shared amount
 
 	};
-	LBB_GET(indexer_address);
+	IXR_OUT(0, ixr_h, indexer_address);
 	LBB_GET(bytes_shared);
+
+	ixr_h *temp=IXR_GET(indexer_address, ixr_h);
+
+	printf("lbb checksum : %lu", ixrh_checksum(temp));
 
 // __lbb_command(tmp, NULL);
 

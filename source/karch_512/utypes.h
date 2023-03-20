@@ -144,21 +144,14 @@ static pt2s up=(pt2s)&ua;
 #define u3__ ua._3
 static __ul u;
 
-enum __lbb_types {
-	lbb_none,
-	lbb_ptr,
-	lbb_intr,
-	lbb_pyld,
-	lbb_entry
-};
-typedef enum __lbb_types lbb_t;
+
 
 // atp :: {a.k.a @-Protocol} : types
 enum __atypes_ {
-	atp='0',
-	at4=4,
-	at6=6,
-	ate='e',
+	__at_p='0',
+	__at_4=4,
+	__at_6=6,
+	__at_e='e',
 };
 typedef enum __atypes_ at_t;
 
@@ -227,16 +220,15 @@ enum __fmt_t {
   
     
     __call__,
-    atp_t=__call__+3, // @s<i>{ p }
+    atp_c=__call__+3, // @s<i>{ p }
 };
 typedef enum __fmt_t fmt_t;
 
 enum __fmt_cats {
-	__cval=4, //commands
-	__refs=8, //references
-	__intr=64, //interpreters
-	__payl=512, //payloads,
-	__lbb //all others e.g binaries
+	_f_lbb, //all others e.g binaries
+	_f_refs=8, //references
+	_f_intr=64, //interpreters
+	_f_payl=512, //payloads,
 };
 typedef enum __fmt_cats cfmt;
 
@@ -363,21 +355,50 @@ struct __in_pia {
 };
 typedef struct __in_pia pia_st;
 
-enum __p_types {
-__nul,
-__unk,
-__ptr,
-__pnt
+enum __lbb_entries {
+	__lbb_none__=-1,		// no entry
+	__lbb_charms__='@',		// @charms
+	__lbb_field__=1,		// @lbb
+	__lbb_info__=0,			// (null)==ixr
+	__lbb_variable__='*',	// *
+	__lbb_atp__				// @*
 };
-typedef enum __p_types p_type;
+typedef enum __lbb_entries lbb_entry;
 
 struct __into {
-	char const *argument;
-	p_type arg_t;
+	char const **args;
+	char const *caller;
+	int req_at;
 };
 typedef struct __into into_st;
-#define i_argument(i) (i->argument)
-#define i_ptype(i) (i->arg_t)
+
+enum __at_protocol {
+	atp_base=__lbb_atp__,
+	atp_get=atp_base+__lbb_variable__,
+	atp_set,
+	atp_return, // return : to caller
+	atp_retain, // save
+	atp_retreive, // collect :  get AND THEN { &-> } return to caller
+	atp_dcloud,
+	atp_next
+};
+typedef enum __at_protocol atp_t;
+
+
+
+#define i_caller(i)		(char const *)(i->caller)
+#define i_type(i)		(lbb_entry)(i->req_at)
+#define i_proto(i)		(atp_t)(i->req_at)
+#define i_base(i)		((int)(i->req_at))
+#define i_args(i)		(char const **)(i->args)
+#define i_narg(i, n)	(char const *)((i->args)[n])
+#define i_argument(i)	i_narg(i, 0)
+
+#define into_caller(i, c) i.caller=(char const *)c;
+#define into_type(i, t) i.req_at=(int)t;
+#define into_args(i, a) i.args=(char const **)a;
+#define typepoint(i) i_type((&i))
+
 
 struct __socket_address {
 	at_t _atype;
@@ -400,8 +421,9 @@ enum __sha3_flags {
 typedef enum __sha3_flags sha3_config_t;
 
 struct __ptr_addr {
-void *ptr;//memory access
-char address[__P_LEN];
+	char const *chkref;
+	void *ptr;//memory access
+	char address[__P_LEN];
 };
 typedef struct __ptr_addr ptr_st;
 
@@ -418,12 +440,15 @@ char address[__A_LEN];
 typedef struct __payld_addr payld_st;
 
 struct __cis_addr {
-void *ptr;
-char *addr;
+	char const *ref;
+	void *ptr;
+	char *addr;
 };
 typedef struct __cis_addr cis_st;
-#define addr_size(x) ((ulong)sizeof((x->address)))
-#define paddr(x) &(x.address)
+#define addr_ref(x) ((char const *)x->ref)
+#define addr_ptr(x) ((void *)x->ptr)
+#define addr_size(x) ((ulong)sizeof((x->addr)))
+#define addr(x) ((char *)((&x->addr)+addr_size(x)))
 
 static const char *__lbb_indexfile = "@charms/lbb/.lbb\0";
 static const char *__lbb_convdir = "@charms/lbb\0";
@@ -432,16 +457,6 @@ static const char *__lbb_locking = "@charms/lock\0";
 
 static uchar pbuffer[__A_LEN];
 static uchar *pbuf=(uchar *)&pbuffer;
-
-
-
-
-
-
-
-
-
-
 
 
 
