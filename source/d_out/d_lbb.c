@@ -16,13 +16,13 @@ int lbb_total() {
 }
 
 int main(int argc, char const *argv[]) {
-// __LBB_START__
+__LBB_START__
 	// means we are just calling the lbb
 	if(argc==1) {
 		// display the bytes shared amount
 
 	};
-
+	LBB_GET(indexer_address);
 	LBB_GET(bytes_shared);
 
 // __lbb_command(tmp, NULL);

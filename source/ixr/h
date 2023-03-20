@@ -15,6 +15,13 @@ The indexer
 	static const char *__dprg_fmt="_Q:s>s<s$s_\n";
 	static const char *__fld_fmt="_Q:s@s=s+h_\n";
 
+
+	#define ixrh_size(x) (ulong)(x->__size)
+	#define ixrh_dcount(x) (ulong)(x->d_count)
+	#define ixrh_checksum(x) (ulong)(x->checksum)
+	#define ixrh_head(x) ((uchar *)x->head)
+
+
 	#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
 	#define sz8(x) ((ulong)__8sz(x))
 	#define fsze(x) ((ulong)__fsize(x))
@@ -70,6 +77,7 @@ The indexer
 		unsigned long long int*	: (tlong*)x, \
 		default					: NULL)
 
+	ixr_h *indexer_header();
 	dpoint_t ref_point(void const *__key, char const *__value, char const *__format);
 	ulong __fsize(char const *__fpath);
 	ulong __iosize(char const *__fpath);
