@@ -670,27 +670,22 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		printf("fld file  : %lu\n", __fd);
 		printf("fld count : %lu\n", __fld_count);
 	#endif
-	ulong const field_size=size_fld;
-	ulong const lf_size=str_rwings(__lbb_convdir);
-	ulong const fn_size=str_rwings(__fn);
+	char const *fld_name=__combine_str(__lbb_convdir, __fn);
 	ulong c=0,_res=0,__offset=0;
 
-	// create entry in lbb/
-	char const *fld_name=__combine_str(__lbb_convdir, __fn);
-
+	// create entry in lbb
 	ulong lbb_dd=__lbb_file_n(fld_name);
 
-
+	// reset the fld to be to 0
 	fld field; memset(&field,0,size_fld);
 	char *__buffer=(char *)&(field.fld_con.etc);
-	__buffer[4096]='\0';
+	__buffer[4095]='\0';
+
 
 	chk_st cst;
-
-
 	while(c<__fld_count){
 		memset(&cst, 0, sizeof(chk_st));
-		memset(__buffer,0,4096);
+		memset(__buffer,0,4024);
 		#ifdef DEBUG
 			printf("Conv Fields DEBUG :: %lu\n", c);
 		#endif
@@ -698,38 +693,38 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		int __tempres=pread(__fd,__buffer,4096,__offset);
 		if(__tempres==-1) {
 			#ifdef LOG_ERR
-				printf("could not read file : %s\n", shd_path);
+				printf("%s : convolution :: could not read file ::: %s\n", "@LBB", shd_path);
 			#endif
 			return NULL;
 		}
 		else if (__tempres==0) {
-			break;
+			#ifdef LOG_ERR
+				printf("%s : convolution :: file is empty ::: %s\n", "@LBB", shd_path);
+			#endif
+			continue;
 		}
 		else {
+		// get the total size of file contents
 			cst.chksize=(ulong)__tempres;
 			__offset+=cst.chksize;		
 		};
-		#ifdef DEBUG
-			printf("read size :: %lu\n", cst.chksize);
-		#endif
-
-		// file path
+		
+		// get the charms file path
 		cst.chkname=__get_cfname(__fn, c);
-		OUT_ASCII(lbb_dd,cst.chkname);
-		// #ifdef DEBUG
-		printf("file path :: %s\n", cst.chkname);
-		// #endif
-
 		// get checksum for entire file
 		cst.chksum=(char *)hashof(1,field_content(field),field_length(field));
-		OUT_ASCII(lbb_dd,cst.chksum);
-		// #ifdef DEBUG
-		printf("file checksum :: %s\n", cst.chksum);
-		// #endif		
-
+		#ifdef DEBUG
+			printf("fld : file path      :: %s\n", cst.chkname);
+			printf("fld : read size      :: %lu\n", cst.chksize);
+			printf("fld : file checksum  :: %s\n", cst.chksum);
+		#endif
+		#ifdef OUTPUT
+			OUT_ASCII(lbb_dd, cst.chksize);		
+			OUT_ASCII(lbb_dd, cst.chkname);
+			OUT_ASCII(lbb_dd, cst.chksum);
+			OUT_ASCII(lbb_dd, field_content(field));
+		#endif		
 		// pack the contents as binary with s indicator
-		OUT_ASCII(lbb_dd, field_content(field));
-
 		c+=1;
 	};
 	
@@ -844,7 +839,10 @@ char const *__lbb_command(char const *__cpath, char const *__args) {
 
 
 char const *__lbb_filepath(char const *__fpath, sterm __term) {
-	printf("lbb filepath :%s+%u\n", __fpath, __term);
+	#ifdef PROCESS
+		printf("lbb filepath :%s+%c\n", __fpath, __term);
+	#endif
+	// check the file requested
 	int __res=-1;
 	__res=get_mstat(__fpath, lbb_mstat);
 	if(__res==-1) {
@@ -853,25 +851,28 @@ char const *__lbb_filepath(char const *__fpath, sterm __term) {
 		#endif
 		return NULL;
 	};
+	// log the stats of the file requested
 	#ifdef DEBUG
 		log_mstat(lbb_mstat);
 	#endif
-
+	// get a reader for the file
+	// if stat is obtained but reader
+	// is not, most likely already added
+	// or no permissions
 	__res=get_freader(lbb_mstat);
 	if(__res==-1) {
 		#ifdef LOG_ERR
-			printf("result is = %d\n", __res);
+			printf("%s : filepath :: cannot open reader ::: %s \n", "@LBB", __fpath);
 		#endif
 		return NULL;
 	};
-	#ifdef DEBUG
+	#ifdef PROCESS
 		printf("lbb@%lu<%lu>\n", shd_fd, shd_sze);
 	#endif
-
 	ulong count=__flds_count(shd_sze);
 	char const *convres=__conv_fields(shd_key,shd_fd,count);
-	lbb_close();
 
+	lbb_close();
 	if(convres==NULL) {
 		#ifdef LOG_ERR
 			printf("could not do a convolution for path : %s\n", __fpath);
@@ -926,6 +927,9 @@ void const *__lbb_type_args(lbb_at __atype) {
 	};
 	return __ne;
 };
+
+
+
 
 
 

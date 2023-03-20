@@ -5,8 +5,6 @@
 #include "atp.h"
 #endif
 
-#define DEBUG 1
-
 #ifndef __atp_name
 	#define __atp_name "@-Protocol"
 	

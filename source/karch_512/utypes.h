@@ -68,7 +68,7 @@ struct __ixr_h {
 	ulong __size;
 	ulong d_count;
 	ulong checksum;
-	dpoint_t **dpoints;
+	uchar head[__I_LEN];	
 };
 typedef struct __ixr_h ixr_h;
 
