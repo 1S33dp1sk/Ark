@@ -97,18 +97,20 @@
     )
 
     #define LBB_SPEC(lbb_arg) _Generic((lbb_arg), \
-    	ixr_h*: ixrh_size(lbb_arg), ixrh_dcount(lbb_arg), ixrh_checksum(lbb_arg), ixrh_head(lbb_arg),\
-	    default: NULL
+    	ixr_h*: &ixrh_size(lbb_arg), ixrh_dcount(lbb_arg), ixrh_checksum(lbb_arg), ixrh_head(lbb_arg),\
+	    default: NULL\
     )
 
-    #define LBB_HEADER indexer_header()
-    #define lbb_indexer_address ixrh_checksum(LBB_HEADER)
+    #define lbb_indexer_address indexer_header()
     #define lbb_bytes_shared 1200
 
     #define LBB_GET(a) __OUT_ASCII(0, lbb_##a)
+    #define IXR_GET(a, type) (type *)lbb_##a 
 
-    #define __LBB_OUT(type, arg) do {
-    	printf(LBB_FMT_SPEC(arg), LBB_SPEC(arg));\
+    // #define LBB_EVAL(type, varname) LBB_FMT_OUT(0, type, varname)
+
+    #define IXR_OUT(fd, type, val) do {\
+        printf("%d@lbb<%s>(%s)\n", fd, #type, #val);\
 	} __dPER
 
     #define LBB_OUT(fd, mthd, valu) do {\

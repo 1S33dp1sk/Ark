@@ -485,38 +485,6 @@
 		return 0;
 	};
 
-	p_type __decode_p(into_st *into) {
-		char const *point_buffer=into->argument;
-		if(point_buffer==NULL) {
-			#ifdef DEBUG
-				printf("\ndecode p : { NULL }\n");
-			#endif
-			into->arg_t=__nul;
-			return __nul;
-		}
-		if(*point_buffer!=AT_DEFINED) {
-			#ifdef DEBUG
-				printf("\ndecode p : { unknown }\n");
-			#endif
-			into->arg_t=__unk;
-			return __unk;
-		};
-		for(int i=0; i<d_atbase_rwings; i++) {
-			if(point_buffer[i]!=d_atbase[i]) {
-				#ifdef DEBUG
-					printf("\ndecode p : kPtr\n");
-				#endif
-				into->arg_t=__ptr;
-				return __ptr;
-			};
-		};
-		#ifdef DEBUG
-			printf("\ndecode p : @point{}\n");
-		#endif
-		into->arg_t=__pnt;
-		return __pnt;
-	};
-
 	char const *__pia_http(pia_st *pst) {
 		#ifdef OUTPUT
 			printf("starting http parser (pia) :: \n");
@@ -533,6 +501,47 @@
 		return strdup(__);
 	};
 
+
+	lbb_entry __decode_arg(char const *argument) {
+		char const *point_buffer=argument;
+		// __info__
+		if(point_buffer==NULL) {
+			printf("IXR-LBB\n");
+			return __lbb_info__;
+		}
+		// __@__
+		else if(*point_buffer==AT_DEFINED) {
+			// @
+			int __flag=0;
+			for(int i=0; i<dcharms_rwings; i++) {
+					if(i<dlbb_rwings) {
+						// @lbb
+						if (point_buffer[i]==d_lbb[i]){
+							__flag+=1;
+						}				
+					}
+					if(point_buffer[i]==d_charms[i]) {
+						// @charms
+						__flag+=4;
+					};
+			};
+			switch(__flag) {
+			case 8: 
+				printf("LBB-FLD :   %s\n", point_buffer);
+				return __lbb_field__;
+			case 29: 
+				printf("LBB-CLD ::  %s\n", point_buffer);
+				return __lbb_charms__;
+			default: 
+				printf("LBB-DLD ::: %s\n", point_buffer);
+				return __lbb_variable__;
+			}
+		}
+		else {
+			printf("ATP : %s\n", point_buffer);
+			return __lbb_atp__;
+		};
+	};
 	/**
 	 * d-lbb GET some_handler||path/to
 	 * 
@@ -540,14 +549,14 @@
 	 * 
 	 * d-lbb text_out __TEXT
 	 */ 
-	lbb_t get_lbb_type(char const *bufin) {
+	atp_t __get_at_protoname(char const *bufin) {
 		/**
 		 * lbb entries always start with 
 		 * '@'
 		 */
 		if(*bufin==__AT_DEFINED) {
 
-			return lbb_entry;
+			return atp_base;
 		}
 		/**
 		 * payloads always start with
@@ -557,7 +566,7 @@
 		 */
 		if((*bufin>=0x30)&&(*bufin<=0x39)){
 
-			return lbb_pyld;
+			return atp_retain;
 		}
 		/**
 		 * protocol requests always start with
@@ -568,7 +577,7 @@
 		 */
 		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
 
-			return lbb_ptr;
+			return atp_return;
 		}
 		/**
 		 * interpreters are always called using 
@@ -580,12 +589,23 @@
 		 */
 		else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
 
-			return lbb_intr;
-		};
+			return atp_retreive;
+		}
 		/**
-		 * will exit with grace if unknown
-		 */
-		return lbb_none;
+		* will exit with grace if unknown
+		*/
+		else {
+			return atp_next;
+		};
+	};
+	
+	int get_atp_type(char const *proto_call) {
+		int res=__lbb_none__;
+		res=__decode_arg(proto_call);
+		if(res==__lbb_atp__) {
+			res=__get_at_protoname(proto_call);
+		}
+		return res;
 	};
 
 	int __check_allowed(char const *__){ 
@@ -788,40 +808,13 @@
 		return 0;
 	};
 
-	void *__arc_stpoints(ulong __stindex, char const *__stname) {
-		dpoint_t *__point=__arcstp(0x8);
-		memset(__point,0,sizeof(ulong));
-		__point->c_index=__stindex;
-		
-		ulong length=str_rwings(__stname);
-		char *stname=(char *)malloc(length);
-		memset(stname,0,length);
-		memmove(stname,__stname,length);
-		__point->c_name=stname;
-
-		char const *__stref=hashof(1, __stname, length);
-		ulong ref_length=str_rwings(__stref);
-		char *stref=(char *)malloc(ref_length);
-		memset(stref,0,ref_length);
-		memmove(stref,__stref,ref_length);
-		__point->c_ref=(uchar const*)stref;
-
-		// points_c+=1;
-		return (dpoint_t *)__point;
-	};
-
 	int decode_point(into_st *into) {
 		#ifdef DEBUG
 			printf("decoding aetherpoint :: \n");
 		#endif
-		ulong pnt_offset=sep_offset(into->argument, d_atbase);
-		char *point=str_a4offset(into->argument, pnt_offset);
+		ulong pnt_offset=sep_offset(i_argument(into), d_charms);
+		char *point=str_a4offset(i_argument(into), pnt_offset);
 		printf("point @%s\n", point);
-		return 0;
-	};
-
-	int __point_run() {
-		void *temp = __arcstp(512);
 		return 0;
 	};
 
@@ -1209,16 +1202,16 @@ typedef struct __sok_t aipsock;
 
 	at_t stype_to_atype(sAF_type __stype) {
 		switch(__stype) {
-			case __sAF_INET: return at4;
-			case __sAF_INET6: return at6;
-			default: return at4;
+			case __sAF_INET: return __at_4;
+			case __sAF_INET6: return __at_6;
+			default: return __at_4;
 		}
 	};
 
 	sAF_type a2s_type(at_t _atype) {
 		switch(_atype) {
-			case at4: return __sAF_INET;
-			case at6: return __sAF_INET6;
+			case __at_4: return __sAF_INET;
+			case __at_6: return __sAF_INET6;
 			default: return __sAF_INET;
 		};
 	};
@@ -1263,11 +1256,11 @@ typedef struct __sok_t aipsock;
 		aip_sockaddr __sa;
 		memset(&__sa,0,sizeof(aip_sockaddr));
 		if (sa->sa_family == AF_INET) {
-			__sa._atype=at4;
+			__sa._atype=__at_4;
 			__sa._sokaddr=&(((struct sockaddr_in*)sa)->sin_addr);
 		}
 		else {
-			__sa._atype=at6;
+			__sa._atype=__at_6;
 			__sa._sokaddr=&(((struct sockaddr_in6*)sa)->sin6_addr);
 		};
 		char s[INET6_ADDRSTRLEN];
@@ -1644,7 +1637,7 @@ typedef struct __sok_t aipsock;
 		return c_stp;
 	};
 
-	void __ellcall(ulong __socfd, char *reusable, ulong r_size) {
+	void __ellcall(ulong __sockfd, char *reusable, ulong r_size) {
 		#ifdef OUTPUT
 			printf("reading input\n");
 		#endif
@@ -1658,10 +1651,10 @@ typedef struct __sok_t aipsock;
 			#ifdef OUTPUT 
 				printf("sending to socket\n");
 			#endif
-			__tempres=send(__socfd, reusable, r_size, 0);
+			__tempres=send(__sockfd, reusable, r_size, 0);
 			break;
 		};
-			close(__socfd);
+		close(__sockfd);
 	};
 
 	void __ellget(ulong __sockfd, char *reusable, ulong reu_size) {
@@ -1669,15 +1662,30 @@ typedef struct __sok_t aipsock;
 		int __recvd_num=recv(__sockfd, reusable, reu_size, 0);
 		if(__recvd_num==-1) {
 			#ifdef OUTPUT
-				printf("could not recieve in `ellcall`\n");
+				printf("ATP : err<recv>(%d)\n", errno);
 			#endif
-			exit(1);
+			_exit(1);
 		};
-
 		reusable[__recvd_num] = '\0';
-		#if DEBUG
-			printf("client: received '%s'\n",reusable);
+	};
+
+	void __ellsend(ulong __sockfd, char *reusable, ulong r_size) {
+		#ifdef OUTPUT
+			printf("reading input\n");
 		#endif
+		int __tempres=0;
+		while(__tempres!=-1) {
+			#ifdef OUTPUT
+				printf("ATP : sending :: %s\n", reusable);
+			#endif
+			__tempres=send(__sockfd, reusable, r_size, 0);
+			__ellget(__sockfd, reusable, ATP_BUFFER_SIZE);
+			break;
+		};
+		#if OUTPUT
+			printf("ATP : recieving :: %s\n", reusable);
+		#endif
+		close(__sockfd);
 	};
 
 
@@ -1716,11 +1724,6 @@ typedef struct __arc_t arc_t;
 		return __arcell(c_step);
 	};
 
-	void *__arcrun(void *c_step) {
-
-		return __arcstp(512);
-	};
-
 	void __arcpid(){
 	#define ARC_PID_SZ sizeof(ulong)
 		__arc.__pid=(ulong)getpid();
@@ -1744,8 +1747,17 @@ typedef struct __arc_t arc_t;
 		free_sok();
 	};
 
-	int mor(void *args) {
-		printf("d-cloud : atp {mor} :: %p\n", args);
+	int mor(void *__args) {
+		printf("d-cloud : atp {mor} :: %p\n", __args);
+
+		cis_st *cis_addr = (cis_st *)__args;
+
+		printf("address\n");
+		printf("reference    : %s\n", addr_ref(cis_addr));
+		printf("pointer      : %p\n", addr_ptr(cis_addr));
+		printf("size         : %lu\n", addr_size(cis_addr));
+		printf("atp-%s\n", addr(cis_addr));
+
 
 		int sockfd, numbytes;  
 		char buf[ATP_BUFFER_SIZE];
@@ -1782,14 +1794,12 @@ typedef struct __arc_t arc_t;
 
 			break;
 		};
-
 		if (p == NULL) {
 			#ifdef DEBUG
 				printf("client: failed to connect\n");
 			#endif
 			return 2;
 		};
-
 		inet_ntop(p->ai_family, __sok_addr((struct sockaddr *)p->ai_addr), s, sizeof s);
 		#if DEBUG
 			printf("client: connecting to %s\n", s);
@@ -1797,10 +1807,8 @@ typedef struct __arc_t arc_t;
 		freeaddrinfo(servinfo); // all done with this structure
 		memset(&buf, 0, sizeof(buf));
 		__ellcall(sockfd, (char *)&buf, sizeof(buf)-1);
-
 	 
 		close(sockfd);
-
 		return 0;
 	};
 
@@ -1852,58 +1860,185 @@ typedef struct __arc_t arc_t;
 		return 0;
 	};
 
+	#define ATP_POINTER atp_step(6);
+
+
+	#define hash_follow(l,...) (char const *)hashof(l, #__VA_ARGS__, str_rwings(#__VA_ARGS__))
+	
+
+	void *__atp_pointer() {
+		ptr_st *atp_p=malloc(sizeof(ptr_st));
+		memset(atp_p, 0, sizeof(ptr_st));
+		__arcpid();
+		#ifdef PROCESS
+			printf("ATP<arcpid> = %lu\n", __arc.__pid);
+		#endif
+		atp_p->ptr = atp_p;
+		sprintf(atp_p->address, "%lu", __arc.__pid);
+		atp_p->chkref = hash_follow(0, atp_p->address);
+		#ifdef DEBUG
+			printf("%p<%s>(%lu)\n", atp_p.ptr, atp_p.address, atp_p.chkref);
+		#endif
+		return atp_p->ptr;
+	};
+
+
+	void *__atp_address() {
+
+		return NULL;
+	};
+
+
+
+
+	void log_into(into_st *into) {
+		printf("into : \n");
+		printf("request : %u\n", into->req_at);
+		printf("caller  : %s\n", into->caller);
+	};
+
+
+	// returns true for child process
+	#define arc_process (!__arc.__fork) 
+
 	// we generate a kept reference for a certain
-	// size defined by `stp_size` which can be 
+	// size defined by `atp_step` which can be 
 	// accessed via the lbb
-	void *__arcstp(stp_size stsize){
+	void *atp_step(stp_size stsize){
 		cis_st *stp;
-		if(stsize<=__step_point) {
-			struct __ptr_addr p_stp;memset(&p_stp, 0, sizeof(p_stp));
-			__arcpid();
-			#ifdef DEBUG
-				printf("{ ARC } => pid: %lu\n", __arc.__pid);
-			#endif
-			p_stp.ptr=malloc(8);
-			ulong thsz=sizeof(void *)+sizeof(ulong);
-			char temp[thsz];
-			sprintf(temp, "%p-%lu", (p_stp.ptr), (__arc.__pid));
-			char const *__=hashof(0,temp,thsz);
-			p_stp.ptr=(char *)(__);
-			#ifdef DEBUG
-				printf("ace @%p", p_stp.ptr);
-				printf("__hashof : %s\n", __);
-			#endif
-			return p_stp.ptr;
+		if (stsize<=__step_point) {
+			
+			return __atp_pointer();
 		}
-		else if (stsize<=__step_addr) {
+		else if (stsize==__step_addr) {
 			__arcfork();
-			#ifdef DEBUG
+			if arc_process {
+				__atp_pointer();
+			};
+			#ifdef PROCESS
 				printf("{ ARC } => fork: \n");
 			#endif
-			return __arcstp(6);
+			return __atp_pointer();
 		}
-		else if(stsize==__step_sok) {
+		else if (stsize==__step_sok) {
 			__arcsok();
-			#ifdef DEBUG
+			#ifdef PROCESS
 				printf("{ ARC } => socket: \n");
 			#endif
-			return __arcstp(6);
+			return __atp_pointer();
 		}
-		else if(stsize==__step_start) {
+		else if (stsize==__step_start) {
 			#ifdef DEBUG
 				printf("ARC : listen :: \n");
 			#endif
-			return __arcstart(__arcstp(6));
+			return __arcstart(atp_step(6));
 		}
-		else if(stsize==__step_mor) {
+		else if (stsize==__step_mor) {
 			#ifdef DEBUG
 				printf("ARC : send :: \n");
 			#endif
-			 mor(__arcstp(6));
-			return __arcstp(6);
+			mor(atp_step(6));
+			return atp_step(6);
 		};
 		return strdup(stp->addr);
 	};
+
+	int __point_run() {
+		void *__=atp_step(512);
+		return 0;
+	};
+
+	int __point_lbb(into_st *into_point, atp_t proto_type) {
+		#ifdef PROCESS
+			printf("ATP : lbb :: 2\n");
+		#endif
+		// if(argc>=3){
+		// 		return decode_lbb_addr(&into, &argv[2]);
+		// 	}
+		// 	else if (argc>=2) {
+		// 		return check_command(&into, argv);
+		// 	};
+		return 0;
+	};
+
+
+int __no_entry__(into_st *into_p) {
+	printf("no entry");
+	exit(1);
+}
+
+int __pointer__(into_st *into_p) {
+	printf("pointer\n");
+	return decode_pointer(into_p);;
+};
+
+int __field__(into_st *into_fld) {
+	printf("field\n");
+
+	// printf("@lbb : fld :: %s\n", i_narg(into_fld, 1));
+	return 0;
+};
+
+int __info__(into_st *info) {
+	printf("info\n");
+	#ifdef PROCESS
+		printf("ATP : info :: 4096 bytes\n");
+	#endif
+	return 0;
+};
+
+int __point__(into_st *into_point) {
+	printf("point\n");
+	#ifdef PROCESS
+		printf("ATP : request :: 512 bytes\n");
+	#endif
+
+	return decode_point(into_point);
+};
+
+int __lbb__(into_st *into_lbb) {
+	printf("lbb\n");
+
+	return __point_lbb(into_lbb, get_atp_type(i_narg(into_lbb, 1)));
+};
+
+int get(into_st *var) {
+
+	printf("ATP : get :: %s\n", i_narg(var, 1));
+	return 0;
+};
+
+int set(into_st *var) {
+
+	printf("ATP : set < %s :: %s > \n", i_narg(var, 1), i_narg(var, 2));
+	return 0;
+};
+
+int atp(into_st *pcall) {
+
+	printf("ATP : execute :: %s\n", i_narg(pcall, 1));
+	return 0;
+};
+
+int save(into_st *data) {
+
+	printf("ATP : save :: %s\n", i_narg(data, 1));
+	return 0;
+};
+
+int collect(into_st *data) {
+
+	printf("ATP<collect> : @%s : %s :: %s\n", i_narg(data, 1), i_narg(data, 2), i_narg(data, 3));
+	return 0;
+};
+
+int dcloud(into_st *address) {
+
+	printf("d-%s\n", i_narg(address, 1));
+	return 0;
+};
+
+
 
 
 #endif

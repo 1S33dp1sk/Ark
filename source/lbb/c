@@ -610,13 +610,15 @@ void log_process_schema(ulong p_pid, ulong c_pid) {
     printf("call next ? %lu\n",CALL_NEXT(c_pid));
 };
 
-void log_lbb_type(lbb_t lbbt) {
-	switch(lbbt) {
-	case lbb_entry:	printf("lbb {Entry}\n"); break;
-	case lbb_ptr:		printf("lbb {Protocol}\n"); break;
-	case lbb_intr: 	printf("lbb {Interpreter}\n"); break;
-	case lbb_pyld:		printf("lbb {Payload}\n"); break;
-	default: printf("{Unknown}\n"); break;
+void log_at_protoname(atp_t __atpname) {
+	switch(__atpname) {
+	case atp_get: 			printf("ATP : get       ::\b"); break;
+	case atp_set: 			printf("ATP : set       ::\b"); break;
+	case atp_return: 		printf("ATP : return    ::\b"); break;
+	case atp_retain:		printf("ATP : retain    ::\b"); break;
+	case atp_retreive: 	printf("ATP : retreieve ::\b"); break;
+	case atp_dcloud:		printf("ATP <dcloud> :::\n"); break;
+	default:					printf("{Unknown}\n"); break;
 	};
 };
 

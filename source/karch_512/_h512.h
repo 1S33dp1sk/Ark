@@ -90,7 +90,7 @@ void log_keyvalue(char *key, char *value);
 void lbb_usage();
 int get_allstats(char *__mountpoint, char *__socketaddr, char *__fieldshare);
 char *flds(char const *__fldname);
-void *__search_r(char const *__rname, lbb_t entry_type);
+void *__search_r(char const *__rname, lbb_entry in);
 void *__lbb_ref(char const *__rname);
 
 
@@ -143,8 +143,8 @@ char const *__charm_call(char const *__filefrom) {
 	char charmcall[__clen];
 	memset(&charmcall, 0, sizeof(charmcall));
 
-	ulong f_sep=sep_offset(__filefrom, d_atbase);
-	ulong c_sep=sep_offset(__caller, d_atbase);
+	ulong f_sep=sep_offset(__filefrom, d_charms);
+	ulong c_sep=sep_offset(__caller, d_charms);
 	if(!c_sep||!f_sep) {
 		#ifdef LOG_ERR
 			printf("f:sep=%lu, c:sep=%lu\n", f_sep, c_sep);
@@ -594,14 +594,14 @@ char *flds(char const *__fldname) {
 	return strdup(cflds_head);
 };
 
-void *__search_r(char const *rname, lbb_t entry_type) {
+void *__search_r(char const *rname, lbb_entry in_type) {
 
 
 	return NULL;
 };
 
 void *__lbb_ref(char const *__rname) {
-	lbb_t __ltype=get_lbb_type(__rname);
+	lbb_entry __ltype=__decode_arg(__rname);
 	void *temp=__search_r(__rname, __ltype);
 	return temp;
 };
