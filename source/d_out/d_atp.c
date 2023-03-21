@@ -29,9 +29,10 @@
 int main(int argc,char const*argv[]) {
 __LBB_START__
 	into_st into, *into_p=&into;
+	log_atp_names();
 	__into__(into, into_p, argv);
-	printf("into.req_at = %d\n", into.req_at);
-	switch(into.req_at){
+	
+	switch(into_p -> req_at){
 
 	case __lbb_none__:
 		return __no_entry__(into_p);
