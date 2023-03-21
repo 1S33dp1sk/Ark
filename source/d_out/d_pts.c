@@ -1,16 +1,34 @@
 /// d-pts \\\
 points 
 
-#ifndef __Karch_512__
-#include "headers/_h512.h"
-#include "headers/lbb.h"
-#include "headers/ixr.h"
-#define OUTPUT 1
-#define LOG_ERR 1
+#ifndef karch
+#include "headers/karch.h"
 #endif
 
 
-int main() {
+dPRG(
+	string(var_name, "Hello World\n")
+	out(var_name)
+	number(y, 1381)
+	out(y)
+)
 
-    
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

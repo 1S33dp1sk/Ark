@@ -112,6 +112,27 @@ typedef struct __fld_t fld_t;
 	#define fld_dname(x) ((char const *)x->f_alias)
 	#define fld_flags(x) ((int)x->f_flags)
 
+struct __arc_t {
+	ulong __pid;
+	int __fork;
+	ulong __next;
+	dpoint_t **__points;
+};
+typedef struct __arc_t arc_st;
+	// returns true for child process
+	#define arc_process (!__arc.__fork) 
+	#define arc_pid(x)	((ulong)(x->__pid))
+	#define arc_fork(x) ((int)(x->__fork))
+	#define arc_next(x) ((ulong)(x->__next))
+	#define arc_points(x) ((dpoint_t **)(x->__points))
+
+struct __sok_t {
+    ulong aip_sockfd;
+    ulong aip_socklen;
+    char aip_socket[128];
+};
+typedef struct __sok_t aipsock;
+	static aipsock __sok;
 
 /**
 * 
@@ -358,7 +379,7 @@ typedef struct __in_pia pia_st;
 enum __lbb_entries {
 	__lbb_none__=-1,		// no entry
 	__lbb_charms__='@',		// @charms
-	__lbb_field__=1,		// @lbb
+	__lbb_yeild__=1,		// @lbb
 	__lbb_info__=0,			// (null)==ixr
 	__lbb_variable__='*',	// *
 	__lbb_atp__				// @*
@@ -458,6 +479,63 @@ static const char *__lbb_locking = "@charms/lock\0";
 static uchar pbuffer[__A_LEN];
 static uchar *pbuf=(uchar *)&pbuffer;
 
+
+enum __http_content_types {
+	__hct_text,
+	__hct_html,
+	__hct_json,
+	__hct_img,
+};
+typedef enum __http_content_types content_type;
+
+
+enum __http_request_types {
+	__http_get,
+	__http_post,
+};
+typedef enum __http_request_types http_request_t;
+
+
+struct __http_content {
+	ulong __size;
+	void *__content;
+	char const *__type;
+};
+typedef struct __http_content http_content;
+
+
+struct __kvp {
+	char const *key;
+	char const *val;
+	struct __kvp *(*kv_memit)(char const *,char const *);
+	struct __kvp *next;
+	char offseter;
+};
+typedef struct __kvp kvptr;
+	static const ulong size_kv=sizeof(kvptr);
+	static const ulong size_kvp=sizeof(kvptr*);
+
+struct __kvs {
+	char const**keys;
+	char const**values;
+	char const *seperator;
+	char const *__line_ends;
+	ulong count;
+};
+typedef struct __kvs keyvals;
+	static const ulong mem_sz=sizeof(char*);
+	#define kvs_id(s,x) (s->keys[x], s->values[x], s->seperator, s->__line_ends)
+	#define kvs_key(x,p) ((const char *)((x->keys)[p]))
+	#define kvs_val(x,p) ((const char *)((x->values)[p]))
+	#define __keys__(x) ((char const **)(x->keys))
+	#define vals__(x) ((const *char *)(&x))
+
+struct __liner {
+	ulong __size;
+	char const *__cptr;
+};
+typedef struct __liner s_line;
+	static const ulong size_sline=sizeof(struct __liner);
 
 
 #define __UTYPES__H 1

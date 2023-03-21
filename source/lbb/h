@@ -51,7 +51,7 @@
 	void log_mstat(m_stat *mfile);
 	void log_sstat(s_stat *sfile);
 	void log_kstat(k_stat *kfile);
-	void log_str(strld __strld);
+	void log_strld(strld __strld);
 	void log_sepstr(spstr __spstr);
 	void log_ptrdx(struct __ptrdx *ptrdx);
 	void log_esptr(ulong *esptr);
@@ -137,6 +137,21 @@
     	LBB_OUT(0, #x, x);\
     } __dPER
 
+  
+	#define __ARR_OUT(x, x_size) int _=0; do {\
+		printf("%s", x[_].arg);\
+		_+=1;\
+	}while(_<x_size);
+	#define ARR_OUT(x) __ARR_OUT(x, arr_size(x))
+	#define DUPCAT(c,x,y) c##x#y
+	#define _ARR_OUT(x, y_delim, x_size) int _=0; char *res; do {\
+		printf("%s%c", x[_].arg, y_delim);\
+		_+=1;\
+	} while(_<x_size-1);\
+	printf("%s", x[x_size-1].arg);\
+
+	#define ARR_SEP(x,y) _ARR_OUT(x, y, arr_size(x))
+
 
 	#define PACK_IN(fld,siz,fmt,...) do {\
 	    uchar __[siz];memset(&__,0,siz);\
@@ -187,14 +202,12 @@ static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
 		printf("sizeof type-d : %lu\n",sizeof(d));\
 	}
 	#define __DPRG__ do __BASE__ __dPER
-	#define __LBB__(rx,vx) {\
+	#define __LBB__(...) {\
 		__BASE__\
-		if(vx==NULL){R_INDEXER(rx,&rx);}\
-		else {R_INDEXER(rx,vx);};\
+		__VA_ARGS__\
+		INDEX_END("\n");\
 	}
-	#define __ARGS__ {\
 	
-	#define __dRUN(x,a) __dPRG __ARGS__ &x 
 	#define __dLBB(x) __LBB_START__(&x,#x)
 	#define d(...) __dLBB(#__VA_ARGS__)
 
