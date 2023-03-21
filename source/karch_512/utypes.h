@@ -374,7 +374,7 @@ typedef struct __into into_st;
 
 enum __at_protocol {
 	atp_base=__lbb_atp__,
-	atp_get=atp_base+__lbb_variable__,
+	atp_get,
 	atp_set,
 	atp_return, // return : to caller
 	atp_retain, // save

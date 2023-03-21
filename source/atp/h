@@ -138,8 +138,7 @@
 		memset(__, 0, sizeof(st));
 		into_caller(st, argv[0]);
 		into_args(st, &argv[1]);
-		int p_type=get_atp_type(argv[1]);
-		into_type(st, p_type);
+		into_type(st, get_atp_type(argv[1]));
 		return stp;
 	};
 	void *__pia__(pia_st st) {

@@ -512,34 +512,41 @@
 		// __@__
 		else if(*point_buffer==AT_DEFINED) {
 			// @
-			int __flag=0;
-			for(int i=0; i<dcharms_rwings; i++) {
-					if(i<dlbb_rwings) {
+			int __flag=0, i=0;
+			for(; i<dlbb_rwings; i++) {
+					if (point_buffer[i]==d_lbb[i]){
 						// @lbb
-						if (point_buffer[i]==d_lbb[i]){
-							__flag+=1;
-						}				
-					}
+						__flag+=1;
+					}				
 					if(point_buffer[i]==d_charms[i]) {
 						// @charms
 						__flag+=4;
 					};
 			};
+			if(__flag!=8) {
+				__flag=1;
+				for(; i<dcharms_rwings; i++) {
+					if(point_buffer[i]==d_charms[i]) {
+						__flag+=8;
+					};
+				};
+			};
+			printf("flags : %d\n", __flag);
 			switch(__flag) {
 			case 8: 
-				printf("LBB-FLD :   %s\n", point_buffer);
+				printf("LBB-FLD :   %s", point_buffer);
 				return __lbb_field__;
-			case 29: 
-				printf("LBB-CLD ::  %s\n", point_buffer);
+			case 33:
+				printf("LBB-CLD ::  %s", point_buffer);
 				return __lbb_charms__;
-			default: 
-				printf("LBB-DLD ::: %s\n", point_buffer);
-				return __lbb_variable__;
+			default:
+				printf("ATP : %s", point_buffer);
+				return __lbb_atp__;
 			}
 		}
 		else {
-			printf("ATP : %s\n", point_buffer);
-			return __lbb_atp__;
+			printf("LBB ::: %s\n", point_buffer);
+			return __lbb_variable__;
 		};
 	};
 	/**
@@ -550,13 +557,14 @@
 	 * d-lbb text_out __TEXT
 	 */ 
 	atp_t __get_at_protoname(char const *bufin) {
+		int __res=0;
 		/**
 		 * lbb entries always start with 
 		 * '@'
 		 */
-		if(*bufin==__AT_DEFINED) {
+		if(*bufin++==__AT_DEFINED) {
 
-			return atp_base;
+			__res|=__lbb_atp__;
 		}
 		/**
 		 * payloads always start with
@@ -565,8 +573,7 @@
 		 * which is basically the address
 		 */
 		if((*bufin>=0x30)&&(*bufin<=0x39)){
-
-			return atp_retain;
+			__res+=atp_retain;
 		}
 		/**
 		 * protocol requests always start with
@@ -576,8 +583,7 @@
 		 * GET & POST & LBB & ATP & ATM ...
 		 */
 		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
-
-			return atp_return;
+			__res+=atp_return;
 		}
 		/**
 		 * interpreters are always called using 
@@ -588,22 +594,72 @@
 		 * such as a prg, or a prg entry point.
 		 */
 		else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
-
-			return atp_retreive;
+			__res+=atp_retreive;
 		}
 		/**
 		* will exit with grace if unknown
 		*/
 		else {
-			return atp_next;
+			__res=atp_next;
 		};
+		return (atp_t)__res;
 	};
+
+	char const *__atp_names(int __at) {
+		switch(__at) {
+		case __lbb_none__:		return "#%d	NoEntry";
+		case __lbb_charms__:	return "#%d	@charms/";
+		case __lbb_field__:		return "#%d	@lbb";
+		case __lbb_info__:		return "#%d	:IXR:";
+		case __lbb_variable__:	return "#%d	var";
+		case atp_base:			return "#%d	K-lbb";
+		case atp_get:			return "#%d	K-@ATP<get>";
+		case atp_set:			return "#%d	K-@ATP<set>(varname){value}";
+		case atp_return: 		return "#%d	K-atp_fetch";
+		case atp_retain: 		return "#%d	K-atp_save";
+		case atp_retreive: 		return "#%d	K-atp_call";
+		case atp_dcloud: 		return "#%d	K-dcloud_connect";
+		case atp_next: 			return "#%d	K-&ATP->";
+		default: 				return "#%d	K-default";
+		}
+	};
+
+
+	char const *atp_name(atp_t __type) {
+		char __name[__I_LEN];
+		memset(__name, 0, sizeof(__name));
+		sprintf(__name, __atp_names(__type), __type);
+		return strdup((char *)__name);
+	}
+
+
+	void log_atp_names() {
+		printf("\natp names :\n");
+		printf("%s\n", atp_name(__lbb_none__));
+		printf("%s\n", atp_name(__lbb_charms__));
+		printf("%s\n", atp_name(__lbb_field__));
+		printf("%s\n", atp_name(__lbb_info__));
+		printf("%s\n", atp_name(__lbb_variable__));
+		printf("%s\n", atp_name(atp_base));
+		printf("%s\n", atp_name(atp_get));
+		printf("%s\n", atp_name(atp_set));
+		printf("%s\n", atp_name(atp_return));
+		printf("%s\n", atp_name(atp_retain));
+		printf("%s\n", atp_name(atp_retreive));
+		printf("%s\n", atp_name(atp_dcloud));
+		printf("%s\n", atp_name(atp_next));
+	}
+
+
 	
 	int get_atp_type(char const *proto_call) {
 		int res=__lbb_none__;
 		res=__decode_arg(proto_call);
 		if(res==__lbb_atp__) {
-			res=__get_at_protoname(proto_call);
+			int __tempres=__get_at_protoname(proto_call);
+			res = __tempres-res;
+			atp_name(__tempres);
+			return res;
 		}
 		return res;
 	};
