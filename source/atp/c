@@ -5,8 +5,11 @@
 #include "atp.h"
 #endif
 
+
 #ifndef __atp_name
 	#define __atp_name "@-Protocol"
+
+	// strings
 	
 	int __incheck(char c){   
 		if( (c>=0x30)&&(c<=0x39)){
@@ -86,10 +89,10 @@
 		return temp;
 	};
 
+	int spaces_and_tabs(char *word){
 	/**
 	 * count spaces and tabs in `word`
 	**/
-	int spaces_and_tabs(char *word){
 		int count=0, x=0;
 		while(word[x]!='\0'){
 			if(word[x]==' '||word[x]==' '){
@@ -116,10 +119,28 @@
 		return strdup(temp);
 	};
 
+	int __exact_match(char const *_a, char const *_b) {
+		ulong __alen=str_rwings(_a), __blen=str_rwings(_b);
+		if (__alen!=__blen) {
+			#ifdef LOG_ERR
+				printf("A&B do not matchn\n");
+			#endif
+			return 0;
+		};
+		while(--__alen!=0) {
+			if(_a[__alen]==_b[__alen]){
+				continue;
+			}else {
+				return 0;
+			};
+		};
+		return 1;
+	};
+
+	ulong sep_offset(char const *string,char *seperator) {
 	/**
 	 * find the first `seperator` in `string`
 	**/
-	ulong sep_offset(char const *string,char *seperator) {
 		long x=0,y=0,len_count=0,offset_at=-1;
 		while(string[x]!='\0'){
 			if(string[x]==seperator[y]){
@@ -139,6 +160,13 @@
 			return 0;
 		};
 		return offset_at;
+	};
+
+	char *str_b4eoffset(char const *string, ulong offset) {
+		char temp[offset];
+		memset(&temp,0,sizeof temp);
+		memmove(temp, ++string, offset-2);
+		return strdup(temp);
 	};
 
 	char *str_b4offset(char const *string, ulong offset) {
@@ -173,9 +201,29 @@
 		return strdup(temp);
 	};
 
-	char const *__self_s() {
-		char const *__s=hashof(2, __self_file, __self_flen);
-		return __s;
+	char const *expand_atoffset(char const *__str, char const *expantion, ulong __offset) {
+		#ifdef DEBUG
+			printf("@index:%lu\n", __offset);
+		#endif
+		ulong __str_rwings=str_rwings(__str);
+		ulong __explen=str_rwings(expantion);
+		ulong __len=__str_rwings+__explen+1;
+		char __[__len];memset(&__, 0, sizeof(__));
+		memmove(__, __str, __offset);
+		memmove((__+__offset), expantion, __explen);
+		memmove((__+__offset+__explen), (__str+__offset+1), (__str_rwings-__offset));
+		return (char const *)strdup(__);
+	};
+
+	char const *expand(char const *__str, char const *expantion, ulong __offset) {
+		ulong __str_rwings=str_rwings(__str);
+		ulong __explen=str_rwings(expantion);
+		ulong __len=__str_rwings+__explen+1;
+		char __[__len];memset(&__, 0, sizeof(__));
+		memmove(__, __str, __offset);
+		memmove((__+__offset), expantion, __explen);
+		memmove((__+__offset+__explen), (__str+__offset), (__str_rwings-__offset));
+		return (char const *)strdup(__);
 	};
 
 	char const *__combine_str(char const *str1, char const *str2) {
@@ -188,78 +236,380 @@
 		return strdup(__);
 	};
 
-	char const *__check_wss_key(char *__msg) {
-		ulong __len=str_rwings(__msg);
-		ulong __offset=sep_offset(__msg, "Sec-WebSocket-Key: ");
-		if(!__offset){
-			#ifdef LOG_ERR
-				printf("no wss key found\n");
-			#endif
-			return NULL;
-		}
-		char *temp=str_a4offset(__msg, __offset+str_rwings(wss_key_h));
-		__offset=sep_offset(temp, "\n");
-		temp=str_b4offset(temp, __offset);
+	// files
+
+void *__mstat__(m_stat *st) {
+
+	return memset(st, 0, sizeof(m_stat));
+};
+
+	int __stres(char const *__cpath){
+		int __res=access(__cpath, F_OK);
 		#ifdef DEBUG
-			printf("WSS KEY : %s\n", temp);
+			printf("checking cpath :: %s\n", __cpath);
+			printf("result of access = %d\n", __res);
 		#endif
-		return strdup(temp);
+		return __res==0;
 	};
 
-	char const *__gethash(char const *__key) {
-		int x=fork();
-		#ifdef DEBUG
-			printf("fork res : %d\n", x);
-		#endif
-		if(!x){
-			char **_s=malloc(sizeof(char *)*3);
-			char *__sname="scripts/hash1.py";
-			char *__sarg=(char *)__key;
-			char *__send=NULL;
-			_s[0] = __sname;
-			_s[1] = __sarg;
-			_s[2] = __send;
-			#ifdef DEBUG
-				printf("getting hash\n");
-				printf("0 : %s\n", _s[0]);
-				printf("1 : %s\n", _s[1]);
-				printf("2 : %s\n", _s[2]);
+	ulong fsize_st(void *st){
+	    struct stat *__=(struct stat*)st;
+	    return __->st_size;
+	};
+
+	ulong iosize_st(void *st){
+	    struct stat *__=(struct stat*)st;
+	    return __->st_blksize;
+	};
+
+	uns dmode_st(void *st){
+	    struct stat *__=(struct stat*)st;
+	    return __->st_mode;
+	};
+
+	ulong inn_st(void *st){
+	    struct stat *__=(struct stat*)st;
+	    return __->st_ino;
+	};
+
+	void *__statusof(char const *__file) {
+	    struct stat __;
+	    memset(&__,0,sizeof(struct stat));
+	    if(stat(__file,&__)==0){
+	        return (void *)__file;
+	    }
+	    return NULL;
+	};
+
+	int get_mstat(char const *__path, m_stat *mfile) {
+		memset(mfile,0,sizeof(struct __m_stat));
+		ulong path_len=str_rwings(__path);
+		if(path_len>512){
+			#ifdef LOG_ERR
+				printf("path specified is 512+ \n");
 			#endif
-			int __eres=execve(_s[0], _s, environ);	
-			_exit(0);
+			return -1;
+		}
+		memmove(mfile->m_path,__path,path_len);
+		struct stat temp;
+		memset(&temp,0,sizeof(struct stat));
+		if(stat(mfile->m_path,&temp)!=0){
+			#ifdef LOG_ERR
+				printf("cannot determine `stat` call :: %s\n", mfile->m_path);
+			#endif
+			return -1;
+		};
+		mfile->m_size=fsize_st(&temp);
+		mfile->m_mode=dmode_st(&temp);
+		mfile->m_blksz=iosize_st(&temp);
+		mfile->m_inn=inn_st(&temp);
+		return 0;
+	};
+
+	// miscellaneous
+	char const *__atp_names(int __at) {
+		switch(__at) {
+		case __lbb_none__:		return "#%d	NoEntry";
+		case __lbb_charms__:	return "#%d	@charms/";
+		case __lbb_yeild__:		return "#%d	@lbb";
+		case __lbb_info__:		return "#%d	:IXR:";
+		case __lbb_variable__:	return "#%d	var";
+		case atp_base:			return "#%d	K-lbb";
+		case atp_get:			return "#%d	K-@ATP<get>";
+		case atp_set:			return "#%d	K-@ATP<set>(varname){value}";
+		case atp_return: 		return "#%d	K-atp_fetch";
+		case atp_retain: 		return "#%d	K-atp_save";
+		case atp_retreive: 		return "#%d	K-atp_call";
+		case atp_dcloud: 		return "#%d	K-dcloud_connect";
+		case atp_next: 			return "#%d	K-&ATP->";
+		default: 				return "#%d	K-default";
+		}
+	};
+
+	char const *atp_name(int __type) {
+		char __name[__I_LEN];
+		memset(__name, 0, sizeof(__name));
+		sprintf(__name, __atp_names(__type), __type);
+		return strdup((char *)__name);
+	};
+
+	int __check_allowed(char const *__){ 
+		int __nallowed[]={'\\', '/', '.'};
+		while(*__++){
+			for(int i=0;i<arr_size(__nallowed); i++){
+				int __cmp=*(__);
+				if (__cmp==__nallowed[i]){
+					return 0;
+				};
+			};
+		};
+		return 1;
+	};
+
+	int check_addr(const char *_addr) {
+		
+		return __check_allowed(_addr)==0;
+	};
+
+	int check_command(into_st *into, char const **args) {
+		char const *__pntr=i_argument(into);
+		char const *__arghash=hashof(0, __pntr, 4);
+
+		if(strstr(__read_hash__,__arghash)!=NULL) {
+			printf("will read the hash\n");
+			return 0;   
+		}
+		else if (strstr(__write_hash__,__arghash)!= NULL){
+			printf("will write a message to hash\n");
+			return 0;       
+		}
+		else if(strstr(__execute_hash__,__arghash)!=NULL) {
+			printf("should execute the command \n");
+			return 0;
+		}
+		else if (strstr(__send_hash__,__arghash)!=NULL) {
+			printf("will send msg to hash\n");
+			return 0;
+		}
+		else if (strstr(__connect_hash__,__arghash)!=NULL) {
+			printf("will try to connect to address\n");
+			return 0;
+		}
+		else if (strstr(__listen_hash__,__arghash)!=NULL) {
+			printf("will try to listen on the address\n");
+			return 0;
 		}
 		else {
-			int __zen=0;
-			waitpid(x, &__zen, 0);
-			char __[30];memset(&__,0, sizeof(__));
-			int fd=__dgetfd("temp.sha1");
-			#ifdef DEBUG
-				printf("access to file : %d\n", access("temp.sha1", F_OK));
-			#endif
-			long b_read=read(fd, __, sizeof(__));
-			#ifdef DEBUG
-				printf("bread : %ld\n", b_read);
-			#endif
-			close(fd);
-			if(b_read<=2){
-				#ifdef LOG_ERR
-					printf("read less than 2 bytes\n");
-				#endif
-				return NULL;
-			};
-			__[b_read]='\r';
-			__[b_read+1]='\n';
-			return strdup(__);
+			printf("none of them matched\n");
+			return 1;
+		};
+	}
+
+	char *uname(const char *__filename) {
+
+		return (char *)hashof(2,__filename,str_rwings(__filename));
+	};
+
+	void log_atp_names() {
+		printf("\natp names :\n");
+		printf("%s\n", atp_name(__lbb_none__));
+		printf("%s\n", atp_name(__lbb_charms__));
+		printf("%s\n", atp_name(__lbb_yeild__));
+		printf("%s\n", atp_name(__lbb_info__));
+		printf("%s\n", atp_name(__lbb_variable__));
+		printf("%s\n", atp_name(atp_base));
+		printf("%s\n", atp_name(atp_get));
+		printf("%s\n", atp_name(atp_set));
+		printf("%s\n", atp_name(atp_return));
+		printf("%s\n", atp_name(atp_retain));
+		printf("%s\n", atp_name(atp_retreive));
+		printf("%s\n", atp_name(atp_dcloud));
+		printf("%s\n", atp_name(atp_next));
+	};
+	
+
+
+void *__kvptr__(kvptr *kptr) {
+
+	return memset(kptr, 0, sizeof(kvptr));
+};
+
+	kvptr *kv_memit(char const *key, char const *val) {
+		ulong keylen=str_rwings(key), vallen=str_rwings(val);
+		kvptr *__=(kvptr*)malloc(size_kv);
+		void *__key=malloc(len_strze(keylen));
+		void *__val=malloc(len_strze(vallen));
+		memmove(__key, key, keylen);
+		memmove(__val, val, vallen);
+		__ -> key=(char const *)__key;
+		__ -> val=(char const *)__val;
+		__ -> offseter='\0';
+		return __;
+	};
+
+	int kv_offset(kvptr *kv, char const *data, ulong offset_at) {
+		memset((void *)kv, 0, size_kvp);
+		kv->key=str_b4offset(data, offset_at);
+		kv->val=str_a4offset(++data, offset_at);
+		kv->offseter=data[offset_at];
+		return 0;
+	};
+
+	kvptr *kv_at(char const *data, char *delim) {
+		ulong __offset=sep_offset(data, delim);
+		if(!__offset){
+			return NULL;
+		};
+		kvptr *res=(kvptr*)malloc(size_kvp);
+		kv_offset(res, data, __offset);
+		return res;
+	};
+
+	void log_kvp(kvptr *res){
+		printf("kv :'rn\n");
+		printf("dlm -> %c\n", res->offseter);
+		printf("key -> %s\n", res->key);
+		printf("val -> %s\n", res->val);
+	};
+
+
+
+void *__keyvals__(keyvals *kvs) {
+
+	return memset(kvs, 0, sizeof(keyvals));
+};
+	void free_kv(keyvals *__) {
+		ulong __count=__->count;
+		printf("total count = %lu \n", __count);
+		for(int i=0; i<__count;i++) {
+			free((void *)__->keys[i]);
+			free((void *)__->values[i]);
 		};
 	};
 
-	// read from till
+	void free_kvs(keyvals *__) {
+		free((void *)__->seperator);
+		free((void *)__->__line_ends);
+		free((void *)__->keys);
+		free((void *)__->values);
+	};
+
+	void __free_str(char const *__) {
+		
+		free((void *)__);
+	};
+
+	void log_kvs(keyvals *__) {
+		printf("kvs :: \n");
+		printf("seperator (%s)\n", __->seperator);
+		printf("line endings -> %s\n", __->__line_ends);
+		ulong count=0,__c=__->count;
+		char const *_k,*_v;
+		printf("total kvs = %lu\n", __c);
+		do {
+			_k=__->keys[count];
+			_v=__->values[count];
+			printf("%s,%s   =: %lu\n", _k,_v,count);
+			count+=1;
+		}while(count<__c);
+	};
+	
+	void log_kv(keyvals *__) {
+		ulong __count=__->count;
+		printf("total count = %lu \n", __count);
+		for(int i=0; i<__count;i++) {
+			printf("k-> %s\n v-> %s\n",__->keys[i],__->values[i]);
+		};
+	};
+
+	void *__kvs__(keyvals *__, char const *sep, char const *lds) {
+		ulong seplen=str_rwings(sep), ldslen=str_rwings(lds);
+		char *__sep=(char *)malloc(len_strze(seplen));
+		char *__lends=(char *)malloc(len_strze(ldslen));
+		memmove(__sep, sep, seplen);
+		memmove(__lends, lds, ldslen);
+		memset(__, 0, sizeof(keyvals));
+		__->seperator=(char const *)__sep;
+		__->__line_ends=(char const *)__lends;
+		__->keys=malloc(mem_sz);
+		__->values=malloc(mem_sz);
+		__->keys[0]=NULL;
+		__->values[0]=NULL;
+		__->count=0;
+		return __;
+	};
+
+	int __add_pair(keyvals *kvs, char const *key, char const *val) {
+
+		log_kvs(kvs);
+
+		return 0;
+	};
+
+	int kvs_pair(keyvals *kvs, char const *key, char const *val) {
+		ulong keylen=str_rwings(key), vallen=str_rwings(val);
+		char const *__key=(char const *)malloc(len_strze(keylen));
+		char const *__val=(char const *)malloc(len_strze(vallen));
+		memmove((void *)__key, key, keylen);
+		memmove((void *)__val, val, vallen);
+		#ifdef DEBUG
+			printf("adding pair :: (%s,%s)\n",key, val);
+		#endif
+		return __add_pair(kvs, __key, __val);
+	};
+
+
+
+void *__sline__(s_line *sline) {
+
+	return memset(sline, 0, sizeof(s_line));
+};
+	s_line*kvs_liner(char const *__key, char const *__val, char const *__dlm, char const *__lds) {
+		ulong keylen=str_rwings(__key), vallen=str_rwings(__val), dlmlen=str_rwings(__dlm), ldslen=str_rwings(__lds);
+		ulong __size=keylen+vallen+dlmlen+ldslen;
+		void *__=malloc(len_strze(__size));
+		memmove(__, __key, keylen);
+		memmove((__+keylen), __dlm, dlmlen);
+		memmove((__+keylen+dlmlen), __val, vallen);
+		memmove((__+keylen+dlmlen+vallen), __lds, ldslen);
+		s_line *_=(s_line *)malloc(size_sline);
+		_->__size=__size;
+		_->__cptr=__;
+		return _;
+	};
+
+	void free_kv_sline(s_line *kvs_sl) {
+		free((void *)kvs_sl->__cptr);
+		free(kvs_sl);
+	};
+
+	char const *kvs_traverse(keyvals *kvs) {
+		ulong __size=0, c=0, count=kvs->count;
+		do {
+			#ifdef DEBUG
+				printf("kvs->key : %lu :: %s\n", c, kvs_key(kvs,c));
+				printf("kvs->val : %lu :: %s\n", c, kvs_val(kvs,c));
+			#endif
+			__size+=str_rwings(kvs->keys[c]);
+			__size+=str_rwings(kvs->values[c]);
+			c+=1;
+		} while(c<count);
+		ulong __len=len_strze(__size);
+		#ifdef DEBUG
+			printf("size : %lu\n", __size);
+		#endif
+		char *__=(char *)malloc(__len);
+		memset(__, '\0', sizeof(__len));
+		c=1;__size=0;
+		while(c<count){
+			s_line *temp=kvs_liner kvs_id(kvs,c);
+			memmove((__+__size), (void *)temp->__cptr, temp->__size);
+			__size+=(temp->__size);
+			free_kv_sline(temp);
+			c+=1;
+		};
+
+		return strdup(__);
+	};
+
+
+
+void *__pia__(pia_st *st) {
+
+	return memset(st, 0, sizeof(pia_st));
+};
+
+	static const char *__http_protocol_version="HTTP/1.1";
+	static const char *__http_request_base="M P V\r\n";
+	static const char *__http_response_base="B S R\r\n";
+
 	int __read_ft(char *dbuffer, ulong dbuf_len) {
+	// read from till
 	    int __direction=0;
 	    ulong __flags=0, c__=0, __c=dbuf_len;
 	    char const *arg=(char const *)dbuffer;
 	    ulong main_offset=0, __alen=str_rwings(arg);
-	    pia_st pst; __pia__(pst);
+	    pia_st pst; __pia__(&pst);
 	    char *ptr_interchange, *__ptrname, *__interpreter, *__args, *__payload;
 	    do {
 	        c__+=1;
@@ -417,707 +767,6 @@
 	    return 0;
 	};
 
-	int __stres(char const *__cpath){
-		int __res=access(__cpath, F_OK);
-		#ifdef DEBUG
-			printf("checking cpath :: %s\n", __cpath);
-			printf("result of access = %d\n", __res);
-		#endif
-		return __res==0;
-	};
-
-	ulong fsize_st(void *st){
-	    struct stat *__=(struct stat*)st;
-	    return __->st_size;
-	};
-
-	ulong iosize_st(void *st){
-	    struct stat *__=(struct stat*)st;
-	    return __->st_blksize;
-	};
-
-	uns dmode_st(void *st){
-	    struct stat *__=(struct stat*)st;
-	    return __->st_mode;
-	};
-
-	ulong inn_st(void *st){
-	    struct stat *__=(struct stat*)st;
-	    return __->st_ino;
-	};
-
-	void *__statusof(char const *__file) {
-	    struct stat __;
-	    memset(&__,0,sizeof(struct stat));
-	    if(stat(__file,&__)==0){
-	        return (void *)__file;
-	    }
-	    return NULL;
-	};
-
-	void *__mstat__(m_stat st) {
-
-		return memset(&st, 0, sizeof(m_stat));
-	};
-
-	int get_mstat(char const *__path, m_stat *mfile) {
-		memset(mfile,0,sizeof(struct __m_stat));
-		ulong path_len=str_rwings(__path);
-		if(path_len>512){
-			#ifdef LOG_ERR
-				printf("path specified is 512+ \n");
-			#endif
-			return -1;
-		}
-		memmove(mfile->m_path,__path,path_len);
-		struct stat temp;
-		memset(&temp,0,sizeof(struct stat));
-		if(stat(mfile->m_path,&temp)!=0){
-			#ifdef LOG_ERR
-				printf("cannot determine `stat` call :: %s\n", mfile->m_path);
-			#endif
-			return -1;
-		};
-		mfile->m_size=fsize_st(&temp);
-		mfile->m_mode=dmode_st(&temp);
-		mfile->m_blksz=iosize_st(&temp);
-		mfile->m_inn=inn_st(&temp);
-		return 0;
-	};
-
-	char const *__pia_http(pia_st *pst) {
-		#ifdef OUTPUT
-			printf("starting http parser (pia) :: \n");
-		#endif
-		char __[__API_LEN], *__ptr=memset(&__,0,sizeof(__));
-		char *__interpt=pst->interpreter;
-		ulong __ilen=str_rwings(__interpt);
-		memmove(__ptr, __interpt, __ilen);
-		#ifdef OUTPUT
-			printf("GET /%s", pst->pointer);
-			printf("\nInterpreter:%s", pst->interpreter);
-			printf("\nArgs:%s\n", pst->args);
-		#endif
-		return strdup(__);
-	};
-
-
-	lbb_entry __decode_arg(char const *argument) {
-		char const *point_buffer=argument;
-		// __info__
-		if(point_buffer==NULL) {
-			printf("IXR-LBB\n");
-			return __lbb_info__;
-		}
-		// __@__
-		else if(*point_buffer==AT_DEFINED) {
-			// @
-			int __flag=0, i=0;
-			for(; i<dlbb_rwings; i++) {
-					if (point_buffer[i]==d_lbb[i]){
-						// @lbb
-						__flag+=1;
-					}				
-					if(point_buffer[i]==d_charms[i]) {
-						// @charms
-						__flag+=4;
-					};
-			};
-			if(__flag!=8) {
-				__flag=1;
-				for(; i<dcharms_rwings; i++) {
-					if(point_buffer[i]==d_charms[i]) {
-						__flag+=8;
-					};
-				};
-			};
-			printf("flags : %d\n", __flag);
-			switch(__flag) {
-			case 8: 
-				printf("LBB-FLD :   %s", point_buffer);
-				return __lbb_field__;
-			case 33:
-				printf("LBB-CLD ::  %s", point_buffer);
-				return __lbb_charms__;
-			default:
-				printf("ATP : %s", point_buffer);
-				return __lbb_atp__;
-			}
-		}
-		else {
-			printf("LBB ::: %s\n", point_buffer);
-			return __lbb_variable__;
-		};
-	};
-	/**
-	 * d-lbb GET some_handler||path/to
-	 * 
-	 * d-lbb some_script
-	 * 
-	 * d-lbb text_out __TEXT
-	 */ 
-	atp_t __get_at_protoname(char const *bufin) {
-		int __res=0;
-		/**
-		 * lbb entries always start with 
-		 * '@'
-		 */
-		if(*bufin++==__AT_DEFINED) {
-
-			__res|=__lbb_atp__;
-		}
-		/**
-		 * payloads always start with
-		 * numbers
-		 * 
-		 * which is basically the address
-		 */
-		if((*bufin>=0x30)&&(*bufin<=0x39)){
-			__res+=atp_retain;
-		}
-		/**
-		 * protocol requests always start with
-		 * CAPITAL ASCII
-		 *
-		 * examples including the http
-		 * GET & POST & LBB & ATP & ATM ...
-		 */
-		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
-			__res+=atp_return;
-		}
-		/**
-		 * interpreters are always called using 
-		 * small leter ascii
-		 * to complement the entire suite of the call, 
-		 * so an interpreter doesn't
-		 * have to be a specific call, could be a * 
-		 * such as a prg, or a prg entry point.
-		 */
-		else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
-			__res+=atp_retreive;
-		}
-		/**
-		* will exit with grace if unknown
-		*/
-		else {
-			__res=atp_next;
-		};
-		return (atp_t)__res;
-	};
-
-	char const *__atp_names(int __at) {
-		switch(__at) {
-		case __lbb_none__:		return "#%d	NoEntry";
-		case __lbb_charms__:	return "#%d	@charms/";
-		case __lbb_field__:		return "#%d	@lbb";
-		case __lbb_info__:		return "#%d	:IXR:";
-		case __lbb_variable__:	return "#%d	var";
-		case atp_base:			return "#%d	K-lbb";
-		case atp_get:			return "#%d	K-@ATP<get>";
-		case atp_set:			return "#%d	K-@ATP<set>(varname){value}";
-		case atp_return: 		return "#%d	K-atp_fetch";
-		case atp_retain: 		return "#%d	K-atp_save";
-		case atp_retreive: 		return "#%d	K-atp_call";
-		case atp_dcloud: 		return "#%d	K-dcloud_connect";
-		case atp_next: 			return "#%d	K-&ATP->";
-		default: 				return "#%d	K-default";
-		}
-	};
-
-
-	char const *atp_name(atp_t __type) {
-		char __name[__I_LEN];
-		memset(__name, 0, sizeof(__name));
-		sprintf(__name, __atp_names(__type), __type);
-		return strdup((char *)__name);
-	}
-
-
-	void log_atp_names() {
-		printf("\natp names :\n");
-		printf("%s\n", atp_name(__lbb_none__));
-		printf("%s\n", atp_name(__lbb_charms__));
-		printf("%s\n", atp_name(__lbb_field__));
-		printf("%s\n", atp_name(__lbb_info__));
-		printf("%s\n", atp_name(__lbb_variable__));
-		printf("%s\n", atp_name(atp_base));
-		printf("%s\n", atp_name(atp_get));
-		printf("%s\n", atp_name(atp_set));
-		printf("%s\n", atp_name(atp_return));
-		printf("%s\n", atp_name(atp_retain));
-		printf("%s\n", atp_name(atp_retreive));
-		printf("%s\n", atp_name(atp_dcloud));
-		printf("%s\n", atp_name(atp_next));
-	}
-
-
-	
-	int get_atp_type(char const *proto_call) {
-		int res=__lbb_none__;
-		res=__decode_arg(proto_call);
-		if(res==__lbb_atp__) {
-			int __tempres=__get_at_protoname(proto_call);
-			res = __tempres-res;
-			atp_name(__tempres);
-			return res;
-		}
-		return res;
-	};
-
-	int __check_allowed(char const *__){ 
-		int __nallowed[]={'\\', '/', '.'};
-		while(*__++){
-			for(int i=0;i<arr_size(__nallowed); i++){
-				int __cmp=*(__);
-				if (__cmp==__nallowed[i]){
-					return 0;
-				};
-			};
-		};
-		return 1;
-	};
-
-	int check_addr(const char *_addr) {
-		
-		return __check_allowed(_addr)==0;
-	};
-
-	int check_command(into_st *into, char const **args) {
-		char const *__pntr=i_argument(into);
-		char const *__arghash=hashof(0, __pntr, 4);
-
-		if(strstr(__read_hash__,__arghash)!=NULL) {
-			printf("will read the hash\n");
-			return 0;   
-		}
-		else if (strstr(__write_hash__,__arghash)!= NULL){
-			printf("will write a message to hash\n");
-			return 0;       
-		}
-		else if(strstr(__execute_hash__,__arghash)!=NULL) {
-			printf("should execute the command \n");
-			return 0;
-		}
-		else if (strstr(__send_hash__,__arghash)!=NULL) {
-			printf("will send msg to hash\n");
-			return 0;
-		}
-		else if (strstr(__connect_hash__,__arghash)!=NULL) {
-			printf("will try to connect to address\n");
-			return 0;
-		}
-		else if (strstr(__listen_hash__,__arghash)!=NULL) {
-			printf("will try to listen on the address\n");
-			return 0;
-		}
-		else {
-			printf("none of them matched\n");
-			return 1;
-		};
-	}
-
-	int __exact_match(char const *_a, char const *_b) {
-		ulong __alen=str_rwings(_a), __blen=str_rwings(_b);
-		if (__alen!=__blen) {
-			#ifdef LOG_ERR
-				printf("A&B do not matchn\n");
-			#endif
-			return 0;
-		};
-		while(--__alen!=0) {
-			if(_a[__alen]==_b[__alen]){
-				continue;
-			}else {
-				return 0;
-			};
-		};
-		return 1;
-	};
-
-	int decode_lbb_addr(into_st *into, char const *args[]) {
-		char const *__arg=i_argument(into);
-		ulong _addr_len=str_rwings(__arg);
-
-		if(check_addr(__arg)==-1){
-			#ifdef LOG_ERR
-				printf("address is not correctly formatted\n");
-			#endif
-			return 1;
-		};
-
-		ulong _addr_max=__LBB_BASE_LEN+_addr_len;
-		char __address[_addr_max];
-		memset(&__address, 0, sizeof(__address));
-		memmove(__address, __lbb_convdir, __LBB_BASE_LEN);
-		memmove((__address+__LBB_BASE_LEN), __arg, _addr_len);
-		__address[_addr_max]='\0';
-
-		#ifdef DEBUG
-			printf("decoding lbb address :: \n");
-		#endif
-		if(!__stres(__address)){
-			#ifdef LOG_ERR
-				printf("address doesn't exist ( %s ) \n", __address);
-			#endif
-			return 2;
-		};
-		m_stat cm_st;
-		m_stat *__cm_st=__mstat__(cm_st);
-		#ifdef DEBUG
-			printf("getting mstat :: \n");
-		#endif
-		get_mstat(__address, __cm_st);
-		#ifdef DEBUG
-			log_mstat(__cm_st);
-		#endif
-
-
-		return 0;
-	};
-
-	int decode_pointer(into_st *into) {
-		#ifdef DEBUG
-			printf("decoding pointer :: \n");
-		#endif
-
-		char const *arg=i_argument(into);
-		ulong __argflen=str_rwings(arg);
-		pia_st pst;
-		__pia__(pst);
-
-		ulong ptr_name_offset=sep_offset(arg, "<");
-		// we increment the `arg` to get rid of the @ & then
-		// seperate offset considers the `<` included in str_b4
-		// so we decrement the count
-		char *__ptrname=str_b4offset(++arg, ptr_name_offset-1);
-		memmove(__p_pointer(pst), __ptrname, __P_LEN);
-		ulong __pointer_len=_p_pointer_len(pst);
-		if(__pointer_len>__P_LEN){
-			#ifdef LOG_ERR
-				printf("pointer names must be 8 bytes\n");
-			#endif
-			#ifdef DEBUG
-				printf("pointer contents iteration ::\n");
-				for(int i=0;i<__pointer_len; i++){
-					printf("%d(%c)\n", __ptrname[i],__ptrname[i]);
-				}
-			#endif
-			return 2;
-		};
-
-		// recenter the `arg` to be able to extract the correct offset
-		char *_ptrcomplete=str_a4offset(--arg, ptr_name_offset);
-		ulong intrpt_path_offset=sep_offset(_ptrcomplete, ">");
-		char *__interpreter=str_b4offset(_ptrcomplete, intrpt_path_offset);
-		memmove(__p_interpreter(pst), __interpreter, __I_LEN);
-		ulong __interpreter_len=_p_interpreter_len(pst);
-		if(__interpreter_len>__I_LEN){
-			#ifdef LOG_ERR
-				printf("interpreters always have a maximum of 64 bytes for a reference call\n");
-			#endif
-			#ifdef DEBUG
-				printf("__interpreter :: %s : %lu\n", __interpreter,__interpreter_len);
-				printf("offset is @ %lu\n", intrpt_path_offset);
-			#endif
-			return 3;
-		};
-
-		// seperate the bracket insides by seperating the `{`
-		// and making use of the fact that `}` should be at end of data inp (eodi)
-		char *_intrargs=str_a4offset(_ptrcomplete, __interpreter_len);
-		ulong args_path_offset=sep_offset(_intrargs, "{");
-		char *__args=str_a4offset(_intrargs, args_path_offset);
-		ulong arg_length=str_rwings((char const *)__args);
-		ulong __arg_offset=arg_length-1;
-		if(__args[__arg_offset]!='}'){
-			#ifdef LOG_ERR
-				printf("err : malformat :: no closing arg sequence `}Z`\n");
-			#endif
-			return 1;
-		};
-
-		// get the actual args inside the brackets
-		char *args=str_b4offset(__args, arg_length);
-		memmove(__p_args(pst), args, __A_LEN);
-		arg_length=_p_args_len(pst);
-		if(arg_length>__A_LEN){
-			#ifdef DEBUG
-				printf("payloads are restricted to 512bytes max\n");
-			#endif
-			#ifdef DEBUG
-				printf("ptr complete :: %s\n", _ptrcomplete);
-				printf("intra arguments :: %s\n", _intrargs);
-				printf("start args offset :: %lu\n", args_path_offset);
-				printf("main args :: %s\n", __args);
-			#endif
-			return 4;
-		};
-
-		#ifdef DEBUG
-			printf("pointer name := %s\n", p_pointer(pst));
-			printf("interpreter  := %s\n", p_interpreter(pst));
-			printf("arguments    := %s\n", p_args(pst));
-		#endif
-
-		__pia_http(&pst);
-
-		return 0;
-	};
-
-	int decode_point(into_st *into) {
-		#ifdef DEBUG
-			printf("decoding aetherpoint :: \n");
-		#endif
-		ulong pnt_offset=sep_offset(i_argument(into), d_charms);
-		char *point=str_a4offset(i_argument(into), pnt_offset);
-		printf("point @%s\n", point);
-		return 0;
-	};
-
-	char *uname(const char *__filename) {
-
-		return (char *)hashof(2,__filename,str_rwings(__filename));
-	};
-
-struct __kvp {
-	char const *key;
-	char const *val;
-	struct __kvp *(*kv_memit)(char const *,char const *);
-	struct __kvp *next;
-	char offseter;
-};
-typedef struct __kvp kvptr;
-	static const ulong size_kv=sizeof(kvptr);
-	static const ulong size_kvp=sizeof(kvptr*);
-
-	kvptr *kv_memit(char const *key, char const *val) {
-		ulong keylen=str_rwings(key), vallen=str_rwings(val);
-		kvptr *__=(kvptr*)malloc(size_kv);
-		void *__key=malloc(len_strze(keylen));
-		void *__val=malloc(len_strze(vallen));
-		memmove(__key, key, keylen);
-		memmove(__val, val, vallen);
-		__ -> key=(char const *)__key;
-		__ -> val=(char const *)__val;
-		__ -> offseter='\0';
-		return __;
-	};
-
-	int kv_offset(kvptr *kv, char const *data, ulong offset_at) {
-		memset((void *)kv, 0, size_kvp);
-		kv->key=str_b4offset(data, offset_at);
-		kv->val=str_a4offset(++data, offset_at);
-		kv->offseter=data[offset_at];
-		return 0;
-	};
-
-	kvptr *kv_at(char const *data, char *delim) {
-		ulong __offset=sep_offset(data, delim);
-		if(!__offset){
-			return NULL;
-		};
-		kvptr *res=(kvptr*)malloc(size_kvp);
-		kv_offset(res, data, __offset);
-		return res;
-	};
-
-	void log_kvp(kvptr *res){
-		printf("kv :'rn\n");
-		printf("dlm -> %c\n", res->offseter);
-		printf("key -> %s\n", res->key);
-		printf("val -> %s\n", res->val);
-	};
-
-
-struct __kvs {
-	char const**keys;
-	char const**values;
-	char const *seperator;
-	char const *__line_ends;
-	ulong count;
-};
-typedef struct __kvs keyvals;
-	static const ulong mem_sz=sizeof(char*);
-	#define kvs_id(s,x) (s->keys[x], s->values[x], s->seperator, s->__line_ends)
-	#define kvs_key(x,p) ((const char *)((x->keys)[p]))
-	#define kvs_val(x,p) ((const char *)((x->values)[p]))
-	#define __keys__(x) ((char const **)(x->keys))
-	#define vals__(x) ((const *char *)(&x))
-
-	void free_kv(keyvals *__) {
-		ulong __count=__->count;
-		printf("total count = %lu \n", __count);
-		for(int i=0; i<__count;i++) {
-			free((void *)__->keys[i]);
-			free((void *)__->values[i]);
-		};
-	};
-
-	void free_kvs(keyvals *__) {
-		free((void *)__->seperator);
-		free((void *)__->__line_ends);
-		free((void *)__->keys);
-		free((void *)__->values);
-	};
-
-	void __free_str(char const *__) {
-		
-		free((void *)__);
-	};
-
-	void log_kvs(keyvals *__) {
-		printf("kvs :: \n");
-		printf("seperator (%s)\n", __->seperator);
-		printf("line endings -> %s\n", __->__line_ends);
-		ulong count=0,__c=__->count;
-		char const *_k,*_v;
-		printf("total kvs = %lu\n", __c);
-		do {
-			_k=__->keys[count];
-			_v=__->values[count];
-			printf("%s,%s   =: %lu\n", _k,_v,count);
-			count+=1;
-		}while(count<__c);
-	};
-	
-	void log_kv(keyvals *__) {
-		ulong __count=__->count;
-		printf("total count = %lu \n", __count);
-		for(int i=0; i<__count;i++) {
-			printf("k-> %s\n v-> %s\n",__->keys[i],__->values[i]);
-		};
-	};
-
-	void *__kvs__(keyvals *__, char const *sep, char const *lds) {
-		ulong seplen=str_rwings(sep), ldslen=str_rwings(lds);
-		char *__sep=(char *)malloc(len_strze(seplen));
-		char *__lends=(char *)malloc(len_strze(ldslen));
-		memmove(__sep, sep, seplen);
-		memmove(__lends, lds, ldslen);
-		memset(__, 0, sizeof(keyvals));
-		__->seperator=(char const *)__sep;
-		__->__line_ends=(char const *)__lends;
-		__->keys=malloc(mem_sz);
-		__->values=malloc(mem_sz);
-		__->keys[0]=NULL;
-		__->values[0]=NULL;
-		__->count=0;
-		return __;
-	};
-
-	int __add_pair(keyvals *kvs, char const *key, char const *val) {
-
-		log_kvs(kvs);
-
-		return 0;
-	}
-
-	int kvs_pair(keyvals *kvs, char const *key, char const *val) {
-		ulong keylen=str_rwings(key), vallen=str_rwings(val);
-		char const *__key=(char const *)malloc(len_strze(keylen));
-		char const *__val=(char const *)malloc(len_strze(vallen));
-		memmove((void *)__key, key, keylen);
-		memmove((void *)__val, val, vallen);
-		#ifdef DEBUG
-			printf("adding pair :: (%s,%s)\n",key, val);
-		#endif
-		return __add_pair(kvs, __key, __val);
-	};
-
-
-struct __liner {
-	ulong __size;
-	char const *__cptr;
-};
-typedef struct __liner s_line;
-	static const ulong size_sline=sizeof(struct __liner);
-
-	s_line*kvs_liner(char const *__key, char const *__val, char const *__dlm, char const *__lds) {
-		ulong keylen=str_rwings(__key), vallen=str_rwings(__val), dlmlen=str_rwings(__dlm), ldslen=str_rwings(__lds);
-		ulong __size=keylen+vallen+dlmlen+ldslen;
-		void *__=malloc(len_strze(__size));
-		memmove(__, __key, keylen);
-		memmove((__+keylen), __dlm, dlmlen);
-		memmove((__+keylen+dlmlen), __val, vallen);
-		memmove((__+keylen+dlmlen+vallen), __lds, ldslen);
-		s_line *_=(s_line *)malloc(size_sline);
-		_->__size=__size;
-		_->__cptr=__;
-		return _;
-	};
-
-	void free_kv_sline(s_line *kv_sline);
-
-	char const *kvs_traverse(keyvals *kvs) {
-		ulong __size=0, c=0, count=kvs->count;
-		do {
-			#ifdef DEBUG
-				printf("kvs->key : %lu :: %s\n", c, kvs_key(kvs,c));
-				printf("kvs->val : %lu :: %s\n", c, kvs_val(kvs,c));
-			#endif
-			__size+=str_rwings(kvs->keys[c]);
-			__size+=str_rwings(kvs->values[c]);
-			c+=1;
-		} while(c<count);
-		ulong __len=len_strze(__size);
-		#ifdef DEBUG
-			printf("size : %lu\n", __size);
-		#endif
-		char *__=(char *)malloc(__len);
-		memset(__, '\0', sizeof(__len));
-		c=1;__size=0;
-		while(c<count){
-			s_line *temp=kvs_liner kvs_id(kvs,c);
-			memmove((__+__size), (void *)temp->__cptr, temp->__size);
-			__size+=(temp->__size);
-			free_kv_sline(temp);
-			c+=1;
-		};
-
-		return strdup(__);
-	};
-
-	void free_kv_sline(s_line *kvs_sl) {
-		free((void *)kvs_sl->__cptr);
-		free(kvs_sl);
-	}
-
-	enum __http_protomethods __get_from_http_status(ulong __http_status) {
-		switch(__http_status) {
-		case 200:
-			return __http_request;
-		case 101:
-			return __http_switch;
-		default:
-			return __http_request;
-		}
-		return __http_request;
-	};
-
-	char const *__config_prop(char const *str1, char const *str2) {
-		ulong _lstr1=str_rwings(str1),_lstr2=str_rwings(str2);
-		ulong __len=_lstr1+_lstr2+3;
-		char __[__len];memset(&__, 0, sizeof(__));
-		__[__len-1]='\r';
-		__[__len]='\n';
-		memmove(__, str1, _lstr1);
-		memmove((__+_lstr1), str2, _lstr2);
-		return strdup(__);
-	};
-
-
-enum __http_content_types {
-	__hct_text,
-	__hct_html,
-	__hct_json,
-	__hct_img,
-};
-typedef enum __http_content_types content_type;
-
-	static const char *__http_protocol_version="HTTP/1.1";
-	static const char *__http_request_base="M P V\r\n";
-	static const char *__http_response_base="B S R\r\n";
-
 	char const *__http_hc_typed(content_type cont_t) {
 		switch(cont_t) {
 		case __hct_text: return "text;";
@@ -1127,80 +776,6 @@ typedef enum __http_content_types content_type;
 		default: return "text;";
 		};
 	};
-
-
-struct __http_content {
-	ulong __size;
-	void *__content;
-	char const *__type;
-};
-typedef struct __http_content http_content;
-
-	http_content *crt_http_content(char const *__, content_type __type) {
-		ulong __size=str_rwings(__);
-		void *__content_string=malloc(__size*sizeof(char));
-		memmove(__content_string, __, __size);
-		http_content *content=(http_content *)malloc(sizeof(http_content));
-		if(content==NULL){
-			#ifdef LOG_ERR
-				printf("cannot allocate enough memory for content\n");
-			#endif
-			return NULL;
-		};
-		content->__size=__size;
-		content->__content=__content_string;
-		content->__type=__http_hc_typed(__type);
-		return content;
-	};
-
-	void __free_content(http_content *__) {
-		free(__->__content);
-		free(__);
-	};
-
-	void log_content(http_content *content) {
-		printf("content :: \n");
-		printf("type    : %s\n",content->__type);
-		printf("data    : %s\n",(char *)content->__content);
-		printf("size    : %lu\n",content->__size);
-	};
-
-	char const *http_config(char const *c_key, char const *c_val) {
-
-		return __config_prop(c_key, c_val);
-	}
-
-	char const *expand_atoffset(char const *__str, char const *expantion, ulong __offset) {
-		#ifdef DEBUG
-			printf("@index:%lu\n", __offset);
-		#endif
-		ulong __str_rwings=str_rwings(__str);
-		ulong __explen=str_rwings(expantion);
-		ulong __len=__str_rwings+__explen+1;
-		char __[__len];memset(&__, 0, sizeof(__));
-		memmove(__, __str, __offset);
-		memmove((__+__offset), expantion, __explen);
-		memmove((__+__offset+__explen), (__str+__offset+1), (__str_rwings-__offset));
-		return (char const *)strdup(__);
-	};
-
-	char const *expand(char const *__str, char const *expantion, ulong __offset) {
-		ulong __str_rwings=str_rwings(__str);
-		ulong __explen=str_rwings(expantion);
-		ulong __len=__str_rwings+__explen+1;
-		char __[__len];memset(&__, 0, sizeof(__));
-		memmove(__, __str, __offset);
-		memmove((__+__offset), expantion, __explen);
-		memmove((__+__offset+__explen), (__str+__offset), (__str_rwings-__offset));
-		return (char const *)strdup(__);
-	};
-
-
-enum __http_request_types {
-	__http_get,
-	__http_post,
-};
-typedef enum __http_request_types http_request_t;
 
 	char const *__request_name(http_request_t __type) {
 		switch(__type) {
@@ -1247,14 +822,244 @@ typedef enum __http_request_types http_request_t;
 		return form_http_response(http_status, http_result);
 	};
 
+	char const *__pia_http(pia_st *pst) {
+		#ifdef OUTPUT
+			printf("starting http parser (pia) :: \n");
+		#endif
+		char __[__API_LEN], *__ptr=memset(&__,0,sizeof(__));
+		char *__interpt=pst->interpreter;
+		ulong __ilen=str_rwings(__interpt);
+		memmove(__ptr, __interpt, __ilen);
+		#ifdef OUTPUT
+			printf("GET /%s", pst->pointer);
+			printf("\nInterpreter:%s", pst->interpreter);
+			printf("\nArgs:%s\n", pst->args);
+		#endif
+		return strdup(__);
+	};
 
-struct __sok_t {
-    ulong aip_sockfd;
-    ulong aip_socklen;
-    char aip_socket[128];
+	char const *decode_pointer(into_st *into) {
+		#ifdef DEBUG
+			printf("decoding pointer :: \n");
+		#endif
+
+		char const *arg=i_argument(into);
+		ulong __argflen=str_rwings(arg);
+		pia_st pst; __pia__(&pst);
+
+		ulong ptr_name_offset=sep_offset(arg, "<");
+		// we increment the `arg` to get rid of the @ & then
+		// seperate offset considers the `<` included in str_b4
+		// so we decrement the count
+		char *__ptrname=str_b4offset(++arg, ptr_name_offset-1);
+		memmove(__p_pointer(pst), __ptrname, __P_LEN);
+		ulong __pointer_len=_p_pointer_len(pst);
+		if(__pointer_len>__P_LEN){
+			#ifdef LOG_ERR
+				printf("pointer names must be 8 bytes\n");
+			#endif
+			#ifdef DEBUG
+				printf("pointer contents iteration ::\n");
+				for(int i=0;i<__pointer_len; i++){
+					printf("%d(%c)\n", __ptrname[i],__ptrname[i]);
+				}
+			#endif
+			return NULL;
+		};
+
+		// recenter the `arg` to be able to extract the correct offset
+		char *_ptrcomplete=str_a4offset(--arg, ptr_name_offset);
+		ulong intrpt_path_offset=sep_offset(_ptrcomplete, ">");
+		char *__interpreter=str_b4offset(_ptrcomplete, intrpt_path_offset);
+		memmove(__p_interpreter(pst), __interpreter, __I_LEN);
+		ulong __interpreter_len=_p_interpreter_len(pst);
+		if(__interpreter_len>__I_LEN){
+			#ifdef LOG_ERR
+				printf("interpreters always have a maximum of 64 bytes for a reference call\n");
+			#endif
+			#ifdef DEBUG
+				printf("__interpreter :: %s : %lu\n", __interpreter,__interpreter_len);
+				printf("offset is @ %lu\n", intrpt_path_offset);
+			#endif
+			return NULL;
+		};
+
+		// seperate the bracket insides by seperating the `{`
+		// and making use of the fact that `}` should be at end of data inp (eodi)
+		char *_intrargs=str_a4offset(_ptrcomplete, __interpreter_len);
+		ulong args_path_offset=sep_offset(_intrargs, "{");
+		char *__args=str_a4offset(_intrargs, args_path_offset);
+		ulong arg_length=str_rwings((char const *)__args);
+		ulong __arg_offset=arg_length-1;
+		if(__args[__arg_offset]!='}'){
+			#ifdef LOG_ERR
+				printf("err : malformat :: no closing arg sequence `}Z`\n");
+			#endif
+			return NULL;
+		};
+
+		// get the actual args inside the brackets
+		char *args=str_b4offset(__args, arg_length);
+		memmove(__p_args(pst), args, __A_LEN);
+		arg_length=_p_args_len(pst);
+		if(arg_length>__A_LEN){
+			#ifdef DEBUG
+				printf("payloads are restricted to 512bytes max\n");
+			#endif
+			#ifdef DEBUG
+				printf("ptr complete :: %s\n", _ptrcomplete);
+				printf("intra arguments :: %s\n", _intrargs);
+				printf("start args offset :: %lu\n", args_path_offset);
+				printf("main args :: %s\n", __args);
+			#endif
+			return NULL;
+		};
+
+		#ifdef DEBUG
+			printf("pointer name := %s\n", p_pointer(pst));
+			printf("interpreter  := %s\n", p_interpreter(pst));
+			printf("arguments    := %s\n", p_args(pst));
+		#endif
+
+		return __pia_http(&pst);
+	};
+
+	char *decode_point(into_st *into) {
+		#ifdef DEBUG
+			printf("decoding aetherpoint :: \n");
+		#endif
+		ulong pnt_offset=sep_offset(i_argument(into), d_charms);
+		char *point=str_a4offset(i_argument(into), pnt_offset);
+		return strdup(point);
+	};
+
+	http_content *crt_http_content(char const *__, content_type __type) {
+		ulong __size=str_rwings(__);
+		void *__content_string=malloc(__size*sizeof(char));
+		memmove(__content_string, __, __size);
+		http_content *content=(http_content *)malloc(sizeof(http_content));
+		if(content==NULL){
+			#ifdef LOG_ERR
+				printf("cannot allocate enough memory for content\n");
+			#endif
+			return NULL;
+		};
+		content->__size=__size;
+		content->__content=__content_string;
+		content->__type=__http_hc_typed(__type);
+		return content;
+	};
+
+	void __free_content(http_content *__) {
+		free(__->__content);
+		free(__);
+	};
+
+	void log_content(http_content *content) {
+		printf("content :: \n");
+		printf("type    : %s\n",content->__type);
+		printf("data    : %s\n",(char *)content->__content);
+		printf("size    : %lu\n",content->__size);
+	};
+
+	enum __http_protomethods __get_from_http_status(ulong __http_status) {
+		switch(__http_status) {
+		case 200:
+			return __http_request;
+		case 101:
+			return __http_switch;
+		default:
+			return __http_request;
+		}
+		return __http_request;
+	};
+
+	char const *__config_prop(char const *str1, char const *str2) {
+		ulong _lstr1=str_rwings(str1),_lstr2=str_rwings(str2);
+		ulong __len=_lstr1+_lstr2+3;
+		char __[__len];memset(&__, 0, sizeof(__));
+		__[__len-1]='\r';
+		__[__len]='\n';
+		memmove(__, str1, _lstr1);
+		memmove((__+_lstr1), str2, _lstr2);
+		return strdup(__);
+	};
+
+	char const *http_config(char const *c_key, char const *c_val) {
+
+		return __config_prop(c_key, c_val);
+	}
+
+
+
+void *__aipsock__() {
+
+	return memset(&__sok, 0, sizeof(aipsock));
 };
-typedef struct __sok_t aipsock;
-	static aipsock __sok;
+	char const *__gethash(char const *__key) {
+		int x=fork();
+		#ifdef DEBUG
+			printf("fork res : %d\n", x);
+		#endif
+		if(!x){
+			char **_s=malloc(sizeof(char *)*3);
+			char *__sname="scripts/hash1.py";
+			char *__sarg=(char *)__key;
+			char *__send=NULL;
+			_s[0] = __sname;
+			_s[1] = __sarg;
+			_s[2] = __send;
+			#ifdef DEBUG
+				printf("getting hash\n");
+				printf("0 : %s\n", _s[0]);
+				printf("1 : %s\n", _s[1]);
+				printf("2 : %s\n", _s[2]);
+			#endif
+			int __eres=execve(_s[0], _s, environ);	
+			_exit(0);
+		}
+		else {
+			int __zen=0;
+			waitpid(x, &__zen, 0);
+			char __[30];memset(&__,0, sizeof(__));
+			int fd=__dgetfd("temp.sha1");
+			#ifdef DEBUG
+				printf("access to file : %d\n", access("temp.sha1", F_OK));
+			#endif
+			long b_read=read(fd, __, sizeof(__));
+			#ifdef DEBUG
+				printf("bread : %ld\n", b_read);
+			#endif
+			close(fd);
+			if(b_read<=2){
+				#ifdef LOG_ERR
+					printf("read less than 2 bytes\n");
+				#endif
+				return NULL;
+			};
+			__[b_read]='\r';
+			__[b_read+1]='\n';
+			return strdup(__);
+		};
+	};
+
+	char const *__check_wss_key(char *__msg) {
+		ulong __len=str_rwings(__msg);
+		ulong __offset=sep_offset(__msg, "Sec-WebSocket-Key: ");
+		if(!__offset){
+			#ifdef LOG_ERR
+				printf("no wss key found\n");
+			#endif
+			return NULL;
+		}
+		char *temp=str_a4offset(__msg, __offset+str_rwings(wss_key_h));
+		__offset=sep_offset(temp, "\n");
+		temp=str_b4offset(temp, __offset);
+		#ifdef DEBUG
+			printf("WSS KEY : %s\n", temp);
+		#endif
+		return strdup(temp);
+	};
 
 	at_t stype_to_atype(sAF_type __stype) {
 		switch(__stype) {
@@ -1701,11 +1506,8 @@ typedef struct __sok_t aipsock;
 		memset(reusable, 0, r_size);
 		while(__tempres!=-1) {
 			__tempres=read(0, reusable, r_size);
-			#ifdef OUTPUT
-				printf("\n\nread input :: %s\n", reusable);
-			#endif
 			#ifdef OUTPUT 
-				printf("sending to socket\n");
+				printf("ATP : ell :: read&send ::: %s\n", reusable);
 			#endif
 			__tempres=send(__sockfd, reusable, r_size, 0);
 			break;
@@ -1718,7 +1520,7 @@ typedef struct __sok_t aipsock;
 		int __recvd_num=recv(__sockfd, reusable, reu_size, 0);
 		if(__recvd_num==-1) {
 			#ifdef OUTPUT
-				printf("ATP : err<recv>(%d)\n", errno);
+				printf("ATP : ell :: err<recv>(%d)\n", errno);
 			#endif
 			_exit(1);
 		};
@@ -1732,29 +1534,27 @@ typedef struct __sok_t aipsock;
 		int __tempres=0;
 		while(__tempres!=-1) {
 			#ifdef OUTPUT
-				printf("ATP : sending :: %s\n", reusable);
+				printf("ATP : ell :: sending ::: %s\n", reusable);
 			#endif
 			__tempres=send(__sockfd, reusable, r_size, 0);
 			__ellget(__sockfd, reusable, ATP_BUFFER_SIZE);
 			break;
 		};
 		#if OUTPUT
-			printf("ATP : recieving :: %s\n", reusable);
+			printf("ATP : ell :: recieving ::: %s\n", reusable);
 		#endif
 		close(__sockfd);
 	};
 
 
-struct __arc_t {
-	ulong __pid;
-	int __fork;
-	ulong __next;
-	dpoint_t **__points;
-};
-typedef struct __arc_t arc_t;
-	static arc_t __arc;
-	const arc_t* arc=&__arc;
 
+void *__arc__(arc_st *st) {
+
+	return memset(st, 0, sizeof(arc_st));
+};
+	static arc_st __arc;
+	const arc_st* arc=&__arc;
+	
 	void __arcfork(){
 
 		__arc.__fork=fork();
@@ -1914,13 +1714,7 @@ typedef struct __arc_t arc_t;
 		__ellrun(sockfd);
 
 		return 0;
-	};
-
-	#define ATP_POINTER atp_step(6);
-
-
-	#define hash_follow(l,...) (char const *)hashof(l, #__VA_ARGS__, str_rwings(#__VA_ARGS__))
-	
+	};	
 
 	void *__atp_pointer() {
 		ptr_st *atp_p=malloc(sizeof(ptr_st));
@@ -1938,24 +1732,21 @@ typedef struct __arc_t arc_t;
 		return atp_p->ptr;
 	};
 
-
 	void *__atp_address() {
 
 		return NULL;
 	};
 
+	void *__atp_field() {
 
-
+		return NULL;
+	};
 
 	void log_into(into_st *into) {
 		printf("into : \n");
 		printf("request : %u\n", into->req_at);
 		printf("caller  : %s\n", into->caller);
 	};
-
-
-	// returns true for child process
-	#define arc_process (!__arc.__fork) 
 
 	// we generate a kept reference for a certain
 	// size defined by `atp_step` which can be 
@@ -2004,95 +1795,271 @@ typedef struct __arc_t arc_t;
 		return 0;
 	};
 
-	int __point_lbb(into_st *into_point, atp_t proto_type) {
-		#ifdef PROCESS
-			printf("ATP : lbb :: 2\n");
+	lbb_entry __decode_arg(char const *argument) {
+		char const *point_buffer=argument;
+		// __info__
+		if(point_buffer==NULL) {
+			#ifdef PROCESS
+				printf("IXR\n");
+			#endif
+			return __lbb_info__;
+		}
+		// __@__
+		else if(*point_buffer==AT_DEFINED) {
+			// @
+			int __flag=0, i=0;
+			for(; i<dlbb_rwings; i++) {
+					if (point_buffer[i]==d_lbb[i]){
+						// @lbb
+						__flag+=1;
+					}				
+					if(point_buffer[i]==d_charms[i]) {
+						// @charms
+						__flag+=4;
+					};
+			};
+			if(__flag!=8) {
+				__flag=1;
+				for(; i<dcharms_rwings; i++) {
+					if(point_buffer[i]==d_charms[i]) {
+						__flag+=8;
+					};
+				};
+			};
+			#ifdef DEBUG
+				printf("flags : %d\n", __flag);
+			#endif
+			#ifdef PROCESS
+				printf("ATP\n");
+			#endif
+			switch(__flag) {
+			case 8:
+				return __lbb_variable__;
+			case 33:
+				return __lbb_charms__;
+			default:
+				return __lbb_atp__;
+			}
+		}
+		else {
+			#ifdef PROCESS
+				printf("LBB\n");
+			#endif
+			return __lbb_yeild__;
+		};
+	};
+	/**
+	 * d-lbb GET some_handler||path/to
+	 * 
+	 * d-lbb some_script
+	 * 
+	 * d-lbb text_out __TEXT
+	 */ 
+	atp_t __get_at_protoname(char const *bufin) {
+		int __res=0;
+		/**
+		 * lbb entries always start with 
+		 * '@'
+		 */
+		if(*bufin++==__AT_DEFINED) {
+
+			__res&=~__lbb_atp__;
+		}
+		/**
+		 * payloads always start with
+		 * numbers
+		 * 
+		 * which is basically the address
+		 */
+		if((*bufin>=0x30)&&(*bufin<=0x39)){
+			__res=atp_retain;
+		}
+		/**
+		 * protocol requests always start with
+		 * CAPITAL ASCII
+		 *
+		 * examples including the http
+		 * GET & POST & LBB & ATP & ATM ...
+		 */
+		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
+			__res=atp_return;
+		}
+		/**
+		 * interpreters are always called using 
+		 * small leter ascii
+		 * to complement the entire suite of the call, 
+		 * so an interpreter doesn't
+		 * have to be a specific call, could be a * 
+		 * such as a prg, or a prg entry point.
+		 */
+		else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
+			__res=atp_retreive;
+		}
+		/**
+		* will exit with grace if unknown
+		*/
+		else {
+			__res=atp_next;
+		};
+		return (atp_t)__res;
+	};
+
+
+	int get_atp_type(char const *proto_call) {
+		int res=__lbb_none__;
+		res=__decode_arg(proto_call);
+		if(res==__lbb_atp__) {
+			return __get_at_protoname(proto_call);
+		}
+		return res;
+	};
+
+	int decode_lbb_addr(char const *__arg) {
+		ulong _addr_len=str_rwings(__arg);
+
+		if(check_addr(__arg)==-1){
+			#ifdef LOG_ERR
+				printf("address is not correctly formatted\n");
+			#endif
+			return 1;
+		};
+
+		ulong _addr_max=__LBB_BASE_LEN+_addr_len;
+		char __address[_addr_max];
+		memset(&__address, 0, sizeof(__address));
+		memmove(__address, __lbb_convdir, __LBB_BASE_LEN);
+		memmove((__address+__LBB_BASE_LEN), __arg, _addr_len);
+		__address[_addr_max]='\0';
+
+		#ifdef DEBUG
+			printf("decoding lbb address :: \n");
 		#endif
-		// if(argc>=3){
-		// 		return decode_lbb_addr(&into, &argv[2]);
-		// 	}
-		// 	else if (argc>=2) {
-		// 		return check_command(&into, argv);
-		// 	};
+		if(!__stres(__address)){
+			#ifdef LOG_ERR
+				printf("address doesn't exist ( %s ) \n", __address);
+			#endif
+			return 2;
+		};
+		m_stat cm_st;
+		__mstat__(&cm_st);
+		#ifdef DEBUG
+			printf("getting mstat :: \n");
+		#endif
+		get_mstat(__address, &cm_st);
+		#ifdef DEBUG
+			log_mstat(&cm_st);
+		#endif
+
+
 		return 0;
 	};
 
 
-int __no_entry__(into_st *into_p) {
-	printf("no entry");
-	exit(1);
-}
 
-int __pointer__(into_st *into_p) {
-	printf("pointer\n");
-	return decode_pointer(into_p);;
+void *__into__(into_st *st) {
+	
+	return memset(st, 0, sizeof(into_st));
 };
 
-int __field__(into_st *into_fld) {
-	printf("field\n");
+	int __no_entry__(into_st *into_p) {
+		#ifdef PROCESS
+			printf("@no_entry@\n");
+		#endif
+		exit(1);
+	}
 
-	// printf("@lbb : fld :: %s\n", i_narg(into_fld, 1));
-	return 0;
-};
+	int __info__(into_st *info) {
+		#ifdef PROCESS
+			printf("@ixr\n");
+		#endif
+		return 0;
+	};
 
-int __info__(into_st *info) {
-	printf("info\n");
-	#ifdef PROCESS
-		printf("ATP : info :: 4096 bytes\n");
-	#endif
-	return 0;
-};
+	int __pointer__(into_st *into_ptr) {
+		char const *ptr_name = i_argument(into_ptr);
+		#ifdef PROCESS
+			printf("@ptr:%s\n", ptr_name);
+		#endif
+		return 0;
+	};
 
-int __point__(into_st *into_point) {
-	printf("point\n");
-	#ifdef PROCESS
-		printf("ATP : request :: 512 bytes\n");
-	#endif
+	int __field__(into_st *into_fld) {
+		char const *fld_name = i_argument(into_fld);
+		#ifdef PROCESS
+			printf("@fld : %s\n", fld_name);
+		#endif
+		return 0;
+	};
 
-	return decode_point(into_point);
-};
+	int __point__(into_st *into_pnt) {
+		char const *point_name = i_argument(into_pnt);
+		#ifdef PROCESS
+			printf("@pnt : %s\n", point_name);
+		#endif
 
-int __lbb__(into_st *into_lbb) {
-	printf("lbb\n");
+		return 0;
+	};
 
-	return __point_lbb(into_lbb, get_atp_type(i_narg(into_lbb, 1)));
-};
+	int __lbb__(into_st *into_lbb, int arg_count) {
+		switch(arg_count) {
+			case 2:
+				return get(into_lbb);
+			case 3:
+				return set(into_lbb);
+			default:
+				return dcloud(into_lbb);
+		};
+		return 0;
+	};
 
-int get(into_st *var) {
+	int get(into_st *var) {
+		char const *var_name=i_narg(var, 1);
+		#ifdef PROCESS
+			printf("@ATP<get>(%s)\n", var_name);
+		#endif
+		return 0;
+	};
 
-	printf("ATP : get :: %s\n", i_narg(var, 1));
-	return 0;
-};
+	int set(into_st *var) {
+		char const *var_name=i_narg(var, 1);
+		char const *var_val=i_narg(var, 2);
+		#ifdef PROCESS
+			printf("@ATP<set>(%s){%s}\n", var_name, var_val);
+		#endif
+		return 0;
+	};
 
-int set(into_st *var) {
+	int prun(into_st *pcall) {
+		char const *p_name=i_narg(pcall, 1);
+		#ifdef PROCESS
+			printf("@-Protocol : run    :: %s\n", p_name);
+		#endif
+		return 0;
+	};
 
-	printf("ATP : set < %s :: %s > \n", i_narg(var, 1), i_narg(var, 2));
-	return 0;
-};
+	int psave(into_st *data) {
+		char  const *d_name=i_narg(data, 1);
+		#ifdef PROCESS
+			printf("@-Protocol : save   :: %s\n", d_name);
+		#endif
+		return 0;
+	};
 
-int atp(into_st *pcall) {
+	int pcollect(into_st *form) {
+		char  const *f_att=i_narg(form, 1);
+		#ifdef PROCESS
+			printf("@-Protocol : collect :: %s\n", f_att);
+		#endif
+		return 0;
+	};
 
-	printf("ATP : execute :: %s\n", i_narg(pcall, 1));
-	return 0;
-};
-
-int save(into_st *data) {
-
-	printf("ATP : save :: %s\n", i_narg(data, 1));
-	return 0;
-};
-
-int collect(into_st *data) {
-
-	printf("ATP<collect> : @%s : %s :: %s\n", i_narg(data, 1), i_narg(data, 2), i_narg(data, 3));
-	return 0;
-};
-
-int dcloud(into_st *address) {
-
-	printf("d-%s\n", i_narg(address, 1));
-	return 0;
-};
+	int dcloud(into_st *cloud) {
+		char const *dc_address=i_narg(cloud, 1);
+		#ifdef PROCESS
+			printf("d-%s\n", dc_address);
+		#endif
+		return 0;
+	};
 
 
 

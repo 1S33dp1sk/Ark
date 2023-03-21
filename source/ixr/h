@@ -38,15 +38,17 @@ The indexer
     #define KV_FORMAT(...) __generic_fmt(__key_value, ##__VA_ARGS__) 
 	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
 	#define INDEX_END(x) return __set_next(x);
+
+	#define __dPRG int main(int argc, char const*argv[]) 
     #define dPRG(...) __dPRG __INDEXER__(__VA_ARGS__)
 	#define __ARGC__ argc
-	#define __ARGV__ **argv
-	#define __dPRG int main(int argc, char const*argv[]) 
+	#define __ARGV__ argv
 	#define __INDEXER__(...) {\
 		if(!checkef_file){INDEXER(NULL);}\
 		__ARGC__;\
 		__ARGV__;\
-		__VA_ARGS__\
+		__VA_ARGS__;\
+		return 0;\
 	}
 
 	#define uc_size(x) ((ulong)(x*sizeof(uchar)))

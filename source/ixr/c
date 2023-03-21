@@ -370,7 +370,7 @@
 
 	int __write_header() {
 		#ifdef PROCESS
-			printf("writing :::");
+			printf("@IXR<write>(header)\n");
 		#endif
 		uchar __head[__I_LEN];memset(&__head, 0, sizeof(__head));
 		unsigned __temp=pack(__head, ixr_format(ixr_header), ixr_h_args);

@@ -471,7 +471,7 @@ int main_sepstr(int argc, char const *argv[]){
 
 int main_atoff(){
 	strld sep=extract_atoff("hello world\n",6);
-	log_str(sep);
+	log_strld(sep);
 	return 0;
 };
 
@@ -572,7 +572,7 @@ void log_mstat(m_stat *mfile){
 	printf("blkio	= %lu\n",mfile->m_blksz);
 };
 
-void log_str(strld __){
+void log_strld(strld __){
 	printf("string\n");
 	printf("length=%d\n",__.len);
 	printf("data:=%s\n",__.data);
@@ -751,6 +751,8 @@ char const *conv_fields(m_stat *m_st){
 
 	return __conv_fields(hashof(1,m_st,sizeof(m_stat)),__fd,__count);
 };
+
+
 
 /*******************************************************************/
 

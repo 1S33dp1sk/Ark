@@ -565,8 +565,8 @@ char *flds(char const *__fldname) {
 	#endif
 
 	m_stat cm_st;
-	m_stat *__cm_st=__mstat__(cm_st);
-	int res=get_mstat(__fldname,__cm_st);
+	__mstat__(&cm_st);
+	int res=get_mstat(__fldname,&cm_st);
 	if(res==-1){
 		#ifdef LOG_ERR
 			__TEXT(Field not found);
@@ -577,8 +577,8 @@ char *flds(char const *__fldname) {
 		log_mstat(&cm_st);
 	#endif
 
-
-	char const *cflds_head=conv_fields(__cm_st);
+	
+	char const *cflds_head=conv_fields(&cm_st);
 	if(cflds_head==NULL){
 		#ifdef LOG_ERR
 			printf("cflds header is null\n");
