@@ -74,20 +74,22 @@
 
 	ulong str_rwings(char const *__str) {
 		ulong temp=0;
-		if(__str==NULL){
-			return temp;
-		}
-		do {
-			if(*__str=='\0'){
-				break;
-			};
-			temp+=1;
-		}while((*__str++)&&(temp<4096));
+		if(__str!=NULL){
+			do {
+				if(*__str=='\0'){
+					break;
+				};
+				temp+=1;
+			}while((*__str++)&&(temp<4096));
+		};
 		#ifdef DEBUG
 			printf("str : %s =: %lu\n",(char const *)(__str-temp),temp);
 		#endif
 		return temp;
 	};
+
+
+
 
 	int spaces_and_tabs(char *word){
 	/**
@@ -102,6 +104,17 @@
 		};
 		return count;
 	};
+
+	int tabs_and_spaces(char const *word){
+	/**
+	 * count spaces and tabs until `word`
+	**/
+		int count=0;
+		while(word[count]==' '||word[count]==' '){
+			count+=1;
+		};
+		return count;	
+	}
 
 	char *__stn(char const *word, ulong len) {
 		ulong rc=0, c=0;
@@ -137,11 +150,20 @@
 		return 1;
 	};
 
-	ulong sep_offset(char const *string,char *seperator) {
+	void *__arg__(char const *fc) {
+		int tas=tabs_and_spaces(fc);
+		printf("__arg__ :::::::::::: %c\n",*(fc+1));
+		if(*(fc+1)=='"'){
+			return "string";
+		};
+		return "n";
+	};
+
+	int __sep_atoff(char const *string, char const *seperator) {
 	/**
 	 * find the first `seperator` in `string`
 	**/
-		long x=0,y=0,len_count=0,offset_at=-1;
+		long x=0,y=0,len_count=0,offset_at=0;
 		while(string[x]!='\0'){
 			if(string[x]==seperator[y]){
 				while(seperator[y]==string[y+x]){
@@ -157,9 +179,27 @@
 			x+=1;
 		};
 		if(offset_at==-1){
-			return 0;
+			return -1;
 		};
 		return offset_at;
+	};
+
+	ulong sep_offset(char const *string, char *seperator) {
+		printf("string : %s\n", string);
+		int tempres=__sep_atoff(string, seperator);
+		if(tempres==-1){
+			#ifdef LOG_ERR
+				printf("unsigned call\n");
+				_exit(1);
+				// #error "should not return"
+			#endif
+			return 0;
+		}
+		else if (!tempres) {
+			return 0;
+		} else {
+			return (ulong)tempres;
+		};
 	};
 
 	char *str_b4eoffset(char const *string, ulong offset) {
@@ -235,6 +275,53 @@
 		memmove((__+_lstr1), str2, _lstr2);
 		return strdup(__);
 	};
+#define DEBUG 1
+	ulong str_cdelims(char const *__str, char const *__dlm) {
+		ulong count=0, temp=0, length=str_rwings(__str);
+		char *substr=(char *)__str;
+		str *subs;		
+		while((temp=__sep_atoff(substr, __dlm))>=1) {
+			if(!count){
+				count=1;
+				subs=(str*)malloc(sizeof(str));
+				subs->__=str_a4offset(substr, temp);
+				subs->__len=str_rwings(substr);
+				subs->__next=NULL;
+			}
+			else if (count) {
+				count+=1;
+				substr=str_a4offset(substr, temp);
+				++substr;subs++;
+				printf("type     :%c: %s\n\n",*substr, (char *)__arg__(substr));
+					// string(temp, substr)
+				// subs->__next=&temp;
+			}else {
+			
+			};
+		// #ifdef DEBUG
+		// 	printf("seperator : %lu\n", temp);
+		// 	printf("substr    : %s\n", substr);
+		// 	printf("subzero   : %p\n", &subs[0]);
+		// 	printf("nextsub   : %p\n", subs[0].__next);
+		// 	printf("subs count: %lu\n", arr_size(subs));
+		}
+
+		return count;
+	};
+
+
+
+	ulong arr_cdelims(char const *__, char const *__d) {
+		// add 1 more to create an array
+		// #err if more elements than arg_count specifies
+		ulong arg_count=str_cdelims(__, __d)+1;
+
+
+		return arg_count;
+	}
+
+
+
 
 	// files
 
@@ -1727,7 +1814,7 @@ void *__arc__(arc_st *st) {
 		sprintf(atp_p->address, "%lu", __arc.__pid);
 		atp_p->chkref = hash_follow(0, atp_p->address);
 		#ifdef DEBUG
-			printf("%p<%s>(%lu)\n", atp_p.ptr, atp_p.address, atp_p.chkref);
+			printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->address, atp_p->chkref);
 		#endif
 		return atp_p->ptr;
 	};
@@ -1747,6 +1834,8 @@ void *__arc__(arc_st *st) {
 		printf("request : %u\n", into->req_at);
 		printf("caller  : %s\n", into->caller);
 	};
+
+	#define start_atp() atp_step(256);
 
 	// we generate a kept reference for a certain
 	// size defined by `atp_step` which can be 

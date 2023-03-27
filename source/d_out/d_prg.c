@@ -1,19 +1,51 @@
 /// d-prg \\\
+d-program
 
-
-#ifndef __Karch_512__
-#include "headers/_h512.h"
-#include "headers/lbb.h"
-#include "headers/ixr.h"
-#define OUTPUT 1
-#define LOG_ERR 1
+#ifndef karch
+#include "headers/karch.h"
 #endif
 
 
+int __resolve(int _fd, char const *__dpath) {
+
+	printf("__dpath : %s\n", __dpath);
+	return 0;
+}
+
+#define d(fd,...) __resolve(fd, #__VA_ARGS__)
+
 
 dPRG(
-	ulong res=10;
-	dpoint_t point=index_reference(&res);
-	log_dpoint(&point);
+	d(0, @scripts/basics.py)
 )
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

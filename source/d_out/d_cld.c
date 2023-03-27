@@ -1,31 +1,14 @@
 /// d-cld \\\
+distributed cloud
 
-#ifndef __Karch_512__
-#include "headers/_h512.h"
-#include "headers/lbb.h"
-#include "headers/ixr.h"
-#define OUTPUT 1
-#define LOG_ERR 1
+#ifndef karch
+#include "headers/karch.h"
 #endif
 
-
-#ifdef RUNNING_BITS
-#undef __RUN_C
-#else
-#define __RUN_C 256
-#endif
-
-
-int main(int argc, char **argv) {
-__LBB_START__ 
-    atp_step(256);
-    
-
-
-
-    INDEX_END("\n");
-};
-
+__dPRG
+    __LBB__(
+        start_atp()
+    );
 
 
 

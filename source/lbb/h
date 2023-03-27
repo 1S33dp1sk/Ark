@@ -32,7 +32,7 @@
 	ulong start_book();
 	ulong lbb_print(char *k__addr);
 	ulong reset_book();
-	char *read_book();
+	char const *read_book(char const *cpath);
 	void lbb_close();
 
 	int spaces_and_tabs(char *__string);
@@ -201,17 +201,14 @@ static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
 		__BASE__\
 		printf("sizeof type-d : %lu\n",sizeof(d));\
 	}
-	#define __DPRG__ do __BASE__ __dPER
+	#define __DPRG__(...) __LBB__(__VA_ARGS__) __dPER
 	#define __LBB__(...) {\
 		__BASE__\
 		__VA_ARGS__\
 		INDEX_END("\n");\
 	}
 	
-	#define __dLBB(x) __LBB_START__(&x,#x)
-	#define d(...) __dLBB(#__VA_ARGS__)
-
-	#define __LBB_START__ __DPRG__
+	#define __LBB_START__(...) __DPRG__(__VA_ARGS__)
 
 	#define __LBB_WRITER__ do {\
 		memset(l_shard,0,sizeof(struct __lbb_shard));\
@@ -233,6 +230,19 @@ static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
 
 	#define __lbb_buffer_size 512
 	#define LBB_BUFFER_SIZE ((ulong)__lbb_buffer_size)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	#define __LBB__H 1
 #endif

@@ -1,13 +1,9 @@
-/// d-lbb \\\
+/// d-atp \\\
+@-Protocol
 
-#ifndef __Karch_512__
-	#include "headers/_h512.h"
-	#include "headers/lbb.h"
-	#include "headers/ixr.h"
-	#define OUTPUT 1
-	#define LOG_ERR 1
+#ifndef karch
+#include "headers/karch.h"
 #endif
-
 
 __dPRG
 	__LBB__(
