@@ -511,6 +511,7 @@ hash bar
 			char fl_hash[__size];
 			memset(&fl_hash,0,__size);
 			ulong b_read=read(__fd,fl_hash,__size);
+			close(__fd);
 
 			#ifdef DEBUG
 				printf( "file size :: %lu\n" , __size );
@@ -518,6 +519,47 @@ hash bar
 			#endif
 
 			return hashof(level,fl_hash,b_read);
+	};
+
+	char const *fdhashof(uns level, ulong fd, ulong filesize) {
+			char fd_hash[filesize];
+			memset(&fd_hash,0,filesize);
+			int b_read=read(fd,fd_hash,filesize);
+			if(b_read==-1) {
+				#ifdef LOG_ERR
+					printf("err : read :: %d", errno);
+				#endif
+				return NULL;
+			}
+			else if ((ulong)b_read==filesize) {
+				return hashof(level, fd_hash, b_read);
+			}
+			else if (b_read==0) {
+				#ifdef LOG_ERR
+					printf("file has no contents to hash\n");
+				#endif
+				return zeroatt(level);
+			}
+			else {
+				ulong temp=0;
+				if(b_read<filesize) {
+					temp+=(ulong)b_read;
+					while(temp<filesize) {
+						b_read=pread(fd, (fd_hash+b_read), filesize-temp, temp);
+						if(b_read==-1){
+							#ifdef LOG_ERR
+								printf("cannot read the full file\n");
+							#endif
+							break;
+						};
+					};
+					#ifdef DEBUG
+						printf( "file size :: %lu\n" , filesize );
+						printf( "bytes read :: %d\n" , b_read );    
+					#endif
+			}
+				return hashof(level, fd_hash, temp);
+			};
 	}
 	/**
 	file-hash raw

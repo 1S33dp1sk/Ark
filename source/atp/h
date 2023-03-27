@@ -43,7 +43,7 @@
 		__http_switch,
 	};
 
-	int __dgetfd(char *__fpath);
+	int __dgetfd(char const *__fpath);
 	char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
 	char const *fhashof(unsigned level, char const *__tohash);
 	ulong str_rwings(char const *string);
@@ -182,7 +182,23 @@ int dcloud(into_st *into_0xa);
 			return 0;\
 	}\
 
-	
+
+#define _C_TYPES(x) \
+    _Generic((x), \
+        signed char: "char", \
+        unsigned char:"uchar", \
+        int:"int", \
+        unsigned int:"uns", \
+        long int:"ulong", \
+        unsigned long int:"ulong", \
+        long long int:"tlong", \
+        unsigned long long int:"tlong", \
+        char *:"string",\
+        void *:"pointer",\
+        default:"NULL")
+
+
+
 
 
 	#define __ATP__H 1

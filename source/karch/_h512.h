@@ -52,6 +52,34 @@ K512-architecture
 #define arch_filename "@charms/Lockfile"
 
 
+#define fmt_out(x) log_str(_Generic((x), \
+	num:(char const *)(x.__),\
+	str:(char const *)(x.__),\
+	arr:(char const *)(x.__),\
+	default:__NADA__\
+));
+
+#define out(x) fmt_out(x);
+
+#define out_fmt(x) log_str(_Generic((x), \
+	num:"number",\
+	str:"string",\
+	arr:"array",\
+	default:"dPRG"\
+));
+
+
+
+
+ulong lexical_args(void **__vars) { 
+	char const *temp = (char const *)__vars;
+	printf("vars : %s\n", temp);
+	ulong arg_count=arr_cdelims(temp, ",");
+	return arg_count;
+}
+
+
+
 /************************ naming ************************/
 
 
@@ -93,8 +121,21 @@ char *flds(char const *__fldname);
 void *__search_r(char const *__rname, lbb_entry in);
 void *__lbb_ref(char const *__rname);
 
+void log_str(char const *__);
+
+
+
+
+
+
 
 /********* base8 *********/
+
+
+void log_str(char const *__) {
+	write(0,__,str_rwings(__));
+	write(0,"\n",1);
+};
 
 uns __8sz(uns _){
 	uns __=1;while(_>0){__*=8;_--;}

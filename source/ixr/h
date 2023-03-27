@@ -15,12 +15,10 @@ The indexer
 	static const char *__dprg_fmt="_Q:s>s<s$s_\n";
 	static const char *__fld_fmt="_Q:s@s=s+h_\n";
 
-
 	#define ixrh_size(x) (ulong)(x->__size)
 	#define ixrh_dcount(x) (ulong)(x->d_count)
 	#define ixrh_checksum(x) (ulong)(x->checksum)
 	#define ixrh_head(x) ((uchar *)x->head)
-
 
 	#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
 	#define sz8(x) ((ulong)__8sz(x))
@@ -39,8 +37,9 @@ The indexer
 	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
 	#define INDEX_END(x) return __set_next(x);
 
+	#define __RUN__(x) __dPRG __INDEXER__(x)
+
 	#define __dPRG int main(int argc, char const*argv[]) 
-    #define dPRG(...) __dPRG __INDEXER__(__VA_ARGS__)
 	#define __ARGC__ argc
 	#define __ARGV__ argv
 	#define __INDEXER__(...) {\
@@ -50,6 +49,7 @@ The indexer
 		__VA_ARGS__;\
 		return 0;\
 	}
+    #define dPRG(...) __dPRG __INDEXER__(__VA_ARGS__)
 
 	#define uc_size(x) ((ulong)(x*sizeof(uchar)))
 	#define ULONG_MAX_DIGITS 21
@@ -120,6 +120,9 @@ The indexer
 	int refresh_h();
 	int indexer_start();
 	int refer_index(void *__ptr, void *__ref, char *__prname);
+	ulong str_cdelims(char const *__args, char const *c);
+
+
 
 
 

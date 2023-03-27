@@ -250,11 +250,11 @@ ulong __writeb(uchar *content,ulong c_size) {
 	return 0;
 };
 
-int __dgetfd(char *__fpath) {
+int __dgetfd(char const *__fpath) {
 	return open(__fpath, __lbb_lock_reader);
 };
 
-char *__readb(ulong f_size, ulong f_d,ulong r_o){
+char const *__readb(ulong f_size, ulong f_d,ulong r_o){
 	ulong __res=r_o,__fsz=f_size,__fd=f_d;
 	uchar lbb_content[__fsz+1];
 	int __tempres=read(__fd,lbb_content,__fsz);
@@ -270,7 +270,7 @@ char *__readb(ulong f_size, ulong f_d,ulong r_o){
 		// so we can read from where we left off
 		__res=pread(__fd,(lbb_content+__res),(__fsz-__res),__res);
 	};
-	return strdup((char*)lbb_content);
+	return (char const *)strdup((char*)lbb_content);
 };
 
 void __readin(char *buffer, ulong size, ulong stfd) {
@@ -296,13 +296,13 @@ ulong write_book(char *content, ulong csize) {
 	return __writeb((uchar*)content,csize);
 };
 
-char *read_book(char *__bpath){ 
+char const *read_book(char const *__cpath){ 
 	m_stat cm_st;
-	int res=get_mstat(__bpath, &cm_st);
+	int res=get_mstat(__cpath, &cm_st);
 	if(res!=0){
 		return NULL;
 	}
-	return __readb(cm_st.m_size, __dgetfd(__bpath), 0);
+	return __readb(cm_st.m_size, __dgetfd(__cpath), 0);
 };
 
 void lbb_close(){
@@ -933,6 +933,18 @@ void const *__lbb_type_args(lbb_at __atype) {
 };
 
 
+
+
+int __init_field(char const *arg) {
+	m_stat cm_st;
+	get_mstat(arg, &cm_st);
+	printf("argument : %s\n", arg);
+	conv_fields(&cm_st);
+	return 0;
+}
+
+
+#define field(...) __init_field(#__VA_ARGS__)
 
 
 

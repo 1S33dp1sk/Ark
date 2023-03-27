@@ -5,20 +5,14 @@ points
 #include "headers/karch.h"
 #endif
 
-
 dPRG(
-	string(var_name, "Hello World\n")
+	string(var_name, "Hello World!")
 	out(var_name)
-	number(y, 1381)
-	out(y)
+	number(somenum, 134217728)
+	out(somenum)
+	array(c_array, ["123", 123, var_name])
+	out(c_array)
 )
-
-
-
-
-
-
-
 
 
 

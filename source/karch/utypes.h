@@ -538,5 +538,91 @@ typedef struct __liner s_line;
 	static const ulong size_sline=sizeof(struct __liner);
 
 
+
+#define format_args(x, ...) (ulong) lexical_args(x);
+#define file_hash(x,y) (char const *) fhashof(x,y);
+
+// this should be used as a default
+// for all types, initiated once 
+// at start or compile time and loaded
+// via a .o or .so 
+//
+struct __num_d {
+	ulong __val;
+	void const *__;
+	struct __num_d* __next;
+};
+typedef struct __num_d num;
+	#define number(x,...) num x; \
+		x.__val=__tonum(#__VA_ARGS__); \
+		x.__=numtochar(__VA_ARGS__); \
+		x.__next=&x;
+
+
+struct __str_d {
+	ulong __len;
+	char const *__;
+	struct __str_d* __next;
+};
+typedef struct __str_d str;
+	#define string(x,y) str x; \
+		x.__=y; \
+		x.__len=str_rwings(y); \
+		x.__next=&x;
+	#define str_len(x) (ulong)(x.__len)
+	#define str_val(x) (char const *)(x.__)
+	#define str_nxt(x) (str *)(x.__next)
+	#define __NADA__ "\0"
+
+
+struct __array_d {
+	ulong __count;
+	void **__;
+	struct __array_d* __next;
+};
+typedef struct __array_d arr;
+	#define array_count(x) (ulong)(x->__count)
+	#define array_elems(x) (void *)(x->__)
+	#define array(x, ...) int y; arr x; \
+		x.__=(void **)(#__VA_ARGS__); \
+		x.__count=format_args(x.__, __VA_ARGS__);\
+		x.__next=&x; \
+
+
+
+struct __script_d {
+	ulong __hash;
+	void const *__;
+	char const *__path;
+	int __to;
+	struct __script_d* __next;
+};
+typedef struct __script_d _script;
+	#define script_hash(x) (char const *)(x.__hash)
+	#define script_path(x) (char const *)(x.__path)
+	#define script_tofd(x) (ulong)(x.__to)
+	#define script(x, a) _script x; \
+		x.__=read_book(#x);\
+		x.__hash=hash8(a, x.__, fsze(x.__));\
+		x.__path=(#x);\
+		x.__to=a;\
+		x.__next=&x;\
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #define __UTYPES__H 1
 #endif

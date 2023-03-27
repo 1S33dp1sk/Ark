@@ -290,7 +290,7 @@
 			printf("read :::");
 		#endif
 		uchar *__head=ixr_ubuf;
-		unsigned __rbytes=pread(__ixr_fd, (void *)__head, __I_LEN, 0);
+		int __rbytes=pread(__ixr_fd, (void *)__head, __I_LEN, 0);
 		if (__rbytes==-1) {
 			#ifdef LOG_ERR
 				printf("%s : err :: cannot write header to indexfile ::: %d\n", __FILE__, errno);
@@ -307,7 +307,7 @@
 		___header.checksum=u[2];
 		___offset=(ulong)__rbytes;
 		#ifdef DEBUG
-			printf("attempting %d @indexfile: %lu\n", __tempres, __hfsize);
+			printf("attempting %d @indexfile: %lu\n", __rbytes, u[0]);
 			log_ixrh(&___header);
 		#endif	
 		return __header_in();
@@ -362,7 +362,7 @@
 			return -1;
 		};
 		#ifdef DEBUG
-			printf("wrote %d bytes for idx header\n", _temp);
+			printf("wrote %d bytes for idx header\n", __bytes_w);
 		#endif
 		___offset=(ulong)__bytes_w;
 		return 0;
@@ -539,6 +539,24 @@
 		printf("\tchksum=%lu", ixrh->checksum);
 		printf("\n");
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
