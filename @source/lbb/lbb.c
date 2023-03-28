@@ -1,10 +1,35 @@
 #include "lbb.h"
+<<<<<<< HEAD
 
+=======
+/*
+***************************************************************************
+	*******************************************************************
+		***********************************************************
+			***************************************************
+				********************************************
+					************************************
+						****************************
+							********************
+								************
+									lbb
+								************
+							********************
+						****************************
+					************************************
+				********************************************
+			***************************************************
+		***********************************************************
+	*******************************************************************
+***************************************************************************
+*/
+>>>>>>> in_vik/main
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
 #include <regex.h>
+<<<<<<< HEAD
 
 
 
@@ -22,16 +47,53 @@ void log_sota( struct sota *__sota ) {
 }
 
 int lbb_append( __lbb *lbb_st , char *key , char *val ) {
+=======
+/**
+lbb : word ::
+ * an lbb word consists of 3 main parts
+ * 
+*-1.	key	]	:	[ value				( stores the associated key with value )
+		
+
+*.0.	key ]	=	[ reference			( stores the associated key with a reference )
+
+	____________________________
+*+1.	key	]	:=	[ address 			( stores the associated key as an address )
+ *
+ * 
+1.	key:value:=address 
+ * 
+2. 	key=value:=address
+ * 
+3.	key:=value:=address
+ * 
+*/
+
+
+word_t __read( struct lbb_st *__st );
+word_t __line( char *key , char *val , char *delim );
+
+
+int lbb_append( struct lbb_si*__ , char *key , char *val ) {
+>>>>>>> in_vik/main
 	#ifdef DEBUG
 		printf( "lbb -> \n\tadding %s :: %s\n" , key , val );
 	#endif
 
+<<<<<<< HEAD
 	const char *prev = __read( lbb_st );
+=======
+	const char *prev = __read( &__ -> st );
+>>>>>>> in_vik/main
 	const char *curr = __line( key , val , ":" );
 	char total[strlen( prev ) + strlen( curr )];
 	strcpy( total , prev );
 	strcpy( total , curr );
+<<<<<<< HEAD
 	int b_written = write( lbb_st -> lbb_fd , total , strlen( total ) );
+=======
+	int b_written = write( __ -> st.lbb_fd , total , strlen( total ) );
+>>>>>>> in_vik/main
 	
 	#ifdef DEBUG
 		printf( "wrote %d bytes\n" , b_written );
@@ -40,10 +102,15 @@ int lbb_append( __lbb *lbb_st , char *key , char *val ) {
 	return b_written;
 }
 
+<<<<<<< HEAD
 int lbb_query( __lbb *lbb_st , char *key ) {
 
 	char const *s = __read( lbb_st );
 	printf( "lbb :: \n%s\n" , s );
+=======
+int lbb_query( struct lbb_si*__ , char *key ) {
+
+>>>>>>> in_vik/main
 }
 
 int compile_lbb( char const *rlbb , struct seam **__lines ) {
@@ -97,6 +164,7 @@ int compile_lbb( char const *rlbb , struct seam **__lines ) {
 	return 0;
 }
 
+<<<<<<< HEAD
 int __regex_lbb( char const *rlbb ) {
 
 	char const *__s = rlbb;
@@ -154,6 +222,12 @@ const char *__line( char *key , char *val , char *delim ) {
 	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
 	char __line[__len];
 	memset( &__line , 0 , sizeof( __line ) );
+=======
+word_t __line( char *key , char *val , char *delim ) {
+	unsigned __len = strlen( key ) + strlen( val ) + strlen( delim ) + 1;
+	char __line[__len]; memset( &__line , 0 , __len ); __line[__len] = '\0';
+
+>>>>>>> in_vik/main
 	strcpy( __line , key );
 	strcat( __line , delim );
 	strcat( __line , val );
@@ -162,6 +236,7 @@ const char *__line( char *key , char *val , char *delim ) {
 	return strdup( __line );
 }
 
+<<<<<<< HEAD
 const char *__read( __lbb *lbb_st ) {
 	unsigned lbb_size = lbb_st -> lbb_stat.st_size;
 	char temp[lbb_size+1];
@@ -215,5 +290,72 @@ int little_black_book( char *p_name ) {
 	cleanup( ud , lines );
 
 	return compilation_res;
+=======
+word_t __read( struct lbb_st *st ) {
+
+	unsigned lbb_size = st -> lbb_stat.st_size;
+	char temp[lbb_size+1]; temp[lbb_size+1] = '\0';
+	memset( &temp , 0 , lbb_size );
+	read( st -> lbb_fd , &temp , lbb_size );
+	return strdup( temp );
+}
+
+int little_black_book( char *lbb_name ) {
+
+	struct seam *lines;
+	memset( &book , 0 , sizeof( struct lbb_si ) );
+
+	unsigned _name_len = strlen( lbb_name );
+	char *__name = _name_len <= 3 \
+		? __lbb_name : lbb_name;
+	memmove( book.st.lbb_path , __name , _name_len );
+
+	printf( "struct path :: %s\n" , book.st.lbb_path );
+	if ( lbb_check( book ) == -1 ) {
+		#ifdef DEBUG
+			printf( "no lbb found, creating one\n" );
+		#endif
+		lbb_make( book );
+	}
+	#ifdef DEBUG
+	printf( "initializing lbb\n");
+	#endif
+	lbb_open( book );
+
+	if ( lbb_status( book ) != 0 ) {
+		printf( "lbb status cannot be determined\n" );
+		return -1;
+	}
+
+	#ifdef DEBUG
+	printf( "lbb : size = %ld bytes\n" , lbb_size( book ) );	
+	#endif
+
+	if ( lbb_descriptors( book ) <= 0 ) {
+		printf( "lbb file cannot be accessed\n" );
+		return -2;
+	}
+	#ifdef DEBUG
+	printf( "lbb : fd = %d\n" , book.st.lbb_fd );
+	#endif
+
+	word_t _word_all = __read(  &(book.st) );
+	long _word_alen = strlen( _word_all );
+
+	printf( "read :: %ld\n" , _word_alen );
+
+	int compilation_res = compile_lbb( _word_all , &lines );
+	if ( _word_alen < 4 ) {
+		return compilation_res;
+	}
+	#ifdef DEBUG
+		printf( "compiled : %d\n" , compilation_res );
+		printf( "\n lines = \n k :: %.*s\n v :: %.*s\n" , 
+		(int)(lines[0].key).tal , (lines[0].key).sptr , 
+		(int)(lines[0].wry).tal , (lines[0].wry).sptr );
+	#endif
+
+	return 0;
+>>>>>>> in_vik/main
 }
 

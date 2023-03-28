@@ -1,12 +1,5 @@
 #include "hbar.h"
 
-#include <stdio.h>
-
-/**
- * NOTICE :: missing file hashing
- */
-
-
 #define MAX_STR 256
 
 #define SHA3_ASSERT( x )
@@ -15,7 +8,7 @@
 
 #undef get16bits
 #if ( defined( __GNUC__ ) && defined( __i386__ )) || defined( __WATCOMC__ ) \
-    || defined( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __TURBOC__ )
+|| defined( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __TURBOC__ )
     #define get16bits( d ) ( * ( ( const uint16_t * ) ( d ) ) )
 #endif
 #if !defined ( get16bits )
@@ -91,6 +84,7 @@ void __btoh( uint8_t b , char s[3] ) {
 }
 #endif
 #define byte_to_hex __btoh
+
 
 
 #ifndef hash_to_string
@@ -417,45 +411,6 @@ sha3_return_t sha3_hash_buffer( unsigned bit_size, enum SHA3_FLAGS flags, const 
 }
 
 
-char *hash_bar( char *hbar_in , unsigned level )  {
-
-    char hbar_out[MAX_STR];
-    memset( &hbar_out , 0 , sizeof( hbar_out ) );
-
-    int _ilen = strlen( hbar_in );
-    uint8_t *__hash;
-
-    switch ( level ) {
-        case 0: 
-        	sprintf( hbar_out , "@%x" , super_fast_hash( hbar_in , _ilen ) ); 
-        	break;
-        case 1:
-            sha3_init384( &__sha3 );
-            sha3_set_flags( &__sha3 , 1 );
-            sha3_update( &__sha3 , hbar_in , _ilen );
-            __hash = ( uint8_t * ) sha3_finalize( &__sha3 );
-            __htostr( hbar_out , __hash );
-            break;
-        case 2:
-            sha3_init512( &__sha3 );
-            sha3_set_flags( &__sha3 , 0 );
-            sha3_update( &__sha3 , hbar_in , _ilen );
-            __hash = ( uint8_t * ) sha3_finalize( &__sha3 );
-            __htostr( hbar_out , __hash );
-            break;
-        case 3:
-        default:
-            sha3_init256( &__sha3 );
-            sha3_set_flags( &__sha3 , 1 );
-            sha3_update( &__sha3 , hbar_in , _ilen );
-            __hash = ( uint8_t * ) sha3_finalize( &__sha3 );
-            __htostr( hbar_out , __hash );
-            break;
-    }
-    printf( "%s\n" , hbar_out );
-    
-    return strdup( hbar_out );
-}
 
 
 

@@ -1,4 +1,4 @@
-#include "probe.h"
+#include "kurl/probe.h"
 #include "point/point.h"
 #include "lbb/lbb.h"
 #include "hbar/hbar.h"

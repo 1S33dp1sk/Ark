@@ -10,11 +10,29 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
+<<<<<<< HEAD
 
+=======
+/**
+errors 
+ * 
+ * -1 :: cannot get current working dir
+ * -2 :: os path too long
+ * -3 :: lbb cannot be `access`ed()
+ * -4 :: no atherpoint found
+ * -5 :: cannot get host details `gethostbyname` failed
+ * -6 :: cannot initiate communication socket
+ * -7 :: could not bind to network address
+ * -8 :: could not listen on socket
+**/
+
+#define sp_network htons( 9999 )
+>>>>>>> in_vik/main
 #define sa_global_port "3490"  // the global conf port
 #define sa_global_queue 10   // queue size for connections
 #define sa_size sizeof( struct in_addr )
 #define sa6_size sizeof( struct in6_addr )
+<<<<<<< HEAD
 /**
  * ERRORS 
  * 
@@ -27,6 +45,8 @@
  * 7 :: could not bind to network address
  * 8 :: could not listen on socket
  */
+=======
+>>>>>>> in_vik/main
 
 char *__path_unix( char *__path , char *__filename ) {
 	int path_len = strlen( __path ) - 1 , fname_len = strlen( __filename ) - 1;
@@ -46,6 +66,7 @@ void sigchld_handler(int s) {
 }
 
 // get sockaddr, IPv4 or IPv6:
+<<<<<<< HEAD
 void *get_in_addr(struct sockaddr *sa) {
 	if (sa->sa_family == AF_INET) {
 		return &(((struct sockaddr_in*)sa)->sin_addr);
@@ -54,6 +75,21 @@ void *get_in_addr(struct sockaddr *sa) {
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
+=======
+void *get_in_addr( struct sockaddr *sa ) {
+	if (sa->sa_family == AF_INET) {
+		return &(((struct sockaddr_in*)sa)->sin_addr);
+	}
+	return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
+/***
+ * interface calls only check and return the
+ * native structure for the interface
+ * i.e :: only ATOMIC && GET but no SET is allowed here.
+ */
+
+>>>>>>> in_vik/main
 // node number : point
 // mount path : lbb
 int uni_interface( struct a_inmp *inmp ) {
@@ -65,8 +101,15 @@ int uni_interface( struct a_inmp *inmp ) {
 	memset( __path , 0 , mpath_max );
 	// get the current working dir
 	if ( getcwd( __path , mpath_max ) == NULL ) {
+<<<<<<< HEAD
 		printf( "cannot get working dir\n" );
 		return 1;
+=======
+		#ifdef DEBUG
+		printf( "cannot get working dir\n" );
+		#endif
+		return -1;
+>>>>>>> in_vik/main
 	}
 	// re-zero the `mp`
 	memset( path , 0 , mpath_max );
@@ -74,12 +117,18 @@ int uni_interface( struct a_inmp *inmp ) {
 	memcpy( path , __path , strlen( __path ) );
 	// add the `.lbb` name to the path
 	if ( __path_unix( path , ".lbb" ) == NULL ) {
+<<<<<<< HEAD
 		printf( "path too long\n" );
 		return 2;
+=======
+		printf( "cannot construct lbb path\n" );
+		return -2;
+>>>>>>> in_vik/main
 	}
 	// check calling process permissions
 	// for constructed path to lbb
 	if ( access( path , F_OK|R_OK ) != 0 ) {
+<<<<<<< HEAD
 		printf( "lbb cannot be accessed\n" );
 		return 3;
 	}
@@ -100,6 +149,27 @@ int uni_interface( struct a_inmp *inmp ) {
 	return 0;
 }
 
+=======
+		#ifdef DEBUG
+		printf( "lbb cannot be accessed\n" );
+		#endif
+		return -3;
+	}
+	// attach `atherpoint` to the directory path
+	if ( __path_unix( __path , "atherpoint" ) == NULL ) {
+		printf( "cannot construct point path\n" );
+		return -2;
+	}
+	// call the FIFO `stat` to retreive `inn`
+	if ( stat( __path , &__st ) == -1 ) {
+		printf("cannot initiate unix interface\n");
+		return -4;				
+	}
+	// get the inodenum from the struct `stat`
+	// and add the value to `inmp`
+	return 0;
+}
+>>>>>>> in_vik/main
 // S B L A
 int loc_interface( struct a_isok *isok ) {
 	
@@ -118,7 +188,11 @@ int loc_interface( struct a_isok *isok ) {
 				printf( "failed.\n exiting.\n" );
 			#endif
 			printf( "cannot initiate communication socket\n" );
+<<<<<<< HEAD
 			return 6;
+=======
+			return -6;
+>>>>>>> in_vik/main
 		}
 	}
 	#ifdef DEBUG
@@ -150,7 +224,11 @@ int loc_interface( struct a_isok *isok ) {
 
 	if ( res != 0 ) {
 		printf( "could not bind to local network address.\n" );
+<<<<<<< HEAD
 		return 7;
+=======
+		return -7;
+>>>>>>> in_vik/main
 	}
 	
 
@@ -163,7 +241,11 @@ int loc_interface( struct a_isok *isok ) {
 
 	if ( listen( _sok , 10 ) == -1 ) {
 		printf("cannot listen on socket.\n");
+<<<<<<< HEAD
 		return 8;
+=======
+		return -8;
+>>>>>>> in_vik/main
 	}
 
 	printf("server: waiting for connections...\n");
@@ -193,7 +275,11 @@ int loc_interface( struct a_isok *isok ) {
 		close( _newfd );  // parent doesn't need this
 	}
 }
+<<<<<<< HEAD
 
+=======
+// global socket && sbla
+>>>>>>> in_vik/main
 int glo_interface( struct a_idns *idns ) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
@@ -209,7 +295,11 @@ int glo_interface( struct a_idns *idns ) {
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE; // use my IP
 
+<<<<<<< HEAD
 	if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
+=======
+	if ((rv = getaddrinfo(NULL, sa_global_port, &hints, &servinfo)) != 0) {
+>>>>>>> in_vik/main
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
 	}
@@ -250,7 +340,11 @@ int glo_interface( struct a_idns *idns ) {
 		exit(1);
 	}
 
+<<<<<<< HEAD
 	if (listen(sockfd, BACKLOG) == -1) {
+=======
+	if (listen(sockfd, sa_global_queue) == -1) {
+>>>>>>> in_vik/main
 		perror("listen");
 		exit(1);
 	}
@@ -290,7 +384,11 @@ int glo_interface( struct a_idns *idns ) {
 
 	return 0;
 }
+<<<<<<< HEAD
 
+=======
+// blockchain socket + network name + netaddr
+>>>>>>> in_vik/main
 int blo_interface( struct a_ibna *ibna ) {
 	char *__argvs[3] = { "/home/kj/go/bin/geth" , "attach" , NULL };
 
@@ -298,7 +396,15 @@ int blo_interface( struct a_ibna *ibna ) {
 }
 
 
+<<<<<<< HEAD
 int atherinterface( int level , ani __ ) {
+=======
+// delegate
+nai native_interface( int level ) {
+
+	nai __;
+	memset( &__ , 0 , sizeof( __ ) );
+>>>>>>> in_vik/main
 
 	int _res = -1;
 
@@ -309,5 +415,49 @@ int atherinterface( int level , ani __ ) {
 		case 3: _res = blo_interface( &__.n_blo ); break;
 		default: break; 
 	}
+<<<<<<< HEAD
 	return _res;
 }
+=======
+	return __;
+}
+
+
+#ifndef native_address
+#include "../hbar/hbar.h"
+char *native_address( int level ) {
+	int res = -1;
+	nai __;
+	memset( &__ , 0 , sizeof( __ ) );
+	switch ( level ) {
+		case 0: 
+			res = uni_interface( &__.n_uni );
+			if ( res >= 0 ) {
+				return hashof( level , &__.n_uni , sizeof( struct a_inmp ) );
+			}
+			break;
+		case 1: 
+			res = loc_interface( &__.n_loc ); 
+			if ( res >= 0 ) {
+				return hashof( level , &__.n_loc , sizeof( struct a_isok ) );
+			}
+			break;
+		case 2: 
+			res = glo_interface( &__.n_glo );
+			if ( res >= 0 ) {
+				return hashof( level , &__.n_glo , sizeof( struct a_idns ) );
+			}
+			break;
+		case 3: 
+			res = blo_interface( &__.n_blo ); 
+			if ( res >= 0 ) {
+				return hashof( level , &__.n_blo , sizeof( struct a_ibna ) );
+			}
+			break;
+		default: 
+			break; 
+	}
+	return NULL;
+}
+#endif
+>>>>>>> in_vik/main

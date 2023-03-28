@@ -1,5 +1,9 @@
 #ifndef hbar
+<<<<<<< HEAD
     #define hbar hash_bar
+=======
+    #define hbar hashof
+>>>>>>> in_vik/main
 
 #include <stdint.h>
 #include <string.h>
@@ -44,10 +48,22 @@ sha3_return_t sha3_init( void *priv , unsigned bit_size );
 uint32_t super_fast_hash( char *data , int len );
 void byte_to_hex( uint8_t _ , char _s[3] );
 void hash_to_string( char *_hstr , uint8_t _ );
+<<<<<<< HEAD
 char *hash_bar( char *_in , unsigned level );
 
 #define sfh( _ ) \
     super_fast_hash( _ , strlen( _ ) )
+=======
+extern char *hashof( unsigned level , void *tohash , size_t thsize );
+extern char *fhash( unsigned level , char *filepath );
+
+
+#define sfh( __ ) \
+    super_fast_hash( __ , strlen( __ ) )
+
+#define sc_sfh( _ ) \
+    super_fast_hash( ( (char *) _ ) , 1 )
+>>>>>>> in_vik/main
 
 #define sha3_init256( priv ) \
     sha3_init( priv , 256 )
@@ -59,6 +75,17 @@ char *hash_bar( char *_in , unsigned level );
     sha3_init( priv , 512 )
 
 
+<<<<<<< HEAD
+=======
+#define hof_size( level ) \
+    level == 0 ? 1 : \
+    level == 1 ? sizeof( int ) : \
+    sizeof( int ) * ( ( level ) * ( level ) ) 
+
+#define sof_size( level ) \
+    ( hof_size( level ) * 2  )
+
+>>>>>>> in_vik/main
 
 
 

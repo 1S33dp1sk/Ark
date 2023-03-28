@@ -22,6 +22,7 @@ int __ap_fifo();
 int __ap_make();
 
 
+<<<<<<< HEAD
 
 int atherpoint( char *p_path , unsigned p_level ) {
 
@@ -33,6 +34,13 @@ int atherpoint( char *p_path , unsigned p_level ) {
 
     #ifdef DEBUG
         printf( "@point :: checking FIFO for atherpoint\n" );
+=======
+int atherpoint( void *point_name , apoint *__ ) {
+
+    memset( __ , 0 , sizeof( apoint ) );
+    #ifdef DEBUG
+        printf( "@point :: checking for atherpoint\n" );
+>>>>>>> in_vik/main
     #endif
 
     if ( !__ap_fifo( &__ ) ) {
@@ -43,6 +51,7 @@ int atherpoint( char *p_path , unsigned p_level ) {
 
         if ( !__ap_make() ) {
             printf( "@point :: unable to create atherpoint\n" );
+<<<<<<< HEAD
             return 2;
         }
     }
@@ -51,11 +60,25 @@ int atherpoint( char *p_path , unsigned p_level ) {
 
 
     return applier( &__ );
+=======
+            return -2;
+        }
+    }
+
+    __ -> lbb_fd = __ap_entry( ( char * ) point_name , __ -> __k__ );
+
+
+    return __ -> lbb_fd;
+>>>>>>> in_vik/main
 }
 
 int process_entry( char *entry , int e_len ) {
 
+<<<<<<< HEAD
     printf( "entry = %d@app_engine :: \n\t%s\n" );
+=======
+    printf( "entry = %d@app_engine :: \n\t%s\n" , e_len , entry );
+>>>>>>> in_vik/main
 
     return e_len > 10 ? 0 : 1;
 }
@@ -129,36 +152,65 @@ int socket_execute( struct apio *sexec ) {
     return 0;
 }
 
+<<<<<<< HEAD
 int applier( ap *a_point ){
 
     // get the current pid
     ( a_point -> e_ap ).__pid = getpid();
     // fork the process for the new pid
     if ( ( ( a_point -> t_ap ).__pid = fork() ) == -1 ) {
+=======
+int applier( apoint *a_point ){
+
+    // get the current pid
+    ( a_point -> from ).__pid = getpid();
+    // fork the process for the new pid
+    if ( ( ( a_point -> to_point ).__pid = fork() ) == -1 ) {
+>>>>>>> in_vik/main
         printf( "cannot start the atherpoint :: fork\n" );
         return 2;
     }
 
     // check calling process
+<<<<<<< HEAD
     if ( ( a_point -> t_ap ).__pid == 0 ) {
         printf( "current pid for reading :: %d\n" , ( a_point -> e_ap ).__pid );
         // read
         if ( ( ( a_point -> e_ap ).__fd = _ap_r_entry() ) == 0 ) {
+=======
+    if ( ( a_point -> to_point ).__pid == 0 ) {
+        printf( "current pid for reading :: %d\n" , ( a_point -> from ).__pid );
+        // read
+        if ( ( ( a_point -> from ).__fd = _ap_r_entry() ) == 0 ) {
+>>>>>>> in_vik/main
             printf( "cannot open atherpoint for reading\n");
             return 3;
         }
         printf( "\n-#-#-# engine -#-#-#\n" );
+<<<<<<< HEAD
         return app_engine( &(a_point -> e_ap) );
     }
     else {
         printf( "current pid for writing :: %d\n" , ( a_point -> t_ap ).__pid );
         // write
         if ( ( ( a_point -> t_ap ).__fd = _ap_w_entry() ) == 0 ) {
+=======
+        return app_engine( &(a_point -> from ) );
+    }
+    else {
+        printf( "current pid for writing :: %d\n" , ( a_point -> to_point ).__pid );
+        // write
+        if ( ( ( a_point -> to_point ).__fd = _ap_w_entry() ) == 0 ) {
+>>>>>>> in_vik/main
             printf( "cannot open atherpoint for writing\n");
             return 3;
         }
         printf( "\n#-#-# socket executive #-#-#\n" );
+<<<<<<< HEAD
         return socket_execute( &(a_point -> t_ap) );
+=======
+        return socket_execute( &(a_point -> to_point) );
+>>>>>>> in_vik/main
     }
 
     return 0;
@@ -182,9 +234,15 @@ int __ap_entry( char *_e_path , int _e_type ) {
 int _ap_r_entry() {
     int __apr , __flags = ( R_OK );
 
+<<<<<<< HEAD
     if ( access( __AP_NAME , __flags ) == 0 ) {
         __flags = O_RDONLY;
         __apr = open( __AP_NAME , __flags );
+=======
+    if ( access( __ap_name , __flags ) == 0 ) {
+        __flags = O_RDONLY;
+        __apr = open( __ap_name , __flags );
+>>>>>>> in_vik/main
     }
 
     return __apr > 0 ? __apr : 0;
@@ -195,9 +253,15 @@ int _ap_r_entry() {
 int _ap_w_entry() {
     int __apr , __flags = ( W_OK );
 
+<<<<<<< HEAD
     if ( access( __AP_NAME , __flags ) == 0 ) {
         __flags = O_WRONLY;
         __apr = open( __AP_NAME , __flags );
+=======
+    if ( access( __ap_name , __flags ) == 0 ) {
+        __flags = O_WRONLY;
+        __apr = open( __ap_name , __flags );
+>>>>>>> in_vik/main
     }
 
     return __apr > 0 ? __apr : 0;   
@@ -205,6 +269,7 @@ int _ap_w_entry() {
 #endif
 
 #ifndef __ap_fifo
+<<<<<<< HEAD
 int __ap_fifo( ap *__ ) {
     if ( ( ( __ -> ap_stat ).st_nlink == 0 ) 
         && 
@@ -214,13 +279,24 @@ int __ap_fifo( ap *__ ) {
         #endif
             return 1;
     }
+=======
+int __ap_fifo( char *point_name , struct stat *point_st ) {
+    // kindof a mutex because after `stat`
+    // st_nlink is atleast >= 1
+    if ( ( point_st -> st_nlink == 0 ) \
+        && stat( point_name , point_st ) == 0 ) { return 1; }
+>>>>>>> in_vik/main
     return 0;
 }
 #endif
 
 #ifndef __ap_make
 int __ap_make() {
+<<<<<<< HEAD
     if ( !mkfifo( __AP_NAME , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
+=======
+    if ( !mkfifo( __ap_name , ( S_IRWXU | S_IXGRP | S_IXOTH ) ) ) {
+>>>>>>> in_vik/main
         return 1;
     }
     return 0;

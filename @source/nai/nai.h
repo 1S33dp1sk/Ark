@@ -1,4 +1,5 @@
 #ifndef nai
+<<<<<<< HEAD
 	#define nai atherinterface // native ather interface
 
 #define DEBUG
@@ -32,6 +33,12 @@
 // blockchain identitfer must be 3 characters
 #define bid_max 3
 
+=======
+
+// #define DEBUG
+
+
+>>>>>>> in_vik/main
 /**
  * since `__nai` is a union we will use a concept called 
  * 	common initial sequence ( cis ) for the structs a_i*
@@ -40,6 +47,11 @@
  * accessed is a *cis*
  */
 
+<<<<<<< HEAD
+=======
+#define __nai_name "nativeainterface"
+
+>>>>>>> in_vik/main
 struct a_inmp {
 	long inn; // node number
 	char imp[mpath_max]; // mount path
@@ -50,7 +62,11 @@ struct a_isok {
 	char __imp[mpath_max]; //cis
 
 	unsigned isv; // socket value
+<<<<<<< HEAD
 	// struct sockaddr_storage isa;
+=======
+	struct sockaddr_storage isa;
+>>>>>>> in_vik/main
 	int isp; // socket port
 };
 
@@ -59,7 +75,11 @@ struct a_idns {
 	char __imp[mpath_max]; // cis
 
 	unsigned __isv; // cis
+<<<<<<< HEAD
 	char __isa[saddr_max]; // cis
+=======
+	struct sockaddr_storage isa; // cis
+>>>>>>> in_vik/main
 	int __isp; // cis
 
 	char ids[dstr_max]; // sub domain
@@ -72,7 +92,11 @@ struct a_ibna {
 	char __imp[mpath_max]; // cis
 
 	unsigned __isv; // cis
+<<<<<<< HEAD
 	char __isa[saddr_max]; // cis
+=======
+	struct sockaddr_storage isa; // cis
+>>>>>>> in_vik/main
 	int __isp; // cis
 
 	char __ids[dstr_max]; // cis
@@ -83,12 +107,17 @@ struct a_ibna {
 	char iba[baddr_max]; // blockchain address ( public key )
 };
 
+<<<<<<< HEAD
 
 union __nai {
+=======
+typedef union __nai {
+>>>>>>> in_vik/main
 	struct a_inmp n_uni; // universal ( unix )
 	struct a_isok n_loc; // local
 	struct a_idns n_glo; // global
 	struct a_ibna n_blo; // blockchain
+<<<<<<< HEAD
 };
 
 #define ani union __nai
@@ -96,11 +125,24 @@ union __nai {
 
 
 int atherinterface( int level , ani __ );
+=======
+} nai;
+
+
+int uni_interface( struct a_inmp *n_uni );
+int loc_interface( struct a_isok *n_loc );
+int glo_interface( struct a_idns *n_glo );
+int blo_interface( struct a_ibna *n_blo );
+
+nai native_interface( int level );
+char *native_address( int level );
+>>>>>>> in_vik/main
 
 
 #endif
 
 
+<<<<<<< HEAD
 #ifndef log_nai
 	void log_uni( struct a_inmp n_uni ) {
 		printf( "native ather interface\n" );
@@ -109,3 +151,5 @@ int atherinterface( int level , ani __ );
 		printf( "mount path::		%s\n" , n_uni.imp );
 	}
 #endif
+=======
+>>>>>>> in_vik/main
