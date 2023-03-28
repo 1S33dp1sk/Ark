@@ -479,7 +479,7 @@ uint32_t super_fast_hash (char *data , int len) {
 int find_ip_address( char *hostname , char *ip_address ) {  
       struct hostent *host_name;     
       struct in_addr **ipaddress;     
-      int count;     
+      int count;
       if ( ( host_name = gethostbyname( hostname ) ) == NULL ) { 
             printf("\nIP Address Not Found\n");         
             return 1;

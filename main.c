@@ -88,7 +88,7 @@
  *  for each 
  *  1.  person(unique phone,ethereum address,... for example)/ 
  *  2.  each group of people(unique LAN)/ 
- *  3.  each collection of groups(unique sub_net)
+ *  3.  each collection of groups(unique subnet)
  *  4.  each (global ip) 
  *  5.  each protocol type  
  * @ protocol includes the different machine processes that are
