@@ -1,91 +1,20 @@
+/// ixr \\\
+The indexer
 
 #ifndef __IXR__H
-#define LOG_ERR 1
-#define OUTPUT 1
 #include "ixr.h"
 #endif
 
-
 #ifndef __ixr_name 
-
-	//expanding args
-	#define ixr_mem 	((void *)&___header.head)
-	#define ixr_ubuf	((uchar *)&___header.head)
-	#define ixr_buf		((char *)&___header.head)
-	#define ixr_head	((char const *)&___header.head)
-	#define ixr_h_args ___header.__size, ___header.d_count, ___header.checksum
-	#define __eixrh(x) x->__size, x->d_count, x->checksum
-	#define __ihsz(x) x->__size
-	// unistd flags for `open`&`creat`
-	#define __ixr_start_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
-	#define __ixr_access_flags (O_RDWR|O_NOFOLLOW_ANY)
-	#define __ixr_pmode (S_IRWXU|S_IXGRP|S_IXOTH)
-
-	/********* files *********/
-
-	ulong __fsize(char const *__fpath){
-		struct stat __;
-		memset(&__,0,sizeof(struct stat));
-		if(stat(__fpath,&__)!=0){return 0;}
-		return __.st_size;
-	};
-
-	ulong __iosize(char const *__fpath){
-		struct stat __;
-		memset(&__,0,sizeof(struct stat));
-		if(stat(__fpath,&__)!=0){return 0;}
-		return __.st_blksize;
-	};
-
-	ulong __inodenum(char const *__fpath){
-		struct stat __;
-		memset(&__,0,sizeof(struct stat));
-		if(stat(__fpath,&__)!=0){return 0;}
-		return __.st_ino;
-	};
-
-	uns __dmode(char const *__fpath){
-		struct stat __;
-		memset(&__,0,sizeof(struct stat));
-		if(stat(__fpath,&__)!=0){return 0;}
-		return __.st_mode;
-	};
-
-	ulong __file_r(char const *__cpath){
-		if (access(__cpath,R_OK)==0){
-			return 1;
-		}
-		return 0;
-	};
-
-	ulong __file_w(char const *__cpath){
-		if (access(__cpath,W_OK)==0){
-			return 2; 
-		}
-		return 0;
-	};
-
-	ulong __file_x(char const *__cpath){
-		if (access(__cpath,X_OK)==0){
-			return fsze(__cpath);
-		}
-		return 0;
-	};
-
-	char const *__getcaller(){
-
-		return (char const *)__FILE__;
-	};
-
-
+	#define __ixr_name "indexer"
 	/********* d-types *********/
 
-	dpoint_t ref_point(void const *__arg, char const *__key, char const *__format) {
+	d_point ref_point(void const *__arg, char const *__key, char const *__format) {
 		if(__key[0]=='&') {
 			++__key;
 		};
 		ulong keylen=str_rwings(__key);
-		dpoint_t __point; memset(&__point, 0, size_dpoint_t);
+		d_point __point; memset(&__point, 0, size_dpoint);
 		ulong packedlen=__ixr_argument(__format, __arg);
 		#ifdef DEBUG
 			printf("packed length :: %lu\n", packedlen);
@@ -93,7 +22,7 @@
 		__point.c_index=__cindex;
 		__point.c_name=__key;
 		__point.c_ref=__arg;
-		__point.d_fmt=__format;
+		__point.c_fmt=__format;
 
 		return __point;
 	};
@@ -107,11 +36,6 @@
 		case ixr_fld:		return __fld_fmt;
 		default: return NULL;
 		};
-	};
-
-	char const *ixr_address(void *cis_ixr, ixr_t ixr_type) {
-	
-		return NULL;
 	};
 
 	char const *__kaddress(char const *__hash) {
@@ -155,7 +79,7 @@
 		char urv[urv_len];memset(&urv, 0, sizeof(urv));
 		sprintf(urv, "%lu:%s", __cindex, __rv);
 		return (uchar const *)strdup(urv);
-	}
+	};
 
 	// irv
 	char const *__irv(char const *__key, char const *__value) {
@@ -193,7 +117,6 @@
 		return __index_increment();
 	};
 	
-
 	// start the indexer
 	ulong __idx_start(){
 		if(__cindex!=0){
@@ -256,8 +179,7 @@
 			printf("offset ::: %lu\n", ___offset);
 		#endif
 		return __index_increment();
-	}
-
+	};
 
 	int __index_urn(uchar const *_key, char const *_val) {
 
@@ -265,7 +187,7 @@
 	};
 
 	// irv -> __setnext -> (reference, name)
-	int __index_point(dpoint_t *dst) {
+	int __index_point(d_point *dst) {
 
 		return __index_urn(dst->c_ref, dst->c_name);
 	};
@@ -273,8 +195,9 @@
 	/********* indexer IO *********/
 
 	// initiate and set memory to zero for the header struct
-	void *__header__() {
-		return memset(&___header, 0, sizeof(ixr_h));
+	ixr_h *__header__() {
+
+		return (ixr_h *) memset(&___header, 0, sizeof(ixr_h));
 	};
 
 	// read the indexer header \\
@@ -314,8 +237,6 @@
 		return 0;		
 	};
 
-
-
 	int __rd_ixrh() {
 		#ifdef DEBUG
 			printf("reading :::\n");
@@ -343,7 +264,6 @@
 		#endif
 		return 0;
 	};
-
 
 	// write the indexer header \\
 	OFFSET ALWAYS 0
@@ -382,8 +302,6 @@
 		return 0;
 	};
 
-
-
 	// obtain header properties { ENVIROMENT }
 	int __refresh_header() {
 		___header.__size=fsze(__lbb_indexfile);
@@ -403,14 +321,12 @@
 		return __refresh_header();
 	};
 
-
 	ixr_h *indexer_header() {
 		ulong header_size=sizeof(___header);
 		ixr_h *temp = malloc(header_size);
 		memmove(temp, &___header, header_size);
 		return (ixr_h *)temp;
 	}
-
 
 	// start the indexer 
 	int indexer_start() {
@@ -453,7 +369,6 @@
 		#endif
 		return 0;
 	};
-
 
 	// index any incoming idrs
 	int __indexer__(char const *idr) {
@@ -531,31 +446,74 @@
 		printf("point name  	: %s\n", ist_name(__));
 	};
 
-	// log indexer prototype
-	void log_ixrh(ixr_h *ixrh) {
-		printf("\nindexer head ::\n");
-		printf("\tfldsze=%lu", ixrh->__size);
-		printf("\tdcount=%lu", ixrh->d_count);
-		printf("\tchksum=%lu", ixrh->checksum);
-		printf("\n");
+
+ixr_h *ixr_get(into_st *ist) {
+	ixr_h *header=__header__();
+	char const *var_name=(char const *)i_narg(ist, 1);
+	#ifdef PROCESS
+		printf("@ATP<get>(%s)\n", var_name);
+	#endif
+	return header;
+};
+
+
+ixr_h *ixr_set(into_st *ist) {
+	ixr_h *header=__header__();
+	char const *var_name=(char const *)i_narg(ist, 1);
+	char const *var_val=(char const *)i_narg(ist, 2);
+	#ifdef PROCESS
+		printf("@ATP<set>(%s){%s}\n", var_name, var_val);
+	#endif
+	return header;
+};
+
+ixr_h *ixr_prun(into_st *ist) {
+	ixr_h *header=__header__();
+
+	char const *p_name=(char const *)i_narg(ist, 1);
+	#ifdef PROCESS
+		printf("@-Protocol : run    :: %s\n", p_name);
+	#endif
+	return header;
+};
+
+ixr_h *ixr_psave(into_st *ist) {
+	ixr_h *header=__header__();
+	char  const *d_name=(char const *)i_narg(ist, 1);
+	#ifdef PROCESS
+		printf("@-Protocol : save   :: %s\n", d_name);
+	#endif
+	return header;
+};
+
+ixr_h *ixr_pcollect(into_st *ist) {
+	ixr_h *header=__header__();
+	char  const *f_att=(char const *)i_narg(ist, 1);
+	#ifdef PROCESS
+		printf("@-Protocol : collect :: %s\n", f_att);
+	#endif
+	return header;
+};
+
+
+#define into_argc(x) ((int)(x->switcher))
+
+ixr_h *args3head(into_st *in_args) {
+	switch(into_argc(in_args)) {
+		case 2:
+			return ixr_get(in_args);
+		case 3:
+			return ixr_set(in_args);
+		case 4:
+			return ixr_prun(in_args);
+		case 5:
+			return ixr_pcollect(in_args);
+		case 6:
+			return ixr_psave(in_args);
+		default:
+			return __header__();
 	};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+};
 
 
 

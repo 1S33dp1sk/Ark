@@ -5,47 +5,8 @@ little black book
 #include "lbb.h"
 #endif
 
-#define OUTPUT 1
-#define LOG_ERR 1
-
-#ifndef __os_name
-#define __os_delim "/"
-	#if HAVE_TARGET_CONDITIONALS_H
-		#include <targetConditionals.h>
-	#endif
-	#if _WIN64
-		#define __os_name "windows:64b\0"
-		#undef __os_delim
-		#define __os_delim '\\'
-	#elif _WIN32
-		#define __os_name "windows\0"
-		#undef __os_delim
-		#define __os_delim "\\"
-	#elif defined(TARGET_OS_IPHONE)
-		#define __os_name "apple:iphone\0"
-	#elif defined(TARGET_OS_MAC)
-		#define __os_name "apple:macos\0"
-	#elif __APPLE__!=0
-		#define __os_name "apple\0"
-	#elif __linux__!=0
-		#define __os_name "unix:linux\0"
-	#elif __ANDROID__!=0
-		#define __os_name "unix:android\0"
-	#elif BSD
-		#define __os_name "bsd\0"
-	#elif __unix__
-		#define __os_name "unix\0"
-	#else
-		#define __os_name "\0"
-	#endif
-#endif
-
-
 #ifndef __lbb_name
 	#define __lbb_name "linked binary book"
-
-
-
 
 // try to create a { SHARED } file
 // get the mounted status of said file
@@ -81,7 +42,7 @@ int __ap_fifo(char const *__path){
 // socket connections or commands , etc..
 ulong __ap_writer() {
 	ulong retres;
-	int __fd=open(__lbb_locking,__lbb_lock_writer);
+	int __fd=open(__lbb_locking,__lock_writer);
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open writer\n");
@@ -107,7 +68,7 @@ ulong __ap_writer() {
 MUST NOT HAVE ANY LOCKING BITS
 ulong __ap_reader() {
 	ulong retres=0;
-	int __fd=open(__lbb_locking,__lbb_lock_reader);
+	int __fd=open(__lbb_locking,__lock_reader);
 	if(__fd==-1){
 		printf("cannot open reader\n");
 		_exit(1);
@@ -128,7 +89,7 @@ ulong __ap_reader() {
 
 ulong __lbb_file_r(char const *__fpath) {
 	ulong retres=0;
-	int __fd=open(__fpath,__lbb_lock_reader);
+	int __fd=open(__fpath,__lock_reader);
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open reader\n");
@@ -144,7 +105,7 @@ ulong __lbb_file_r(char const *__fpath) {
 
 ulong __lbb_file_w(char const *__fpath) {
 	ulong retres=0;
-	int __fd=open(__fpath,__lbb_lock_writer);
+	int __fd=open(__fpath,__lock_writer);
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open reader\n");
@@ -158,7 +119,6 @@ ulong __lbb_file_w(char const *__fpath) {
 	return retres;
 };
 
-#define LOG_ERR 1
 ulong __lbb_file_n(char const *__fpath) {
 	ulong retres=0;
 	ulong temp=str_rwings(__fpath), __total=temp;
@@ -250,10 +210,6 @@ ulong __writeb(uchar *content,ulong c_size) {
 	return 0;
 };
 
-int __dgetfd(char const *__fpath) {
-	return open(__fpath, __lbb_lock_reader);
-};
-
 char const *__readb(ulong f_size, ulong f_d,ulong r_o){
 	ulong __res=r_o,__fsz=f_size,__fd=f_d;
 	uchar lbb_content[__fsz+1];
@@ -283,6 +239,13 @@ void __readin(char *buffer, ulong size, ulong stfd) {
 	buffer[__fsz]='\0';
 };
 
+
+void lbb_close(){
+	close(shd_fd);
+	memset(&lbb_shard,0,sizeof(struct __lbb_shard));
+};
+
+
 ulong __fillb(){ // create &-> fill the book
 	ulong __res=__writeb((uchar*)shd_key,LBB_BUFFER_SIZE);
 	lbb_close();
@@ -303,11 +266,6 @@ char const *read_book(char const *__cpath){
 		return NULL;
 	}
 	return __readb(cm_st.m_size, __dgetfd(__cpath), 0);
-};
-
-void lbb_close(){
-	close(shd_fd);
-	memset(&lbb_shard,0,sizeof(struct __lbb_shard));
 };
 
 ulong reset_book(){
@@ -331,7 +289,6 @@ int lbb(char const *__cpath,ulong __lock){
 	lbb_close();
 	return res;
 };
-
 
 
 /*******************************************************************/
@@ -411,7 +368,7 @@ spstr sepstr_offset(char *string, char *seperator) {
 		};
 		x+=1;
 	};
-	struct sepstr res = {
+	spstr res = {
 		.str=string,
 		.str_length=x,
 		.sep=seperator,
@@ -445,7 +402,7 @@ void test_spaces_and_tabs() {
 };
 
 void test_init_sepstr(char const*fullstr, char const*sep) {
-	struct sepstr res;
+	spstr res;
 	if(fullstr==NULL||sep==NULL){
 		res=sepstr_offset("mykey:has a very niceth=ce value of ", "=c");
 	}
@@ -539,90 +496,6 @@ int get_kstat(char const *__path, k_stat *kfile) {
 };
 
 
-/*******************************************************************/
-
-void log_dpoint(dpoint_t *dst_point) {
-	printf("dst point :: \n");
-	printf("@%lu\n", dst_point->c_index);
-	printf("name :%s\n",dst_point->c_name);
-	printf("ref  :%s\n",dst_point->c_ref);
-};
-
-void log_kstat(k_stat *kfile) {
-	printf("dcloud : K\n");
-	printf("uname	= %s\n", kfile->u_name);
-	printf("iaddr	= %s\n", kfile->i_addr);
-};
-
-void log_sstat(s_stat *sfile){
-	printf("dcloud : ATP :: dist ::: shared\n");
-	printf("path	= %s\n", sfile->s_path);
-	printf("iploc	= %s\n", sfile->s_ipv);
-	printf("port	= %s\n", __s_port);
-	printf("addr	= %s\n", sfile->s_addr);
-	printf("term	= %s\n", sfile->s_term==0?"PUBLIC":"PRIVATE");
-};
-
-void log_mstat(m_stat *mfile){
-	printf("dcloud : ATP :: dist ::: mounted\n");
-	printf("path	= %s\n", mfile->m_path);
-	printf("nodenum	= %lu\n", mfile->m_inn);
-	printf("size	= %lu\n",mfile->m_size);
-	printf("mode	= %lu\n",mfile->m_mode);
-	printf("blkio	= %lu\n",mfile->m_blksz);
-};
-
-void log_strld(strld __){
-	printf("string\n");
-	printf("length=%d\n",__.len);
-	printf("data:=%s\n",__.data);
-};
-
-void log_sepstr(spstr ss){
-	printf("string=%s\nlength=%d\nseperator=%s\noffset=%d\n",ss.str,ss.str_length,ss.sep,ss.sep_offs);
-};
-
-void log_ptrdx(struct __ptrdx *ptrdx) {
-	printf("dcloud : K :: ptrdx\n");
-	printf("pidx :%lu\n",ptrdx->pidx);
-	printf("tri  :%lu\n",ptrdx->tri);
-};
-
-void log_esptr(ulong *esptr) {
-	printf("dcloud : K :: esptr\n");
-	ulong c=0;
-	do {
-		printf(":%lu=%lu\n",c,esptr[c]);c+=1;
-	}
-	while(*esptr++);
-};
-
-void log_process_ids(ulong p_pid, ulong c_pid) {
-   printf("process ids ::\n");
-   printf("p.pid    =%lu\n",p_pid);
-   printf("c.pid    =%lu\n",c_pid);
-};
-
-void log_process_schema(ulong p_pid, ulong c_pid) {
-    printf("p_pid :: %lu",p_pid);
-    printf("\nc_pid :: %lu",c_pid);
-    printf("\nsuccess=%d\tnsucess=%d\n",CALL_SUCC(c_pid),CALL_NSUC(c_pid));
-    printf("call next ? %lu\n",CALL_NEXT(c_pid));
-};
-
-void log_at_protoname(atp_t __atpname) {
-	switch(__atpname) {
-	case atp_get: 			printf("ATP : get       ::\b"); break;
-	case atp_set: 			printf("ATP : set       ::\b"); break;
-	case atp_return: 		printf("ATP : return    ::\b"); break;
-	case atp_retain:		printf("ATP : retain    ::\b"); break;
-	case atp_retreive: 	printf("ATP : retreieve ::\b"); break;
-	case atp_dcloud:		printf("ATP <dcloud> :::\n"); break;
-	default:					printf("{Unknown}\n"); break;
-	};
-};
-
-/*******************************************************************/
 
 ulong __get_long_digits(ulong num) {
 	ulong cnum=((ulong)(num/10));
@@ -650,7 +523,7 @@ char const *__get_fcontents(char *__conts, ulong __size) {
 	return (char const *)strdup(__);
 };
 
-void free_fields(fld **flds){
+void free_fields(cfld **flds){
 	ulong c=0;
 	while(*flds++){
 		free(flds[c]);
@@ -679,7 +552,7 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	ulong lbb_dd=__lbb_file_n(fld_name);
 
 	// reset the fld to be to 0
-	fld field; memset(&field,0,size_fld);
+	cfld field; memset(&field,0,size_cfld);
 	char *__buffer=(char *)&(field.fld_con.etc);
 	__buffer[4095]='\0';
 
@@ -720,12 +593,12 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 			printf("fld : read size      :: %lu\n", cst.chksize);
 			printf("fld : file checksum  :: %s\n", cst.chksum);
 		#endif
-		#ifdef OUTPUT
-			OUT_ASCII(lbb_dd, cst.chksize);		
-			OUT_ASCII(lbb_dd, cst.chkname);
-			OUT_ASCII(lbb_dd, cst.chksum);
-			OUT_ASCII(lbb_dd, field_content(field));
-		#endif		
+		// #ifdef OUTPUT
+		// 	OUT_ASCII(lbb_dd, cst.chksize);		
+		// 	OUT_ASCII(lbb_dd, cst.chkname);
+		// 	OUT_ASCII(lbb_dd, cst.chksum);
+		// 	OUT_ASCII(lbb_dd, field_content(field));
+		// #endif		
 		// pack the contents as binary with s indicator
 		c+=1;
 	};
@@ -812,7 +685,7 @@ static const void *ne=(char const *)(void *)'\0';
 		default:"unknown")
 
 int get_freader(m_stat *mst) {
-	int _fd=open(mst->m_path,__lbb_lock_reader);
+	int _fd=open(mst->m_path,__lock_reader);
 	if(_fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open reader for : %s\n", mst->m_path);
@@ -840,7 +713,6 @@ char const *__lbb_command(char const *__cpath, char const *__args) {
 	};
 	return __args;
 };
-
 
 char const *__lbb_filepath(char const *__fpath, sterm __term) {
 	#ifdef PROCESS
@@ -932,19 +804,98 @@ void const *__lbb_type_args(lbb_at __atype) {
 	return __ne;
 };
 
-
-
-
 int __init_field(char const *arg) {
 	m_stat cm_st;
 	get_mstat(arg, &cm_st);
 	printf("argument : %s\n", arg);
 	conv_fields(&cm_st);
 	return 0;
-}
+};
+#define into_size (ulong)(sizeof(into_st))
 
 
-#define field(...) __init_field(#__VA_ARGS__)
+void *__into__(into_st *st) {
+	
+	return memset(st, 0, sizeof(into_st));
+};
+
+	into_st *__no_entry__(atp_act *proto_call) {
+		#ifdef PROCESS
+			printf("@no_entry@\n");
+		#endif
+		_exit(1);
+		return NULL;
+	}
+
+	into_st *__info__(atp_act *proto_call) {
+		#ifdef PROCESS
+			printf("@ixr\n");
+		#endif
+		return NULL;
+	};
+
+	into_st *__pointer__(atp_act *proto_call) {
+		char const *ptr_name = i_argument(proto_call);
+		#ifdef PROCESS
+			printf("@ptr:%s\n", ptr_name);
+		#endif
+		return NULL;
+	};
+
+	into_st *__field__(atp_act *proto_call) {
+		char const *fld_name = i_argument(proto_call);
+		#ifdef PROCESS
+			printf("@fld : %s\n", fld_name);
+		#endif
+		return NULL;
+	};
+
+	into_st *__w3__(atp_act *proto_call) {
+
+		return NULL;
+	}
+
+	into_st *__point__(atp_act *proto_call) {
+		char const *point_name = i_argument(proto_call);
+		#ifdef PROCESS
+			printf("@pnt : %s\n", point_name);
+		#endif
+		return NULL;
+	};
+
+	into_st *dcloud(atp_act *proto_call) {
+		char const *dc_address=i_narg(proto_call, 1);
+		#ifdef PROCESS
+			printf("d-%s\n", dc_address);
+		#endif
+		return NULL;
+	};
+
+	#define p_switcher(x) (x->switcher)
+
+	into_st *act2args(atp_act *proto_call) {
+		switch(p_switcher(proto_call)) {
+		case -1 : return __no_entry__(proto_call);
+		case 0  : return __info__(proto_call);
+		case 1  : return __pointer__(proto_call);
+		case 2  : return __field__(proto_call);
+		case 3  : return __pointer__(proto_call);
+		default : return dcloud(proto_call);
+		};
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
