@@ -25,11 +25,13 @@ chain_names = {
 	43114		:	'AVALANCE',
 	
 	'TestNet1'	:	'TestNet1',
+	'Testnet1'	:	'TestNet1',
 	'TN1'		:	'TestNet1',
 	'1234'		:	'TestNet1',
 	1234		:	'TestNet1',
 	
 	'TestNet4'	:	'TestNet4',
+	'Testnet4'	:	'TestNet4',
 	'TN4'		:	'TestNet4',
 	'4321'		:	'TestNet4',
 	4321		:	'TestNet4'

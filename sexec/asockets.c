@@ -1,65 +1,105 @@
-#include <stdio.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <netdb.h>
+#include<stdio.h>
+#include<string.h>	//strlen
+#include<stdlib.h>	//strlen
+#include<sys/socket.h>
+#include<arpa/inet.h>	//inet_addr
+#include<unistd.h>	//write
 
-#define PORT_ACCEPT "9999"
+#include<pthread.h> //for threading , link with lpthread
 
-typedef enum {
-	ATOMIC ,
-	LOCAL,
-	GLOBAL,
-	UNIVERSAL
-} as_type;
+void *connection_handler(void *);
 
-
-
-int nit_ather_socket( as_type _as_type ) {
-
-	int __listener;
-	int __rv;
-
-	int G2G = 1;
-
-	struct addrinfo as_hints , *as_info , *temp;
-	memset( &as_hints , 0 , sizeof ( as_hints ) );
-
-	// check if socket already exsits
-
-	switch ( _as_type ) {
-		default:
-			as_hints.ai_family = AF_UNSPEC;
-			as_hints.ai_socktype = SOCK_STREAM;
-			as_hints.ai_flags = AI_PASSIVE;
-			break;
+int main(int argc , char *argv[]) {
+	int socket_desc , new_socket , c , *new_sock;
+	struct sockaddr_in server , client;
+	char *message;
+	
+	//Create socket
+	socket_desc = socket(AF_INET , SOCK_STREAM , 0);
+	if (socket_desc == -1)
+	{
+		printf("Could not create socket");
 	}
-
-	if ( ( __rv = getaddrinfo( NULL , PORT_ACCEPT , &as_hints , &as_info ) ) != 0 ) {
-		printf("ERROR :: %s : (%s)\n", "getaddrinfo" , gai_strerror( __rv ) );
-		return -1;
+	
+	//Prepare the sockaddr_in structure
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = INADDR_ANY;
+	server.sin_port = htons( 8888 );
+	
+	//Bind
+	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
+	{
+		puts("bind failed");
+		return 1;
 	}
-
-	for ( temp = as_info ; temp != NULL ; temp = temp -> ai_next ) {
-		__listener = socket( temp -> ai_family , temp -> ai_socktype , temp -> ai_protocol );
-		if ( __listener < 0 )
-			continue;
-		setsockopt( __listener , SOL_SOCKET , SO_REUSEADDR , &G2G , sizeof( int ) );
-		if ( bind( __listener , temp -> ai_addr , temp -> ai_addrlen ) < 0 )
-			continue;
-		break;
+	puts("bind done");
+	
+	//Listen
+	listen(socket_desc , 3);
+	
+	//Accept and incoming connection
+	puts("Waiting for incoming connections...");
+	c = sizeof(struct sockaddr_in);
+	while( (new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
+	{
+		//Reply to the client
+		// message = "\n\t.aether>Aether";
+		// write( new_socket , message , strlen( message ) );
+		puts(" #.aether ");
+		
+		pthread_t sniffer_thread;
+		new_sock = malloc(1);
+		*new_sock = new_socket;
+		
+		if( pthread_create( &sniffer_thread , NULL ,  connection_handler , (void*) new_sock) < 0) {
+			perror("could not create thread");
+			return 1;
+		}
+		
+		//Now join the thread , so that we dont terminate before the thread
+		//pthread_join( sniffer_thread , NULL);
 	}
-
-	freeaddrinfo( as_info );
-	return temp == NULL ? -2 : __listener;
+	
+	if (new_socket<0)
+	{
+		perror("accept failed");
+		return 1;
+	}
+	
+	return 0;
 }
 
+/*
+ * This will handle connection for each client
+ * */
+void *connection_handler(void *socket_desc)
+{
+	//Get the socket descriptor
+	int sock = *(int*)socket_desc;
+	int read_size;
+	char *message , client_message[2000];
+	
+	//Send some messages to the client
+	message = "\n\tAether -> .aether/(P)ath , (C)onnc , C(all) , ENTRY{}\n";
+	write(sock , message , strlen(message));
+	
+	//Receive a message from client
+	while( ( read_size = recv( sock , client_message , 2000 , 0 ) ) > 0 ) {
+		//Send the message back to client
 
-
-int main( int argc , char **argv ) {
-	if ( argc == 2 ){
-		return nit_ather_socket( 0 );
+		write( sock , client_message , strlen( client_message ) );
 	}
-
-	printf("Usage :: @sockets [0|1|2|3]\n");
-	return 1;
+	
+	if(read_size == 0) {
+		puts("Client disconnected");
+		fflush(stdout);
+	}
+	else if(read_size == -1) {
+		perror("recv failed");
+	}
+		
+	//Free the socket pointer
+	free(socket_desc);
+	
+	return 0;
 }
