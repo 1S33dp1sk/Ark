@@ -1,11 +1,12 @@
 #ifndef __ANETSTD__H
+    #define __ANET_IDX 4
+    #define __ANETSTD__H __ANET_IDX
 /**
  * 
  * tests should be done here per header, and checked against to result
  * in a pre defined manner to ensure consistant execution across devices and 
  * systems
 **/
-#define __ANET_IDX 2
 
 #ifndef __anet_unistd
 #include <unistd.h>
@@ -82,5 +83,36 @@
 #define __anet_arpa_inet __ANET_IDX
 #endif
 
-#define __ANETSTD__H __ANET_IDX
+#ifndef __os_name
+#define __os_delim "/"
+    #if HAVE_TARGET_CONDITIONALS_H
+        #include <targetConditionals.h>
+    #endif
+    #if _WIN64
+        #define __os_name "windows:64b\0"
+        #undef __os_delim
+        #define __os_delim "\\"
+    #elif _WIN32
+        #define __os_name "windows\0"
+        #undef __os_delim
+        #define __os_delim "\\"
+    #elif defined(TARGET_OS_IPHONE)
+        #define __os_name "apple:iphone\0"
+    #elif defined(TARGET_OS_MAC)
+        #define __os_name "apple:macos\0"
+    #elif __APPLE__!=0
+        #define __os_name "apple\0"
+    #elif __linux__!=0
+        #define __os_name "unix:linux\0"
+    #elif __ANDROID__!=0
+        #define __os_name "unix:android\0"
+    #elif BSD
+        #define __os_name "bsd\0"
+    #elif __unix__
+        #define __os_name "unix\0"
+    #else
+        #define __os_name "\0"
+    #endif
+#endif
+
 #endif

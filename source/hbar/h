@@ -1,14 +1,6 @@
 #ifndef __HBAR__H
-    #include <unistd.h>
-    #include <stdlib.h>
-    #include <stddef.h>
-    #include <stdint.h>
-    #include <stdio.h>
-    #include <string.h>
-    #include <fcntl.h>
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include "utypes.h"
+    #include "karch_512.d"
+    
     #define hlv h_level
 
     static uns h_level=0;

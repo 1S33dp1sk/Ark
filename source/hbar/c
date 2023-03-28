@@ -5,7 +5,7 @@ hash bar
 #include "hbar.h"
 #endif
 
-#ifndef __hbar_name 
+#ifndef __hbar_name
 	#define __hbar_name "hash_bar"
 	#define byte_to_hex __btoh
 	#define hash_to_strl h_str_tl 
