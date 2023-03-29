@@ -96,6 +96,25 @@
 
 	static const uns mods_count=arr_size(mods);
 
+	// get this architicture modificiations {{ CERTIFICATE }}
+	int arch_mods(char const *__3curl){
+		ulong fieldname=0, ccc__offset=0;
+		char const *__mod,*__crm,*__3c;
+		ulong __len=0, __offset=0;
+		int c=0; // count
+		for(;c<mods_count;c++){
+			__mod=(char*)mods[c];
+			__crm=(char*)charms[c];
+			__3c=ccopy_to_path(__crm,__3curl);
+			__len=arch_tfile(__3c);
+			__offset+=arch_fpermissions(__3c);
+			ccc__offset+=arch_foffset(__3c,__offset);
+			fieldname=arch_fname(__crm,ccc__offset);
+		}
+		return 0;
+	}
+
+
 	struct __ccc_item {
 		struct __ccc_item* nxt;
 		ulong __3chash;
@@ -158,9 +177,124 @@
 		};
 		typedef struct __sepstr spstr;
 	#endif
-	void log_strld(strld __strld);
-	void log_sepstr(spstr __spstr);
-	void log_ptrdx(struct __ptrdx *ptrdx);
+	#ifndef k_stat
+		// K structure
+		struct __ptrdx {
+			ulong pidx;
+			ulong tri;
+		};
+		union __exs_ptr {
+			ulong *esptr;
+			struct __ptrdx ptrdx;
+		};
+		struct __k_stat {
+			char u_name[8];
+			union __exs_ptr exsp;
+			char i_addr[512];
+		};
+		typedef struct __k_stat k_stat;
+		static const ulong size_kstat=sizeof(k_stat);
+	#endif
+
+	struct __ptrdx __iptridx(char const *__ptr_index) {
+		char *_ptr_idx=(char *)__ptr_index;
+
+		ulong plen=str_rwings(_ptr_idx);
+		ulong lcount=0;
+
+		ulong off_at=sep_offset(_ptr_idx,"ae");
+
+		char *_pidx=str_b4offset(_ptr_idx,off_at);
+		ulong pidx,_pxlen=str_rwings(_pidx);
+		uchar *pidx_=(uchar *)_pidx;
+		unpack(pidx_,"L",pidx);
+
+
+		char *_tri=str_a4offset(_ptr_idx,off_at);
+		ulong tri,_tilen=str_rwings(_tri);
+		uchar *tri_=(uchar *)_tri;
+		unpack(tri_,"L",tri);
+
+		struct __ptrdx ipd;
+		memset(&ipd,0,sizeof(struct __ptrdx));
+		ipd.pidx=pidx;
+		ipd.tri=tri;
+
+		return ipd;
+	};
+
+	void *___exsptr(char const *__ptr_index) {
+		ulong lcount=0, lcpy=0, plen=str_rwings(__ptr_index), comb_len=plen;
+		char *_ptr_idx=(char *)__ptr_index;
+		uchar *__pind=(uchar *)_ptr_idx;
+
+		while(comb_len>8){
+			lcount+=1;comb_len-=8;
+		};
+
+		// ulong esize=lcount*(sizeof(ulong));
+		// void *_es_ptrs=malloc(esize);
+		// _es_ptrs=memset(_es_ptrs,0,esize);
+
+		// ulong *es_ptr=(ulong *)_es_ptrs;
+
+		// es_ptr[0]=1281;
+		// es_ptr[1]=28589105;
+
+		// // while(lcpy<(lcount-1)){
+		// // 	unpack(__pind,"L",es_ptrs[lcpy]);
+		// // 	lcpy+=1;
+		// // };
+		// // es_ptrs[lcount]='\0';
+
+		// // // log_esptr()
+		// // return es_ptrs;
+
+
+		return (void *)__ptr_index;
+	};
+
+	spstr sepstr_offset(char *string, char *seperator) {
+		int x=0,y=0,len_count=0,offset_at=-1;
+		while(string[x]!='\0'){
+			if(string[x]==seperator[y]){
+				while(seperator[y]==string[y+x]){
+					y+=1;
+				};
+				if(seperator[y]=='\0'){
+					offset_at=x;
+				}
+				else{
+					y=0;
+				};
+			};
+			x+=1;
+		};
+		spstr res = {
+			.str=string,
+			.str_length=x,
+			.sep=seperator,
+			.sep_offs=offset_at,
+		};
+		return res;
+	};
+
+	/**
+	 * extract the string at offset
+	**/
+	strld extract_atoff(char *str, ulong atoff){
+		strld res;
+		res.data=str+atoff;
+		char *s=str+atoff;
+		int c=0;
+		while(*s++){
+			c+=1;
+		};
+		res.len=c;
+		return res;
+	};
+
+
 	void log_strld(strld __){
 		printf("string\n");
 		printf("length=%d\n",__.len);
@@ -193,11 +327,68 @@
 	//	return dmde(__cpath);
 	//};
 
-int main_atoff(){
-	strld sep=extract_atoff("hello world\n",6);
-	log_strld(sep);
-	return 0;
-};
+
+	/*******************************************************************/
+
+
+	void test_spaces_and_tabs() {
+		int spta_count=spaces_and_tabs(" aksd foa	sf");
+		printf("spaces+tabs count :: %d\n",spta_count);
+	};
+
+	void test_init_sepstr(char const*fullstr, char const*sep) {
+		spstr res;
+		if(fullstr==NULL||sep==NULL){
+			res=sepstr_offset("mykey:has a very niceth=ce value of ", "=c");
+		}
+		else {
+			res=sepstr_offset((char *)fullstr,(char *)sep);
+		};
+
+		log_sepstr(res);
+	};
+
+
+	int main_atoff(){
+		strld sep=extract_atoff("hello world\n",6);
+		log_strld(sep);
+		return 0;
+	};
+
+	 int get_kstat(char const *__path, k_stat *kfile) {
+	 	memset(kfile,0,sizeof(struct __k_stat));
+	 	char *_path=(char *)__path;
+	 	ulong off_at=sep_offset(_path,"@");
+
+
+	 	char *uname=str_b4offset(_path,off_at);
+	 	ulong unlen=str_rwings(uname);
+
+	 	char *ixes=str_a4offset(_path,off_at);
+	 	ulong ixlen=str_rwings(ixes);
+
+	 	memmove((&kfile->u_name),uname,unlen);
+	 	memmove((&kfile->i_addr),ixes,ixlen);
+
+	 	(kfile->exsp).ptrdx=__iptridx(__path);
+	 	log_ptrdx(&((kfile->exsp).ptrdx));
+
+	 	 (kfile->exsp).esptr=___exsptr(__path);
+	 	 log_esptr((kfile->exsp).esptr);
+	 	return 0;
+	 };
+
+	 int main_sepstr(int argc, char const *argv[]){
+		if(argc==3){
+			test_init_sepstr(argv[1],argv[2]);
+		}
+		else{
+			test_init_sepstr(NULL,NULL);
+		}
+		return 0;
+	};
+
+
 #endif
 
 #ifdef __HTTP_TESTS

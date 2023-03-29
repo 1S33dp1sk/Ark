@@ -12,11 +12,6 @@
 
 	// files
 
-void *__mstat__(m_stat *st) {
-
-	return memset(st, 0, sizeof(m_stat));
-};
-
 	void *__statusof(char const *__file) {
 	    struct stat __;
 	    memset(&__,0,sizeof(struct stat));
@@ -37,13 +32,13 @@ void *__mstat__(m_stat *st) {
 		case __lbb_info__:		return "#%d	:IXR:";
 		case __lbb_variable__:	return "#%d	var";
 		case atp_base:			return "#%d	K-lbb";
-		case atp_get:			return "#%d	K-@ATP<get>";
-		case atp_set:			return "#%d	K-@ATP<set>(varname){value}";
-		case atp_return: 		return "#%d	K-atp_fetch";
-		case atp_retain: 		return "#%d	K-atp_save";
-		case atp_retreive: 		return "#%d	K-atp_call";
-		case atp_dcloud: 		return "#%d	K-dcloud_connect";
-		case atp_next: 			return "#%d	K-&ATP->";
+		case aip_get:			return "#%d	K-@ATP<get>";
+		case aip_set:			return "#%d	K-@ATP<set>(varname){value}";
+		case aip_return: 		return "#%d	K-atp_fetch";
+		case aip_retain: 		return "#%d	K-atp_save";
+		case aip_retreive: 		return "#%d	K-atp_call";
+		case aip_dcloud: 		return "#%d	K-dcloud_connect";
+		case aip_next: 			return "#%d	K-&ATP->";
 		default: 				return "#%d	K-default";
 		}
 	};
@@ -706,8 +701,8 @@ void *__arc__(arc_st *st) {
 		info->ai_family=AF_UNSPEC;
 	};
 
-	aipsock __arcsocket() {
-		aipsock __sok; memset(&__sok,0,sizeof(aipsock));
+	aip_sock __arcsocket() {
+		aip_sock __sok; memset(&__sok,0,sizeof(aip_sock));
 
 		struct addrinfo hints;
 		__hints(&hints);
@@ -721,7 +716,7 @@ void *__arc__(arc_st *st) {
 			#ifdef DEBUG
 				printf("getaddrinfo error : %s\n", gai_strerror(__res));
 			#endif
-			memset(&__sok,0,sizeof(aipsock));
+			memset(&__sok,0,sizeof(aip_sock));
 			return __sok;
 		};
 
@@ -832,16 +827,16 @@ void *__arc__(arc_st *st) {
 
 
 	// get sockaddr, IPv4 or IPv6:
-	aip_sockaddr __sock_addr(struct sockaddr *sa) {
-		aip_sockaddr __sa;
-		memset(&__sa,0,sizeof(aip_sockaddr));
-		if (sa->sa_family == AF_INET) {
-			__sa._atype=__at_4;
-			__sa._sokaddr=&(((struct sockaddr_in*)sa)->sin_addr);
+	socket_st __sock_addr(struct sockaddr *sa) {
+		socket_st __sa; memset(&__sa,0,sizeof(socket_st));
+
+		if (sa->sa_family==AF_INET) {
+			__sa.s_protocol=__at_4;
+			__sa.s_address=&(((struct sockaddr_in*)sa)->sin_addr);
 		}
 		else {
-			__sa._atype=__at_6;
-			__sa._sokaddr=&(((struct sockaddr_in6*)sa)->sin6_addr);
+			__sa.s_protocol=__at_6;
+			__sa.s_addre=&(((struct sockaddr_in6*)sa)->sin6_addr);
 		};
 		char s[INET6_ADDRSTRLEN];
 		ulong __s_size=sizeof(__sa.ascii_addr);
@@ -855,7 +850,7 @@ void *__arc__(arc_st *st) {
 		return __sa;
 	};
 
-	struct sockaddr *sock_aip_to_sa(aipsock *sock){
+	struct sockaddr *sock_aip_to_sa(aip_sock *sock){
 		struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_socket)));
 		return (struct sockaddr *)saddrst;
 	};
@@ -871,7 +866,7 @@ void *__arc__(arc_st *st) {
 	};
 
 
-	void *__aip_recieve(aipsock *sock) {
+	void *__aip_recieve(aip_sock *sock) {
 		int numbytes;
 		char buf[512];
 		memset(&buf,0,sizeof(buf));
@@ -884,7 +879,7 @@ void *__arc__(arc_st *st) {
 		return (void *)strdup(buf);
 	};
 
-	void *__aip_activate(aipsock *sock, char *msg_to_send, char const *msg_hash){
+	void *__aip_activate(aip_sock *sock, char *msg_to_send, char const *msg_hash){
 		char const *_hmsg=__combine_str(wss_acc_h, msg_hash);
 		char const *__msg=__combine_str(msg_to_send, _hmsg);
 		#ifdef DEBUG
@@ -901,12 +896,12 @@ void *__arc__(arc_st *st) {
 	};
 
 
-	void _socket_free_fd(aipsock *sok_t) {
+	void _socket_free_fd(aip_sock *sok_t) {
 
 		close(sok_t->aip_sockfd);
 	};
 
-	int aip_recv(aipsock *sock, uchar *buf) {
+	int aip_recv(aip_sock *sock, uchar *buf) {
 		int numbytes=0;
 		memset(buf,0,512);
 		if ((numbytes = recv(sock_fd(sock), buf, 512, 0))==-1) {
@@ -919,7 +914,7 @@ void *__arc__(arc_st *st) {
 	};
 
 
-	void *aip_send(aipsock *sock, void *msg_to_send){
+	void *aip_send(aip_sock *sock, void *msg_to_send){
 		// char const *__msg=__combine_str("@KaramJ:",msg_to_send);
 		char const *__msg=(char const *)msg_to_send;
 		ulong msglen=str_rwings(__msg);
@@ -939,7 +934,7 @@ void *__arc__(arc_st *st) {
 		};
 	};
 
-	void __aip_send(aipsock *sock, char *msg_to_send){
+	void __aip_send(aip_sock *sock, char *msg_to_send){
 		ulong msglen=str_rwings(msg_to_send);
 		#ifdef DEBUG
 			printf("message sent :: %s\n", msg_to_send);
@@ -1019,7 +1014,7 @@ void *__arc__(arc_st *st) {
 		return strdup((char *)a_msg);
 	};
 
-	char *decode_and_reply(aipsock *sock, char *smsg, int rbytes) {
+	char *decode_and_reply(aip_sock *sock, char *smsg, int rbytes) {
 		printf("decoding msg : %d :: %s\n", rbytes , smsg);
 		if(*smsg=='@'){
 			printf("should initiate ATP for : ");
@@ -1029,7 +1024,7 @@ void *__arc__(arc_st *st) {
 		return "@\0";
 	};
 
-	void __aip_start__(aipsock *sock) {
+	void __aip_start__(aip_sock *sock) {
 		int __d=0;
 		uchar __[512]; memset(&__, 0, sizeof(__));
 		#ifdef OUTPUT
@@ -1124,7 +1119,7 @@ void *__arc__(arc_st *st) {
 
 	void __ellrun(ulong __fd) {
 		char const *__wsskey, *__wsshash;
-		aipsock temp_sok; memset(&temp_sok,0,sizeof(aipsock));
+		aip_sock temp_sok; memset(&temp_sok,0,sizeof(aip_sock));
 		#ifdef OUTPUT
 			printf("running ell :: \n");
 		#endif
@@ -1168,8 +1163,8 @@ void *__arc__(arc_st *st) {
 
 
 	void *__arcell(void *c_stp) {
-		aipsock __socket =__arcsocket();
-		aip_sockaddr saddr_st=__sock_addr(sock_aip_to_sa(&__socket));
+		aip_sock __socket =__arcsocket();
+		socket_st saddr_st=__sock_addr(sock_aip_to_sa(&__socket));
 
 		ulong socket_fd=socket_fd(__socket);
 		ulong socket_len=socket_len(__socket);
@@ -1507,11 +1502,11 @@ void *__arc__(arc_st *st) {
 	};
 
 
-void *__aipsock__(aipsock *sok) {
+void *__aip_sock__(aip_sock *sok) {
 
-	return memset(sok, 0, sizeof(aipsock));
+	return memset(sok, 0, sizeof(aip_sock));
 };
-	static aipsock __sok;
+	static aip_sock __sok;
 
 	at_t stype_to_atype(sAF_type __stype) {
 		switch(__stype) {
@@ -1521,40 +1516,40 @@ void *__aipsock__(aipsock *sok) {
 		}
 	};
 
-	void _socket_address_free(aip_sockaddr *aip_sa){
+	void _socket_address_free(socket_st *aip_sa){
 
 		free(aip_sa->_sokaddr);
 	};
 
-	at_t get_atype(aip_sockaddr *aip_sa) {
+	at_t get_atype(socket_st *aip_sa) {
 
 		return aip_sa->_atype;
 	};
 
-	void *get_sokaddr(aip_sockaddr *aip_sa) {
+	void *get_sokaddr(socket_st *aip_sa) {
 
 		return aip_sa->_sokaddr;
 	};
 
-	char *get_sockaddr(aip_sockaddr *aip_sa) {
+	char *get_sockaddr(socket_st *aip_sa) {
 
 		return (char *)&(aip_sa->_sockaddr);
 	};
 
 
-	char *__aipsock_raw(){
+	char *__aip_sock_raw(){
 
 		return (char *)__sok.aip_socket;
 	};
 
-	struct sockaddr *__aipsock_addr_sa(){
+	struct sockaddr *__aip_sock_addr_sa(){
 
 		return sock_aip_to_sa(&__sok);
 	};
 
-	aip_sockaddr __aipsock_addr(){
+	socket_st __aip_sock_addr(){
 
-		return __sock_addr(__aipsock_addr_sa());
+		return __sock_addr(__aip_sock_addr_sa());
 	};
 
 
@@ -1666,13 +1661,13 @@ void *__aipsock__(aipsock *sok) {
 	};	
 
 
-atp_act *h2act(ixr_h *h_request) {
+aip_st *h2act(ixr_h *h_request) {
 
 	return NULL;
 };
 
 
-ixr_h *act2h(atp_act *action) {
+ixr_h *act2h(aip_st *action) {
 
 
 	return NULL;

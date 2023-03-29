@@ -19,7 +19,7 @@ int __ap_file(char const *__path){
 		#endif
 		return __fd;
 	}
-	lbb_shard.lbb_fd=__fd;
+	lbb_shard.c_fd=__fd;
 	if(get_mstat(__path, lbb_mstat)) {
 		#ifdef LOG_ERR
 			printf("cannot get the mounted status of file %s\n", __path);
@@ -54,7 +54,7 @@ ulong __ap_writer() {
 	#ifdef DEBUG
 		printf("Writer : fifo opened :: %lu\n",_fd);
 	#endif
-	lbb_shard.lbb_fd=_fd;
+	lbb_shard.c_fd=_fd;
 	if(get_mstat(__lbb_locking, lbb_mstat)) {
 		#ifdef LOG_ERR
 			printf("cannot obtain mounted status for Writer on FIFO\n");
@@ -77,7 +77,7 @@ ulong __ap_reader() {
 	#ifdef DEBUG
 		printf("Reader : fifo opened :: %lu\n",_fd);
 	#endif
-	lbb_shard.lbb_fd=_fd;
+	lbb_shard.c_fd=_fd;
 	if(get_mstat(__lbb_locking, lbb_mstat)) {
 		#ifdef LOG_ERR
 			printf("cannot obtain mounted status for READER on FIFO\n");
@@ -158,7 +158,7 @@ void purge_shard() {
 	#ifdef DEBUG
 		printf("Purging lbb shard\n");
 	#endif
-	close(lbb_shard.lbb_fd);
+	close(lbb_shard.c_fd);
 };
 
 
@@ -167,7 +167,7 @@ ulong __run_ap(ulong __size){
 		ulong r_bytes=0,__FLAG=0;
 		char __buffer[512];
 		while(!__FLAG) {
-			r_bytes=read(lbb_shard.lbb_fd,__buffer,512);
+			r_bytes=read(lbb_shard.c_fd,__buffer,512);
 			if(r_bytes<=2){
 				printf("read less than 3 bytes :: %s\n",__buffer);
 				__FLAG=1;
@@ -182,7 +182,7 @@ ulong __run_ap(ulong __size){
 		char *__buffer="hello world";
 		memset(&__buffer,0,sizeof(__buffer));
 		while(!__FLAG) {
-			w_bytes=write(lbb_shard.lbb_fd,__buffer,64);
+			w_bytes=write(lbb_shard.c_fd,__buffer,64);
 			if(w_bytes<=2){
 				printf("write less than 3 bytes :: %s\n",__buffer);
 				__FLAG=1;
@@ -242,7 +242,7 @@ void __readin(char *buffer, ulong size, ulong stfd) {
 
 void lbb_close(){
 	close(shd_fd);
-	memset(&lbb_shard,0,sizeof(struct __lbb_shard));
+	memset(&lbb_shard,0,sizeof(c_shard));
 };
 
 
@@ -291,140 +291,6 @@ int lbb(char const *__cpath,ulong __lock){
 };
 
 
-/*******************************************************************/
-
-
-struct __ptrdx __iptridx(char const *__ptr_index) {
-	char *_ptr_idx=(char *)__ptr_index;
-
-	ulong plen=str_rwings(_ptr_idx);
-	ulong lcount=0;
-
-	ulong off_at=sep_offset(_ptr_idx,"ae");
-
-	char *_pidx=str_b4offset(_ptr_idx,off_at);
-	ulong pidx,_pxlen=str_rwings(_pidx);
-	uchar *pidx_=(uchar *)_pidx;
-	unpack(pidx_,"L",pidx);
-
-
-	char *_tri=str_a4offset(_ptr_idx,off_at);
-	ulong tri,_tilen=str_rwings(_tri);
-	uchar *tri_=(uchar *)_tri;
-	unpack(tri_,"L",tri);
-
-	struct __ptrdx ipd;
-	memset(&ipd,0,sizeof(struct __ptrdx));
-	ipd.pidx=pidx;
-	ipd.tri=tri;
-
-	return ipd;
-};
-
-void *___exsptr(char const *__ptr_index) {
-	ulong lcount=0, lcpy=0, plen=str_rwings(__ptr_index), comb_len=plen;
-	char *_ptr_idx=(char *)__ptr_index;
-	uchar *__pind=(uchar *)_ptr_idx;
-
-	while(comb_len>8){
-		lcount+=1;comb_len-=8;
-	};
-
-	// ulong esize=lcount*(sizeof(ulong));
-	// void *_es_ptrs=malloc(esize);
-	// _es_ptrs=memset(_es_ptrs,0,esize);
-
-	// ulong *es_ptr=(ulong *)_es_ptrs;
-
-	// es_ptr[0]=1281;
-	// es_ptr[1]=28589105;
-
-	// // while(lcpy<(lcount-1)){
-	// // 	unpack(__pind,"L",es_ptrs[lcpy]);
-	// // 	lcpy+=1;
-	// // };
-	// // es_ptrs[lcount]='\0';
-
-	// // // log_esptr()
-	// // return es_ptrs;
-
-
-	return (void *)__ptr_index;
-};
-
-spstr sepstr_offset(char *string, char *seperator) {
-	int x=0,y=0,len_count=0,offset_at=-1;
-	while(string[x]!='\0'){
-		if(string[x]==seperator[y]){
-			while(seperator[y]==string[y+x]){
-				y+=1;
-			};
-			if(seperator[y]=='\0'){
-				offset_at=x;
-			}
-			else{
-				y=0;
-			};
-		};
-		x+=1;
-	};
-	spstr res = {
-		.str=string,
-		.str_length=x,
-		.sep=seperator,
-		.sep_offs=offset_at,
-	};
-	return res;
-};
-
-/**
- * extract the string at offset
-**/
-strld extract_atoff(char *str, ulong atoff){
-	strld res;
-	res.data=str+atoff;
-	char *s=str+atoff;
-	int c=0;
-	while(*s++){
-		c+=1;
-	};
-	res.len=c;
-	return res;
-};
-
-
-/*******************************************************************/
-
-
-void test_spaces_and_tabs() {
-	int spta_count=spaces_and_tabs(" aksd foa	sf");
-	printf("spaces+tabs count :: %d\n",spta_count);
-};
-
-void test_init_sepstr(char const*fullstr, char const*sep) {
-	spstr res;
-	if(fullstr==NULL||sep==NULL){
-		res=sepstr_offset("mykey:has a very niceth=ce value of ", "=c");
-	}
-	else {
-		res=sepstr_offset((char *)fullstr,(char *)sep);
-	};
-
-	log_sepstr(res);
-};
-
-/*******************************************************************/
-
-
-int main_sepstr(int argc, char const *argv[]){
-	if(argc==3){
-		test_init_sepstr(argv[1],argv[2]);
-	}
-	else{
-		test_init_sepstr(NULL,NULL);
-	}
-	return 0;
-};
 
 
 
@@ -465,30 +331,6 @@ int get_sstat(char const *__path, s_stat *sfile) {
 	return 0;
 };
 
-// int get_kstat(char const *__path, k_stat *kfile) {
-// 	memset(kfile,0,sizeof(struct __k_stat));
-// 	char *_path=(char *)__path;
-// 	ulong off_at=sep_offset(_path,"@");
-
-
-// 	char *uname=str_b4offset(_path,off_at);
-// 	ulong unlen=str_rwings(uname);
-
-// 	char *ixes=str_a4offset(_path,off_at);
-// 	ulong ixlen=str_rwings(ixes);
-
-// 	memmove((&kfile->u_name),uname,unlen);
-// 	memmove((&kfile->i_addr),ixes,ixlen);
-
-// 	(kfile->exsp).ptrdx=__iptridx(__path);
-// 	log_ptrdx(&((kfile->exsp).ptrdx));
-
-// 	// (kfile->exsp).esptr=___exsptr(__path);
-// 	// log_esptr((kfile->exsp).esptr);
-
-
-// 	return 0;
-// };
 
 
 
@@ -518,7 +360,7 @@ char const *__get_fcontents(char *__conts, ulong __size) {
 	return (char const *)strdup(__);
 };
 
-void free_fields(cfld **flds){
+void free_fields(c_fld **flds){
 	ulong c=0;
 	while(*flds++){
 		free(flds[c]);
@@ -547,9 +389,8 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	ulong lbb_dd=__lbb_file_n(fld_name);
 
 	// reset the fld to be to 0
-	cfld field; memset(&field,0,size_cfld);
-	char *__buffer=(char *)&(field.fld_con.etc);
-	__buffer[4095]='\0';
+	c_req request; memset(&request,0,size_creq);
+	char *__buffer=(char *)request.data.etc;
 
 
 	chk_st cst;
@@ -560,7 +401,7 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 			printf("Conv Fields DEBUG :: %lu\n", c);
 		#endif
 		// read size
-		int __tempres=pread(__fd,__buffer,4096,__offset);
+		int __tempres=pread(__fd,(void *)__buffer,4096,__offset);
 		if(__tempres==-1) {
 			#ifdef LOG_ERR
 				printf("%s : convolution :: could not read file ::: %s\n", "@LBB", shd_path);
@@ -582,7 +423,7 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		// get the charms file path
 		cst.chkname=__get_cfname(__fn, c);
 		// get checksum for entire file
-		cst.chksum=(char *)hashof(1,field_content(field),field_length(field));
+		cst.chksum=(char *)hashof(1,req_content(request),req_contlen(request));
 		#ifdef DEBUG
 			printf("fld : file path      :: %s\n", cst.chkname);
 			printf("fld : read size      :: %lu\n", cst.chksize);
@@ -638,7 +479,7 @@ static void *__ne=(void *)'\0';
 static const void *ne=(char const *)(void *)'\0';
 
 #define __lbb_command_args (char const *, char const *)
-#define __lbb_filepath_args (char const *, sterm)
+#define __lbb_filepath_args (char const *, aip_sterm)
 #define __lbb_function_args (char const *, void *, void *)
 #define __lbb_field_args (void const *)
 #define __lbb_cc char const *
@@ -657,7 +498,7 @@ int get_freader(m_stat *mst) {
 		return -1;
 	};
 	ulong __fd=(ulong)_fd;
-	lbb_shard.lbb_fd=__fd;
+	lbb_shard.c_fd=__fd;
 	#ifdef DEBUG
 		printf("Reader : file opened :: %lu\n",shd_fd);
 	#endif
@@ -678,7 +519,7 @@ char const *__lbb_command(char const *__cpath, char const *__args) {
 	return __args;
 };
 
-char const *__lbb_filepath(char const *__fpath, sterm __term) {
+char const *__lbb_filepath(char const *__fpath, aip_sterm __term) {
 	#ifdef PROCESS
 		printf("lbb filepath :%s+%c\n", __fpath, __term);
 	#endif
@@ -756,7 +597,7 @@ void const *__lbb_type_args(lbb_at __atype) {
 
 	case __command: return (char const *(*)(char const *, char const *))&__lbb_command;
 
-	case __filepath: return (char const *(*)(char const *, sterm))&__lbb_filepath;
+	case __filepath: return (char const *(*)(char const *, aip_sterm))&__lbb_filepath;
 
 	case __function: return (void *(*)(char const *, void *, void *))&__lbb_function;
 
@@ -775,15 +616,15 @@ int __init_field(char const *arg) {
 	conv_fields(&cm_st);
 	return 0;
 };
-#define into_size (ulong)(sizeof(into_st))
+#define into_size ((ulong)(sizeof(d_into)))
 
 
-void *__into__(into_st *st) {
+void *__into__(d_into *st) {
 	
-	return memset(st, 0, sizeof(into_st));
+	return memset(st, 0, into_size);
 };
 
-	into_st *__no_entry__(atp_act *proto_call) {
+	d_into *__no_entry__(aip_st *proto_call) {
 		#ifdef PROCESS
 			printf("@no_entry@\n");
 		#endif
@@ -791,44 +632,44 @@ void *__into__(into_st *st) {
 		return NULL;
 	}
 
-	into_st *__info__(atp_act *proto_call) {
+	d_into *__info__(aip_st *proto_call) {
 		#ifdef PROCESS
 			printf("@ixr\n");
 		#endif
 		return NULL;
 	};
 
-	into_st *__pointer__(atp_act *proto_call) {
-		char const *ptr_name = i_argument(proto_call);
+	d_into *__pointer__(aip_st *proto_call) {
+		char const *ptr_name = aip_base(proto_call);
 		#ifdef PROCESS
 			printf("@ptr:%s\n", ptr_name);
 		#endif
 		return NULL;
 	};
 
-	into_st *__field__(atp_act *proto_call) {
-		char const *fld_name = i_argument(proto_call);
+	d_into *__field__(aip_st *proto_call) {
+		char const *fld_name = aip_base(proto_call);
 		#ifdef PROCESS
 			printf("@fld : %s\n", fld_name);
 		#endif
 		return NULL;
 	};
 
-	into_st *__w3__(atp_act *proto_call) {
+	d_into *__w3__(aip_st *proto_call) {
 
 		return NULL;
 	}
 
-	into_st *__point__(atp_act *proto_call) {
-		char const *point_name = i_argument(proto_call);
+	d_into *__point__(aip_st *proto_call) {
+		char const *point_name = aip_base(proto_call);
 		#ifdef PROCESS
 			printf("@pnt : %s\n", point_name);
 		#endif
 		return NULL;
 	};
 
-	into_st *dcloud(atp_act *proto_call) {
-		char const *dc_address=i_narg(proto_call, 1);
+	d_into *dcloud(aip_st *proto_call) {
+		char const *dc_address=aip_arg(proto_call, 1);
 		#ifdef PROCESS
 			printf("d-%s\n", dc_address);
 		#endif
@@ -837,7 +678,7 @@ void *__into__(into_st *st) {
 
 	#define p_switcher(x) (x->switcher)
 
-	into_st *act2args(atp_act *proto_call) {
+	d_into *act2args(aip_st *proto_call) {
 		switch(p_switcher(proto_call)) {
 		case -1 : return __no_entry__(proto_call);
 		case 0  : return __info__(proto_call);

@@ -33,6 +33,14 @@ and loaded via a .o or .so
 		#define __ut8 unsigned long long
 	typedef __ut8 utlong;
 	#endif
+	#ifndef ulptr
+		#define __ulptr ulong*
+	typedef ulong* ulptr;
+	#endif
+	#ifndef uc
+		#define __uc3 uchar*
+	typedef uchar uc[3];
+	#endif
 	/**
 	* 
 	* can modify a call or similar, to `conifgure.ac` usign `autoreconf` to iterate 
@@ -47,7 +55,7 @@ and loaded via a .o or .so
 	#ifndef __ul
 		typedef ulong __ul[3];
 			#define init_ul() memset(&u, 0, sizeof(__ul));
-			#define return_ul() return u;
+			#define return_ul() return ((ulptr) &u);
 	#endif
 #endif
 
@@ -175,25 +183,25 @@ and loaded via a .o or .so
 
 	#ifndef c_req
 			// req :: c->request
-			struct __request {
+			struct __c_data {
 			    ulong len;
 			    uchar etc[4096];
 			};
-		typedef struct __request __c_request;
-		typedef char __c_name[24];
-		typedef ulong __c_keys[3];
-			#define content_len(x) (x.len)
-			#define content_etc(x) (x.etc)
+		typedef struct __c_data c_data;
+		typedef char c_name[24];
+		typedef ulong c_keys[3];
+			#define data_length(x) (x.len)
+			#define data_content(x) (x.etc)
 			struct c_request {
-			    __c_name name;
-			    __c_request req;
-			    __c_keys keys;
+			    c_name name;
+			    c_data data;
+			    c_keys keys;
 			};
 	typedef struct c_request c_req;
 		static const ulong size_creq=sizeof(c_req);
 		#define req_name(x) ((char const *)(x.name))
-		#define req_content(x) ((char const *)content_etc(x.req))
-		#define req_contlen(x) ((ulong)content_len(x.req))
+		#define req_content(x) ((char const *)data_content(x.data))
+		#define req_contlen(x) ((ulong)data_length(x.data))
 		#define req_keys(x) ((ulong *)(x.keys))
 	
 	#endif
@@ -208,11 +216,11 @@ and loaded via a .o or .so
 			char  m_path[512];
 		};
 	typedef struct __cm_stat m_stat;
-		#define cm_size(x) ((ulong)(x->m_size))
-		#define cm_mode(x) ((ulong)(x->m_mode))
-		#define cm_iosz(x) ((ulong)(x->m_blksz))
-		#define cm_inum(x) ((ulong)(x->m_inn))
-		#define cm_path(x) ((char const *)(x->m_path))
+		#define cm_size(x) ((ulong)(x.m_size))
+		#define cm_mode(x) ((ulong)(x.m_mode))
+		#define cm_iosz(x) ((ulong)(x.m_blksz))
+		#define cm_inum(x) ((ulong)(x.m_inn))
+		#define cm_path(x) ((char const *)(x.m_path))
 	
 	#endif
 
@@ -223,7 +231,7 @@ and loaded via a .o or .so
 			ulong	c_fd;
 		};
 	typedef struct __c_shard c_shard;
-		#define sh_stat(x) ((c_mstat *)(x->c_stat))
+		#define sh_stat(x) ((m_stat *)(x->c_stat))
 		#define sh_fd(x) ((ulong)x->c_fd)
 
 	#endif
@@ -613,6 +621,7 @@ and loaded via a .o or .so
 					__at_4=4,
 					__at_6=6,
 					__at_e='e',
+					__at__='@'
 				};
 			typedef enum __atypes_p atp_t;
 			
@@ -707,7 +716,7 @@ and loaded via a .o or .so
 	
 	#endif
 
-	#ifndef aip_act
+	#ifndef aip_st
 		struct __aip_st {
 			int switcher;
 			int action_type;
@@ -715,6 +724,12 @@ and loaded via a .o or .so
 			char const **args;
 		};
 	typedef struct __aip_st aip_st;
+		#define aip_switch(x) (x->switcher)
+		#define aip_action_t(x) (x->action_type)
+		#define aip_args_count(x) ((ulong)(x->args_length))
+		#define aip_args(x) ((char const **)args)
+		#define aip_arg(x,n) ((char const *)((x->args)[n]))
+		#define aip_base(x) aip_arg(x, 0)
 
 	#endif
 	
@@ -793,24 +808,6 @@ and loaded via a .o or .so
 // 		};
 // 	typedef struct __liner k_line;
 // 		static const ulong size_kline=sizeof(k_line);
-// 	#endif
-// 	#ifndef k_stat
-// 		// K structure
-// 		struct __ptrdx {
-// 			ulong pidx;
-// 			ulong tri;
-// 		};
-// 		union __exs_ptr {
-// 			ulong *esptr;
-// 			struct __ptrdx ptrdx;
-// 		};
-// 		struct __k_stat {
-// 			char u_name[8];
-// 			union __exs_ptr exsp;
-// 			char i_addr[512];
-// 		};
-// 	typedef struct __k_stat k_stat;
-// 		static const ulong size_kstat=sizeof(k_stat);
 // 	#endif
 // #endif
 

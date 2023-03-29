@@ -55,9 +55,6 @@
 	#define __listen_hash__ ((char const *)hashof(0, "listen\0", 4))
 
 
-	#define str_wsize(x) (str_rwings(x)*sizeof(char))
-	#define ustr_wsize(x) (str_rwings(x)*sizeof(uchar))
-
 	#define PLD_MASKED(x)   x&10000000
 	#define PLD_SIZE(x)     x&1111111
 	#define FRAME_FIN(x)    x&1

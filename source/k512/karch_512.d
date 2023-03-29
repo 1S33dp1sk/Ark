@@ -22,7 +22,7 @@ K512-architecture
 	#ifndef __ANETSTD__H
 		#include "standard.h"
 	#endif
-	#ifdef __HBAR__H
+	#ifndef __HBAR__H
 		#include "hbar.h"
 	#endif
 	#ifdef __ENK__H
@@ -235,6 +235,7 @@ K512-architecture
 	#define __caller_namelen (ulong)str_rwings(__FILE__)
 	#define __ASCII(x) OUT_ENK_A(0,x)
 	#define __TEXT(x) OUT_ENK_A(0,#x);
+	#define __STRING(x) #x
 	/**
 	** NNE : x :: true if x is not 0x0000
 	**/
@@ -256,9 +257,8 @@ K512-architecture
 	#define ustr_wsize(x) wsize(uchar, x)
 	#define vcontent(x) ((void const **)x)
 	#define __typed_lbbfile_name(x) arch_tfile_lbb(x)
-	#define typed_lbbfilename(x) #__typed_lbbfile_name(x)
-	#define s_sign "+"
-	#define s_lbbfile(x) s_sign##x
+	#define typed_lbbfilename(x) __STRING(arch_tfile_lbb(x))
+	#define s_lbbfile(x1,x2) x1##x2
 
 	#define LBB_READER(x)		x^0010000
 	#define LBB_DIRECTORY(x)	x^0040000
@@ -266,6 +266,9 @@ K512-architecture
 	#define LBB_SOCKET(x)		x^0140000
 	#define ARCH_MADE(x)		x^0000700
 	#define ARCH_SAVE(x)		x^0000007
+
+
+	#define ARR_DELIM ",\0"
 
 
 	#define __H512__D 'k'
@@ -325,122 +328,44 @@ K512-architecture
 	ulong str_cdelims(char const *__str, char const *__delim);
 	ulong arr_cdelims(char const *__str);
 	ulong sep_offset(char const *__str, char *__seperator);
-	
+	// hbar
+    void __btoh(uchar __c, uc __s);
+    void h_str_tl(char *__, uchar *__hash, ulong __len);
+    void __htostr(char *__str, uchar *hash);
+    char *__s_hash(char *__key, char *__hashkey);
+    ulong blaz_hash(char const *__data);
+    static void keccakf(ulong s[25]);
+    sha3_r sha3_init(void *p,ulong bit_size);
+    sha3_f sha3_set_flags(void *p,sha3_f flags);
+    void sha3_update(void *p,void const *buf_in,ulong len);
+    void const *sha3_finalize(void *ctx_p);
+    sha3_r sha3_hash_buffer(ulong bit_size,sha3_f cfg,const void *in,ulong in_bytes,void *out,ulong out_bytes);
+    const char *zero_address(ulong level);
+    void *__generate_lock(char const *__hash, ulong __hlen);
+    char const *hashof (ulong level, void const*to_hash, ulong the_hash_size);
+    uchar const *hash (ulong level, void const *to_hash, ulong the_hash_size);
+    ulong hash8 (ulong level, void const *to_hash, ulong the_hash_size);
+    ulptr  hash24 (ulong level, void const *to_hash, ulong the_hash_size);
+    char const *fhashof(ulong level, char const *to_hash);
+    char const *fdhashof(ulong level, ulong fd, ulong filesize);
+    uchar const *fhash(ulong level, char const *to_hash);
+    uns fhash4 (ulong level, char const *to_hash);
+    ulong fhash8 (ulong level, char const *to_hash);
+    ulong fhash16 (ulong level, char const *to_hash);
+
+    //lbb
+	char const *conv_fields(m_stat *m_st);
+
+
+	//atp
+	socket_st __sock_addr(struct sockaddr *sa);
+	struct sockaddr *sock_aip_to_sa(aip_sock *sock);
+
+    
 
 	#define __H512__N
 #endif
 // CDN (:
-
-/************************ h-logging ************************/
-
-#ifndef __H512__L
-
-	void log_str(char const *__) {
-		write(0,__,str_rwings(__));
-		write(0,"\n",1);
-	};
-
-	void log_dpoint(d_point *dst_point) {
-		printf("dst point :: \n");
-		printf("@%lu\n", dst_point->c_index);
-		printf("name :%s\n",dst_point->c_name);
-		printf("ref  :%s\n",dst_point->c_ref);
-	};
-
-	void log_sstat(s_stat *sfile){
-		printf("dcloud : ATP :: dist ::: shared\n");
-		printf("path	= %s\n", sfile->s_path);
-		printf("iploc	= %s\n", sfile->s_ipv);
-		printf("port	= %s\n", __s_port);
-		printf("addr	= %s\n", sfile->s_addr);
-		printf("term	= %s\n", sfile->s_term==0?"PUBLIC":"PRIVATE");
-	};
-
-	void log_mstat(m_stat *mfile){
-		printf("dcloud : ATP :: dist ::: mounted\n");
-		printf("path	= %s\n", mfile->m_path);
-		printf("nodenum	= %lu\n", mfile->m_inn);
-		printf("size	= %lu\n",mfile->m_size);
-		printf("mode	= %lu\n",mfile->m_mode);
-		printf("blkio	= %lu\n",mfile->m_blksz);
-	};
-
-	void log_esptr(ulong *esptr) {
-		printf("dcloud : K :: esptr\n");
-		ulong c=0;
-		do {
-			printf(":%lu=%lu\n",c,esptr[c]);c+=1;
-		}
-		while(*esptr++);
-	};
-
-	void log_process_ids(ulong p_pid, ulong c_pid) {
-	   printf("process ids ::\n");
-	   printf("p.pid    =%lu\n",p_pid);
-	   printf("c.pid    =%lu\n",c_pid);
-	};
-
-	void log_process_schema(ulong p_pid, ulong c_pid) {
-	    printf("p_pid :: %lu",p_pid);
-	    printf("\nc_pid :: %lu",c_pid);
-	    printf("\nsuccess=%d\tnsucess=%d\n",CALL_SUCC(c_pid),CALL_NSUC(c_pid));
-	    printf("call next ? %lu\n",CALL_NEXT(c_pid));
-	};
-
-	void log_at_protoname(atp_t __atpname) {
-		switch(__atpname) {
-		case atp_get: 			printf("ATP : get       ::\b"); break;
-		case atp_set: 			printf("ATP : set       ::\b"); break;
-		case atp_return: 		printf("ATP : return    ::\b"); break;
-		case atp_retain:		printf("ATP : retain    ::\b"); break;
-		case atp_retreive: 	printf("ATP : retreieve ::\b"); break;
-		case atp_dcloud:		printf("ATP <dcloud> :::\n"); break;
-		default:					printf("{Unknown}\n"); break;
-		};
-	};
-	
-	void log_ixrh(ixr_h *ixrh) {
-		// log indexer prototype
-		printf("\nindexer head ::\n");
-		printf("\tfldsze=%lu", ixrh->__size);
-		printf("\tdcount=%lu", ixrh->d_count);
-		printf("\tchksum=%lu", ixrh->checksum);
-		printf("\n");
-	};
-
-	void log_socket(aipsock *sock) {
-		aip_sockaddr info=__sock_addr(sock_aip_to_sa(sock));
-		printf("socket @%s\n",info.ascii_addr);
-	};
-
-
-	//// log the format type specifications
-	//void log_fmt_t(fmt_t __format) {
-	//	switch(__format) {
-	//	case __keyval__: __TEXT(Key:Value); break;
-	//	case __envvar__: __TEXT(Enviroment=Spec); break;
-	//	case __pathmut__: __TEXT(Path:=MountPoint); break;
-	//	case __fld__: __TEXT(Field=:Callable); break;
-	//	case __intrprt__: __TEXT(Interpreter<i>); break;
-	//	case __csok__: __TEXT(@Socket); break;
-	//	case __call__: __TEXT(@ATP<i>{p}); break;
-	//	default: __TEXT(Unknown); break;
-	//	};
-	//};
-
-	// log the key value as strings
-	void log_keyvalue(char *key, char *value) {
-		__ASCII(key);
-		__ASCII(value);
-	};
-	// print the corrent way of using the `d-lbb` command
-	void lbb_usage(){
-		__TEXT(Use lbb as :: `d-lbb /path/to/file`);
-	};
-
-
-	#define __H512__L
-#endif
 
 
 
@@ -521,7 +446,7 @@ K512-architecture
 		return __.st_ino;
 	};
 
-	uns __dmode(char const *__fpath){
+	ulong __dmode(char const *__fpath){
 		struct stat __;
 		memset(&__,0,sizeof(struct stat));
 		if(stat(__fpath,&__)!=0){return 0;}
@@ -665,7 +590,7 @@ K512-architecture
 			sprintf(__, "-%lu", snum_in);
 		};
 
-		return (char const *)__;
+		return (char const *) strdup(__);
 	};
 
 	char *__stn(char const *__word, ulong __len) {
@@ -790,20 +715,25 @@ K512-architecture
 	};
 
 	char const *expand(char const *__str, char const *expantion, ulong __offset) {
-		ulong __str_rwings=str_rwings(__str);
+		ulong __strlen=str_rwings(__str);
 		ulong __explen=str_rwings(expantion);
-		ulong __len=__str_rwings+__explen+1;
+		ulong __len=__strlen+__explen+1;
 		char __[__len];memset(&__, 0, sizeof(__));
 		memmove(__, __str, __offset);
 		memmove((__+__offset), expantion, __explen);
-		memmove((__+__offset+__explen), (__str+__offset), (__str_rwings-__offset));
+		memmove((__+__offset+__explen), (__str+__offset), (__strlen-__offset));
 		return (char const *)strdup(__);
 	};
+
+	char const *__expand_str(char const *__str, char const *__expantion) {
+
+		return expand(__str, __expantion, str_rwings(__str));
+	}
 
 	char const *__combine_str(char const *str1, char const *str2) {
 		ulong _lstr1=str_rwings(str1),_lstr2=str_rwings(str2);
 		ulong __len=_lstr1+_lstr2+1;
-		char __[__len], char *__p=&__;
+		char __[__len], *__p=(char *)&__;
 		memset(__p, 0, sizeof(__));
 		__[__len]='\0';
 		memmove(__p, str1, _lstr1);
@@ -840,7 +770,7 @@ K512-architecture
 	ulong arr_cdelims(char const *__str) {
 		// add 1 more to create an array
 		// #err if more elements than arg_count specifies
-		ulong arg_count=str_cdelims(__, ',')+1;
+		ulong arg_count=str_cdelims(__str, ARR_DELIM)+1;
 		return arg_count;
 	};
 
@@ -892,7 +822,7 @@ K512-architecture
 
 	int __smchar(char __c) {
 		// check if char is a small cap alphabet
-		if((__c>=0x61)&&(c<=0x7a)){
+		if((__c>=0x61)&&(__c<=0x7a)){
 			return 1;
 		};
 		return 0;
@@ -900,7 +830,7 @@ K512-architecture
 
 	int __capchar(char __c) {
 		// check if char is a large cap alphabet
-		if((__c>=0x41)&&(c<=0x5a)){
+		if((__c>=0x41)&&(__c<=0x5a)){
 			return 1;
 		};
 		return 0;
@@ -922,7 +852,7 @@ K512-architecture
 	};
 
 	int __delimchar(char __c) {
-		if(__c==__os_delim) {
+		if(__c==*__os_delim) {
 			return 1;
 		};
 		return 0;
@@ -950,6 +880,15 @@ K512-architecture
 		return 1;
 	};
 
+
+	ulong vcontent_count(void const **__vc) {
+		ulong c=0;
+		while(__vc[c]!=NULL) {
+			c+=1;
+		};
+		return c;
+	};
+
 	ulong content_count(char const **__content) {
 		ulong c=0;
 		while(__content[c]) {
@@ -964,7 +903,7 @@ K512-architecture
 	ulong lexical_args(void **__vars) { 
 		char const *temp = (char const *)__vars;
 		printf("vars : %s\n", temp);
-		ulong arg_count=arr_cdelims(temp, ",");
+		ulong arg_count=arr_cdelims(temp);
 		return arg_count;
 	};
 
@@ -1040,63 +979,26 @@ K512-architecture
 		return __combine_str(__callbase, __name);
 	};
 
-	int __check_mod(char const *modname) {
-		char const *__ccc=__charm_call(modname);
-
+	int __check_ectx(char const *__mod, char const *__name) {
+		char const *__ccc=__ecall(__mod, __name);
 		return stres(__ccc);
 	};
 
 	int __check_entry(char const *entry) {
 		int __res=__entry_valid(entry);
-		int __ds_offset=__sep_atoff(entry, d_seperator);
+		int __ds_offset=__sep_atoff(entry, d_sep);
 		if((!__res)||(__ds_offset==-1)) {
 			#ifndef DEBUG
 				printf("entry invalid : %s\n", entry);
 			#endif
 			return -1;
 		};
-		char const *__charm=str_b4offset(entry, __ds_offset);
+		char const *__cmod=str_b4offset(entry, __ds_offset);
 		char const *__entry=str_a4woffset(entry, __ds_offset);
-		
-		return __check_charm(__entry);
+
+		return __check_ectx(__cmod, __entry);
 	};
 
-	// gets file size in ( x << n*3 ) 
-	// gets file types in ( x >> n*3 )
-	ulong arch_ufile(char const *__cpath) {
-		ulong usize=0, __size=__fsize(__cpath);
-		do {
-			usize+=1;
-			__size>>(3*usize);
-		}while(__size>=1);
-		return usize;
-	};
-
-
-	lbb_t arch_tfile_lbb(char const *__cpath) {
-		
-		return (lbb_t)arch_tfile(__cpath);
-	};
-	
-	// gets file size number 
-	// representation in characters
-	char const *arch_cfile(char const *__cpath){
-
-		return num2char(__fsize(__cpath));
-	};
-
-
-	char const *arch_hash(void const *__){
-
-		return hashof(3,__,__rwings(__));
-	};
-
-
-	char const *arch_checksum(char const **__content) {
-		ulong llcount=content_count(__content);
-
-		return varll_hash(vcontent(__content), llcount);
-	}
 
 	char const *arch_namehash(char const *__name) {
 
@@ -1118,9 +1020,9 @@ K512-architecture
 
 
 	char const *envarr_hash(uchar *__udef_pnop){
-		char **env_var=environ;
+		char const **env_var=(char const **)environ;
 		char *udef_pnop=(char*)__udef_pnop;
-		ulong vcount=0,__c=0, envar_count=__env_hash(env_var), evar_count=envar_count+1;
+		ulong vcount=0,__c=0, envar_count=content_count(env_var), evar_count=envar_count+1;
 		ulong __hashes[evar_count];
 		void *__hptr=memset(&__hashes,0,(sizeof(ulong)*evar_count));
 		do {
@@ -1145,7 +1047,7 @@ K512-architecture
 				printf("vcount cannot be 0\n");
 			#endif
 			return zero_address(2);
-		};
+		}
 		else {
 			while((__vars[c])&&(c<__vcount)){
 				hashes[c]=hash8(1,__vars[c],str_rwings(__vars[c]));
@@ -1156,28 +1058,75 @@ K512-architecture
 		};
 	};
 
-	// generate file name from path and size
-	char const *arch_dfile(char const *__name, ulong arch_perm, ulong tfile_size) {
-		char const *__cpath=__ecall("var", __name);
-		if(stres(__cpath)){
-			#ifdef DEBUG
-				printf("file already exists\n");
-			#endif
-			return zero_address(3);
-		};
+	// gets file size in ( x << n*3 ) 
+	// gets file types in ( x >> n*3 )
+	ulong arch_ufile(char const *__cpath) {
+		ulong usize=0, __size=__fsize(__cpath);
+		do {
+			usize+=1;
+			__size>>=(3*usize);
+		}while(__size>=1);
+		return usize;
+	};
 
-		char const *tlbb_name=(char const *)typed_lbbfilename(fsize);
-		char const *__raw_fname=__combine_str(__cpath, s_lbbfile(tlbb_name));
+
+	lbb_t arch_tfile_lbb(char const *__cpath) {
 		
-		char const *__arch_filename=arch_namehash(__raw_fname);
-		if(!attsize(__arch_filename, arch_perm, tfile_size)){
-			#ifdef DEBUG
-				printf("failed to create dfile\n");
-			#endif
-			return zero_address(3);
-		};
+		return (lbb_t)arch_ufile(__cpath);
+	};
+	
+	// gets file size number 
+	// representation in characters
+	char const *arch_szfile(char const *__cpath){
 
-		return __arch_filename;
+		return num2char(__fsize(__cpath));
+	};
+
+
+	char const *arch_hash(void const *__){
+
+		return hashof(3,__,__rwings(__));
+	};
+
+
+	char const *arch_checksum(char const **__content) {
+		ulong llcount=content_count(__content);
+
+		return varll_hash(vcontent(__content), llcount);
+	};
+
+	/**
+	 * the reason im currently not using the following logic
+	 *  mfile -> m_size = __fsze(...)
+	 * is due to a feature that can be implemented into a
+	 * single interface call regardless of the execution context(high level interface)
+	 * i.e : language, compilier, etc...
+	 * so im dividing them into functions for now.
+	**/
+
+	int get_mstat(char const *__path, m_stat *mfile) {
+		memset(mfile,0,sizeof(m_stat));
+		ulong path_len=str_rwings(__path);
+		if(path_len>512){
+			#ifdef LOG_ERR
+				printf("path specified is 512+ \n");
+			#endif
+			return -1;
+		}
+		memmove(mfile->m_path,__path,path_len);
+		struct stat temp;
+		memset(&temp,0,sizeof(struct stat));
+		if(stat(mfile->m_path,&temp)!=0){
+			#ifdef LOG_ERR
+				printf("cannot determine `stat` call :: %s\n", mfile->m_path);
+			#endif
+			return -1;
+		};
+		mfile->m_size=fsize_st(&temp);
+		mfile->m_mode=dmode_st(&temp);
+		mfile->m_blksz=iosize_st(&temp);
+		mfile->m_inn=inn_st(&temp);
+		return 0;
 	};
 
 
@@ -1223,7 +1172,7 @@ K512-architecture
 								printf("err : cannot init enough memory for archfile : %s\n", __path);
 							#endif
 							return -1;
-						};
+						}
 						else if(!temp) {
 							__flag+=1;
 							if(__flag==3) {
@@ -1234,7 +1183,8 @@ K512-architecture
 							}else {
 								continue;
 							};
-						}else {
+						}
+						else {
 							b_written+=temp;
 						};
 					};
@@ -1259,6 +1209,31 @@ K512-architecture
 		};
 	};
 
+	// generate file name from path and size
+	char const *arch_dfile(char const *__name, ulong arch_perm, ulong tfile_size) {
+		char const *__cpath=__ecall("var", __name);
+		
+		if(stres(__cpath)){
+			#ifdef DEBUG
+				printf("file already exists\n");
+			#endif
+			return zero_address(3);
+		};
+
+		char const *tlbb_name=(char const *)typed_lbbfilename(fsize);
+		char const *__raw_fname=__combine_str(__cpath, tlbb_name);
+		char const *__arch_filename=arch_namehash(__raw_fname);
+		
+		if(!arch_att(__arch_filename, arch_perm, tfile_size)){
+			#ifdef DEBUG
+				printf("failed to create dfile\n");
+			#endif
+			return zero_address(3);
+		};
+
+		return __arch_filename;
+	};
+
 	// creates the arch file needed
 	int arch_cfile(char const *cf_name, lbb_t lbb_ftype){
 		
@@ -1267,12 +1242,12 @@ K512-architecture
 
 	// checks the arch permissions for the requested path
 	int arch_fpermissions(char const *__cpath, aip_sterm __sterm){
-		mstat c_mstat; memset(&c_mstat, 0, sizeof(m_stat));
+		m_stat c_mstat; memset(&c_mstat, 0, sizeof(m_stat));
 		get_mstat(__cpath, &c_mstat);
 		if(__sterm==Public){
-			return ARCH_MADE(cm_mode(__cpath));
+			return ARCH_MADE(cm_mode(c_mstat));
 		}else{
-			return ARCH_SAVE(cm_mode(__cpath));
+			return ARCH_SAVE(cm_mode(c_mstat));
 		};
 	};
 
@@ -1283,69 +1258,23 @@ K512-architecture
 				return fhash8(2, __fpath);
 			}
 			else {
-				return hash8(1, __fpath);
+				return hash8(1, __fpath, str_rwings(__fpath));
 			};
 		}else {
-			return zero_address(2);
+			return (ulong)0;
 		};
 	};
 
-	// get this architicture modificiations {{ CERTIFICATE }}
-	int arch_mods(char const *__3curl){
-		ulong fieldname=0, ccc__offset=0;
-		char const *__mod,*__crm,*__3c;
-		ulong __len=0, __offset=0;
-		int c=0; // count
-		for(;c<mods_count;c++){
-			__mod=(char*)mods[c];
-			__crm=(char*)charms[c];
-			__3c=ccopy_to_path(__crm,__3curl);
-			__len=arch_tfile(__3c);
-			__offset+=arch_fpermissions(__3c);
-			ccc__offset+=arch_foffset(__3c,__offset);
-			fieldname=arch_fname(__crm,ccc__offset);
-		}
-		return 0;
-	}
 
 	char const *arch_cenv(){
-		char **__var=environ;
-		ulong var_count=__env_hash(__var);
-		return __keys_hash(var_hlist, var_count);
+		char const **__var=(char const **)environ;
+		ulong var_count=content_count(__var);
+		return varll_hash(vcontent(__var), var_count);
 	};
 
-	/**
-	 * the reason im currently not using the following logic
-	 *  mfile -> m_size = __fsze(...)
-	 * is due to a feature that can be implemented into a
-	 * single interface call regardless of the execution context(high level interface)
-	 * i.e : language, compilier, etc...
-	 * so im dividing them into functions for now.
-	**/
+	void *__mstat__(m_stat *st) {
 
-	int get_mstat(char const *__path, m_stat *mfile) {
-		memset(mfile,0,sizeof(m_stat));
-		ulong path_len=str_rwings(__path);
-		if(path_len>512){
-			#ifdef LOG_ERR
-				printf("path specified is 512+ \n");
-			#endif
-			return -1;
-		}
-		memmove(mfile->m_path,__path,path_len);
-		struct stat temp;
-		memset(&temp,0,sizeof(struct stat));
-		if(stat(mfile->m_path,&temp)!=0){
-			#ifdef LOG_ERR
-				printf("cannot determine `stat` call :: %s\n", mfile->m_path);
-			#endif
-			return -1;
-		};
-		mfile->m_size=fsize_st(&temp);
-		mfile->m_mode=dmode_st(&temp);
-		mfile->m_blksz=iosize_st(&temp);
-		mfile->m_inn=inn_st(&temp);
-		return 0;
+		return memset(st, 0, sizeof(m_stat));
 	};
 
 	// convolute through the file to get
@@ -1395,6 +1324,117 @@ K512-architecture
 #endif
 
 
+/************************ h-logging ************************/
+
+#ifndef __H512__L
+
+	void log_str(char const *__) {
+		write(0,__,str_rwings(__));
+		write(0,"\n",1);
+	};
+
+	void log_dpoint(d_point *dst_point) {
+		printf("dst point :: \n");
+		printf("@%lu\n", dst_point->c_index);
+		printf("name :%s\n",dst_point->c_name);
+		printf("ref  :%s\n",dst_point->c_ref);
+	};
+
+	void log_sstat(s_stat *sfile){
+		printf("dcloud : ATP :: dist ::: shared\n");
+		printf("path	= %s\n", sfile->s_path);
+		printf("iploc	= %s\n", sfile->s_ipv);
+		printf("port	= %s\n", __s_port);
+		printf("addr	= %s\n", sfile->s_addr);
+		printf("term	= %s\n", sfile->s_term==0?"PUBLIC":"PRIVATE");
+	};
+
+	void log_mstat(m_stat *mfile){
+		printf("dcloud : ATP :: dist ::: mounted\n");
+		printf("path	= %s\n", mfile->m_path);
+		printf("nodenum	= %lu\n", mfile->m_inn);
+		printf("size	= %lu\n",mfile->m_size);
+		printf("mode	= %lu\n",mfile->m_mode);
+		printf("blkio	= %lu\n",mfile->m_blksz);
+	};
+
+	void log_esptr(ulong *esptr) {
+		printf("dcloud : K :: esptr\n");
+		ulong c=0;
+		do {
+			printf(":%lu=%lu\n",c,esptr[c]);c+=1;
+		}
+		while(*esptr++);
+	};
+
+	void log_process_ids(ulong p_pid, ulong c_pid) {
+	   printf("process ids ::\n");
+	   printf("p.pid    =%lu\n",p_pid);
+	   printf("c.pid    =%lu\n",c_pid);
+	};
+
+	void log_process_schema(ulong p_pid, ulong c_pid) {
+	    printf("p_pid :: %lu",p_pid);
+	    printf("\nc_pid :: %lu",c_pid);
+	    printf("\nsuccess=%d\tnsucess=%d\n",CALL_SUCC(c_pid),CALL_NSUC(c_pid));
+	    printf("call next ? %lu\n",CALL_NEXT(c_pid));
+	};
+
+	void log_at_protoname(atp_t __atpname) {
+		switch(__atpname) {
+		case __at_p: 		printf("ATP : @				::\b"); break;
+		case __at_4: 		printf("ATP : @Ipv4			::\b"); break;
+		case __at_6: 		printf("ATP : @Ipv6			::\b"); break;
+		case __at_e:		printf("ATP : @ETHEREUM		::\b"); break;
+		case __at__:		printf("ATP : @-Protocol	::\b"); break;
+		default:			printf("ATP <dcloud> 		:::\n"); break;
+		};
+	};
+	
+	void log_ixrh(ixr_h *ixrh) {
+		// log indexer prototype
+		printf("\nindexer head ::\n");
+		printf("\tfldsze=%lu", ixrh->__size);
+		printf("\tdcount=%lu", ixrh->d_count);
+		printf("\tchksum=%lu", ixrh->checksum);
+		printf("\n");
+	};
+
+	void log_socket(aip_sock *sock) {
+		socket_st s_info=__sock_addr(sock_aip_to_sa(sock));
+		printf("socket @%s\n",s_info.s_ascii);
+	};
+
+
+	//// log the format type specifications
+	//void log_fmt_t(fmt_t __format) {
+	//	switch(__format) {
+	//	case __keyval__: __TEXT(Key:Value); break;
+	//	case __envvar__: __TEXT(Enviroment=Spec); break;
+	//	case __pathmut__: __TEXT(Path:=MountPoint); break;
+	//	case __fld__: __TEXT(Field=:Callable); break;
+	//	case __intrprt__: __TEXT(Interpreter<i>); break;
+	//	case __csok__: __TEXT(@Socket); break;
+	//	case __call__: __TEXT(@ATP<i>{p}); break;
+	//	default: __TEXT(Unknown); break;
+	//	};
+	//};
+
+	// log the key value as strings
+	void log_keyvalue(char *key, char *value) {
+		__ASCII(key);
+		__ASCII(value);
+	};
+	// print the corrent way of using the `d-lbb` command
+	void lbb_usage(){
+		__TEXT(Use lbb as :: `d-lbb /path/to/file`);
+	};
+
+
+	#define __H512__L
+#endif
+
+
 
 /************************ d-language ************************/
 
@@ -1420,7 +1460,7 @@ K512-architecture
 	#define __BASE__ {\
 		static char dbuf[__A_LEN];memset(&dbuf, 0, sizeof(dbuf));\
 		memset(lbb_mstat, 0, sizeof(struct __m_stat));\
-		memset(l_shard,0,sizeof(struct __lbb_shard));\
+		memset(l_shard,0,sizeof(c_shard));\
 		printf("getting shard .:%s:. \n",__lbb_indexfile);\
 		if(!checkef_file){INDEXER(NULL);}\
 		get_mstat(__lbb_indexfile,lbb_mstat);\
