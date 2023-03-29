@@ -432,7 +432,7 @@ The indexer
     	case 'H': ps=pack(pbuf, __format, (uns *)__); break;
     	case 'l': ps=pack(pbuf, __format, (long*)__); break;
     	case 'L': ps=pack(pbuf, __format, (ulong*)__); break;
-    	case 'Q': ps=pack(pbuf, __format, (tlong*)__); break;
+    	case 'Q': ps=pack(pbuf, __format, (utlong*)__); break;
     	case '_': ps=pack(pbuf, __format, (void *)__); break;
     	default: return 0;
     	};

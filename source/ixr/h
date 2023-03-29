@@ -34,29 +34,6 @@
 	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
 	#define INDEX_END(x) return __set_next(x);
 
-    #define IXR_FMT(__) _Generic((__), \
-		char 		: "c",\
-		char*		: "s",\
-		char const*	: "s",\
-		int*		: "h",\
-		uns*		: "H",\
-		long*		: "l",\
-		ulong*		: "L",\
-		tlong*		: "Q",\
-		default 	: "_")
-
-    #define IXR_ARG(__) _Generic((__), \
-		char*					: (char*)x,\
-		char const *			: (char const *)x,\
-		unsigned char*			: (uchar*)x,\
-		int*					: (int*)x,\
-		unsigned int*			: (uns*)x,\
-		long int*				: (ulong*)x,\
-		unsigned long int*		: (ulong*)x,\
-		long long int*			: (tlong*)x, \
-		unsigned long long int*	: (tlong*)x, \
-		default					: NULL)
-
 	d_point ref_point(void const *__key, char const *__value, char const *__format);
 	void *__erv(char const *__key,char const *__val);
 	char const *ixr_format(ixr_t idx_type);

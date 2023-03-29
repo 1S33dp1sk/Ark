@@ -96,19 +96,6 @@
 		else { refer_index(x,y,#x); }\
 	}
 	#define hash_follow(l,...) (char const *)hashof(l, #__VA_ARGS__, str_rwings(#__VA_ARGS__))
-	#define _C_TYPES(x) \
-	    _Generic((x), \
-	        signed char: "char", \
-	        unsigned char:"uchar", \
-	        int:"int", \
-	        unsigned int:"uns", \
-	        long int:"ulong", \
-	        unsigned long int:"ulong", \
-	        long long int:"tlong", \
-	        unsigned long long int:"tlong", \
-	        char *:"string",\
-	        void *:"pointer",\
-	        default:"NULL")
 	#define __switcher(x) (int)(x->switcher)
 	#define __protocol__(x) void *res;\
 		switch(__switcher(x)){\

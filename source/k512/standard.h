@@ -84,31 +84,31 @@
 #endif
 
 #ifndef __os_name
-#define __os_delim "/"
+#define __os_delim "/\0"
     #if HAVE_TARGET_CONDITIONALS_H
         #include <targetConditionals.h>
     #endif
-    #if _WIN64
+    #if defined(_WIN64)
         #define __os_name "windows:64b\0"
         #undef __os_delim
-        #define __os_delim "\\"
-    #elif _WIN32
+        #define __os_delim "\\\0"
+    #elif defined(_WIN32)
         #define __os_name "windows\0"
         #undef __os_delim
-        #define __os_delim "\\"
+        #define __os_delim "\\\0"
     #elif defined(TARGET_OS_IPHONE)
         #define __os_name "apple:iphone\0"
     #elif defined(TARGET_OS_MAC)
         #define __os_name "apple:macos\0"
-    #elif __APPLE__!=0
+    #elif defined(__APPLE__)
         #define __os_name "apple\0"
-    #elif __linux__!=0
+    #elif defined(__linux__)
         #define __os_name "unix:linux\0"
-    #elif __ANDROID__!=0
+    #elif defined(__ANDROID__)
         #define __os_name "unix:android\0"
-    #elif BSD
+    #elif defined(BSD)
         #define __os_name "bsd\0"
-    #elif __unix__
+    #elif defined(__unix__)
         #define __os_name "unix\0"
     #else
         #define __os_name "\0"
