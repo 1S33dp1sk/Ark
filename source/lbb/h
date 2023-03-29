@@ -63,9 +63,9 @@
 	#define __lbb_public_mode (S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)
 
 	static ulong ___lbb_offset=0;
-	static lshard lbb_shard;
-	static lshard *l_shard=&lbb_shard;
-	static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
+	static c_shard lbb_shard;
+	static c_shard *l_shard=&lbb_shard;
+	static m_stat *lbb_mstat=&(lbb_shard.c_stat);
 
 	// printf friendly
     #define FMT_ASCII_SPEC(__) _Generic((__), \
@@ -149,10 +149,10 @@
 	    write(fld,__,sz);\
 	} __dPER
 
-	#define pth_shard(x) ((char *)((x.lbb_mst).m_path))
-	#define fld_shard(x) ((ulong)(x.lbb_fd))
-	#define sze_shard(x) ((ulong)((x.lbb_mst).m_size))
-	#define ioz_shard(x) ((ulong)((x.lbb_mst).m_blksz))
+	#define pth_shard(x) ((char *)((x.c_stat).m_path))
+	#define fld_shard(x) ((ulong)(x.c_fd))
+	#define sze_shard(x) ((ulong)((x.c_stat).m_size))
+	#define ioz_shard(x) ((ulong)((x.c_stat).m_blksz))
 
 	#define shd_fd fld_shard(lbb_shard)
 	#define shd_sze sze_shard(lbb_shard)
@@ -176,7 +176,7 @@
 	#define __LBB_START__(...) __DPRG__(__VA_ARGS__)
 
 	#define __LBB_WRITER__ do {\
-		memset(l_shard,0,sizeof(struct __lbb_shard));\
+		memset(l_shard,0,sizeof(c_shard));\
 		w_start_ap();\
 	} __dPER
 
@@ -188,7 +188,7 @@
 	} __dPER
 
 	#define __LBB_READER__ do{\
-		memset(l_shard,0,sizeof(struct __lbb_shard));\
+		memset(l_shard,0,sizeof(c_shard));\
 		if(!checkef_lo) {__ap_fifo(__lbb_locking);};\
 		r_start_ap();\
 	} __dPER

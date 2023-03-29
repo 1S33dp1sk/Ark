@@ -5,48 +5,49 @@ hash bar
 #include "hbar.h"
 #endif
 
+
+
 #ifndef __hbar_name
 	#define __hbar_name "hash_bar"
-	#define byte_to_hex __btoh
-	#define hash_to_strl h_str_tl 
-	#define hash_to_string __htostr
-	#define hbar_str __s_hash
-	void __btoh( uint8_t b , char s[3] ) {
-		uint32_t i=1;
-		s[0] = s[1] = '0';
-		s[2] = '\0';
-		while( b ) {
-			uint32_t t = b & 0x0f;
-			if( t < 10 ) {
-				s[i] = '0' + t;
+
+	void __btoh(uchar __c, uc __s) {
+		uns i=1, t=0;
+		__s[0] = __s[1] = __CHAR_ZERO;
+		__s[2] = __CHAR_NULL;
+		while(__c) {
+			t = F_BYTE(__c);
+			if(t<10) {
+				__s[i] = __CHAR_ZERO+t;
 			} 
 			else {
-				s[i] = 'a' + t - 10;
-			}
-			i--;
-			b >>= 4;
+				__s[i] = __CHAR_ALPH_A+t-10;
+			};
+			__c>>=4;i--;
 		}
-	}
-	void h_str_tl( char *buf , uint8_t *_i_hash , unsigned il ) {
-		for ( int i=0; i < il ; i++ ) {
-			char __[3];
-			__btoh( _i_hash[i] , __ );
-			strncat( buf , __ , 3 );
-		}
-	}
-	void __htostr( char *hashstr , uint8_t *hash ) {
+	};
+	void h_str_tl(char *buffer, uchar *__hash, ulong __len) {
+		int i=0;
+		for (;i<__len;i+=1) {
+			uc __;
+			__btoh(__hash[i], __);
+			strncat(buffer, (char *)__, 3);
+		};
+	};
+
+	void __htostr(char *__str, uchar *__hash) {
 		#ifdef DEBUG
-		printf( " hashstr :: %s\n " , hashstr );
+		printf( "starting string :: %s\n " , __str );
 		#endif
-		for ( int _ = 0 ; _ < 32 ; _ ++ ) {
-			char __[3];
-			__btoh( hash[_] , __ );
-			strncat( hashstr , __ , 3 );
+		ulong __c=0;
+		for (;__c<32; __c+=1) {
+			uc __;
+			__btoh(__hash[__c], __);
+			strncat(__str, (char *)__, 3);
 		}
 		#ifdef DEBUG
-		printf( " hash :: %s\n" , hashstr );
+		printf( " hash :: %s\n" , __str );
 		#endif
-	}
+	};
 	/**
 	 * @dev used to hash the input from
 	 * @param key       : `argv[1]`
@@ -54,56 +55,55 @@ hash bar
 	 * and copy the result to a pre-allocated buffer
 	 * @param hashkey   : ( char[256] )
 	 */
-	char *__s_hash(char *key, char *hashkey) {
-		int key_len=strlen(key);
+	char *__s_hash(char *__key, char *__hash) {
+		ulong __keylen=str_rwings(__key);
 		#ifdef DEBUG
 			printf("-----BEGIN HASH DEBUG-----\n");
-			printf("key :: %s\n",key);
-			printf("keylen :: %d\n",key_len);
+			printf("key : %s :: %lu\n",__key, __keylen);
 		#endif
 		sha3_init256(&__sha3);
 		sha3_set_flags(&__sha3,1);
-		sha3_update(&__sha3,key,key_len);
-		uint8_t *__hash=(uint8_t *)sha3_finalize(&__sha3);
-		__htostr(hashkey,__hash);
+		sha3_update(&__sha3,__key,__keylen);
+		uchar *__uhash=(uchar *)sha3_finalize(&__sha3);
+		__htostr(__hash,__uhash);
 		#ifdef DEBUG
-			printf( "hashkey : result : %s\n" , hashkey );
+			printf( "hash : %s\n" , __hash);
 			printf( "-----END HASH DEBUG-----\n" );
 		#endif
-		return hashkey;
+		return __hash;
 	}
 	/**
 	blaz_hash : used in function signatures
 	 *
 	**/  
-   ulong blaz_hash(char const*data) {
-		uint32_t len=strlen(data),hash=len, tmp;
+   	ulong blaz_hash(char const *__data) {
+		uns len=str_rwings(__data),hash=len, tmp;
 		int rem;
-		if (len<=0||data==NULL) { 
+		if (len<=0||__data==NULL) { 
 			return 0; 
 		};
 		rem = len & 3;
 		len >>= 2;
 		/* main */
 		for (;len > 0; len--) {
-			hash  += get16bits (data);
-			tmp    = (get16bits (data+2) << 11) ^ hash;
+			hash  += get16bits (__data);
+			tmp    = (get16bits (__data+2) << 11) ^ hash;
 			hash   = (hash << 16) ^ tmp;
-			data  += 2*sizeof (uint16_t);
+			__data  += 2*sizeof (uint16_t);
 			hash  += hash >> 11;
 		};
 		/* handler */
 		switch (rem) {
-			case 3: hash += get16bits (data);
+			case 3: hash += get16bits (__data);
 					hash ^= hash << 16;
-					hash ^= ((signed char)data[sizeof (uint16_t)]) << 18;
+					hash ^= ((signed char)__data[sizeof (uint16_t)]) << 18;
 					hash += hash >> 11;
 					break;
-			case 2: hash += get16bits (data);
+			case 2: hash += get16bits (__data);
 					hash ^= hash << 11;
 					hash += hash >> 17;
 					break;
-			case 1: hash += (signed char)*data;
+			case 1: hash += (signed char)*__data;
 					hash ^= hash << 10;
 					hash += hash >> 1;
 		};
@@ -117,14 +117,16 @@ hash bar
 
 		return hash;
 	};
+
+
 	/**
 	XOR into state for keccak
 	 * generally called after `__sha3_k_sponge_w - ctx` -> cap_words words 
 	 * are `XOR()` into the state `s` 
 	**/
-	static void keccakf(uint64_t s[25]) {
+	static void keccakf(ulong s[25]) {
 		int i, j, round;
-		uint64_t t, bc[5];
+		ulong t, bc[5];
 	#define __sha3_keccak_rounds 24
 
 		for(round=0; round<__sha3_keccak_rounds; round++) {
@@ -159,7 +161,7 @@ hash bar
 	/**
 	[initiate | reset] the sha3 context
 	**/
-	sha3_r sha3_init(void *priv, unsigned bit_size) {
+	sha3_r sha3_init(void *priv, ulong bit_size) {
 		sha3_context *ctx = (sha3_context *) priv;
 		if( bit_size != 256 && bit_size != 384 && bit_size != 512 ) {
 			return __sha3_u_n;
@@ -182,32 +184,32 @@ hash bar
 	hash the buffer in ctx
 	 *
 	**/
-	void sha3_update(void *priv, void const *buf_inp, size_t len) {
+	void sha3_update(void *priv, void const *buf_inp, ulong len) {
 		sha3_context *ctx=(sha3_context *)priv;
 				// cast to context from voidptr
-		unsigned tail, old_tail=(8-ctx->byte_idx)&7;
+		ulong tail, old_tail=(8-ctx->byte_idx)&7;
 				// reminder for word 0...7 
-		size_t words, i;
-		const uint8_t *buf=buf_inp;
+		ulong words, i;
+		const uchar *buf=buf_inp;
 		__sha3_trace_buf("called to update with:", buf, len);
 		__sha3_assert(ctx->byte_idx<8);
 		__sha3_assert(ctx->word_idx<sizeof(ctx-> u.s)/sizeof(ctx->u.s[0]));
 		if(len<old_tail) {        
 			// have no complete word or haven't started the word yet 
-			__sha3_trace("because %d<%d, store it and return", (unsigned)len, (unsigned)old_tail);
+			__sha3_trace("because %d<%d, store it and return", (ulong)len, (ulong)old_tail);
 			// endian-independent
 			while (len--)
-				ctx->saved|=(uint64_t)(*(buf++))<<((ctx-> byte_idx++)*8);
+				ctx->saved|=(ulong)(*(buf++))<<((ctx-> byte_idx++)*8);
 			__sha3_assert(ctx->byte_idx<8);
 			return;
 		};
 		if(old_tail) {
 			// process a single word
-			__sha3_trace("completing one word with %d bytes", (unsigned)old_tail);
+			__sha3_trace("completing one word with %d bytes", (ulong)old_tail);
 			// endian-independent
 			len-=old_tail;
 			while(old_tail--)
-				ctx->saved|=(uint64_t )(*(buf++))<<((ctx->byte_idx++)*8);
+				ctx->saved|=(ulong )(*(buf++))<<((ctx->byte_idx++)*8);
 			/* now ready to add saved to the sponge */
 			ctx->u.s[ctx->word_idx]^=ctx->saved;
 			__sha3_assert(ctx->byte_idx==8);
@@ -222,16 +224,16 @@ hash bar
 		__sha3_assert(ctx->byte_idx==0);
 		words=len/__size_u64;
 		tail=len-words*__size_u64;
-		__sha3_trace("have %d full words to process", ( unsigned ) words );
+		__sha3_trace("have %d full words to process", ( ulong ) words );
 		for(i=0; i<words; i++, buf+=__size_u64) {
-			const uint64_t t = (uint64_t) (buf[0]) |
-					((uint64_t) (buf[1]) << 8 * 1) |
-					((uint64_t) (buf[2]) << 8 * 2) |
-					((uint64_t) (buf[3]) << 8 * 3) |
-					((uint64_t) (buf[4]) << 8 * 4) |
-					((uint64_t) (buf[5]) << 8 * 5) |
-					((uint64_t) (buf[6]) << 8 * 6) |
-					((uint64_t) (buf[7]) << 8 * 7);
+			const ulong t = (ulong) (buf[0]) |
+					((ulong) (buf[1]) << 8 * 1) |
+					((ulong) (buf[2]) << 8 * 2) |
+					((ulong) (buf[3]) << 8 * 3) |
+					((ulong) (buf[4]) << 8 * 4) |
+					((ulong) (buf[5]) << 8 * 5) |
+					((ulong) (buf[6]) << 8 * 6) |
+					((ulong) (buf[7]) << 8 * 7);
 	#if defined(__x86_64__) || defined(__i386__)
 			__sha3_assert(memcmp(&t,buf,8)==0);
 	#endif
@@ -242,13 +244,13 @@ hash bar
 			};
 		};
 
-		__sha3_trace("have %d bytes left to process, save them", ( unsigned ) tail );
+		__sha3_trace("have %d bytes left to process, save them", ( ulong ) tail );
 
 		/* finally, save the partial word */
 		__sha3_assert( ctx->byte_idx == 0 && tail < 8 );
 		while ( tail-- ) {
 			__sha3_trace("Store byte %02x '%c'", *buf, *buf);
-			ctx->saved |= ( uint64_t ) ( *( buf++ ) ) << ( ( ctx->byte_idx++ ) * 8 );
+			ctx->saved |= ( ulong ) ( *( buf++ ) ) << ( ( ctx->byte_idx++ ) * 8 );
 		}
 		__sha3_assert( ctx->byte_idx < 8 );
 		__sha3_trace( "Have saved=0x%016" PRIx64 " at the end", ctx->saved );
@@ -265,14 +267,14 @@ hash bar
 		 * use 1<<2 below. The 0x02 below corresponds to the suffix 01.
 		 * Overall, we feed 0, then 1, and finally 1 to start padding. Without
 		 * M || 01, we would simply use 1 to start padding. */
-		uint64_t t;
+		ulong t;
 		if( ctx->cap_words & __sha3_k_use_flag ) {
 			/* Keccak version */
-			t = ( uint64_t )( ( ( uint64_t ) 1 ) << ( ctx->byte_idx * 8 ) );
+			t = ( ulong )( ( ( ulong ) 1 ) << ( ctx->byte_idx * 8 ) );
 		}
 		else {
 			/* SHA3 version */
-			t = ( uint64_t )( ( ( uint64_t )( 0x02 | ( 1 << 2 ) ) ) << ( ( ctx->byte_idx ) * 8 ) );
+			t = ( ulong )( ( ( ulong )( 0x02 | ( 1 << 2 ) ) ) << ( ( ctx->byte_idx ) * 8 ) );
 		};
 		ctx->u.s[ctx->word_idx]^=ctx->saved^t;
 		ctx->u.s[__sha3_k_sponge_w-__sha3_cw(ctx->cap_words)-1]^=__sha3_const( 0x8000000000000000UL );
@@ -283,18 +285,18 @@ hash bar
 		 *    ... the conversion below ...
 		 * #endif */
 		{
-			unsigned i;
+			uns i;
 			for(i=0; i<__sha3_k_sponge_w; i++) {
-				const unsigned t1 = (uint32_t) ctx->u.s[i];
-				const unsigned t2 = (uint32_t) ( (ctx->u.s[i]>>16)>>16);
-				ctx->u.sb[i * 8 + 0] = (uint8_t) (t1); 
-				ctx->u.sb[i * 8 + 1] = (uint8_t) (t1>>8);
-				ctx->u.sb[i * 8 + 2] = (uint8_t) (t1>>16);
-				ctx->u.sb[i * 8 + 3] = (uint8_t) (t1>>24);
-				ctx->u.sb[i * 8 + 4] = (uint8_t) (t2); 
-				ctx->u.sb[i * 8 + 5] = (uint8_t) (t2>>8);
-				ctx->u.sb[i * 8 + 6] = (uint8_t) (t2>>16);
-				ctx->u.sb[i * 8 + 7] = (uint8_t) (t2>>24);
+				const uns t1 = (uns) ctx->u.s[i];
+				const uns t2 = (uns) ( (ctx->u.s[i]>>16)>>16);
+				ctx->u.sb[i * 8 + 0] = (uchar) (t1); 
+				ctx->u.sb[i * 8 + 1] = (uchar) (t1>>8);
+				ctx->u.sb[i * 8 + 2] = (uchar) (t1>>16);
+				ctx->u.sb[i * 8 + 3] = (uchar) (t1>>24);
+				ctx->u.sb[i * 8 + 4] = (uchar) (t2); 
+				ctx->u.sb[i * 8 + 5] = (uchar) (t2>>8);
+				ctx->u.sb[i * 8 + 6] = (uchar) (t2>>16);
+				ctx->u.sb[i * 8 + 7] = (uchar) (t2>>24);
 			}
 		}
 		__sha3_trace_buf( "hash: (first 32 bytes)", ctx->u.sb , 256 / 8 );
@@ -304,7 +306,7 @@ hash bar
 	atomic hashing 
 	 *
 	**/
-	sha3_r sha3_hash_buffer( unsigned bit_size, sha3_f flags, const void *in, unsigned in_bytes, void *out, unsigned out_bytes ) {
+	sha3_r sha3_hash_buffer( ulong bit_size, sha3_f flags, const void *in, ulong in_bytes, void *out, ulong out_bytes ) {
 		
 		sha3_r err;
 		sha3_context c;
@@ -331,13 +333,13 @@ hash bar
 	}
 	/**
 	 * hbar family
-	 * hash,fhash       @returns uint8_t const *
+	 * hash,fhash       @returns uchar const *
 	 * hashof,fhashof   @returns char const *
 	 * hasht,fhasht     @returns typeof(numbytes) : 4=ulong , 8=ulong , etc..
 	 * 
-	 * zeroatt          @returns zero address
+	 * zero_address          @returns zero address
 	**/ 
-	char const *zero_address(uns level){
+	char const *zero_address(ulong level){
 		switch(level){
 		case 0: return "0x0000";
 		case 1: return "0x00000000";
@@ -381,8 +383,8 @@ hash bar
 	 * this is by design, as we can generate randomness from this. 
 	 ***AFNAB**
 	**/ 
-	char const *hashof(uns level, void const *tohash, size_t thsize) {
-		unsigned hash_size=0,k_flag=0,hashstr_len=4;
+	char const *hashof(ulong level, void const *tohash, ulong thsize) {
+		ulong hash_size=0,k_flag=0,hashstr_len=4;
 		switch (level) {
 			case 0:
 				hash_size=256;
@@ -405,20 +407,20 @@ hash bar
 		}
 		char __hsized[hash_size];
 		memset(&__hsized, 0, hash_size);
-		uint8_t *__hptr;
+		uchar *__hptr;
 		sha3_init(&__sha3, hash_size);
 		sha3_set_flags(&__sha3,k_flag);
 		sha3_update(&__sha3,tohash,thsize);
-		h_str_tl(__hsized, (uint8_t *)sha3_finalize(&__sha3), hashstr_len);
+		h_str_tl(__hsized, (uchar *)sha3_finalize(&__sha3), hashstr_len);
 		return strdup(__hsized);
 	}
 	// raw 
-	uint8_t const *hash( uns level , void const *tohash , size_t thsize ) {
+	uchar const *hash( ulong level , void const *tohash , ulong thsize ) {
 		#ifdef DEBUG_HASH
 			char const *_strhash=(char const *)tohash;
 			printf("hash : string to hash :: %s\n",_strhash);
 		#endif
-			unsigned hash_size = 0 , k_flag = 0 , hashstr_len = 4;
+			ulong hash_size = 0 , k_flag = 0 , hashstr_len = 4;
 			switch ( level ) {
 				case 0:
 					hash_size = 256;
@@ -441,18 +443,18 @@ hash bar
 			}
 			char __hsized[hash_size];
 			memset( &__hsized , 0 , hash_size );
-			uint8_t *__hptr;
+			uchar *__hptr;
 			sha3_init( &__sha3 , hash_size );
 			sha3_set_flags( &__sha3 , k_flag );
 			sha3_update( &__sha3 , tohash , thsize );
-			return ( uint8_t * ) sha3_finalize( &__sha3 );
+			return ( uchar * ) sha3_finalize( &__sha3 );
 	}
 	/**
 	hashof-8
 	 * 
 	**/
-	ulong hash8(ulong __vl, void const *__v, size_t __vsize) {
-		uint8_t const *__ = hash((unsigned)__vl,__v,__vsize);
+	ulong hash8(ulong __vl, void const *__v, ulong __vsize) {
+		uchar const *__ = hash((ulong)__vl,__v,__vsize);
 		ulong c=0,res=0;
 		for(;c<8;c+=1){
 			res|=(ulong)__[c]<<(c*8);
@@ -463,14 +465,14 @@ hash bar
 	hash24=3x(hashof-8)
 	 *
 	**/
-	void *hash24(ulong __vl, void const *__v, size_t __vsize){
-		uint8_t const *__ = hash(__vl,__v,__vsize);
+	ulptr hash24(ulong __vl, void const *__v, ulong __vsize){
+		uchar const *__ = hash(__vl,__v,__vsize);
 		init_ul();
 		ulong res,__c0=0,__c1=0;
 		for(;__c0<2;__c0+=1) {
 			res=0;
 			for(;__c1<8;__c1+=1) {
-				res|=(ulong)__[i]<<(__c1*8);
+				res|=(ulong)__[__c0]<<(__c1*8);
 			};
 			u[__c0]=res;
 		};
@@ -480,7 +482,7 @@ hash bar
 	file hash
 	 *
 	**/
-	char const *fhashof( uns level , char const *filepath ) {
+	char const *fhashof( ulong level , char const *filepath ) {
 			struct stat __st;
 			int __fd = open( filepath , O_RDONLY );
 
@@ -507,7 +509,7 @@ hash bar
 			return hashof(level,fl_hash,b_read);
 	};
 
-	char const *fdhashof(uns level, ulong fd, ulong filesize) {
+	char const *fdhashof(ulong level, ulong fd, ulong filesize) {
 			char fd_hash[filesize];
 			memset(&fd_hash,0,filesize);
 			int b_read=read(fd,fd_hash,filesize);
@@ -524,7 +526,7 @@ hash bar
 				#ifdef LOG_ERR
 					printf("file has no contents to hash\n");
 				#endif
-				return zeroatt(level);
+				return zero_address(level);
 			}
 			else {
 				ulong temp=0;
@@ -551,7 +553,7 @@ hash bar
 	file-hash raw
 	 *
 	**/
-	uint8_t const *fhash(uns level,char const*filepath) {
+	uchar const *fhash(ulong level,char const*filepath) {
 		struct stat __st;
 		int __fd = open( filepath , O_RDONLY );
 
@@ -583,8 +585,8 @@ hash bar
 	file-hash4
 	 * 
 	**/
-	uns fhash4(uns level,char const *filepath) {
-		uint8_t const *__ = fhash(level,filepath);
+	uns fhash4(ulong level,char const *filepath) {
+		uchar const *__ = fhash(level,filepath);
 		if(__==NULL){return 0;}
 		uns res=0;
 		for(int i=0;i<4;i++){
@@ -596,8 +598,8 @@ hash bar
 	file-hash8
 	 * 
 	**/
-	ulong fhash8(uns level,char const*filepath) {
-		uint8_t const *__ = fhash(level,filepath);
+	ulong fhash8(ulong level,char const*filepath) {
+		uchar const *__ = fhash(level,filepath);
 		if(__==NULL){return 0;}
 		ulong res=0;
 		for(int i=0;i<8;i++){
@@ -611,8 +613,8 @@ hash bar
 	 * 
 	 * 
 	**/
-	ulong fhash16(uns level, char const*filepath){
-		uint8_t const *__=fhash(level,filepath);
+	ulong fhash16(ulong level, char const*filepath){
+		uchar const *__=fhash(level,filepath);
 		if(__==NULL){return 0;}
 		ulong res=0;
 		for(int i=0;i<16;i++){

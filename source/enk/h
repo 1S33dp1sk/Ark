@@ -1,12 +1,7 @@
 #ifndef __ENK__H
-    #include "utypes.h"
-    #include <stdio.h>
-    #include <stdarg.h>
-    #include <string.h>
-    #include <ctype.h>
-    #include <stdint.h>
-    #include <unistd.h>
-    #include <stdlib.h>
+    #define __ENK__H 1
+    #include "karch_512.d"
+
 
     #define packi16 pack_i_16
     #define packi32 pack_i_32
@@ -43,5 +38,4 @@
     ulong unpack_u_64(uchar *buf);
     long long int unpack_i_64(uchar *buf);
 
-    #define __ENK__H 1
 #endif

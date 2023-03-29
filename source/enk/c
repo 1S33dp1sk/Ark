@@ -114,20 +114,7 @@
         #endif
         return __;
     };
-    // 
-    pt2s unpack_k512(uchar *buf, ulong div) {
-        memset(up, 0, sizeof(u2s));
-        ulong __=0,_c=div,__c=8;
-        do {
-            do {
-                u[div-_c]|=(((ulong)buf[8-__c])<<((__c-_c)*8));
-                --__c;   
-            }while(__c>0);
-            _c-=1;
-            buf+=8;
-        }while(_c>0);
-        return up;
-    };
+    
 
 
     /*
@@ -290,11 +277,6 @@
         ulong *Q;
 
 
-        u2s U={
-            ._1=0,
-            ._2=0,
-        };
-        pt2s _U=&U;
 
         float *f;                    // floats
         double *d;
