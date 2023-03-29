@@ -43,27 +43,5 @@
     ulong unpack_u_64(uchar *buf);
     long long int unpack_i_64(uchar *buf);
 
-
-    #define NOFB_TYPE(x) \
-        _Generic((x), \
-            signed char: (char)x, \
-            unsigned char:(uchar)x, \
-            int:(int)x, \
-            unsigned int:(uns)x, \
-            long int:(ulong)x, \
-            unsigned long int:(ulong)x, \
-            long long int:(tlong)x, \
-            unsigned long long int:(tlong)x, \
-            default:NULL)
-    
-
-  
-    #define LBB_OUT_FMT(__) \
-        _Generic((__), \
-            void * : void *,\
-            char * : char *,\
-            const char *: const char *,\
-            default: ulong*)
-
     #define __ENK__H 1
 #endif

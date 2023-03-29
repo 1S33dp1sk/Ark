@@ -36,11 +36,18 @@ K512-architecture
 /************************ h-constants ************************/
 
 #ifndef __H512__C
+	/********* types *********/
+	static __ul u;
+
 	static ulong __cindex=0;
 	static ulong __ixr_fd=0x228;
 	static ulong ___offset=0;
 	static ixr_h ___header;
+	static ulong env_hash_0;
+	/********* unistd *********/
+
 	extern char **environ;
+
 	static const char *__http_protocol_version="HTTP/1.1";
 	static const char *__http_base="P S R\r\n";
 	static const char *__http_request_base="M P V\r\n";
@@ -72,6 +79,14 @@ K512-architecture
 	#define __UN__F __LO__S<<3
 	#define ARC_GENERIC(x) (ulong)((1<<(x*3)))
 	#define __dPER while(1!=1);
+
+	#define shard_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
+	#define shard_share (S_IRWXU|S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)
+	#define shard_nolock (O_RDWR)
+	#define shard_lock_reader (O_RDONLY)
+	#define shard_lock_writer (O_WRONLY)
+
+
     #define FMT_ASCII_SPEC(__) \
         _Generic((__), \
             int: "%d",\
@@ -79,7 +94,7 @@ K512-architecture
             char: "%c",\
             long: "%ld",\
             ulong: "%lu",\
-            tlong: "%llu",\
+            utlong: "%llu",\
             char *: "%s",\
             char const *:"%s",\
             long long: "%lld",\
@@ -95,9 +110,113 @@ K512-architecture
             long: "l",\
             ulong: "L",\
             long long: "q",\
-            tlong: "Q",\
+            utlong: "Q",\
             char *: "s",\
             default: "_")
+	#define _C_TYPES(x) \
+	    _Generic((x), \
+	        signed char: "char", \
+	        unsigned char:"uchar", \
+	        int:"int", \
+	        unsigned int:"uns", \
+	        long int:"ulong", \
+	        unsigned long int:"ulong", \
+	        long long int:"utlong", \
+	        unsigned long long int:"utlong", \
+	        char *:"string",\
+	        void *:"pointer",\
+	        default:"NULL")
+
+    #define NOFB_TYPE(x) \
+        _Generic((x), \
+            signed char: (char)x, \
+            unsigned char:(uchar)x, \
+            int:(int)x, \
+            unsigned int:(uns)x, \
+            long int:(ulong)x, \
+            unsigned long int:(ulong)x, \
+            long long int:(utlong)x, \
+            unsigned long long int:(utlong)x, \
+            default:NULL)
+    
+    #define LBB_OUT_FMT(__) \
+        _Generic((__), \
+            void * : void *,\
+            char * : char *,\
+            const char *: const char *,\
+            default: ulong*)
+
+    #define IXR_FMT(__) _Generic((__), \
+		char 		: "c",\
+		char*		: "s",\
+		char const*	: "s",\
+		int*		: "h",\
+		uns*		: "H",\
+		long*		: "l",\
+		ulong*		: "L",\
+		utlong*		: "Q",\
+		default 	: "_")
+
+    #define IXR_ARG(__) _Generic((__), \
+		char*					: (char*)x,\
+		char const *			: (char const *)x,\
+		unsigned char*			: (uchar*)x,\
+		int*					: (int*)x,\
+		unsigned int*			: (uns*)x,\
+		long int*				: (ulong*)x,\
+		unsigned long int*		: (ulong*)x,\
+		long long int*			: (utlong*)x, \
+		unsigned long long int*	: (utlong*)x, \
+		default					: NULL)
+
+	#define __lbb_call_generic(__) \
+		_Generic((__),\
+			ptr_st:"lbb command",\
+			intr_st: "lbb interpreter",\
+			payld_st: "lbb payload",\
+			cis_st: "lbb field",\
+		default:"lbb call")
+
+	#define __lbb_resp_generic(__) \
+		_Generic((__),\
+			ptr_st*:"command response",\
+			intr_st*: "interpreter reply",\
+			payld_st*: "payload retrieve",\
+			cis_st*: "field return",\
+		default:"unknown args")
+
+	#define __lbb_generic(__) \
+		_Generic((__),\
+			char[8]:(ptr_st *) &__,\
+			char[64]:(intr_st *) &__,\
+			char[512]:(payld_st *) &__,\
+			char[4096]:(cis_st *) &__,\
+			default:"unknown")
+
+	#define __lbb_typd(__) \
+		_Generic((__),\
+			ptr_st * : char[8],\
+			intr_st * : char[64],\
+			payld_st * : char[512],\
+			cis_st * : char[4096],\
+			default:"unknown")
+
+	#define fmt_out(x) log_str(_Generic((x), \
+		num:(char const *)(x.__),\
+		str:(char const *)(x.__),\
+		arr:(char const *)(x.__),\
+		default:__NADA__\
+	));
+
+	#define out(x) fmt_out(x);
+
+	#define out_fmt(x) log_str(_Generic((x), \
+		num:"number",\
+		str:"string",\
+		arr:"array",\
+		default:"dPRG"\
+	));
+
     #define OUT_ENK_H(fd,x) do { \
         char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
         memset(&_,0,sizeof _);memset(&__,0,sizeof __);\
@@ -129,6 +248,26 @@ K512-architecture
 	// call result jump
 	#define CALL_NEXT(x) ((ulong)(x<(ulong)-1?x>1?1:x:0))
 	#define __dPER while(1!=1);
+	#define arr_size(x) ((ulong)(sizeof(x)/sizeof(x[0])))
+	#define elem_hash(x) hash8(0,x,strlen(x))
+	#define wsize(x,y) (sizeof(x)*y)
+	#define ulong_wsize(x) wsize(ulong, x)
+	#define str_wsize(x) wsize(char, x)
+	#define ustr_wsize(x) wsize(uchar, x)
+	#define vcontent(x) ((void const **)x)
+	#define __typed_lbbfile_name(x) arch_tfile_lbb(x)
+	#define typed_lbbfilename(x) #__typed_lbbfile_name(x)
+	#define s_sign "+"
+	#define s_lbbfile(x) s_sign##x
+
+	#define LBB_READER(x)		x^0010000
+	#define LBB_DIRECTORY(x)	x^0040000
+	#define LBB_FIELD(x)		x^0100000
+	#define LBB_SOCKET(x)		x^0140000
+	#define ARCH_MADE(x)		x^0000700
+	#define ARCH_SAVE(x)		x^0000007
+
+
 	#define __H512__D 'k'
 #endif
 
@@ -136,102 +275,58 @@ K512-architecture
 /************************ h-naming ************************/
 
 #ifndef __H512__N
-	int __incheck(char __c);
-	char const *__getcaller();
-	// calculate length till `__NADA__`
-	ulong __rwings(void const *__);
-	// convert a number-string representation
-	// to a number
-	ulong __tonum(char const *__var);
-	// calculate length of a string
-	// cannot exceed 4096 chars
-	// 8192 bytes
-	ulong str_rwings(char const *__str);
-	// convert an int to a ulong
-	ulong tonum(int i);
-	
-	int __stres(char const *__fpath);
-
-	void *__mstat__(m_stat *st);
-	int get_kstat(char const *__path, k_stat *kfile);
-	int get_sstat(char const *__path, s_stat *sfile);
-	int get_mstat(char const *__path, m_stat *mfile);
-
-    const char *zeroatt(uns level);
-
-    char const *fhashof (uns level,char const*to_hash);
-    uint8_t const *fhash (uns level,char const *to_hash);
-	char const *conv_fields(m_stat *mst);
-	lbb_entry __decode_arg(char const *argument);
-
-    uns  fhash4 (uns level,char const *to_hash);
-    ulong fhash8 (uns level,char const *to_hash);
-    ulong fhash16 (uns level,char const *to_hash);
-
-    char const *hashof (uns level,void const*to_hash,size_t the_hash_size);
-    uint8_t const *hash (uns level,void const *to_hash,size_t the_hash_size);
-
-    uns  hash4 (uns level,void const *to_hash,size_t the_hash_size);
-    ulong hash8 (uns level,void const *to_hash,size_t the_hash_size);
-    void * hash16 (uns level,void const *to_hash,size_t the_hash_size);
-
-	char const *num2char(ulong n);
-	char *stn_b4offset(char const *string, ulong offset);
-
-    unsigned int pack(uchar *buf,char const *fmt,...);
-    void unpack(uchar *buf,char const *fmt,...);
-
-	ulong lbb_print(char *kaddr);
-
-	void log_mstat(m_stat *mfile);
+	// log
+	void log_str(char const *string);
+	void log_dpoint(d_point *dst_point);
 	void log_sstat(s_stat *sfile);
-	void log_kstat(k_stat *kfile);
-	void log_strld(strld __strld);
-	void log_sepstr(spstr __spstr);
-	void log_ptrdx(struct __ptrdx *ptrdx);
-	void log_esptr(ulong *esptr);
-	void log_process_ids(ulong ppid, ulong cpid);
-	void log_process_schema(ulong ppid, ulong cpid);
-	void log_ixrh(ixr_h *ixrst);
+	void log_mstat(m_stat *mfile);
+	void log_esptr(ulong *ptr);
+	void log_process_ids(ulong p_pid, ulong c_pid);
+	void log_process_schema(ulong p_pid, ulong c_pid);
+	void log_at_protoname(atp_t atp_name);
+	void log_ixrh(ixr_h *ixrh);
+	void log_socket(aip_sock *sock);
+	// arch
+	int __numchar(char c);
+	int __smchar(char c);
+	int __capchar(char c);
+	int __atchar(char c);
+	char const *__getcaller();
+	// file
+	int __stres(char const *__path);
+	ulong __fsize(char const *__path);
+	ulong __iosize(char const *__path);
+	ulong __inodenum(char const *__path);
+	ulong __dmode(char const *__path);
+	ulong __file_r(char const *__path);
+	ulong __file_w(char const *__path);
+	ulong __file_x(char const *__path);
+	int __dgetfd(char const *__path);
+	// strings
+	ulong __rwings(void const *__);
+	ulong str_rwings(char const *__str);
+	int spaces_and_tabs(char *__str);
+	int tabs_and_spaces(char const *__str);
+	ulong __tonum(char const *__path);
+	ulong tonum(int i);
+	char const *num2char(ulong num_in);
+	char *__stn(char const *__str, ulong __len);
+	void *__arg__(char const *file_args);
+	int __exact_match(char const *__str_a, char const *__str_b);
+	int __sep_atoff(char const *__str, char const *__sep);
+	char *str_b4eoffset(char const *__str, ulong __offset);
+	char *str_b4offset(char const *__str, ulong __offset);
+	char *stn_b4offset(char const *__str, ulong __offset);
+	char *str_a4woffset(char const *__str, ulong __offset);
+	char *str_a4offset(char const *__str, ulong __offset);
+	char const *expand_atoffset(char const *__str, char const *__expantion, ulong __offset);
+	char const *expand(char const *__str, char const *__expantion, ulong __offset);
+	char const *__combine_str(char const *__str_1, char const *__str_2);
+	ulong str_cdelims(char const *__str, char const *__delim);
+	ulong arr_cdelims(char const *__str);
+	ulong sep_offset(char const *__str, char *__seperator);
+	
 
-	uns __8sz(uns __8to);
-	fms_s fms_type2sz(fms_t __ftype);
-	int __get_fd(char const *__fpath, int __flag);
-	int __get_process_flags(char const *__cpath);
-	int __check_fld(char const *__cpath, fms_t ftype);
-	char const *__charm_call(char const *__ffrom);
-	int __init_3ci();
-	int arch_3ci();
-	void log_arcs();
-	ulong __env_hash(char **__envvar);
-	char const *__h_passcode(char *udef_pass);
-	char const *__kgev(uchar *__udef_pnop);
-	void k1_addr(ulong _h8res, ulong _count, char *_kval);
-	char const *__keys_hash(char **__envvar, uns __varc);
-	fms_t __size_switch(char const *__cpath);
-	char const *ccopy_to_path(char const *cc, char const *__cpath);
-	char const *arch_gfile(char const *__cpath);
-	fms_s arch_tfile(char const *__cpath);
-	ulong arch_cfile(fms_t fms_type);
-	ulong attsize(ulong __sz);
-	ulong fldatt(uns level, ulong szatt);
-	ulong arch_fpermissions(char const *__cpath);
-	char const *tochar(ulong num_in);
-	ulong arch_foffset(char const *__fpath, ulong f_field);
-	static ulong arch_fname(char const *__fpath, ulong fsize);
-	int arch_mods(char const *__cpath);
-	int arch_cenv();
-	void log_fmt_t(fmt_t __format);
-	void log_keyvalue(char *key, char *value);
-	void lbb_usage();
-	int get_allstats(char *__mountpoint, char *__socketaddr, char *__fieldshare);
-	char *flds(char const *__fldname);
-	void *__search_r(char const *__rname, lbb_entry in);
-	void *__lbb_ref(char const *__rname);
-	void log_str(char const *__);
-	void log_socket(aipsock *sock);
-	aip_sockaddr __sock_addr(struct sockaddr *sa);
-	struct sockaddr *sock_aip_to_sa(aipsock *sock);
 	#define __H512__N
 #endif
 // CDN (:
@@ -240,17 +335,16 @@ K512-architecture
 
 #ifndef __H512__L
 
+	void log_str(char const *__) {
+		write(0,__,str_rwings(__));
+		write(0,"\n",1);
+	};
+
 	void log_dpoint(d_point *dst_point) {
 		printf("dst point :: \n");
 		printf("@%lu\n", dst_point->c_index);
 		printf("name :%s\n",dst_point->c_name);
 		printf("ref  :%s\n",dst_point->c_ref);
-	};
-
-	void log_kstat(k_stat *kfile) {
-		printf("dcloud : K\n");
-		printf("uname	= %s\n", kfile->u_name);
-		printf("iaddr	= %s\n", kfile->i_addr);
 	};
 
 	void log_sstat(s_stat *sfile){
@@ -269,22 +363,6 @@ K512-architecture
 		printf("size	= %lu\n",mfile->m_size);
 		printf("mode	= %lu\n",mfile->m_mode);
 		printf("blkio	= %lu\n",mfile->m_blksz);
-	};
-
-	void log_strld(strld __){
-		printf("string\n");
-		printf("length=%d\n",__.len);
-		printf("data:=%s\n",__.data);
-	};
-
-	void log_sepstr(spstr ss){
-		printf("string=%s\nlength=%d\nseperator=%s\noffset=%d\n",ss.str,ss.str_length,ss.sep,ss.sep_offs);
-	};
-
-	void log_ptrdx(struct __ptrdx *ptrdx) {
-		printf("dcloud : K :: ptrdx\n");
-		printf("pidx :%lu\n",ptrdx->pidx);
-		printf("tri  :%lu\n",ptrdx->tri);
 	};
 
 	void log_esptr(ulong *esptr) {
@@ -336,48 +414,46 @@ K512-architecture
 	};
 
 
+	//// log the format type specifications
+	//void log_fmt_t(fmt_t __format) {
+	//	switch(__format) {
+	//	case __keyval__: __TEXT(Key:Value); break;
+	//	case __envvar__: __TEXT(Enviroment=Spec); break;
+	//	case __pathmut__: __TEXT(Path:=MountPoint); break;
+	//	case __fld__: __TEXT(Field=:Callable); break;
+	//	case __intrprt__: __TEXT(Interpreter<i>); break;
+	//	case __csok__: __TEXT(@Socket); break;
+	//	case __call__: __TEXT(@ATP<i>{p}); break;
+	//	default: __TEXT(Unknown); break;
+	//	};
+	//};
+
+	// log the key value as strings
+	void log_keyvalue(char *key, char *value) {
+		__ASCII(key);
+		__ASCII(value);
+	};
+	// print the corrent way of using the `d-lbb` command
+	void lbb_usage(){
+		__TEXT(Use lbb as :: `d-lbb /path/to/file`);
+	};
+
+
 	#define __H512__L
 #endif
 
 
 
-/************************ d-architicture ************************/
-
-#ifndef _D_ARCH
-	#define d_charms "@charms/d.\0"
-	#define d_lbb "@charms/d.lbb\0"
-	#define d_atlbb "@charms/d.lbb/.lbb\0"
-	#define arch_filename d_atlbb
-
-	int __incheck(char __c){   
-	// check character in character set
-		if( (__c>=0x30)&&(__c<=0x39)){
-			#ifdef DDEBUG
-				printf("char %c has a value of %d\n",__c,__c);  
-			#endif
-			return 1;
-		};
-		return 0;
-	};
-
-
-	char const *__getcaller(){
-		// get the calling file
-		return (char const *)__FILE__;
-	};
-	#define _D_ARCH 1
-#endif
-
-
 /************************ d-files ************************/
 
 #ifndef _D_FILE
+	#define _D_FILE 1
 	#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
-	#define sz8(x) ((ulong)__8sz(x))
-	#define fsze(x) ((ulong)__fsize(x))
-	#define iosze(x) ((ulong)__iosize(x))
-	#define dmde(x) ((uns)__dmode(x))
-	#define inn(x) (ulong)__inodenum(x)
+	#define sz8(x)		((ulong)__8sz(x))
+	#define fsze(x)		((ulong)__fsize(x))
+	#define iosze(x)	((ulong)__iosize(x))
+	#define dmde(x)		((ulong)__dmode(x))
+	#define inn(x)		(ulong)__inodenum(x)
 	#define status(x) __statusof(x)
 	#define stres(x) __stres(x)
     #define len_ustrze(x) (((ulong)x)*(sizeof(uchar)))
@@ -386,13 +462,42 @@ K512-architecture
 	#define __lock_writer (O_WRONLY)
 
 
-	int __stres(char const *__cpath){
-		int __res=access(__cpath, F_OK);
+	void *__statusof(char const *__path) {
+	    struct stat __;
+	    memset(&__,0,sizeof(struct stat));
+	    if(stat(__path,&__)==0){
+	        return (void *)__path;
+	    }
+	    return NULL;
+	};
+
+	int __stres(char const *__path){
+		int __res=access(__path, F_OK);
 		#ifdef DEBUG
-			printf("checking cpath :: %s\n", __cpath);
+			printf("checking cpath :: %s\n", __path);
 			printf("result of access = %d\n", __res);
 		#endif
 		return __res==0;
+	};
+
+	ulong fsize_st(void *st){
+	    struct stat *__=(struct stat*)st;
+	    return __->st_size;
+	};
+
+	ulong iosize_st(void *st){
+	    struct stat *__=(struct stat*)st;
+	    return __->st_blksize;
+	};
+
+	uns dmode_st(void *st){
+	    struct stat *__=(struct stat*)st;
+	    return __->st_mode;
+	};
+
+	ulong inn_st(void *st){
+	    struct stat *__=(struct stat*)st;
+	    return __->st_ino;
 	};
 
 	ulong __fsize(char const *__fpath){
@@ -448,13 +553,15 @@ K512-architecture
 		return open(__fpath, __lock_reader);
 	};
 
-	#define _D_FILE 1
 #endif
+
+
 
 
 /************************ d-strings ************************/
 
 #ifndef _D_STRING
+	#define _D_STRING 1
 
 	ulong __rwings(void const *__) {
 		char const *__p=(char const *)__;
@@ -512,7 +619,7 @@ K512-architecture
 		ulong d=1,__c=0,res=0,__len=str_rwings(__var);
 		int c;
 		if(__var[__len]=='\0'){
-			while(__incheck(__var[__c])){
+			while(__numchar(__var[__c])){
 				d*=10;
 				__c+=1;
 			};
@@ -521,7 +628,7 @@ K512-architecture
 			#ifdef DDEBUG
 				printf("digits count :: %lu\n",d);
 			#endif
-			while(__incheck(__var[__c])){
+			while(__numchar(__var[__c])){
 				res+=(d*(__var[__c]-0x30));
 				__c+=1;d/=10;
 			}
@@ -541,11 +648,24 @@ K512-architecture
 		return 0;
 	};
 
-	char const *num2char(ulong __inpu){
+	char const *num2char(ulong snum_in){
 		char __[21];
 		memset(&__,0,sizeof(__));
-		sprintf(__,"%lu",__inpu);
+		sprintf(__,"%lu",snum_in);
 		return (char const *)strdup(__);
+	};
+
+	char const *s_num2char(long snum_in) {
+		char __[21];
+		memset(&__, 0, sizeof(__));
+		if(snum_in>0) {
+			sprintf(__, "+%lu", snum_in);
+		}
+		else {
+			sprintf(__, "-%lu", snum_in);
+		};
+
+		return (char const *)__;
 	};
 
 	char *__stn(char const *__word, ulong __len) {
@@ -595,7 +715,7 @@ K512-architecture
 	/**
 	 * find the first `seperator` in `string`
 	**/
-		long x=0,y=0,len_count=0,offset_at=0;
+		long x=0,y=0,len_count=0,offset_at=-1;
 		while(string[x]!='\0'){
 			if(string[x]==seperator[y]){
 				while(seperator[y]==string[y+x]){
@@ -682,11 +802,12 @@ K512-architecture
 
 	char const *__combine_str(char const *str1, char const *str2) {
 		ulong _lstr1=str_rwings(str1),_lstr2=str_rwings(str2);
-		ulong __len=_lstr1+_lstr2+3;
-		char __[__len];memset(&__, 0, sizeof(__));
+		ulong __len=_lstr1+_lstr2+1;
+		char __[__len], char *__p=&__;
+		memset(__p, 0, sizeof(__));
 		__[__len]='\0';
-		memmove(__, str1, _lstr1);
-		memmove((__+_lstr1), str2, _lstr2);
+		memmove(__p, str1, _lstr1);
+		memmove((__p+_lstr1), str2, _lstr2);
 		return strdup(__);
 	};
 
@@ -716,10 +837,10 @@ K512-architecture
 		return count;
 	};
 
-	ulong arr_cdelims(char const *__, char const *__d) {
+	ulong arr_cdelims(char const *__str) {
 		// add 1 more to create an array
 		// #err if more elements than arg_count specifies
-		ulong arg_count=str_cdelims(__, __d)+1;
+		ulong arg_count=str_cdelims(__, ',')+1;
 		return arg_count;
 	};
 
@@ -740,29 +861,105 @@ K512-architecture
 			return (ulong)tempres;
 		};
 	};
-	#define _D_STRING 1
 #endif
 
 
-/************************ d-formatting ************************/
 
-#ifndef _D_FMT
+/************************ d-architicture ************************/
 
-	#define fmt_out(x) log_str(_Generic((x), \
-		num:(char const *)(x.__),\
-		str:(char const *)(x.__),\
-		arr:(char const *)(x.__),\
-		default:__NADA__\
-	));
+#ifndef _D_ARCH
+	#define _D_ARCH 1
+	#define d_charms "@charms/d.\0"
+	#define d_lbb "@charms/d.lbb\0"
+	#define d_atlbb "@charms/d.lbb/.lbb\0"
+	#define arch_filename d_atlbb
+	#define d_sep ":\0"
 
-	#define out(x) fmt_out(x);
+	int __nullchar(char __c) {
+		if(__c==0x00) {
+			return 1;
+		};
+		return 0;
+	};
 
-	#define out_fmt(x) log_str(_Generic((x), \
-		num:"number",\
-		str:"string",\
-		arr:"array",\
-		default:"dPRG"\
-	));
+	int __numchar(char __c){   
+		// check if char is a number
+		if( (__c>=0x30)&&(__c<=0x39)){
+			return 1;
+		};
+		return 0;
+	};
+
+	int __smchar(char __c) {
+		// check if char is a small cap alphabet
+		if((__c>=0x61)&&(c<=0x7a)){
+			return 1;
+		};
+		return 0;
+	};
+
+	int __capchar(char __c) {
+		// check if char is a large cap alphabet
+		if((__c>=0x41)&&(c<=0x5a)){
+			return 1;
+		};
+		return 0;
+	};
+
+	int __atchar(char __c) {
+		// check if char is an '@' character
+		if(__c==0x40){
+			return 1;
+		};
+		return 0;
+	};
+
+	int __sepchar(char __c) {
+		if(__c==0x3a) {
+			return 1;
+		};
+		return 0;
+	};
+
+	int __delimchar(char __c) {
+		if(__c==__os_delim) {
+			return 1;
+		};
+		return 0;
+	}
+
+	char const *__getcaller(){
+		// get the calling file
+		return (char const *)__FILE__;
+	};
+
+	int __entry_valid(char const *__) {
+		char c=*__;
+		if(!__atchar(c)){
+			#ifdef DEBUG
+				printf("entries start with @\n");
+			#endif
+			return 0;
+		};
+		do {
+			c=*__++;
+			if ((__nullchar(c))||((!__numchar(c))&&(!__smchar(c))&&(!__capchar(c)))) {
+				return 0;
+			};
+		}while(c);
+		return 1;
+	};
+
+	ulong content_count(char const **__content) {
+		ulong c=0;
+		while(__content[c]) {
+			c+=1;
+		};
+		return c;
+	};
+
+
+	/********* base8 *********/
 
 	ulong lexical_args(void **__vars) { 
 		char const *temp = (char const *)__vars;
@@ -771,185 +968,143 @@ K512-architecture
 		return arg_count;
 	};
 
-
-	/********* base8 *********/
-
-
-	void log_str(char const *__) {
-		write(0,__,str_rwings(__));
-		write(0,"\n",1);
+	ulong __size8(int _){
+		if(_<0){
+			return 0;
+		}
+		else {
+			ulong __=1;
+			do {
+				__*=8;
+				_--;
+			}while(_>0);
+			return __;
+		}
 	};
 
-	uns __8sz(uns _){
-		uns __=1;while(_>0){__*=8;_--;}
-		return __;
+	ulong lbb_type2size(lbb_t lbb_type){
+	
+		return lbb_size(lbb_type);
 	};
+
 
 	/********* fld *********/
 
-	fms_s fms_type2sz(fms_t type){
-		switch(type){
-		case f_reader: return __freader_sz;
-		case f_socket: return __fsocket_sz;
-		case f_field: return __ffield_sz;
-		case f_dir: return __fdir_sz;
-		case fld_1: return __fld1_sz;
-		case fld_2: return __fld2_sz;
-		case fld_3: return __fld3_sz;
-		case fld_4: return __fld4_sz;
-		default: break;
-		};
-		return 0;
-	};
-
-	int __get_fd(char const *__cpath, int __flag){
-
-		return open(__cpath, __flag);
-	};
-
-	int __get_process_flags(char const *__cpath){
-
-		return dmde(__cpath);
-	};
-
-	int __check_fld(char const *__cpath, fms_t __ftype){
-		if(fsze(__cpath)<fms_type2sz(__ftype)){
+	int __check_fld(char const *__path, lbb_t __path_type){
+		if(fsze(__path)==lbb_type2size(__path_type)){
 			return 0;
-		}
+		};
 		return 1;
 	};
 
 
-	char const *__charm_call(char const *__filefrom) {
-		char const *__caller=__getcaller();
-		ulong __clen=str_rwings(__caller);
-		ulong __flen=str_rwings(__filefrom);
-		char charmcall[__clen];
-		memset(&charmcall, 0, sizeof(charmcall));
+	/********* mods *********/
 
-		ulong f_sep=sep_offset(__filefrom, d_charms);
-		ulong c_sep=sep_offset(__caller, d_charms);
-		if(!c_sep||!f_sep) {
-			#ifdef LOG_ERR
-				printf("f:sep=%lu, c:sep=%lu\n", f_sep, c_sep);
-				printf("seperate offset is null\n");
+	char const *__mod_call(char const *__mname) {
+		char const *__caller=__getcaller();
+		ulong __clen=str_rwings(__caller), __flen=str_rwings(__mname);
+		ulong c_length=__clen+__flen, c_sep=sep_offset(__caller, d_charms);
+		
+		char charmcall[c_length];
+		void *cc_ptr=memset(&charmcall, 0, sizeof(charmcall));
+
+		if((!c_sep)||(__flen<3)) {
+			#ifdef DEBUG
+				printf("f:length=%lu, c:sep=%lu\n", __flen, c_sep);
 			#endif
 			return NULL;
 		};
-		memmove(charmcall, __caller, c_sep);
-		memmove((charmcall+c_sep), (__filefrom+f_sep), (__flen-f_sep));
+
+		memmove(cc_ptr, __caller, c_sep);
+		memmove((cc_ptr+c_sep), __mname, __flen);
+
 		#ifdef DEBUG
-			printf("charmcall :: %s\n", charmcall);
 		#endif
+		printf("charmcall :: %s\n", charmcall);
 
 		return strdup(charmcall);
 	};
 
+	char const *__fcall(char const *__filename) {
 
-	/********* unistd *********/
-
-	extern char **environ;
-
-
-	/********* base26 *********/
-
-
-	static const uchar charms[26][4]={
-		"att\0","bal\0","ccc\0","def\0","env\0","fmt\0",
-		"git\0","hlv\0","inc\0","jab\0","kei\0","lbb\0",
-		"mke\0","nop\0","ops\0","pub\0","que\0","rdl\0","sok\0",
-		"trv\0","usr\0","vik\0","wln\0","xvl\0","ybn\0","z0x\0"
+		return __combine_str(__os_delim, __filename);
 	};
 
-	static const ulong __enu_size=512;
-	static const char mod_att[]="address\0";
-	static const char mod_bal[]="balance\0";
-	static const char mod_ccc[]="charm\0";
-	static const char mod_def[]="defined\0";
-	static const char mod_env[]="enviroment\0";
-	static const char mod_fmt[]="format\0";
-	static const char mod_git[]="git\0";
-	static const char mod_hlv[]="hash\0";
-	static const char mod_inc[]="include\0";
-	static const char mod_jab[]="jaber\0";
-	static const char mod_kei[]="kei\0";
-	static const char mod_lbb[]="lock\0";
-	static const char mod_mke[]="make\0";
-	static const char mod_net[]="networks\0";
-	static const char mod_oss[]="osys\0";
-	static const char mod_pub[]="public\0";
-	static const char mod_que[]="queue\0";
-	static const char mod_rdl[]="riddle\0";
-	static const char mod_shd[]="shared\0";
-	static const char mod_trv[]="traverse\0";
-	static const char mod_usr[]="user\0";
-	static const char mod_vik[]="vik\0";
-	static const char mod_wln[]="webpage\0";
-	static const char mod_xvl[]="xolve\0";
-	static const char mod_ybn[]="ybin\0";
-	static const char mod_zen[]="zen0x\0";
-	static const char *mods[26] ={
-		mod_att,mod_bal,mod_ccc,mod_def,mod_env,mod_fmt,
-		mod_git,mod_hlv,mod_inc,mod_jab,mod_kei,
-		mod_lbb,mod_mke,mod_net,mod_oss,mod_pub,
-		mod_que,mod_rdl,mod_shd,mod_trv,mod_usr,
-		mod_vik,mod_wln,mod_xvl,mod_ybn,mod_zen
+	char const *__dcall(char const *__dirname) {
+
+		return __combine_str(__dirname, __os_delim);
 	};
 
-	#define arr_size(x) ((ulong)(sizeof(x)/sizeof(x[0])))
-
-	static const uns mods_count=arr_size(mods);
-	#define elem_hash(x) hash8(0,x,strlen(x))
-
-	struct __ccc_item {
-		struct __ccc_item* nxt;
-		ulong __3chash;
-		const uchar *__charm;
-		const char *__mod;
-	};
-	typedef struct __ccc_item ccc;
-
-	static ccc kCCC[26];
-
-	int __init_3ci(){
-		int i_index=0;
-		for(; i_index<25;i_index+=1){
-			kCCC[i_index].__charm=charms[i_index];
-			kCCC[i_index].__mod=mods[i_index];
-			kCCC[i_index].__3chash=elem_hash(mods[i_index]);
-			kCCC[i_index].nxt=&kCCC[i_index+1];
-			printf("INDEXING ARC :%d: %s\n", i_index,mods[i_index]);
-		}
-		printf("INDEXING ARC :%d: %s\n", i_index,mods[i_index]);
-		kCCC[i_index].__charm=charms[i_index];
-		kCCC[i_index].__mod=mods[i_index];
-		kCCC[i_index].__3chash=elem_hash(mods[i_index]);
-		kCCC[i_index].nxt=NULL;
-		return i_index;
+	char const *__ecall(char const *__mod, char const *__name) {
+		char const *__callbase=__dcall(__mod_call(__mod));
+		return __combine_str(__callbase, __name);
 	};
 
-	int arch_3ci(){
-		return __init_3ci();
+	int __check_mod(char const *modname) {
+		char const *__ccc=__charm_call(modname);
+
+		return stres(__ccc);
 	};
 
-	void log_arcs(){
-		ccc *kccc=kCCC;
-		while(kccc!=NULL){
-			printf("name :: %s\n",kccc->__mod);
-			printf("charm :: %s\n",kccc->__charm);
-			printf("hash :: %lu\n",kccc->__3chash);
-			kccc=kccc->nxt;
+	int __check_entry(char const *entry) {
+		int __res=__entry_valid(entry);
+		int __ds_offset=__sep_atoff(entry, d_seperator);
+		if((!__res)||(__ds_offset==-1)) {
+			#ifndef DEBUG
+				printf("entry invalid : %s\n", entry);
+			#endif
+			return -1;
 		};
+		char const *__charm=str_b4offset(entry, __ds_offset);
+		char const *__entry=str_a4woffset(entry, __ds_offset);
+		
+		return __check_charm(__entry);
+	};
+
+	// gets file size in ( x << n*3 ) 
+	// gets file types in ( x >> n*3 )
+	ulong arch_ufile(char const *__cpath) {
+		ulong usize=0, __size=__fsize(__cpath);
+		do {
+			usize+=1;
+			__size>>(3*usize);
+		}while(__size>=1);
+		return usize;
 	};
 
 
+	lbb_t arch_tfile_lbb(char const *__cpath) {
+		
+		return (lbb_t)arch_tfile(__cpath);
+	};
+	
+	// gets file size number 
+	// representation in characters
+	char const *arch_cfile(char const *__cpath){
+
+		return num2char(__fsize(__cpath));
+	};
 
 
-	/********* env handler *********/
-	static const uns __lbb_idx__=11;
-	static uns env_hash_0,env_hash_1;
+	char const *arch_hash(void const *__){
 
-	ulong __env_hash(char **__var){
+		return hashof(3,__,__rwings(__));
+	};
+
+
+	char const *arch_checksum(char const **__content) {
+		ulong llcount=content_count(__content);
+
+		return varll_hash(vcontent(__content), llcount);
+	}
+
+	char const *arch_namehash(char const *__name) {
+
+		return hashof(1, __name, str_rwings(__name));
+	};
+
+
+	ulong env_hash(char **__var){
 		uns __count=0;
 		while(!(NNE(__var[__count]))){
 			#ifdef DEBUG
@@ -957,16 +1112,12 @@ K512-architecture
 			#endif
 			__count+=1;
 		}
-		env_hash_0=hash4(0,&__count,sizeof(uns));
+		env_hash_0=(ulong)hash8(0,&__count,sizeof(uns));
 		return (ulong)__count;
 	};
 
-	char const *__h_passcode(char *udef_pass){
 
-		return hashof(2,udef_pass,strlen(udef_pass));
-	};
-
-	char const*__kgev(uchar *__udef_pnop){
+	char const *envarr_hash(uchar *__udef_pnop){
 		char **env_var=environ;
 		char *udef_pnop=(char*)__udef_pnop;
 		ulong vcount=0,__c=0, envar_count=__env_hash(env_var), evar_count=envar_count+1;
@@ -984,186 +1135,161 @@ K512-architecture
 		return hashof(3,__hashes,sizeof(__hashes));
 	};
 
-	void k1_addr(ulong _h8res,ulong _count,char *_kval) {
-		ulong __len=11+16+strlen(_kval);
-		char __kaddr[__len];
-		memset(&__kaddr,0,__len);
-		sprintf(__kaddr,"k-%08lx:%lu:=%s\n",_h8res,__cindex,_kval);
-		__cindex+=1;
-		ulong psize=lbb_print(__kaddr);
-	};
 
-	char const *__keys_hash(char **__var, uns __varc){
-		uns _c=0;
-		ulong hashes[__varc];
-		void *__hptr=memset(&hashes,0,(sizeof(ulong)*__varc));
-		while(_c<__varc){
-			ulong vclen=strlen(__var[_c]);
-			hashes[_c]=hash8(1,__var[_c],vclen);
-			#ifdef LBB_0
-				k1_addr(hashes[_c],_c,__var[_c]);
+	char const *varll_hash(void const **__vars, ulong __vcount){
+		// variable-linked-list hash
+		ulong c=0, hashes[__vcount], h_vsize=ulong_wsize(__vcount);
+		void *__hptr=memset(&hashes,0,h_vsize);
+		if(!__vcount) {
+			#ifdef DEBUG
+				printf("vcount cannot be 0\n");
 			#endif
-			_c+=1;
-		}
-		char const *env_hash_2=hashof(2,__hptr,sizeof(hashes));
-		return env_hash_2;
-	};
-
-
-	/********* utilities *********/
-
-	// gets file size in increments ( 8 << n+2 )
-	fms_t __size_switch(char const *__cpath) {
-		ulong _fsize=__fsize(__cpath);
-		switch(_fsize){
-			case __freader_sz:return f_reader;
-			case __fsocket_sz: return f_socket;
-			case __ffield_sz: return f_field;
-			case __fdir_sz: return f_dir;
-			case __fld1_sz: return fld_1;
-			case __fld2_sz: return fld_2;
-			case __fld3_sz: return fld_3;
-			case __fld4_sz: return fld_4;
-			default: return 0;
+			return zero_address(2);
 		};
-	};
-	// free after
-	char const *ccopy_to_path(char const *cc, char const *path){
-		char __ccc[256];
-		memset(&__ccc,0,sizeof(__ccc));
-		uns __pathlen=strlen(path),__len=__pathlen+4; //including the '\0' byte
-		strcpy(__ccc,path);
-		strcpy((__ccc+__pathlen),cc);
-		if(__ccc[__len]!='\0'){
-			__ccc[__len]='\0';
-		};
-		return (char const *)strdup(__ccc);
-	};
-	// free after 
-	char const *tochar(ulong inp_u){
-		char __[LONG_MAX_COMPUTED_N_DIGITS];
-		memset(&__,0,sizeof(__));
-		sprintf(__,"%lu",inp_u);
-		return (char const *)strdup(__);
-	};
-	// gets file size in characters
-	char const *arch_gfile(char const *__cpath){
-
-		return tochar(__fsize(__cpath));
-	};
-	// returns the numbered increment of the file size
-	fms_s arch_tfile(char const *__cpath){
-		ulong _fsize=__fsize(__cpath), res=0;
-		while((_fsize>>3)>8){
-			res+=1;
-		};
-		switch(res){
-			case 1:return __freader_sz;
-			case 2: return __fsocket_sz;
-			case 3: return __ffield_sz;
-			case 4: return __fdir_sz;
-			case 5: return __fld1_sz;
-			case 6: return __fld2_sz;
-			case 7: return __fld3_sz;
-			case 8: return __fld4_sz;
-			default: return 0; 
-		};
-	};
-	// creates the arch file needed
-	ulong arch_cfile(fms_t _){
-		switch(_){
-			case f_reader:return attsize(__8sz(1));
-			case f_socket:return attsize(__8sz(2));
-			case f_field:return attsize(__8sz(3));
-			case f_dir:return attsize(__8sz(4));
-			case fld_1:return fldatt(1,__8sz(5));
-			case fld_2:return fldatt(2,__8sz(6));
-			case fld_3:return fldatt(3,__8sz(7));
-			case fld_4:return fldatt(4,__8sz(8));
-			default:return 0;
-		};
-	};
-	// creates a file of a particular increment size
-	ulong attsize(ulong __size){
-		int fd=open(arch_filename,(O_RDWR|O_CREAT), S_IRWXU);
-		if(fd==-1){
-			printf("cannot create .lbb\n");
-			return 0;
-		};
-		uchar buf[__size];
-		memset(&buf,'#',(__size*sizeof(char)));
-		uchar *buffer=buf;
-		ulong __set=0;
-		long int temp=0;
-		while(__set<__size){
-			temp=pwrite(fd,buf,__size,__set);
-			if(temp==-1){
-				printf("error pwriting\n");return 0;
+		else {
+			while((__vars[c])&&(c<__vcount)){
+				hashes[c]=hash8(1,__vars[c],str_rwings(__vars[c]));
+				c+=1;
 			};
-			__set+=temp;temp=0;
+			char const *__hash=hashof(2,__hptr,h_vsize);
+			return __hash;
 		};
-		return fd;
 	};
-	// fills up the file created 
-	ulong fldatt(uns level,ulong sizeatt){
-		int fd=open(arch_filename,(O_RDWR|O_CREAT), S_IRWXU);
-		if(fd==-1){
-			printf("cannot create .lbb\n");
-			return 0;
+
+	// generate file name from path and size
+	char const *arch_dfile(char const *__name, ulong arch_perm, ulong tfile_size) {
+		char const *__cpath=__ecall("var", __name);
+		if(stres(__cpath)){
+			#ifdef DEBUG
+				printf("file already exists\n");
+			#endif
+			return zero_address(3);
 		};
-		ulong lbb_iosize=iosze(arch_filename);
-		uns cptr=0,blk=0,chk_blocks=sizeatt&lbb_iosize,nblocks=sizeatt/lbb_iosize;
-		if(chk_blocks||!nblocks){
-			printf("wrong size.\noctal system handler \n");
-			return 0;
+
+		char const *tlbb_name=(char const *)typed_lbbfilename(fsize);
+		char const *__raw_fname=__combine_str(__cpath, s_lbbfile(tlbb_name));
+		
+		char const *__arch_filename=arch_namehash(__raw_fname);
+		if(!attsize(__arch_filename, arch_perm, tfile_size)){
+			#ifdef DEBUG
+				printf("failed to create dfile\n");
+			#endif
+			return zero_address(3);
 		};
-		ulong total=0;long int temp=0;
-		uchar buf[512];
-		memset(&buf,'@',(512*sizeof(uchar)));
-		for(;blk<nblocks;){
-			temp=pwrite(fd,buf,512,total);
-			if(temp==-1){printf("error writing\n"); return 0;}
-			total+=temp;temp=0;blk++;
-		};
-		return fd;
+
+		return __arch_filename;
 	};
-	// checks the arch permissions for the requested path
-	ulong arch_fpermissions(char const *__cpath){
-		ulong __=__file_x(__cpath);
-		return __<2?__+__file_w(__cpath)+__file_r(__cpath):__;
-	};
-	// returns the 8b hash if not fld is not zero
-	ulong arch_foffset(char const *__fpath, ulong __fld){
-		return __fld!=0?fhash8(2,__fpath):__fld;
-	}
-	// get the entire field+name of `__fname` for `__csize` bytes
-	static ulong arch_fname(char const *__fname,ulong __csize){
-		ulong __res=0;
-		ulong _ures=0;
-		uchar *__=malloc(__csize);
-		if(!(NNE(__))){return 0;}
-		memset(__,0,sizeof(__csize));
-		size_t step=__csize/3;
-		memmove(__,__fname,step);
-		char *__idx=(char*)__+step;
-		// printf("__ : %p\n__idx : %p\n",__,__idx);
-		// printf("%s\n",__idx-3);
-		memmove(__idx,":",1);
-		uchar *__xer=(uchar *)&__idx+1;
-		ulong __packed=0;
-		if((__packed=pack(__xer,"L",__csize))!=4){
-			printf("error packing L in xer\n"); 
-			return 0;
+
+
+	int arch_att(char const *__path, ulong __perm, ulong __fldsize) {
+		int res=stres(__path);
+		if(!res){
+			res=open(__path, shard_flags, shard_share);
+			if(res==-1) {
+				// returns 0
+				#ifdef LOG_ERR
+					printf("cannot arch @%s\n:: create(err:%d)", __path, errno);
+				#endif
+				return 0;
+			}
+			else {
+				// exists
+				m_stat __pmstat;
+				get_mstat(__path, &__pmstat);
+				ulong __pszie=cm_size(&__pmstat);
+				ulong __bsize=cm_iosz(&__pmstat);
+				if(__pszie) {
+					#ifdef LOG_ERR
+						printf("err : non-zero archs\n");
+					#endif
+					_exit(1);
+				}
+				else {
+					// returns write result in bytes
+					ulong __init_size=__fldsize>__bsize?__bsize:__fldsize;
+					uchar __content[__init_size];
+					if(__init_size==__bsize) {
+						memset(__content, 0x40, __bsize);
+					}
+					else {
+						memset(&__content, 0x5e, __fldsize);
+					};
+					ulong __flag=0, b_written=0;
+					long temp=0;
+					while(b_written<__fldsize) {
+						temp=pwrite(res, __content, __init_size, b_written);
+						if(temp<0) {
+							#ifdef DEBUG
+								printf("err : cannot init enough memory for archfile : %s\n", __path);
+							#endif
+							return -1;
+						};
+						else if(!temp) {
+							__flag+=1;
+							if(__flag==3) {
+								#ifdef DEBUG
+									printf("err : arch struck on file @%s\n", __path);
+								#endif
+								return -1;
+							}else {
+								continue;
+							};
+						}else {
+							b_written+=temp;
+						};
+					};
+					return b_written;
+				};	
+			};
 		}
-		unpack(__xer,"L",&_ures);
-		if(__[__csize]=='\0'){
-			printf("%s",__);
-			printf("%08lx%08lx",u[0],u[1]);
-			printf("k+%lu\n",_ures);
-			// *u=hash16(3,__,8);
+		else {
+			int __flags=0;
+			if(__perm==1) {
+				__flags|=shard_lock_reader;
+			}
+			else if(__perm==2) {
+				__flags|=shard_lock_writer;
+			}
+			else if(__perm==3) {
+				__flags|=shard_nolock;
+			};
+
+			res=open(__path, __flags);
+			return res;
 		};
-		return __res;
 	};
+
+	// creates the arch file needed
+	int arch_cfile(char const *cf_name, lbb_t lbb_ftype){
+		
+		return arch_att(cf_name, 3, lbb_size(lbb_ftype));
+	};
+
+	// checks the arch permissions for the requested path
+	int arch_fpermissions(char const *__cpath, aip_sterm __sterm){
+		mstat c_mstat; memset(&c_mstat, 0, sizeof(m_stat));
+		get_mstat(__cpath, &c_mstat);
+		if(__sterm==Public){
+			return ARCH_MADE(cm_mode(__cpath));
+		}else{
+			return ARCH_SAVE(cm_mode(__cpath));
+		};
+	};
+
+	// returns the 8b hash if not fld is not zero
+	ulong arch_address(char const *__fpath, ulong __fld){
+		if(__fld!=0) {
+			if(stres(__fpath)) {
+				return fhash8(2, __fpath);
+			}
+			else {
+				return hash8(1, __fpath);
+			};
+		}else {
+			return zero_address(2);
+		};
+	};
+
 	// get this architicture modificiations {{ CERTIFICATE }}
 	int arch_mods(char const *__3curl){
 		ulong fieldname=0, ccc__offset=0;
@@ -1181,69 +1307,24 @@ K512-architecture
 		}
 		return 0;
 	}
-	// get required randomness from the c `environ` variable
-	int arch_cenv(){
+
+	char const *arch_cenv(){
 		char **__var=environ;
-		uns envar_count=__env_hash(__var);
-		char const *hvar=__keys_hash(__var,envar_count);
-		printf("k+%x:%u:=ENVHASH=1\n",env_hash_0,envar_count); // ENVHASH :: ZENV
-		return 0;
+		ulong var_count=__env_hash(__var);
+		return __keys_hash(var_hlist, var_count);
 	};
 
-
-	// log the format type specifications
-	void log_fmt_t(fmt_t __format) {
-		switch(__format) {
-		case __keyval__: __TEXT(Key:Value); break;
-		case __envvar__: __TEXT(Enviroment=Spec); break;
-		case __pathmut__: __TEXT(Path:=MountPoint); break;
-		case __fld__: __TEXT(Field=:Callable); break;
-		case __intrprt__: __TEXT(Interpreter<i>); break;
-		case __csok__: __TEXT(@Socket); break;
-		case __call__: __TEXT(@ATP<i>{p}); break;
-		default: __TEXT(Unknown); break;
-		};
-	};
-	// log the key value as strings
-	void log_keyvalue(char *key, char *value) {
-		__ASCII(key);
-		__ASCII(value);
-	};
-	// print the corrent way of using the `d-lbb` command
-	void lbb_usage(){
-		__TEXT(Use lbb as :: `d-lbb /path/to/file`);
-	};
-
-
-	ulong fsize_st(void *st){
-	    struct stat *__=(struct stat*)st;
-	    return __->st_size;
-	};
-
-	ulong iosize_st(void *st){
-	    struct stat *__=(struct stat*)st;
-	    return __->st_blksize;
-	};
-
-	uns dmode_st(void *st){
-	    struct stat *__=(struct stat*)st;
-	    return __->st_mode;
-	};
-
-	ulong inn_st(void *st){
-	    struct stat *__=(struct stat*)st;
-	    return __->st_ino;
-	};
 	/**
 	 * the reason im currently not using the following logic
 	 *  mfile -> m_size = __fsze(...)
-	 * is due, to hopefully being able to implement a single
-	 * call interface regardless of the language high-level interface
-	 * so im dividing them into functions to remember this.
+	 * is due to a feature that can be implemented into a
+	 * single interface call regardless of the execution context(high level interface)
+	 * i.e : language, compilier, etc...
+	 * so im dividing them into functions for now.
 	**/
 
 	int get_mstat(char const *__path, m_stat *mfile) {
-		memset(mfile,0,sizeof(struct __m_stat));
+		memset(mfile,0,sizeof(m_stat));
 		ulong path_len=str_rwings(__path);
 		if(path_len>512){
 			#ifdef LOG_ERR
@@ -1266,26 +1347,7 @@ K512-architecture
 		mfile->m_inn=inn_st(&temp);
 		return 0;
 	};
-	// get the full stats with an `ATP` call \\
-	ATP = @-Protocol
-	int get_allstats(char *__mountpoint, char *__socketaddress, char *__fieldshare){
-		m_stat mstat;
-		int res=get_mstat(__mountpoint,&mstat);
-		printf("get mstat res=%d\n",res);
-		log_mstat(&mstat);
 
-		s_stat sstat;
-		res=get_sstat(__socketaddress,&sstat);
-		printf("get sstat res=%d\n",res);
-		log_sstat(&sstat);
-
-		k_stat kstat;
-		res=get_kstat(__fieldshare,&kstat);
-		printf("get kstat res=%d\n",res);
-		log_kstat(&kstat);
-
-		return res;
-	};
 	// convolute through the file to get
 	// the fields
 	char *flds(char const *__fldname) {
@@ -1330,33 +1392,14 @@ K512-architecture
 		return strdup(cflds_head);
 	};
 
-	void *__search_r(char const *rname, lbb_entry in_type) {
-
-
-		return NULL;
-	};
-
-	void *__lbb_ref(char const *__rname) {
-		lbb_entry __ltype=__decode_arg(__rname);
-		void *temp=__search_r(__rname, __ltype);
-		return temp;
-	};
-
-	unsigned get_hlevel(char *href) {
-	    ulong c=str_rwings(href);
-	    unsigned res=((c)>>3);
-	    if (res>3){
-	        return 3;
-	    };
-	    return res;
-	};
-	#define _D_FMT 1
 #endif
+
 
 
 /************************ d-language ************************/
 
 #ifndef _D_LANG
+	#define _D_LANG 1
 	#define __dPRG int main(int argc, char const*argv[]) 
 	#define __ARGC__ argc
 	#define __ARGV__ argv
@@ -1386,7 +1429,6 @@ K512-architecture
 		__BASE__\
 		printf("sizeof type-d : %lu\n",sizeof(d));\
 	}
-	#define _D_LANG 1
 #endif		
 
 	#define __KARCH_D512__ 4096

@@ -16,6 +16,7 @@ and loaded via a .o or .so
 	#define __I_LEN 0x40
 #endif
 
+
 #ifndef __UNSIGNED_TYPES
 	#define __UNSIGNED_TYPES 3
 	#ifndef uns
@@ -24,13 +25,13 @@ and loaded via a .o or .so
 	#ifndef uchar
 		#define uchar unsigned char
 	#endif
-	#ifndef __ud8
+	#ifndef ulong
 		#define __ud8 unsigned long
 	typedef __ud8 ulong;
 	#endif
-	#ifndef __ut8
+	#ifndef utlong
 		#define __ut8 unsigned long long
-	typedef __ut8 tlong;
+	typedef __ut8 utlong;
 	#endif
 	/**
 	* 
@@ -43,25 +44,10 @@ and loaded via a .o or .so
 	* causes restricitions to the octal, hexa, deci, etx. numbering systems.
 	* 
 	**/
-	#ifndef __UL
+	#ifndef __ul
 		typedef ulong __ul[3];
-		struct __u2st {
-			ulong _1;
-			ulong _2;
-			ulong _3;
-		};
-		typedef struct __u2st u2s;
-		static u2s ua;
-		typedef u2s *pt2s;
-		static pt2s up=(pt2s)&ua;	
-		#define __u2__(x) (x->_1=u[0]; x->_2=u[1];c->_3=u[2])
-		#define __u2(x) (u1__=u[0]; u2__=u[1];c->_3=u[2]) 
-		#define vt2s(x) (void *(x))
-		#define u1__ ua._1
-		#define u2__ ua._2
-		#define u3__ ua._3
-		static __ul u;
-		#define __UL __ul
+			#define init_ul() memset(&u, 0, sizeof(__ul));
+			#define return_ul() return u;
 	#endif
 #endif
 
@@ -70,32 +56,42 @@ and loaded via a .o or .so
 	#ifndef ptr_addr
 		struct __ptr_addr {
 			void *ptr;//memory access
-			char address[__P_LEN];
+			char addr[__P_LEN];
 			char const *chkref;
 		};
 	typedef struct __ptr_addr ptr_st;
-	
+		#define __ptr__(x) ((ptr_st *)(x->ptr))
+		#define ptr_addr(x) cis_address(x)
+		#define ptr_chkref(x) cis_chkref(x)
+		#define ptr_addrlen(x) cis_address(x)
+
 	#endif
 
 	#ifndef intr_addr
 		struct __intr_addr { 
 			void *intr;
-			char address[__I_LEN];
+			char addr[__I_LEN];
 			char const *chkref;
 		};
 	typedef struct __intr_addr intr_st;
+		#define __intr__(x) ((intr_st *)(x->intr))
+		#define intr_addr(x) cis_address(x)
+		#define intr_chkref(x) cis_chkref(x)
+		#define intr_addrlen(x) cis_address(x)
 
 	#endif
 
 	#ifndef payld_addr
-		struct __payld_addr {
+		struct __payld_st {
 			void *payld;
-			char address[__A_LEN];
+			char addr[__A_LEN];
 			char const *chkref;
 		};
-	typedef struct __payld_addr payld_st;
-		#define payload(x) ((void *)x->payld)
-		#define address(x) ((char const *)x->address)
+	typedef struct __payld_st payld_st;
+		#define __payld__(x) ((payld_st *)x->payld)
+		#define pyld_addr(x) cis_address(x)
+		#define pyld_chkref(x) cis_chkref(x)
+		#define pyld_addrlen(x) cis_address(x)
 
 	#endif
 
@@ -103,260 +99,18 @@ and loaded via a .o or .so
 		struct __cis_addr {
 			void *ptr;
 			char *addr;
-			char const *ref;
+			char const *chkref;
 		};
 	typedef struct __cis_addr cis_st;
-		#define addr_ref(x) ((char const *)x->ref)
-		#define addr_ptr(x) ((void *)x->ptr)
-		#define addr_size(x) ((ulong)sizeof((x->addr)))
-		#define addr(x) ((char *)((&x->addr)+addr_size(x)))
-
-	#endif
-#endif
-
-
-#ifndef __IXR_TYPES
-	/**
-	 * putting this here because i have a tendency to
-	 * forget things like this when i am developing.
-	 * 
-	 * The simplist way to explain how the d-* works
-	 * is by realizing the structure of which it's built on.
-	 * 
-	 * The very first and the only two main actual types :: `ixr` &-> `lbb`.
-	 * 
-	 * The full first version of the d-language is ::: ATP IXR LBB 
-	 * 
-	 * `ixr` {a.k.a Indexer} is the initial d-type at all times.
-	 * `lbb` {a.k.a Linked Binary Book} are just mod(s) applied on any of the ixr types.
-	 * 
-	**/
-	enum __ixr_types {
-		ixr_header,
-		ixr_point,
-		ixr_file,
-		ixr_dprg,
-		ixr_fld
-	};
-	typedef enum __ixr_types ixr_t;
-
-	#ifndef ixr_st
-			struct __ixr_st {
-				ulong c_index;
-				char const *c_name;
-				uchar const *c_ref;
-			};
-	typedef struct __ixr_st ixr_st;
-			#define ixr_cis_p(x) ((ixr_st *)(&x))
-			#define ixr_cis(x) ((ixr_st *)x)
-			#define ist_index(x) ((ulong)(ixr_cis(x)->c_index))
-			#define ist_name(x)	 ((char const *)(ixr_cis(x)->c_name))
-			#define ist_ref(x) ((uchar const *)(ixr_cis(x)->c_ref))
-	#endif
-
-	#ifndef ixr_h
-			struct __ixr_h {
-				ulong __size;
-				ulong d_count;
-				ulong checksum;
-				uchar head[__I_LEN];	
-			};
-	typedef struct __ixr_h ixr_h;
-		#define ixr_header ixr_h
+		#define __cis__(x) ((cis_st)x->ptr)
+		#define cis_ptr(x) ((void const *)x->ptr)
+		#define cis_address(x) ((char const *)x->addr)
+		#define cis_chkref(x) ((char const *)x->chkref)
+		#define cis_addrsz(x) ((ulong)sizeof(x->addr))
+		#define cis_addrlen(x) ((ulong)str_rwings(cis_address(x)))
 
 	#endif
 
-	#define __IXR_TYPES { ixr_t, ixr_st, ixr_h }
-#endif
-
-
-#ifndef __ATP_TYPES
-
-	#ifndef aip_sterm
-		// S structure
-		enum __sterm {
-			Public='u',
-			Private='v'
-		};
-	typedef enum __sterm aip_sterm;
-	
-	#endif
-	
-	#ifndef aip_stat
-		struct __s_stat {
-			char s_path[256];
-			char s_ipv[16];
-			ulong sa_len;
-			char s_addr[64];
-			ulong se_len;
-			enum __sterm s_term;
-		};
-	typedef struct __s_stat s_stat;
-		#define __s_port "9999"
-	
-	#endif
-
-	#ifndef aip_sock
-			#ifndef atp_t
-			// atp :: {a.k.a @-Protocol} : types
-				enum __atypes_p {
-					__at_p='0',
-					__at_4=4,
-					__at_6=6,
-					__at_e='e',
-				};
-			typedef enum __atypes_p atp_t;
-			
-			#endif
-
-			#ifndef sAF_t
-			// needed for inet resolutions
-				enum __sAF_types {
-					__sAF_INET=2,
-					__sAF_INET6=30
-				};
-			typedef enum __sAF_types sAF_t;
-			
-			#endif
-			#ifndef socket_st
-			// socket address
-				struct __socket_st {
-					at_t _atype;
-					void *_sokaddr;
-					char _sockaddr[128];
-					char ascii_addr[__I_LEN];
-				};
-			typedef struct __socket_st socket_st;
-			
-			#endif
-		struct __sok_st {
-		    ulong aip_sockfd;
-		    ulong aip_socklen;
-		    socket_st *aip_sokst;
-		};
-	typedef struct __sok_st aip_sock;
-	
-	#endif
-
-
-	#ifndef aip_arc
-		#ifndef arc_s
-			/**
-			 * each step is a specific `ARC` call
-			 * and yes, the step indicates the
-			 * size in bytes
-			**/
-			enum __arc_sizes {
-				__step_point=8,
-				__step_addr=16,
-				__step_sok=128,
-				__step_start=256,
-				__step_mor=512
-			};
-		typedef enum __arc_sizes arc_s;
-
-		#endif
-
-		#ifndef arc_st
-			struct __arc_st {
-				aip_sock __sok;
-				ulong __pid;
-				int __fork;
-				ulong __next;
-				d_point **__points;
-			};
-	typedef struct __arc_st aip_arc;
-			// returns true for child process
-			#define arc_process (!__arc.__fork) 
-			#define arc_pid(x)	((ulong)(x->__pid))
-			#define arc_fork(x) ((int)(x->__fork))
-			#define arc_next(x) ((ulong)(x->__next))
-			#define arc_points(x) ((dpoint_t **)(x->__points))
-
-		#endif
-	
-	#endif
-
-	#ifndef aip_act
-		enum __aip_action {
-			aip_base=__lbb_atp__,
-			aip_get,
-			aip_set,
-			aip_return, // return : to caller
-			aip_retain, // save
-			aip_retreive, // collect :  get AND THEN { &-> } return to caller
-			aip_dcloud,
-			aip_next
-		};
-	typedef enum __aip_action aip_act;
-	
-	#endif
-
-	#ifndef aip_act
-		struct __aip_st {
-			int switcher;
-			int action_type;
-			ulong args_length;
-			char const **args;
-		};
-	typedef struct __aip_st aip_st;
-
-	#endif
-	
-	#define __ATP_TYPES { aip_sterm, aip_stat, aip_sock, aip_arc, aip_act }
-#endif
-
-
-#ifndef __LBB_TYPES
-
-	#ifndef lbb_t
-		// lbb file mount structure types
-		enum __lbb_types {
-			/**
-			{a.k.a} FIFO **/
-			    lbb_reader=1,
-			/**
-			{a.k.a} C.PIPE **/
-			    lbb_socket=2,
-			/**
-			{a.k.a} B.FILE **/
-			    lbb_field=3,
-			/**
-			{a.k.a} DIRECTORY **/
-			    lbb_dir=4, 
-			/**
-			{a.k.a} BOOK **/
-			    lbb_1, //binary
-			    lbb_2, //
-			    lbb_3,
-			    lbb_4
-		};
-	typedef enum __lbb_types lbb_t;
-
-	#endif
-
-	#ifndef lbb_size
-		#define lbb_size(x) (ulong)((1<<(x*3)))
-	#endif
-
-	#ifndef lbb_entry
-		enum __lbb_entries {
-			__lbb_none__=-1,		// no entry
-			__lbb_charms__='@',		// @charms
-			__lbb_yeild__=1,		// @lbb
-			__lbb_info__=0,			// (null)==ixr
-			__lbb_variable__='*',	// *
-			__lbb_atp__				// @*
-		};
-	typedef enum __lbb_entries lbb_entry;
-
-	#endif
-
-	static const char *__lbb_indexfile = "@charms/lbb/.lbb\0";
-	static const char *__lbb_convdir = "@charms/lbb\0";
-	static const char *__lbb_locking = "@charms/lock\0";
-
-	#define __LBB_TYPES { lbb_mstat, lbb_t, lbb_size }
 #endif
 
 
@@ -373,28 +127,32 @@ and loaded via a .o or .so
 			__sha3_flag_none__=0,
 			__sha3_flag_keccak__=1
 		};
-	typedef enum __sha3_flags sha3_config_t;
+	typedef enum __sha3_flags sha3_f;
 	#endif
+	
 #endif
 
 
 #ifndef __C_TYPES
 
 	#ifndef c_path
-			struct __path_st {
-				ulong p_offset;
-				char const *p_reference;
-				char const *p_caller;
-				char const *p_called;
-				char const *p_checksum;
-			};
+		struct __path_st {
+			ulong p_offset;
+			ulong p_size;
+			char const *p_reference;
+			char const *p_caller;
+			char const *p_called;
+			char const *p_checksum;
+		};
 	typedef struct __path_st c_path;
-				static const ulong size_cpath=sizeof(c_path);
-				#define path_checksum(x) ((char const *)x->p_checksum)
-				#define path_caller(x) ((char const *)x->p_caller)
-				#define path_called(x) ((char const *)x->p_called)
-				#define path_reference(x) ((char const *)x->p_reference)
-				#define path_offset(x) ((ulong)x->p_offset)
+		static const ulong size_cpath=sizeof(c_path);
+		#define path_checksum(x) ((char const *)x->p_checksum)
+		#define path_caller(x) ((char const *)x->p_caller)
+		#define path_called(x) ((char const *)x->p_called)
+		#define path_reference(x) ((char const *)x->p_reference)
+		#define path_offset(x) ((ulong)x->p_offset)
+		#define path_size(x) ((ulong)x->p_size)
+		#define path_type(x) (())
 	
 	#endif
 
@@ -440,7 +198,7 @@ and loaded via a .o or .so
 	
 	#endif
 
-	#ifndef c_mstat
+	#ifndef m_stat
 		// M structure
 		struct __cm_stat {
 			ulong m_size;
@@ -449,7 +207,7 @@ and loaded via a .o or .so
 			ulong m_inn;
 			char  m_path[512];
 		};
-	typedef struct __cm_stat c_mstat;
+	typedef struct __cm_stat m_stat;
 		#define cm_size(x) ((ulong)(x->m_size))
 		#define cm_mode(x) ((ulong)(x->m_mode))
 		#define cm_iosz(x) ((ulong)(x->m_blksz))
@@ -461,7 +219,7 @@ and loaded via a .o or .so
 	#ifndef c_shard
 		// Shard
 		struct __c_shard {
-			c_mstat c_stat;
+			m_stat c_stat;
 			ulong	c_fd;
 		};
 	typedef struct __c_shard c_shard;
@@ -562,6 +320,24 @@ and loaded via a .o or .so
 				x.__hash=hash8(a, x.__, fsze(x.__));\
 				x.__path=(#x);\
 				x.__to=a;\
+				x.__next=&x;\
+
+	#endif
+
+	#ifndef d_pointer
+			struct __pointer_d {
+				ulong __count;
+				void const **__content;
+				char const *__llhash;
+				struct __pointer_d* __next;
+			};
+	typedef struct __pointer_d d_pointer;
+			#define ptr_count(x) ((ulong)(x->count))
+			#define ptr_content(x) ((ulong)(x->content))
+			#define pointer(x, v) d_pointer x; \
+				x.__content=vcontent(v);\
+				x.__count=content_count(v);\
+				x.__llhash=varll_hash(v, x.__count);\
 				x.__next=&x;\
 
 	#endif
@@ -693,6 +469,258 @@ and loaded via a .o or .so
 
 
 
+#ifndef __LBB_TYPES
+
+	#ifndef lbb_t
+		// lbb file mount structure types
+		enum __lbb_types {
+			/**
+			{a.k.a} FIFO **/
+			    lbb_reader=1,
+			/**
+			{a.k.a} C.PIPE **/
+			    lbb_socket=2,
+			/**
+			{a.k.a} DIRECTORY **/
+			    lbb_dir=3, 
+			/**
+			{a.k.a} B.FILE **/
+			    lbb_field=4,
+			/**
+			{a.k.a} BOOK **/
+			    lbb_1, //binary
+			    lbb_2, //
+			    lbb_3,
+			    lbb_4,
+			    __lbb_roof // roof can be adjusted with updates
+		};
+	typedef enum __lbb_types lbb_t;
+
+	#endif
+
+	#ifndef lbb_size
+		#define lbb_size(x) (ulong)((1<<(x*3)))
+	#endif
+
+	#ifndef lbb_entry
+		enum __lbb_entries {
+			__lbb_none__=-1,		// no entry
+			__lbb_charms__='@',		// @charms
+			__lbb_yeild__=1,		// @lbb
+			__lbb_info__=0,			// (null)==ixr
+			__lbb_variable__='*',	// *
+			__lbb_atp__				// @*
+		};
+	typedef enum __lbb_entries lbb_entry;
+
+	#endif
+
+	static const char *__lbb_indexfile = "@charms/lbb/.lbb\0";
+	static const char *__lbb_convdir = "@charms/lbb\0";
+	static const char *__lbb_locking = "@charms/lock\0";
+
+	#define __LBB_TYPES { lbb_t, lbb_size, lbb_entry }
+#endif
+
+
+
+#ifndef __IXR_TYPES
+	/**
+	 * putting this here because i have a tendency to
+	 * forget things like this when i am developing.
+	 * 
+	 * The simplist way to explain how the d-* works
+	 * is by realizing the structure of which it's built on.
+	 * 
+	 * The very first and the only two main actual types :: `ixr` &-> `lbb`.
+	 * 
+	 * The full first version of the d-language is ::: ATP IXR LBB 
+	 * 
+	 * `ixr` {a.k.a Indexer} is the initial d-type at all times.
+	 * `lbb` {a.k.a Linked Binary Book} are just mod(s) applied on any of the ixr types.
+	 * 
+	**/
+	enum __ixr_types {
+		ixr_header,
+		ixr_point,
+		ixr_file,
+		ixr_dprg,
+		ixr_fld
+	};
+	typedef enum __ixr_types ixr_t;
+
+	#ifndef ixr_st
+			struct __ixr_st {
+				ulong c_index;
+				char const *c_name;
+				uchar const *c_ref;
+			};
+	typedef struct __ixr_st ixr_st;
+			#define ixr_cis_p(x) ((ixr_st *)(&x))
+			#define ixr_cis(x) ((ixr_st *)x)
+			#define ist_index(x) ((ulong)(ixr_cis(x)->c_index))
+			#define ist_name(x)	 ((char const *)(ixr_cis(x)->c_name))
+			#define ist_ref(x) ((uchar const *)(ixr_cis(x)->c_ref))
+	#endif
+
+	#ifndef ixr_h
+			struct __ixr_h {
+				ulong __size;
+				ulong d_count;
+				ulong checksum;
+				uchar head[__I_LEN];	
+			};
+	typedef struct __ixr_h ixr_h;
+		#define ixr_header ixr_h
+
+	#endif
+
+	#define __IXR_TYPES { ixr_t, ixr_st, ixr_h }
+#endif
+
+
+#ifndef __ATP_TYPES
+
+	#ifndef aip_sterm
+		// S structure
+		enum __sterm {
+			Public='u',
+			Private='v'
+		};
+	typedef enum __sterm aip_sterm;
+	
+	#endif
+	
+	#ifndef aip_stat
+		struct __s_stat {
+			char s_path[256];
+			char s_ipv[16];
+			ulong sa_len;
+			char s_addr[64];
+			ulong se_len;
+			enum __sterm s_term;
+		};
+	typedef struct __s_stat s_stat;
+		#define __s_port "9999"
+	
+	#endif
+
+	#ifndef aip_sock
+			#ifndef atp_t
+			// atp :: {a.k.a @-Protocol} : types
+				enum __atypes_p {
+					__at_p='0',
+					__at_4=4,
+					__at_6=6,
+					__at_e='e',
+				};
+			typedef enum __atypes_p atp_t;
+			
+			#endif
+
+			#ifndef sAF_t
+			// needed for inet resolutions
+				enum __sAF_types {
+					__sAF_INET=2,
+					__sAF_INET6=30
+				};
+			typedef enum __sAF_types sAF_t;
+				#define a2s_type(x) sAF_t _s; atp_t x;\
+					switch(_atype) {\
+					case __at_4: return __sAF_INET;\
+					case __at_6: return __sAF_INET6;\
+					default: return __sAF_INET;\
+				}\
+			
+			#endif
+			#ifndef socket_st
+			// socket address
+				struct __socket_st {
+					atp_t s_protocol;
+					void *s_address;
+					char s_socket[128];
+					char s_ascii[__I_LEN];
+				};
+			typedef struct __socket_st socket_st;
+			
+			#endif
+		struct __sok_st {
+		    ulong aip_sockfd;
+		    ulong aip_socklen;
+		    socket_st *aip_sokst;
+		};
+	typedef struct __sok_st aip_sock;
+	
+	#endif
+
+
+	#ifndef aip_arc
+		#ifndef arc_s
+			/**
+			 * each step is a specific `ARC` call
+			 * and yes, the step indicates the
+			 * size in bytes
+			**/
+			enum __arc_sizes {
+				__step_point=8,
+				__step_addr=16,
+				__step_sok=128,
+				__step_start=256,
+				__step_mor=512
+			};
+		typedef enum __arc_sizes arc_s;
+
+		#endif
+
+		#ifndef arc_st
+			struct __arc_st {
+				aip_sock __sok;
+				ulong __pid;
+				int __fork;
+				ulong __next;
+				d_point **__points;
+			};
+	typedef struct __arc_st aip_arc;
+			// returns true for child process
+			#define arc_process (!__arc.__fork) 
+			#define arc_pid(x)	((ulong)(x->__pid))
+			#define arc_fork(x) ((int)(x->__fork))
+			#define arc_next(x) ((ulong)(x->__next))
+			#define arc_points(x) ((dpoint_t **)(x->__points))
+
+		#endif
+	
+	#endif
+
+	#ifndef aip_act
+		enum __aip_action {
+			aip_base=__lbb_atp__,
+			aip_get,
+			aip_set,
+			aip_return, // return : to caller
+			aip_retain, // save
+			aip_retreive, // collect :  get AND THEN { &-> } return to caller
+			aip_dcloud,
+			aip_next
+		};
+	typedef enum __aip_action aip_act;
+	
+	#endif
+
+	#ifndef aip_act
+		struct __aip_st {
+			int switcher;
+			int action_type;
+			ulong args_length;
+			char const **args;
+		};
+	typedef struct __aip_st aip_st;
+
+	#endif
+	
+	#define __ATP_TYPES { aip_sterm, aip_stat, aip_sock, aip_arc, aip_act }
+#endif
+
 
 
 
@@ -700,41 +728,25 @@ and loaded via a .o or .so
 // 	enum __fmt_t {
 // 		__nofmt__='\0',
 // 	    nfmt=0,
-
 // 	    __idxr__,
 // 	    hdr_t=__idxr__+3, // _S_D_C_
-
-	    
 // 	    __keyval__,
 // 	    kvi_t=__keyval__+3, // i : k : v
-
-	    
 // 	    __envvar__,
 // 	    bas_t=__envvar__+3, // i : e = v
-
-	    
 // 	    __pathmut__,
 // 	    pat_t=__pathmut__+3, // i : p := a
-
-	    
 // 	    __fld__,
 // 	    pld_t=__fld__+3, // i : s =: d
-	  
-	    
 // 	    __intrprt__,
 // 	    ipr_t=__intrprt__+1, // < i >
-	  
-	    
 // 	    __csok__,
 // 	    sok_t=__csok__+1, // @s
-	  
-	    
 // 	    __call__,
 // 	    atp_c=__call__+3, // @s<i>{ p }
 // 	};
 // 	typedef enum __fmt_t fmt_t;
 // #endif
-
 // #ifndef __fmt_cats
 // 	enum __fmt_cats {
 // 		_f_lbb, //all others e.g binaries
@@ -745,92 +757,62 @@ and loaded via a .o or .so
 // 	typedef enum __fmt_cats cfmt;
 // #endif
 
-
-// #ifndef __strld
-// /*** string manipulation ***/
-// 	struct __strld {
-// 		int len;
-// 		char *data;
-// 	};
-// 	typedef struct __strld strld;
+// #ifndef K_TYPES
+// 	#ifndef kv_ptr
+// 		struct __kvp {
+// 			char const *key;
+// 			char const *val;
+// 			struct __kvp *(*kv_memit)(char const *,char const *);
+// 			struct __kvp *next;
+// 			char offseter;
+// 		};
+// 	typedef struct __kvp kvptr;
+// 		static const ulong size_kv=sizeof(kvptr);
+// 		static const ulong size_kvp=sizeof(kvptr*);
+// 	#endif
+// 	#ifndef key_val
+// 		struct __kvs {
+// 			char const**keys;
+// 			char const**values;
+// 			char const *seperator;
+// 			char const *__line_ends;
+// 			ulong count;
+// 		};
+// 	typedef struct __kvs keyvals;
+// 		static const ulong mem_sz=sizeof(char*);
+// 		#define kvs_id(s,x) (s->keys[x], s->values[x], s->seperator, s->__line_ends)
+// 		#define kvs_key(x,p) ((const char *)((x->keys)[p]))
+// 		#define kvs_val(x,p) ((const char *)((x->values)[p]))
+// 		#define __keys__(x) ((char const **)(x->keys))
+// 		#define vals__(x) ((const *char *)(&x))
+// 	#endif
+// 	#ifndef k_line
+// 		struct __liner {
+// 			ulong __size;
+// 			char const *__cptr;
+// 		};
+// 	typedef struct __liner k_line;
+// 		static const ulong size_kline=sizeof(k_line);
+// 	#endif
+// 	#ifndef k_stat
+// 		// K structure
+// 		struct __ptrdx {
+// 			ulong pidx;
+// 			ulong tri;
+// 		};
+// 		union __exs_ptr {
+// 			ulong *esptr;
+// 			struct __ptrdx ptrdx;
+// 		};
+// 		struct __k_stat {
+// 			char u_name[8];
+// 			union __exs_ptr exsp;
+// 			char i_addr[512];
+// 		};
+// 	typedef struct __k_stat k_stat;
+// 		static const ulong size_kstat=sizeof(k_stat);
+// 	#endif
 // #endif
-
-// #ifndef __sepstr
-// 	struct __sepstr {
-// 		char *str;
-// 		int str_length;
-// 		char *sep;
-// 		int sep_offs;	
-// 	};
-// 	typedef struct __sepstr spstr;
-// #endif
-
-
-
-#ifndef K_TYPES
-	#ifndef kv_ptr
-		struct __kvp {
-			char const *key;
-			char const *val;
-			struct __kvp *(*kv_memit)(char const *,char const *);
-			struct __kvp *next;
-			char offseter;
-		};
-	typedef struct __kvp kvptr;
-		static const ulong size_kv=sizeof(kvptr);
-		static const ulong size_kvp=sizeof(kvptr*);
-
-	#endif
-
-	#ifndef key_val
-		struct __kvs {
-			char const**keys;
-			char const**values;
-			char const *seperator;
-			char const *__line_ends;
-			ulong count;
-		};
-	typedef struct __kvs keyvals;
-		static const ulong mem_sz=sizeof(char*);
-		#define kvs_id(s,x) (s->keys[x], s->values[x], s->seperator, s->__line_ends)
-		#define kvs_key(x,p) ((const char *)((x->keys)[p]))
-		#define kvs_val(x,p) ((const char *)((x->values)[p]))
-		#define __keys__(x) ((char const **)(x->keys))
-		#define vals__(x) ((const *char *)(&x))
-	
-	#endif
-
-	#ifndef k_line
-		struct __liner {
-			ulong __size;
-			char const *__cptr;
-		};
-	typedef struct __liner k_line;
-		static const ulong size_sline=sizeof(struct k_line);
-	
-	#endif
-
-	#ifndef k_stat
-		// K structure
-		struct __ptrdx {
-			ulong pidx;
-			ulong tri;
-		};
-		union __exs_ptr {
-			ulong *esptr;
-			struct __ptrdx ptrdx;
-		};
-		struct __k_stat {
-			char u_name[8];
-			union __exs_ptr exsp;
-			char i_addr[512];
-		};
-	typedef struct __k_stat k_stat;
-		static const ulong size_kstat=sizeof(k_stat);
-	
-	#endif
-
-#endif
 
 
 #endif

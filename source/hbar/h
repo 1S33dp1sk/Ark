@@ -93,9 +93,9 @@
     void byte_to_hex(uint8_t _,char _s[3]);
     void hash_to_string(char *_hstr,uint8_t _);
 
-    sha3_config_t sha3_set_flags(void *p,sha3_config_t);
-    sha3_return_t sha3_init(void *p,unsigned bit_size);
-    sha3_return_t sha3_hash_buffer(unsigned bit_size,sha3_config_t cfg,const void *in,unsigned in_bytes,void *out,unsigned out_bytes);
+    sha3_f sha3_set_flags(void *p,sha3_f flags);
+    sha3_r sha3_init(void *p,unsigned bit_size);
+    sha3_r sha3_hash_buffer(unsigned bit_size,sha3_f cfg,const void *in,unsigned in_bytes,void *out,unsigned out_bytes);
     void sha3_update(void *p,void const *buf_in,size_t len);
     void const *sha3_finalize(void *ctx_p);
 

@@ -426,11 +426,6 @@ int main_sepstr(int argc, char const *argv[]){
 	return 0;
 };
 
-int main_atoff(){
-	strld sep=extract_atoff("hello world\n",6);
-	log_strld(sep);
-	return 0;
-};
 
 
 /*******************************************************************/
@@ -470,30 +465,30 @@ int get_sstat(char const *__path, s_stat *sfile) {
 	return 0;
 };
 
-int get_kstat(char const *__path, k_stat *kfile) {
-	memset(kfile,0,sizeof(struct __k_stat));
-	char *_path=(char *)__path;
-	ulong off_at=sep_offset(_path,"@");
+// int get_kstat(char const *__path, k_stat *kfile) {
+// 	memset(kfile,0,sizeof(struct __k_stat));
+// 	char *_path=(char *)__path;
+// 	ulong off_at=sep_offset(_path,"@");
 
 
-	char *uname=str_b4offset(_path,off_at);
-	ulong unlen=str_rwings(uname);
+// 	char *uname=str_b4offset(_path,off_at);
+// 	ulong unlen=str_rwings(uname);
 
-	char *ixes=str_a4offset(_path,off_at);
-	ulong ixlen=str_rwings(ixes);
+// 	char *ixes=str_a4offset(_path,off_at);
+// 	ulong ixlen=str_rwings(ixes);
 
-	memmove((&kfile->u_name),uname,unlen);
-	memmove((&kfile->i_addr),ixes,ixlen);
+// 	memmove((&kfile->u_name),uname,unlen);
+// 	memmove((&kfile->i_addr),ixes,ixlen);
 
-	(kfile->exsp).ptrdx=__iptridx(__path);
-	log_ptrdx(&((kfile->exsp).ptrdx));
+// 	(kfile->exsp).ptrdx=__iptridx(__path);
+// 	log_ptrdx(&((kfile->exsp).ptrdx));
 
-	// (kfile->exsp).esptr=___exsptr(__path);
-	// log_esptr((kfile->exsp).esptr);
+// 	// (kfile->exsp).esptr=___exsptr(__path);
+// 	// log_esptr((kfile->exsp).esptr);
 
 
-	return 0;
-};
+// 	return 0;
+// };
 
 
 
@@ -652,37 +647,6 @@ static const void *ne=(char const *)(void *)'\0';
 #define __lbb_call_args(...) __VA_ARGS__
 #define lbb_add(x,...) __lbb_typd_args(x)
 
-#define __lbb_call_generic(__) \
-	_Generic((__),\
-		ptr_st:"lbb command",\
-		intr_st: "lbb interpreter",\
-		payld_st: "lbb payload",\
-		cis_st: "lbb field",\
-	default:"lbb call")
-
-#define __lbb_resp_generic(__) \
-	_Generic((__),\
-		ptr_st*:"command response",\
-		intr_st*: "interpreter reply",\
-		payld_st*: "payload retrieve",\
-		cis_st*: "field return",\
-	default:"unknown args")
-
-#define __lbb_generic(__) \
-	_Generic((__),\
-		char[8]:(ptr_st *) &__,\
-		char[64]:(intr_st *) &__,\
-		char[512]:(payld_st *) &__,\
-		char[4096]:(cis_st *) &__,\
-		default:"unknown")
-
-#define __lbb_typd(__) \
-	_Generic((__),\
-		ptr_st * : char[8],\
-		intr_st * : char[64],\
-		payld_st * : char[512],\
-		cis_st * : char[4096],\
-		default:"unknown")
 
 int get_freader(m_stat *mst) {
 	int _fd=open(mst->m_path,__lock_reader);

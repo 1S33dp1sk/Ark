@@ -63,7 +63,10 @@
 	#define __lbb_public_mode (S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)
 
 	static ulong ___lbb_offset=0;
-	
+	static lshard lbb_shard;
+	static lshard *l_shard=&lbb_shard;
+	static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
+
 	// printf friendly
     #define FMT_ASCII_SPEC(__) _Generic((__), \
                                             int: "%d",\
@@ -71,7 +74,7 @@
                                             char: "%c",\
                                             long: "%ld",\
                                             ulong: "%lu",\
-                                            tlong: "%llu",\
+                                            utlong: "%llu",\
                                             char *: "%s",\
                                             char const *:"%s",\
                                             long long: "%lld",\
@@ -169,13 +172,6 @@
 	#define __NOT_FOUND "Not-Found \xE2\x9C\x95"
 	#define __FOUND "Found \xE2\x9C\x93"
 	#define FND_NTFND(x) x==0?__NOT_FOUND:__FOUND
-
-static lshard lbb_shard;
-static lshard *l_shard=&lbb_shard;
-static m_stat *lbb_mstat=&(lbb_shard.lbb_mst);
-
-	
-
 
 	#define __LBB_START__(...) __DPRG__(__VA_ARGS__)
 

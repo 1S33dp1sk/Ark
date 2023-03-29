@@ -827,11 +827,7 @@ void *__arc__(arc_st *st) {
 
 
 	sAF_type a2s_type(at_t _atype) {
-		switch(_atype) {
-			case __at_4: return __sAF_INET;
-			case __at_6: return __sAF_INET6;
-			default: return __sAF_INET;
-		};
+		
 	};
 
 

@@ -159,7 +159,7 @@ hash bar
 	/**
 	[initiate | reset] the sha3 context
 	**/
-	sha3_return_t sha3_init(void *priv, unsigned bit_size) {
+	sha3_r sha3_init(void *priv, unsigned bit_size) {
 		sha3_context *ctx = (sha3_context *) priv;
 		if( bit_size != 256 && bit_size != 384 && bit_size != 512 ) {
 			return __sha3_u_n;
@@ -172,7 +172,7 @@ hash bar
 	[set | unset] keccak flag
 	 *
 	**/
-	sha3_config_t sha3_set_flags(void *priv, sha3_config_t flags) {
+	sha3_f sha3_set_flags(void *priv, sha3_f flags) {
 		sha3_context *ctx=(sha3_context *)priv;
 		flags&=__sha3_flag_keccak__;
 		ctx->cap_words|=(flags==__sha3_flag_none__?__sha3_flag_keccak__:0);
@@ -304,9 +304,9 @@ hash bar
 	atomic hashing 
 	 *
 	**/
-	sha3_return_t sha3_hash_buffer( unsigned bit_size, sha3_config_t flags, const void *in, unsigned in_bytes, void *out, unsigned out_bytes ) {
+	sha3_r sha3_hash_buffer( unsigned bit_size, sha3_f flags, const void *in, unsigned in_bytes, void *out, unsigned out_bytes ) {
 		
-		sha3_return_t err;
+		sha3_r err;
 		sha3_context c;
 
 		err = sha3_init( &c , bit_size );
@@ -337,7 +337,7 @@ hash bar
 	 * 
 	 * zeroatt          @returns zero address
 	**/ 
-	char const *zeroatt(uns level){
+	char const *zero_address(uns level){
 		switch(level){
 		case 0: return "0x0000";
 		case 1: return "0x00000000";
@@ -448,47 +448,33 @@ hash bar
 			return ( uint8_t * ) sha3_finalize( &__sha3 );
 	}
 	/**
-	hashof-4
-	 * 
-	**/
-	uns hash4(uns level,void const *tohash,size_t thsize) {
-		uint8_t const *__ = hash(level,tohash,thsize);
-		uns res=0;
-		for(int i=0;i<4;i++){
-			res|=(uns)__[i]<<(i*8);
-		};
-		return res;
-	};
-	/**
 	hashof-8
 	 * 
 	**/
-	ulong hash8(uns level,void const *tohash,size_t thsize) {
-		uint8_t const *__ = hash(level,tohash,thsize);
-		ulong res=0;
-		for(int i=0;i<8;i++){
-			res|=(ulong)__[i]<<(i*8);
+	ulong hash8(ulong __vl, void const *__v, size_t __vsize) {
+		uint8_t const *__ = hash((unsigned)__vl,__v,__vsize);
+		ulong c=0,res=0;
+		for(;c<8;c+=1){
+			res|=(ulong)__[c]<<(c*8);
 		};
 		return res;
 	};
 	/**
-	hashof-16
+	hash24=3x(hashof-8)
 	 *
 	**/
-	void *hash16(uns level, void const *tohash, size_t thsize){
-		uint8_t const *__ = hash(level,tohash,thsize);
-		memset(&u,0,sizeof(u));
-		#ifdef DEBUG
-			printf("hash16-u:%lu:%08lx%08lx-",sizeof(u),u[0],u[1]);
-		#endif
-		for(uns k=0;k<2;k++){
-			ulong res=0;
-			for(uns i=0;i<8;i++){
-				res|=(ulong)__[i]<<(i*8);
+	void *hash24(ulong __vl, void const *__v, size_t __vsize){
+		uint8_t const *__ = hash(__vl,__v,__vsize);
+		init_ul();
+		ulong res,__c0=0,__c1=0;
+		for(;__c0<2;__c0+=1) {
+			res=0;
+			for(;__c1<8;__c1+=1) {
+				res|=(ulong)__[i]<<(__c1*8);
 			};
-			u[k]=res;
+			u[__c0]=res;
 		};
-		return &u;
+		return_ul();
 	};
 	/**
 	file hash
