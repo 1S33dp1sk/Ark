@@ -2,6 +2,7 @@
 little black book
 
 #ifndef __LBB__H
+#include "karch_512.d"
 #include "lbb.h"
 #endif
 

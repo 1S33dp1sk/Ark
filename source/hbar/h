@@ -1,7 +1,7 @@
 
 #ifndef __HBAR__H
+    #include "utypes.h"
     #define __HBAR__H 1
-    #include "karch_512.d"
 
 
     void __btoh(uchar __c, uc __s);
@@ -48,7 +48,7 @@
      *
     **/
     #ifndef __keccak__base
-        static const uint64_t keccakf_rndc[24] = {
+        static const ullong keccakf_rndc[24] = {
             __sha3_const( 0x0000000000000001UL ), __sha3_const( 0x0000000000008082UL ),
             __sha3_const( 0x800000000000808aUL ), __sha3_const( 0x8000000080008000UL ),
             __sha3_const( 0x000000000000808bUL ), __sha3_const( 0x0000000080000001UL ),
@@ -73,7 +73,7 @@
     #define __keccak__base 1
     #endif
 
-    #define __size_u64 sizeof(uint64_t)
+    #define __size_u64 sizeof(ullong)
     #define __sha3_k_sponge_w (((1600)/8)/__size_u64) //bits to byte
     #define __sha3_k_use_flag 0x80000000 // flag for PURE keccak
     #define __sha3_cw(x) ((x)&(~__sha3_k_use_flag))
@@ -116,11 +116,11 @@
     #undef get16bits
     #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
     || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
-        #define get16bits(d) (*((const uint16_t *)(d)))
+        #define get16bits(d) (*((const ulong *)(d)))
     #endif
     #if !defined (get16bits)
-        #define get16bits(d) ((((uint32_t) (((const uint8_t *)(d))[1]))<<8)\
-                            +(uint32_t) (((const uint8_t *) (d))[0]))
+        #define get16bits(d) ((((ulong) (((const uchar *)(d))[1]))<<8)\
+                            +(ulong) (((const uchar *) (d))[0]))
     #endif
 
 
