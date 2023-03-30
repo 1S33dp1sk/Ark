@@ -2,7 +2,13 @@
 
 #ifndef __LBB__H
 	#include "karch_512.d"
-
+	/**
+	 * d-lbb GET some_handler||path/to
+	 * 
+	 * d-lbb some_script
+	 * 
+	 * d-lbb text_out __TEXT
+	**/
 
 	// unsigned int pack(uchar *buf,char const *fmt,...);
 	// char const *hashof(unsigned level, void const *to_hash, ulong hash_size);
@@ -66,19 +72,6 @@
 	static c_shard lbb_shard;
 	static c_shard *l_shard=&lbb_shard;
 	static m_stat *lbb_mstat=&(lbb_shard.c_stat);
-
-	// printf friendly
-    #define FMT_ASCII_SPEC(__) _Generic((__), \
-                                            int: "%d",\
-                                            uns: "%u",\
-                                            char: "%c",\
-                                            long: "%ld",\
-                                            ulong: "%lu",\
-                                            utlong: "%llu",\
-                                            char *: "%s",\
-                                            char const *:"%s",\
-                                            long long: "%lld",\
-                                            default: "%x")
 
     #define LBB_FMT_SPEC(lbb_type) _Generic((lbb_type), \
     	ixr_h: "%lu bytes\n %lu@%lu dpoints\n head : %s\n",\

@@ -3,39 +3,37 @@
     #include "karch_512.d"
 
 
-    #define packi16 pack_i_16
-    #define packi32 pack_i_32
-    #define packi64 pack_i_64
-    #define unpacki16 unpack_i_16
-    #define unpacki32 unpack_i_32
-    #define unpacki64 unpack_i_64
-    #define unpacki128 unpack_i_128
-    #define unpacku16 unpack_u_16
-    #define unpacku32 unpack_u_32
+    #define _LONG_MID 0x7fffffffu
+    #define _LONG_MAX 0xffffffffu
 
-    #define packu16(ubuf,num) (enc_unum(1,ubuf,num))
-    #define packu32(ubuf,num) (enc_unum(3,ubuf,num))
-    #define packu64(ubuf,num) (enc_unum(7,ubuf,num))
-    #define unpacku64(x) ((ulong *)unpack_u_64(x))
+    #define _LLONG_MID 0x7fffffffffffffffu
+    #define _LLONG_MAX 0xffffffffffffffffu
 
-    unsigned int pack(uchar *buf,char const *fmt,...);
-    void unpack(uchar *buf,char const *fmt,...);
 
-    // various encodings
-    void enc_unum(size_t base,uchar *buf,ulong i);
-    void enc_brnum(size_t base,size_t roof,uchar *buf,ulong *i);
+    void enc_u(uchar *__buffer, uchar __);
+    void enc_s(uchar *__buffer, schar __);
+    void enc_u8(uchar *__buffer, ulong __);
+    void enc_u64(uchar *__buffer, ullong __);
+    void enc_u512(uchar *__buffer, ullong __[3]);
 
-    //packing
-    void pack_i_16(uchar *buf,uns i);
-    void pack_i_32(uchar *buf,unsigned long int i);
-    void pack_i_64(uchar *buf,unsigned long long int i);
+    void enc_unum(ulong __base, uchar *__buffer, ulong __num);
+    void enc_punum(ulong __base, ulong __roof, uchar *__buffer, ulong *__nums);
 
-    //unpacking
-    uns unpack_u_16(uchar *buf);
-    int unpack_i_16(uchar *buf);
-    unsigned long int unpack_u_32(uchar *buf);
-    long int unpack_i_32(uchar *buf);
-    ulong unpack_u_64(uchar *buf);
-    long long int unpack_i_64(uchar *buf);
+    void enc_i(uchar *__buffer, char __);
+
+
+    char dnc_i(uchar *__buffer);
+    schar dnc_s(uchar *__buffer);
+    uchar dnc_u(uchar *__buffer);
+
+    slong dnc_i8(uchar *__buffer);
+    ulong dnc_u8(uchar *__buffer);
+
+    sllong dnc_i64(uchar *__buffer);
+    ullong dnc_u64(uchar *__buffer);
+    sllong* dnc_i512(uchar *__buffer);
+    ullong* dnc_u512(uchar *__buffer);
+
+
 
 #endif

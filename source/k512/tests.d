@@ -2,7 +2,192 @@
 #define __ATP_TESTS 1
 
 
-#ifdef __FILE_MULTI_IO
+#ifdef __KVS_TESTS
+void *__kvptr__(kvptr *kptr) {
+
+	return memset(kptr, 0, sizeof(kvptr));
+};
+
+	kvptr *kv_memit(char const *key, char const *val) {
+		ulong keylen=str_rwings(key), vallen=str_rwings(val);
+		kvptr *__=(kvptr*)malloc(size_kv);
+		void *__key=malloc(len_strze(keylen));
+		void *__val=malloc(len_strze(vallen));
+		memmove(__key, key, keylen);
+		memmove(__val, val, vallen);
+		__ -> key=(char const *)__key;
+		__ -> val=(char const *)__val;
+		__ -> offseter='\0';
+		return __;
+	};
+
+	int kv_offset(kvptr *kv, char const *data, ulong offset_at) {
+		memset((void *)kv, 0, size_kvp);
+		kv->key=str_b4offset(data, offset_at);
+		kv->val=str_a4offset(++data, offset_at);
+		kv->offseter=data[offset_at];
+		return 0;
+	};
+
+	kvptr *kv_at(char const *data, char *delim) {
+		ulong __offset=sep_offset(data, delim);
+		if(!__offset){
+			return NULL;
+		};
+		kvptr *res=(kvptr*)malloc(size_kvp);
+		kv_offset(res, data, __offset);
+		return res;
+	};
+
+	void log_kvp(kvptr *res){
+		printf("kv :'rn\n");
+		printf("dlm -> %c\n", res->offseter);
+		printf("key -> %s\n", res->key);
+		printf("val -> %s\n", res->val);
+	};
+
+void *__keyvals__(keyvals *kvs) {
+
+	return memset(kvs, 0, sizeof(keyvals));
+};
+	void free_kv(keyvals *__) {
+		ulong __count=__->count;
+		printf("total count = %lu \n", __count);
+		for(int i=0; i<__count;i++) {
+			free((void *)__->keys[i]);
+			free((void *)__->values[i]);
+		};
+	};
+
+	void free_kvs(keyvals *__) {
+		free((void *)__->seperator);
+		free((void *)__->__line_ends);
+		free((void *)__->keys);
+		free((void *)__->values);
+	};
+
+	void __free_str(char const *__) {
+		
+		free((void *)__);
+	};
+
+	void log_kvs(keyvals *__) {
+		printf("kvs :: \n");
+		printf("seperator (%s)\n", __->seperator);
+		printf("line endings -> %s\n", __->__line_ends);
+		ulong count=0,__c=__->count;
+		char const *_k,*_v;
+		printf("total kvs = %lu\n", __c);
+		do {
+			_k=__->keys[count];
+			_v=__->values[count];
+			printf("%s,%s   =: %lu\n", _k,_v,count);
+			count+=1;
+		}while(count<__c);
+	};
+	
+	void log_kv(keyvals *__) {
+		ulong __count=__->count;
+		printf("total count = %lu \n", __count);
+		for(int i=0; i<__count;i++) {
+			printf("k-> %s\n v-> %s\n",__->keys[i],__->values[i]);
+		};
+	};
+
+	void *__kvs__(keyvals *__, char const *sep, char const *lds) {
+		ulong seplen=str_rwings(sep), ldslen=str_rwings(lds);
+		char *__sep=(char *)malloc(len_strze(seplen));
+		char *__lends=(char *)malloc(len_strze(ldslen));
+		memmove(__sep, sep, seplen);
+		memmove(__lends, lds, ldslen);
+		memset(__, 0, sizeof(keyvals));
+		__->seperator=(char const *)__sep;
+		__->__line_ends=(char const *)__lends;
+		__->keys=malloc(mem_sz);
+		__->values=malloc(mem_sz);
+		__->keys[0]=NULL;
+		__->values[0]=NULL;
+		__->count=0;
+		return __;
+	};
+
+	int __add_pair(keyvals *kvs, char const *key, char const *val) {
+
+		log_kvs(kvs);
+
+		return 0;
+	};
+
+	int kvs_pair(keyvals *kvs, char const *key, char const *val) {
+		ulong keylen=str_rwings(key), vallen=str_rwings(val);
+		char const *__key=(char const *)malloc(len_strze(keylen));
+		char const *__val=(char const *)malloc(len_strze(vallen));
+		memmove((void *)__key, key, keylen);
+		memmove((void *)__val, val, vallen);
+		#ifdef DEBUG
+			printf("adding pair :: (%s,%s)\n",key, val);
+		#endif
+		return __add_pair(kvs, __key, __val);
+	};
+
+void *__sline__(s_line *sline) {
+
+	return memset(sline, 0, sizeof(s_line));
+};
+	s_line*kvs_liner(char const *__key, char const *__val, char const *__dlm, char const *__lds) {
+		ulong keylen=str_rwings(__key), vallen=str_rwings(__val), dlmlen=str_rwings(__dlm), ldslen=str_rwings(__lds);
+		ulong __size=keylen+vallen+dlmlen+ldslen;
+		void *__=malloc(len_strze(__size));
+		memmove(__, __key, keylen);
+		memmove((__+keylen), __dlm, dlmlen);
+		memmove((__+keylen+dlmlen), __val, vallen);
+		memmove((__+keylen+dlmlen+vallen), __lds, ldslen);
+		s_line *_=(s_line *)malloc(size_sline);
+		_->__size=__size;
+		_->__cptr=__;
+		return _;
+	};
+
+	void free_kv_sline(s_line *kvs_sl) {
+		free((void *)kvs_sl->__cptr);
+		free(kvs_sl);
+	};
+
+	char const *kvs_traverse(keyvals *kvs) {
+		ulong __size=0, c=0, count=kvs->count;
+		do {
+			#ifdef DEBUG
+				printf("kvs->key : %lu :: %s\n", c, kvs_key(kvs,c));
+				printf("kvs->val : %lu :: %s\n", c, kvs_val(kvs,c));
+			#endif
+			__size+=str_rwings(kvs->keys[c]);
+			__size+=str_rwings(kvs->values[c]);
+			c+=1;
+		} while(c<count);
+		ulong __len=len_strze(__size);
+		#ifdef DEBUG
+			printf("size : %lu\n", __size);
+		#endif
+		char *__=(char *)malloc(__len);
+		memset(__, '\0', sizeof(__len));
+		c=1;__size=0;
+		while(c<count){
+			s_line *temp=kvs_liner kvs_id(kvs,c);
+			memmove((__+__size), (void *)temp->__cptr, temp->__size);
+			__size+=(temp->__size);
+			free_kv_sline(temp);
+			c+=1;
+		};
+
+		return strdup(__);
+	};
+
+
+
+#endif
+
+
+#ifdef __FILE_MULTI_IO_TESTS
 	// creates a file of a particular increment size
 	ulong attsize(ulong __size){
 		int fd=open(arch_filename,(O_RDWR|O_CREAT), S_IRWXU);
@@ -25,14 +210,14 @@
 		return fd;
 	};
 	// fills up the file created 
-	ulong fldatt(uns level,ulong sizeatt){
+	ulong fldatt(ulong level,ulong sizeatt){
 		int fd=open(arch_filename,(O_RDWR|O_CREAT), S_IRWXU);
 		if(fd==-1){
 			printf("cannot create .lbb\n");
 			return 0;
 		};
 		ulong lbb_iosize=iosze(arch_filename);
-		uns cptr=0,blk=0,chk_blocks=sizeatt&lbb_iosize,nblocks=sizeatt/lbb_iosize;
+		ulong cptr=0,blk=0,chk_blocks=sizeatt&lbb_iosize,nblocks=sizeatt/lbb_iosize;
 		if(chk_blocks||!nblocks){
 			printf("wrong size.\noctal system handler \n");
 			return 0;
@@ -94,7 +279,7 @@
 		mod_vik,mod_wln,mod_xvl,mod_ybn,mod_zen
 	};
 
-	static const uns mods_count=arr_size(mods);
+	static const ulong mods_count=arr_size(mods);
 
 	// get this architicture modificiations {{ CERTIFICATE }}
 	int arch_mods(char const *__3curl){

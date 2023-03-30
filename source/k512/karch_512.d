@@ -25,7 +25,7 @@ K512-architecture
 	#ifndef __HBAR__H
 		#include "hbar.h"
 	#endif
-	#ifdef __ENK__H
+	#ifndef __ENK__H
 		#include "enk.h"
 	#endif
 #endif
@@ -38,6 +38,8 @@ K512-architecture
 #ifndef __H512__C
 	/********* types *********/
 	static __ul u;
+	static aip_sock __sok;
+	static aip_arc __arc;
 
 	static ulong __cindex=0;
 	static ulong __ixr_fd=0x228;
@@ -86,21 +88,37 @@ K512-architecture
 	#define shard_lock_reader (O_RDONLY)
 	#define shard_lock_writer (O_WRONLY)
 
+	#ifndef __d3
+		#define __d3 0;
+		
+	#endif
+	#ifndef k512
+		#define k512(x) _Generic((x),\
+		uchar: uchar*,\
+		schar: schar*,\
+		slong: slong*,\
+		ulong: ulong*,\
+		ullong: ullong*,\
+		sllong: sllong*,\
+		default: NULL)
+	#endif
 
-    #define FMT_ASCII_SPEC(__) \
-        _Generic((__), \
-            int: "%d",\
-            uns: "%u",\
-            char: "%c",\
-            long: "%ld",\
-            ulong: "%lu",\
-            utlong: "%llu",\
-            char *: "%s",\
-            char const *:"%s",\
-            long long: "%lld",\
-            default: "%x")
+	//FMT_ASCII_SPEC
+	#define __C_FMT_SPEC(x) _Generic((x), \
+		char: "%c",\
+		unsigned char: "%d",\
+		int: "%d",\
+		unsigned int:"%u",\
+		long: "%ld",\
+		unsigned long: "%lu",\
+		char *: "%s",\
+		unsigned char *: "%s",\
+		long long: "%lld",\
+		unsigned long long: "%llu",\
+		default: "%x")
 
-    #define FMT_HEXA_SPEC(__) \
+	//FMT_HEXA_SPEC
+    #define __ENK_FMT_SPEC(__) \
         _Generic((__), \
             char: "c",\
             unsigned char: "C",\
@@ -110,9 +128,10 @@ K512-architecture
             long: "l",\
             ulong: "L",\
             long long: "q",\
-            utlong: "Q",\
+            ullong: "Q",\
             char *: "s",\
             default: "_")
+
 	#define _C_TYPES(x) \
 	    _Generic((x), \
 	        signed char: "char", \
@@ -121,8 +140,8 @@ K512-architecture
 	        unsigned int:"uns", \
 	        long int:"ulong", \
 	        unsigned long int:"ulong", \
-	        long long int:"utlong", \
-	        unsigned long long int:"utlong", \
+	        long long int:"ullong", \
+	        unsigned long long int:"ullong", \
 	        char *:"string",\
 	        void *:"pointer",\
 	        default:"NULL")
@@ -135,8 +154,8 @@ K512-architecture
             unsigned int:(uns)x, \
             long int:(ulong)x, \
             unsigned long int:(ulong)x, \
-            long long int:(utlong)x, \
-            unsigned long long int:(utlong)x, \
+            long long int:(ullong)x, \
+            unsigned long long int:(ullong)x, \
             default:NULL)
     
     #define LBB_OUT_FMT(__) \
@@ -154,7 +173,7 @@ K512-architecture
 		uns*		: "H",\
 		long*		: "l",\
 		ulong*		: "L",\
-		utlong*		: "Q",\
+		ullong*		: "Q",\
 		default 	: "_")
 
     #define IXR_ARG(__) _Generic((__), \
@@ -165,40 +184,40 @@ K512-architecture
 		unsigned int*			: (uns*)x,\
 		long int*				: (ulong*)x,\
 		unsigned long int*		: (ulong*)x,\
-		long long int*			: (utlong*)x, \
-		unsigned long long int*	: (utlong*)x, \
+		long long int*			: (ullong*)x, \
+		unsigned long long int*	: (ullong*)x, \
 		default					: NULL)
 
 	#define __lbb_call_generic(__) \
 		_Generic((__),\
-			ptr_st:"lbb command",\
-			intr_st: "lbb interpreter",\
-			payld_st: "lbb payload",\
-			cis_st: "lbb field",\
+			atp_pointer:"lbb command",\
+			atp_charm: "lbb interpreter",\
+			atp_pyfld: "lbb payload field",\
+			atp_data: "lbb data",\
 		default:"lbb call")
 
 	#define __lbb_resp_generic(__) \
 		_Generic((__),\
-			ptr_st*:"command response",\
-			intr_st*: "interpreter reply",\
-			payld_st*: "payload retrieve",\
-			cis_st*: "field return",\
+			atp_pointer*:"command response",\
+			atp_charm*: "interpreter reply",\
+			atp_pyfld*: "payload retrieve",\
+			atp_data*: "field return",\
 		default:"unknown args")
 
 	#define __lbb_generic(__) \
 		_Generic((__),\
-			char[8]:(ptr_st *) &__,\
-			char[64]:(intr_st *) &__,\
-			char[512]:(payld_st *) &__,\
-			char[4096]:(cis_st *) &__,\
+			char[8]:(atp_pointer *) &__,\
+			char[64]:(atp_charm *) &__,\
+			char[512]:(atp_pyfld *) &__,\
+			char[4096]:(atp_data *) &__,\
 			default:"unknown")
 
 	#define __lbb_typd(__) \
 		_Generic((__),\
-			ptr_st * : char[8],\
-			intr_st * : char[64],\
-			payld_st * : char[512],\
-			cis_st * : char[4096],\
+			atp_pointer * : char[8],\
+			atp_charm * : char[64],\
+			atp_pyfld * : char[512],\
+			atp_data * : char[4096],\
 			default:"unknown")
 
 	#define fmt_out(x) log_str(_Generic((x), \
@@ -220,7 +239,7 @@ K512-architecture
     #define OUT_ENK_H(fd,x) do { \
         char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
         memset(&_,0,sizeof _);memset(&__,0,sizeof __);\
-        snprintf(_,sizeof _,"%s",FMT_HEXA_SPEC(x));\
+        snprintf(_,sizeof _,"%s",__ENK_FMT_SPEC(x));\
         ulong pack_sz=pack(__,_,x);\
         if(pack_sz>0){write(fd,__,pack_sz);}\
     } __dPER
@@ -228,7 +247,7 @@ K512-architecture
     #define OUT_ENK_A(fd,x) do { \
         char __[4096];\
         memset(&__,0,sizeof __);\
-        snprintf(__,sizeof __,"%s\n", FMT_ASCII_SPEC(x));\
+        snprintf(__,sizeof __,"%s\n", __C_FMT_SPEC(x));\
         dprintf(fd,__,(x));\
     } __dPER
 	#define __vile ((void const *)(__FILE__))
@@ -266,6 +285,8 @@ K512-architecture
 	#define LBB_SOCKET(x)		x^0140000
 	#define ARCH_MADE(x)		x^0000700
 	#define ARCH_SAVE(x)		x^0000007
+	
+	#define _C_ZERO(x) x-'0'
 
 
 	#define ARR_DELIM ",\0"
@@ -345,11 +366,11 @@ K512-architecture
     char const *hashof (ulong level, void const*to_hash, ulong the_hash_size);
     uchar const *hash (ulong level, void const *to_hash, ulong the_hash_size);
     ulong hash8 (ulong level, void const *to_hash, ulong the_hash_size);
-    ulptr  hash24 (ulong level, void const *to_hash, ulong the_hash_size);
+    ullong  hash24 (ulong level, void const *to_hash, ulong the_hash_size);
     char const *fhashof(ulong level, char const *to_hash);
     char const *fdhashof(ulong level, ulong fd, ulong filesize);
     uchar const *fhash(ulong level, char const *to_hash);
-    uns fhash4 (ulong level, char const *to_hash);
+    ulong fhash4 (ulong level, char const *to_hash);
     ulong fhash8 (ulong level, char const *to_hash);
     ulong fhash16 (ulong level, char const *to_hash);
 
@@ -358,7 +379,7 @@ K512-architecture
 
 
 	//atp
-	socket_st __sock_addr(struct sockaddr *sa);
+	d_socket __sock_addr(struct sockaddr *sa);
 	struct sockaddr *sock_aip_to_sa(aip_sock *sock);
 
     
@@ -415,7 +436,7 @@ K512-architecture
 	    return __->st_blksize;
 	};
 
-	uns dmode_st(void *st){
+	ulong dmode_st(void *st){
 	    struct stat *__=(struct stat*)st;
 	    return __->st_mode;
 	};
@@ -805,6 +826,14 @@ K512-architecture
 	#define arch_filename d_atlbb
 	#define d_sep ":\0"
 
+
+	char const *__get_atname(char const *__naming) {
+		if(!__atchar(*__naming)){
+			return "temp";
+		}
+		return __naming++;
+	};
+
 	int __nullchar(char __c) {
 		if(__c==0x00) {
 			return 1;
@@ -1007,14 +1036,14 @@ K512-architecture
 
 
 	ulong env_hash(char **__var){
-		uns __count=0;
+		ulong __count=0;
 		while(!(NNE(__var[__count]))){
 			#ifdef DEBUG
 				printf("%s\n",__var[__count]);
 			#endif
 			__count+=1;
 		}
-		env_hash_0=(ulong)hash8(0,&__count,sizeof(uns));
+		env_hash_0=(ulong)hash8(0,&__count,sizeof(ulong));
 		return (ulong)__count;
 	};
 
@@ -1401,7 +1430,7 @@ K512-architecture
 	};
 
 	void log_socket(aip_sock *sock) {
-		socket_st s_info=__sock_addr(sock_aip_to_sa(sock));
+		d_socket s_info=__sock_addr(sock_aip_to_sa(sock));
 		printf("socket @%s\n",s_info.s_ascii);
 	};
 
