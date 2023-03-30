@@ -2,8 +2,8 @@
 @-Protocol
 
 #ifndef __ATP__H
+	#include "utypes.h"
 	#define __ATP__H 1
-	#include "karch_512.d"
 
 	#define __AT_DEFINED '@'
 	#if __AT_DEFINED!=64

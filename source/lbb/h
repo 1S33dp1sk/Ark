@@ -1,7 +1,7 @@
 
 
 #ifndef __LBB__H
-	#include "karch_512.d"
+	#include "utypes.h"
 	/**
 	 * d-lbb GET some_handler||path/to
 	 * 

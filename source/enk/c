@@ -3,6 +3,7 @@ encoder
 
 
 #ifndef __ENK__H
+#include "karch_512.d"
 #include "enk.h"
 #endif
 

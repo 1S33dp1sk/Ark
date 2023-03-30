@@ -1,8 +1,8 @@
 
 
 #ifndef __IXR__H
+	#include "utypes.h"
 	#define __IXR__H 1
-	#include "karch_512.d"
 
 	#define ixr_mem 	((void *)&___header.head)
 	#define ixr_ubuf	((uchar *)&___header.head)

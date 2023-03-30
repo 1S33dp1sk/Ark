@@ -2,6 +2,7 @@
 hash bar
 
 #ifndef __HBAR__H
+#include "karch_512.d"
 #include "hbar.h"
 #endif
 

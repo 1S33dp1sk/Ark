@@ -1,6 +1,6 @@
 #ifndef __ENK__H
+    #include "utypes.h"
     #define __ENK__H 1
-    #include "karch_512.d"
 
 
     #define _LONG_MID 0x7fffffffu

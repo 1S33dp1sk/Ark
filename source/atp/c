@@ -2,6 +2,7 @@
 @-protocol
 
 #ifndef __ATP__H
+#include "karch_512.d"
 #include "atp.h"
 #endif
 
@@ -1011,7 +1012,7 @@ void *__arc__(aip_arc *st) {
 
 	int mor(c_req *request) {
 		printf("d-cloud : atp {mor} :: %p\n", request);
-		ATP(request, @self);
+		// ATP(request, @self);
 
 		
 
