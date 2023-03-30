@@ -66,12 +66,12 @@
     ulong __ixr_argument(char const *__format, void const *__);
 
 	ixr_h *__header__();
-	ixr_h *ixr_get(into_st *ist);
-	ixr_h *ixr_set(into_st *ist);
-	ixr_h *ixr_prun(into_st *ist);
-	ixr_h *ixr_psave(into_st *ist);
-	ixr_h *ixr_pcollect(into_st *ist);
-	ixr_h *args3head(into_st *in_args);
+	ixr_h *ixr_get(d_into *ist);
+	ixr_h *ixr_set(d_into *ist);
+	ixr_h *ixr_prun(d_into *ist);
+	ixr_h *ixr_psave(d_into *ist);
+	ixr_h *ixr_pcollect(d_into *ist);
+	ixr_h *args3head(d_into *in_args);
 
 
 

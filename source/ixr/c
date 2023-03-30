@@ -29,7 +29,7 @@ The indexer
 
 	char const *ixr_format(ixr_t idx_type) {
 		switch(idx_type) {
-		case ixr_header:	return __head_fmt;
+		case __ixr_header:	return __head_fmt;
 		case ixr_point:		return __value_fmt;
 		case ixr_file:		return __file_fmt;
 		case ixr_dprg:		return __dprg_fmt;
@@ -58,7 +58,7 @@ The indexer
 		ulong __len=len_ustrze(__sz);
 		void *__=malloc(__len);
 		memset(__, 0, __len);
-		uns psz=pack(__, ixr_format(ixr_point), __cindex, __key, __val);
+		ulong psz=pack(__, ixr_format(ixr_point), __cindex, __key, __val);
 		return __;
 	};
 
@@ -293,7 +293,7 @@ The indexer
 			printf("@IXR<write>(header)\n");
 		#endif
 		uchar __head[__I_LEN];memset(&__head, 0, sizeof(__head));
-		unsigned __temp=pack(__head, ixr_format(ixr_header), ixr_h_args);
+		unsigned __temp=pack(__head, ixr_format(__ixr_header), ixr_h_args);
 		__head[__I_LEN-1]='\0';
 		__header_out(__head, __temp);
 		#ifdef DEBUG
@@ -423,16 +423,17 @@ The indexer
 
     ulong __ixr_argument(char const *__format, void const *__) {
     	char const arg_fmt=__format[0];
-    	memset(pbuf, 0, sizeof(pbuffer));
+    	uchar pbuf[__A_LEN];
+    	memset(pbuf, 0, sizeof(pbuf));
     	ulong ps=0;
 
     	switch(arg_fmt) {
     	case 's': ps=pack(pbuf, __format, (char *)__); break;
     	case 'h': ps=pack(pbuf, __format, (int *)__); break;
-    	case 'H': ps=pack(pbuf, __format, (uns *)__); break;
+    	case 'H': ps=pack(pbuf, __format, (ulong *)__); break;
     	case 'l': ps=pack(pbuf, __format, (long*)__); break;
     	case 'L': ps=pack(pbuf, __format, (ulong*)__); break;
-    	case 'Q': ps=pack(pbuf, __format, (utlong*)__); break;
+    	case 'Q': ps=pack(pbuf, __format, (ullong*)__); break;
     	case '_': ps=pack(pbuf, __format, (void *)__); break;
     	default: return 0;
     	};
@@ -447,9 +448,9 @@ The indexer
 	};
 
 
-ixr_h *ixr_get(into_st *ist) {
+ixr_h *ixr_get(d_into *ist) {
 	ixr_h *header=__header__();
-	char const *var_name=(char const *)i_narg(ist, 1);
+	char const *var_name=(char const *)din_arg_n(ist, 1);
 	#ifdef PROCESS
 		printf("@ATP<get>(%s)\n", var_name);
 	#endif
@@ -457,38 +458,38 @@ ixr_h *ixr_get(into_st *ist) {
 };
 
 
-ixr_h *ixr_set(into_st *ist) {
+ixr_h *ixr_set(d_into *ist) {
 	ixr_h *header=__header__();
-	char const *var_name=(char const *)i_narg(ist, 1);
-	char const *var_val=(char const *)i_narg(ist, 2);
+	char const *var_name=(char const *)din_arg_n(ist, 1);
+	char const *var_val=(char const *)din_arg_n(ist, 2);
 	#ifdef PROCESS
 		printf("@ATP<set>(%s){%s}\n", var_name, var_val);
 	#endif
 	return header;
 };
 
-ixr_h *ixr_prun(into_st *ist) {
+ixr_h *ixr_prun(d_into *ist) {
 	ixr_h *header=__header__();
 
-	char const *p_name=(char const *)i_narg(ist, 1);
+	char const *p_name=(char const *)din_arg_n(ist, 1);
 	#ifdef PROCESS
 		printf("@-Protocol : run    :: %s\n", p_name);
 	#endif
 	return header;
 };
 
-ixr_h *ixr_psave(into_st *ist) {
+ixr_h *ixr_psave(d_into *ist) {
 	ixr_h *header=__header__();
-	char  const *d_name=(char const *)i_narg(ist, 1);
+	char  const *d_name=(char const *)din_arg_n(ist, 1);
 	#ifdef PROCESS
 		printf("@-Protocol : save   :: %s\n", d_name);
 	#endif
 	return header;
 };
 
-ixr_h *ixr_pcollect(into_st *ist) {
+ixr_h *ixr_pcollect(d_into *ist) {
 	ixr_h *header=__header__();
-	char  const *f_att=(char const *)i_narg(ist, 1);
+	char  const *f_att=(char const *)din_arg_n(ist, 1);
 	#ifdef PROCESS
 		printf("@-Protocol : collect :: %s\n", f_att);
 	#endif
@@ -496,10 +497,8 @@ ixr_h *ixr_pcollect(into_st *ist) {
 };
 
 
-#define into_argc(x) ((int)(x->switcher))
-
-ixr_h *args3head(into_st *in_args) {
-	switch(into_argc(in_args)) {
+ixr_h *args3head(d_into *in_args) {
+	switch(din_switch(in_args)) {
 		case 2:
 			return ixr_get(in_args);
 		case 3:

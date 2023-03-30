@@ -11,7 +11,7 @@ hash bar
 	#define __hbar_name "hash_bar"
 
 	void __btoh(uchar __c, uc __s) {
-		uns i=1, t=0;
+		ulong i=1, t=0;
 		__s[0] = __s[1] = __CHAR_ZERO;
 		__s[2] = __CHAR_NULL;
 		while(__c) {
@@ -77,43 +77,43 @@ hash bar
 	 *
 	**/  
    	ulong blaz_hash(char const *__data) {
-		uns len=str_rwings(__data),hash=len, tmp;
-		int rem;
+		ulong len=str_rwings(__data), hash=len, tmp, dsize=(sizeof(uchar)*2), ucsize=dsize*2;
+		slong rem;
 		if (len<=0||__data==NULL) { 
 			return 0; 
 		};
-		rem = len & 3;
-		len >>= 2;
+		rem=len&3;
+		len>>=2;
 		/* main */
-		for (;len > 0; len--) {
+		for (;len>0; len--) {
 			hash  += get16bits (__data);
-			tmp    = (get16bits (__data+2) << 11) ^ hash;
-			hash   = (hash << 16) ^ tmp;
-			__data  += 2*sizeof (uint16_t);
-			hash  += hash >> 11;
+			tmp    = (get16bits(__data+2)<<11)^hash;
+			hash   = (hash<<16)^tmp;
+			__data+= ucsize;
+			hash  += hash>>11;
 		};
 		/* handler */
 		switch (rem) {
-			case 3: hash += get16bits (__data);
-					hash ^= hash << 16;
-					hash ^= ((signed char)__data[sizeof (uint16_t)]) << 18;
-					hash += hash >> 11;
+			case 3: hash+=get16bits(__data);
+					hash^=hash<<16;
+					hash^=((schar)__data[dsize]) << 18;
+					hash+=hash>>11;
 					break;
-			case 2: hash += get16bits (__data);
-					hash ^= hash << 11;
-					hash += hash >> 17;
+			case 2: hash+=get16bits (__data);
+					hash^=hash<<11;
+					hash+=hash>>17;
 					break;
-			case 1: hash += (signed char)*__data;
-					hash ^= hash << 10;
-					hash += hash >> 1;
+			case 1: hash+=(schar)*__data;
+					hash^=hash<<10;
+					hash+=hash>>1;
 		};
 		/* force out 127 bits*/
-		hash ^= hash << 3;
-		hash += hash >> 5;
-		hash ^= hash << 4;
-		hash += hash >> 17;
-		hash ^= hash << 25;
-		hash += hash >> 6;
+		hash^=hash<<3;
+		hash+=hash>>5;
+		hash^=hash<<4;
+		hash+=hash>>17;
+		hash^=hash<<25;
+		hash+=hash>>6;
 
 		return hash;
 	};
@@ -285,18 +285,18 @@ hash bar
 		 *    ... the conversion below ...
 		 * #endif */
 		{
-			uns i;
-			for(i=0; i<__sha3_k_sponge_w; i++) {
-				const uns t1 = (uns) ctx->u.s[i];
-				const uns t2 = (uns) ( (ctx->u.s[i]>>16)>>16);
-				ctx->u.sb[i * 8 + 0] = (uchar) (t1); 
-				ctx->u.sb[i * 8 + 1] = (uchar) (t1>>8);
-				ctx->u.sb[i * 8 + 2] = (uchar) (t1>>16);
-				ctx->u.sb[i * 8 + 3] = (uchar) (t1>>24);
-				ctx->u.sb[i * 8 + 4] = (uchar) (t2); 
-				ctx->u.sb[i * 8 + 5] = (uchar) (t2>>8);
-				ctx->u.sb[i * 8 + 6] = (uchar) (t2>>16);
-				ctx->u.sb[i * 8 + 7] = (uchar) (t2>>24);
+			ulong __i;
+			for(__i=0; __i<__sha3_k_sponge_w; __i++) {
+				const ulong t1 = (ulong) ctx->u.s[__i];
+				const ulong t2 = (ulong) ( (ctx->u.s[__i]>>16)>>16);
+				ctx->u.sb[__i*8+0]=(uchar)(t1); 
+				ctx->u.sb[__i*8+1]=(uchar)(t1>>8);
+				ctx->u.sb[__i*8+2]=(uchar)(t1>>16);
+				ctx->u.sb[__i*8+3]=(uchar)(t1>>24);
+				ctx->u.sb[__i*8+4]=(uchar)(t2); 
+				ctx->u.sb[__i*8+5]=(uchar)(t2>>8);
+				ctx->u.sb[__i*8+6]=(uchar)(t2>>16);
+				ctx->u.sb[__i*8+7]=(uchar)(t2>>24);
 			}
 		}
 		__sha3_trace_buf( "hash: (first 32 bytes)", ctx->u.sb , 256 / 8 );
@@ -465,18 +465,18 @@ hash bar
 	hash24=3x(hashof-8)
 	 *
 	**/
-	ulptr hash24(ulong __vl, void const *__v, ulong __vsize){
+	ullong hash24(ulong __vl, void const *__v, ulong __vsize){
 		uchar const *__ = hash(__vl,__v,__vsize);
-		init_ul();
-		ulong res,__c0=0,__c1=0;
+		ullong res=0;
+		ulong __c0=0,__c1=0;
 		for(;__c0<2;__c0+=1) {
 			res=0;
 			for(;__c1<8;__c1+=1) {
-				res|=(ulong)__[__c0]<<(__c1*8);
+				res|=(ullong)__[__c0]<<(__c1*8);
 			};
 			u[__c0]=res;
 		};
-		return_ul();
+		return res;
 	};
 	/**
 	file hash
@@ -585,12 +585,12 @@ hash bar
 	file-hash4
 	 * 
 	**/
-	uns fhash4(ulong level,char const *filepath) {
+	ulong fhash4(ulong level,char const *filepath) {
 		uchar const *__ = fhash(level,filepath);
 		if(__==NULL){return 0;}
-		uns res=0;
+		ulong res=0;
 		for(int i=0;i<4;i++){
-			res|=(uns)__[i]<<(i*8);
+			res|=(ulong)__[i]<<(i*8);
 		}
 		return res;
 	}

@@ -17,27 +17,33 @@ and loaded via a .o or .so
 #endif
 
 
-#ifndef __UNSIGNED_TYPES
-	#define __UNSIGNED_TYPES 3
-	#ifndef uns
-		#define uns unsigned int
-	#endif
+#ifndef __ARCH_TYPES
+	#define __ARCH_TYPES 7
 	#ifndef uchar
-		#define uchar unsigned char
+		#define __u_char unsigned char
+	typedef __u_char uchar;
+	#endif
+	#ifndef schar
+		#define __s_char signed char
+	typedef __s_char schar;
 	#endif
 	#ifndef ulong
-		#define __ud8 unsigned long
+		#define __ud8 unsigned long int
 	typedef __ud8 ulong;
 	#endif
-	#ifndef utlong
-		#define __ut8 unsigned long long
-	typedef __ut8 utlong;
+	#ifndef slong
+		#define __sd8 signed long int
+	typedef __sd8 slong;
 	#endif
-	#ifndef ulptr
-		#define __ulptr ulong*
-	typedef ulong* ulptr;
+	#ifndef ullong
+		#define __u64 unsigned long long int
+	typedef __u64 ullong;
 	#endif
-	#ifndef uc
+	#ifndef sllong
+		#define __s64 signed long long int
+	typedef __s64 sllong;
+	#endif
+	#ifndef s512
 		#define __uc3 uchar*
 	typedef uchar uc[3];
 	#endif
@@ -55,19 +61,20 @@ and loaded via a .o or .so
 	#ifndef __ul
 		typedef ulong __ul[3];
 			#define init_ul() memset(&u, 0, sizeof(__ul));
-			#define return_ul() return ((ulptr) &u);
+			#define return_ul() return ((ulong *)u);
 	#endif
 #endif
 
 
 #ifndef __ADDR_TYPES
-	#ifndef ptr_addr
+
+	#ifndef atp_pointer
 		struct __ptr_addr {
 			void *ptr;//memory access
 			char addr[__P_LEN];
 			char const *chkref;
 		};
-	typedef struct __ptr_addr ptr_st;
+	typedef struct __ptr_addr atp_pointer;
 		#define __ptr__(x) ((ptr_st *)(x->ptr))
 		#define ptr_addr(x) cis_address(x)
 		#define ptr_chkref(x) cis_chkref(x)
@@ -75,42 +82,47 @@ and loaded via a .o or .so
 
 	#endif
 
-	#ifndef intr_addr
-		struct __intr_addr { 
+	#ifndef atp_charm
+		struct __charm_addr { 
 			void *intr;
 			char addr[__I_LEN];
 			char const *chkref;
 		};
-	typedef struct __intr_addr intr_st;
-		#define __intr__(x) ((intr_st *)(x->intr))
+	typedef struct __charm_addr atp_charm;
+		#define __intr__(x) ((atp_charm *)(x->intr))
 		#define intr_addr(x) cis_address(x)
 		#define intr_chkref(x) cis_chkref(x)
 		#define intr_addrlen(x) cis_address(x)
 
 	#endif
 
-	#ifndef payld_addr
+	#ifndef atp_pyfld
 		struct __payld_st {
 			void *payld;
 			char addr[__A_LEN];
 			char const *chkref;
 		};
-	typedef struct __payld_st payld_st;
-		#define __payld__(x) ((payld_st *)x->payld)
+	typedef struct __payld_st atp_pyfld;
+		#define __payld__(x) ((atp_pyfld *)x->payld)
 		#define pyld_addr(x) cis_address(x)
 		#define pyld_chkref(x) cis_chkref(x)
 		#define pyld_addrlen(x) cis_address(x)
 
 	#endif
 
-	#ifndef cis_addr
+	#ifndef atp_data
 		struct __cis_addr {
 			void *ptr;
 			char *addr;
 			char const *chkref;
 		};
-	typedef struct __cis_addr cis_st;
-		#define __cis__(x) ((cis_st)x->ptr)
+	typedef struct __cis_addr atp_data;
+		#define ATP(x, ...) atp_data d##__VA_ARGS__;
+		//x->data;\
+
+
+		#define c3atp(x)	x->ptr, x->addr, x->chkref
+		#define __cis__(x) ((cis_st *)x->ptr)
 		#define cis_ptr(x) ((void const *)x->ptr)
 		#define cis_address(x) ((char const *)x->addr)
 		#define cis_chkref(x) ((char const *)x->chkref)
@@ -119,6 +131,8 @@ and loaded via a .o or .so
 
 	#endif
 
+	#define __ADDR_TYPES { atp_pointer, atp_charm, atp_pyfld, atp_data }
+	#define atp_init(x) atp_data x;
 #endif
 
 
@@ -192,12 +206,12 @@ and loaded via a .o or .so
 		typedef ulong c_keys[3];
 			#define data_length(x) (x.len)
 			#define data_content(x) (x.etc)
-			struct c_request {
+			struct __c_request {
 			    c_name name;
 			    c_data data;
 			    c_keys keys;
 			};
-	typedef struct c_request c_req;
+	typedef struct __c_request c_req;
 		static const ulong size_creq=sizeof(c_req);
 		#define req_name(x) ((char const *)(x.name))
 		#define req_content(x) ((char const *)data_content(x.data))
@@ -377,7 +391,7 @@ and loaded via a .o or .so
 		#define din_switch(x)	(x->i_switch)
 		#define din_args(x)		((char const **)(x->i_args))
 		#define din_caller(x)	((char const *)x->i_caller)
-		#define din_arg_n(x,n)	((char const *)((x->i_args)[n]))
+		#define din_arg_n(x,n)	((char const *)(din_args(x)[n]))
 		#define din_argument(x) din_arg_n(x, 0)
 
 		#define into_caller(i, c) i.caller=(char const *)c;
@@ -394,17 +408,73 @@ and loaded via a .o or .so
 			struct __pia_d* __next;
 		};	
 	typedef struct __pia_d d_pia;
+		static const ulong dpia_size=sizeof(d_pia);
+		#define via_ptr(x)			((void *)(x.pointer))
+		#define via_interp(x)		((void *)(x.interpreter))
+		#define via_args(x)			((void *)(x.args))
+		#define dest_portal(x,...) 	_Generic((#x), \
+			"pointer": memmove(x->pointer, __VA_ARGS__, str_rwings(__VA_ARGS__)),\
+			default:NULL);
+		#define portal(x,n) d_pia x;\
+		memmove(x.pointer, n, str_rwings(n));\
 
+	#endif
+
+	#ifndef d_socket
+			#ifndef atp_t
+			// atp :: {a.k.a @-Protocol} : types
+				enum __atypes_p {
+					__at_p='0',
+					__at_4=4,
+					__at_6=6,
+					__at_e='e',
+					__at__='@'
+				};
+			typedef enum __atypes_p atp_t;
+			
+			#endif
+
+			#ifndef sAF_t
+			// needed for inet resolutions
+				enum __sAF_types {
+					__sAF_INET=2,
+					__sAF_INET6=30
+				};
+			typedef enum __sAF_types sAF_t;
+				#define s2a_type(x) int x; 
+				#define a2s_type(x) atp_t x;\
+					switch(x) {\
+					case __at_4: return __sAF_INET;\
+					case __at_6: return __sAF_INET6;\
+					default: return __sAF_INET;\
+				}\
+			
+			#endif
+			// socket address
+			struct __socket_d {
+				atp_t s_protocol;
+				void *s_address;
+				char s_socket[128];
+				char s_ascii[__I_LEN];
+			};
+		typedef struct __socket_d d_socket;
+			#define d_socket(x) c_req x; mor(x)
+			#define __socket_protocol(x) ((ulong)(x->s_protocol))
+			#define socket_proto(x) ((atp_t)(x->s_protocol))
+			#define socket_address(x) ((void *)(x->s_address))
+			#define socket_raw(x) ((char const *)(x->s_socket))
+			#define socket_name(x) ((char const *)(x->s_ascii))
+		
 	#endif
 
 
 	#ifndef d_http
-		#ifndef h_req_t
+		#ifndef http_req_t
 			enum __http_request_types {
 				__http_rget,
 				__http_rpost,
 			};
-		typedef enum __http_request_types h_req_t;
+		typedef enum __http_request_types http_req_t;
 			#define http_request(x) char const *y; request_types x;\
 			switch(x) {\
 			case __http_rget:	y=__http_get;\
@@ -413,22 +483,20 @@ and loaded via a .o or .so
 
 		#endif
 
-		#ifndef h_content_t
+		#ifndef http_content
 			enum __http_content_types {
 				__hct_text,
 				__hct_html,
 				__hct_json,
 				__hct_img,
 			};
-		typedef enum __http_content_types h_content_t;
-			#define http_content_type(x) char const *y; content_t x; \
-			switch(x) {\
-				case __hct_text:	return y="text;";\
-				case __hct_html:	return y="html;";\
-				case __hct_json:	return y="json;";\
-				case __hct_img: 	return y="img;";\
-				default:			return y="text;";\
-			}\
+		typedef enum __http_content_types http_content;
+			#define set_content_type(c,t) c.__type=http_content_type(t)
+			#define http_content_type(x) &x; switch(x)\
+				__hct_text:"text;";\
+				__hct_html:"html;";\
+				__hct_json:"json;";\
+				__hct_img: "img;";\
 
 		#endif
 
@@ -437,12 +505,13 @@ and loaded via a .o or .so
 				ulong c_size;
 				void *content;
 				char const *__type;
-				h_content_t hc_type;
+				http_content hc_type;
 			};
 		typedef struct __http_content_st content_st;
 			#define http_clen(x) ((ulong)(x->c_size))
 			#define http_cdata(x) ((void *)(x->content))
-			#define http_ctype(x) ((h_content_t)(x->hc_type))
+			#define http_ctype(x) ((http_content)(x->hc_type))
+			#define http_stype(x) ((char const *)(http_content_type(x->hc_type)))
 			#define http_htype(x) ((char const *)(x->__type))
 
 		#endif
@@ -463,7 +532,7 @@ and loaded via a .o or .so
 
 		#endif
 		struct __http_d {
-			h_req_t h_request;
+			http_req_t h_request;
 			content_st h_content;
 		};
 	typedef struct __http_d d_http;
@@ -520,6 +589,8 @@ and loaded via a .o or .so
 			__lbb_atp__				// @*
 		};
 	typedef enum __lbb_entries lbb_entry;
+		#define entry_name(x) __atp_names(x)
+		#define log_entry(x) log_str(entry_name(x))
 
 	#endif
 
@@ -549,7 +620,7 @@ and loaded via a .o or .so
 	 * 
 	**/
 	enum __ixr_types {
-		ixr_header,
+		__ixr_header,
 		ixr_point,
 		ixr_file,
 		ixr_dprg,
@@ -569,6 +640,30 @@ and loaded via a .o or .so
 			#define ist_index(x) ((ulong)(ixr_cis(x)->c_index))
 			#define ist_name(x)	 ((char const *)(ixr_cis(x)->c_name))
 			#define ist_ref(x) ((uchar const *)(ixr_cis(x)->c_ref))
+	#endif
+
+	#ifndef __fmt_t
+	enum __fmt_t {
+		__nofmt__='\0',
+	    nfmt=0,
+	    __idxr__,
+	    hdr_t=__idxr__+3, // _S_D_C_
+	    __keyval__,
+	    kvi_t=__keyval__+3, // i : k : v
+	    __envvar__,
+	    bas_t=__envvar__+3, // i : e = v
+	    __pathmut__,
+	    pat_t=__pathmut__+3, // i : p := a
+	    __fld__,
+	    pld_t=__fld__+3, // i : s =: d
+	    __intrprt__,
+	    ipr_t=__intrprt__+1, // < i >
+	    __csok__,
+	    sok_t=__csok__+1, // @s
+	    __call__,
+	    atp_c=__call__+3, // @s<i>{ p }
+	};
+	typedef enum __fmt_t fmt_t;
 	#endif
 
 	#ifndef ixr_h
@@ -596,7 +691,7 @@ and loaded via a .o or .so
 			Private='v'
 		};
 	typedef enum __sterm aip_sterm;
-	
+
 	#endif
 	
 	#ifndef aip_stat
@@ -614,51 +709,15 @@ and loaded via a .o or .so
 	#endif
 
 	#ifndef aip_sock
-			#ifndef atp_t
-			// atp :: {a.k.a @-Protocol} : types
-				enum __atypes_p {
-					__at_p='0',
-					__at_4=4,
-					__at_6=6,
-					__at_e='e',
-					__at__='@'
-				};
-			typedef enum __atypes_p atp_t;
-			
-			#endif
-
-			#ifndef sAF_t
-			// needed for inet resolutions
-				enum __sAF_types {
-					__sAF_INET=2,
-					__sAF_INET6=30
-				};
-			typedef enum __sAF_types sAF_t;
-				#define a2s_type(x) sAF_t _s; atp_t x;\
-					switch(_atype) {\
-					case __at_4: return __sAF_INET;\
-					case __at_6: return __sAF_INET6;\
-					default: return __sAF_INET;\
-				}\
-			
-			#endif
-			#ifndef socket_st
-			// socket address
-				struct __socket_st {
-					atp_t s_protocol;
-					void *s_address;
-					char s_socket[128];
-					char s_ascii[__I_LEN];
-				};
-			typedef struct __socket_st socket_st;
-			
-			#endif
 		struct __sok_st {
 		    ulong aip_sockfd;
 		    ulong aip_socklen;
-		    socket_st *aip_sokst;
+		    d_socket *aip_sockst;
 		};
 	typedef struct __sok_st aip_sock;
+		#define aip_sockfd(x)	((ulong)(x.aip_sockfd))
+		#define aip_socklen(x)	((ulong)(x.aip_socklen))
+		#define aip_socket(x)	((ulong)(x->aip_sockst))
 	
 	#endif
 
@@ -677,7 +736,7 @@ and loaded via a .o or .so
 				__step_start=256,
 				__step_mor=512
 			};
-		typedef enum __arc_sizes arc_s;
+		typedef enum __arc_sizes arc_sizes;
 
 		#endif
 
@@ -703,7 +762,7 @@ and loaded via a .o or .so
 
 	#ifndef aip_act
 		enum __aip_action {
-			aip_base=__lbb_atp__,
+			aip_base=~__lbb_atp__,
 			aip_get,
 			aip_set,
 			aip_return, // return : to caller
