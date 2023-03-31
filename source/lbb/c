@@ -2,8 +2,8 @@
 little black book
 
 #ifndef __LBB__H
-#include "karch_512.d"
-#include "lbb.h"
+	#include "../headers/lbb.h"
+	#include "constants.d"
 #endif
 
 #ifndef __lbb_name
@@ -43,7 +43,7 @@ int __ap_fifo(char const *__path){
 // socket connections or commands , etc..
 ulong __ap_writer() {
 	ulong retres;
-	int __fd=open(__lbb_locking,__lock_writer);
+	int __fd=open(__lbb_locking,__lbb_lock_writer);
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open writer\n");
@@ -69,7 +69,7 @@ ulong __ap_writer() {
 MUST NOT HAVE ANY LOCKING BITS
 ulong __ap_reader() {
 	ulong retres=0;
-	int __fd=open(__lbb_locking,__lock_reader);
+	int __fd=open(__lbb_locking,__lbb_lock_reader);
 	if(__fd==-1){
 		printf("cannot open reader\n");
 		_exit(1);
@@ -90,7 +90,7 @@ ulong __ap_reader() {
 
 ulong __lbb_file_r(char const *__fpath) {
 	ulong retres=0;
-	int __fd=open(__fpath,__lock_reader);
+	int __fd=open(__fpath,__lbb_lock_reader);
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open reader\n");
@@ -106,7 +106,7 @@ ulong __lbb_file_r(char const *__fpath) {
 
 ulong __lbb_file_w(char const *__fpath) {
 	ulong retres=0;
-	int __fd=open(__fpath,__lock_writer);
+	int __fd=open(__fpath,__lbb_lock_writer);
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open reader\n");
@@ -491,7 +491,7 @@ static const void *ne=(char const *)(void *)'\0';
 
 
 int get_freader(m_stat *mst) {
-	int _fd=open(mst->m_path,__lock_reader);
+	int _fd=open(mst->m_path,__lbb_lock_reader);
 	if(_fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open reader for : %s\n", mst->m_path);

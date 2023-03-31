@@ -2,10 +2,9 @@
 hash bar
 
 #ifndef __HBAR__H
-#include "karch_512.d"
-#include "hbar.h"
+	#include "../headers/hbar.h"
+	#include "constants.d"
 #endif
-
 
 
 #ifndef __hbar_name
