@@ -1,6 +1,6 @@
-#ifndef __ENK__H
-    #include "utypes.h"
+ #ifndef __ENK__H
     #define __ENK__H 1
+   #include "_512.h"
 
 
     #define _LONG_MID 0x7fffffffu
@@ -36,4 +36,9 @@
 
 
 
+    ulong pack(uchar *__buffer, char const *__format , ...);
+    void unpack(uchar *__buffer, char const *__format , ... );
+
+
+    #define __ENK__H 2
 #endif

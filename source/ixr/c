@@ -1,9 +1,10 @@
 /// ixr \\\
 The indexer
 
+
 #ifndef __IXR__H
-#include "karch_512.d"
-#include "ixr.h"
+	#include "../headers/ixr.h"
+	#include "constants.d"
 #endif
 
 #ifndef __ixr_name 

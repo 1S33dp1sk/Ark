@@ -1,34 +1,8 @@
 
 #ifndef __HBAR__H
-    #include "utypes.h"
     #define __HBAR__H 1
+    #include "_512.h"
 
-
-    void __btoh(uchar __c, uc __s);
-    void h_str_tl(char *__, uchar *__hash, ulong __len);
-    void __htostr(char *__str, uchar *hash);
-    char *__s_hash(char *__key, char *__hashkey);
-    ulong blaz_hash(char const *__data);
-    static void keccakf(ulong s[25]);
-    sha3_r sha3_init(void *p,ulong bit_size);
-    sha3_f sha3_set_flags(void *p,sha3_f flags);
-    void sha3_update(void *p,void const *buf_in,ulong len);
-    void const *sha3_finalize(void *ctx_p);
-    sha3_r sha3_hash_buffer(ulong bit_size,sha3_f cfg,const void *in,ulong in_bytes,void *out,ulong out_bytes);
-
-    const char *zero_address(ulong level);
-    void *__generate_lock(char const *__hash, ulong __hlen);
-    char const *hashof (ulong level, void const*to_hash, ulong the_hash_size);
-    uchar const *hash (ulong level, void const *to_hash, ulong the_hash_size);
-    ulong hash8 (ulong level, void const *to_hash, ulong the_hash_size);
-    ullong  hash24 (ulong level, void const *to_hash, ulong the_hash_size);
-    char const *fhashof(ulong level, char const *to_hash);
-    char const *fdhashof(ulong level, ulong fd, ulong filesize);
-    uchar const *fhash(ulong level, char const *to_hash);
-    ulong fhash4 (ulong level, char const *to_hash);
-    ulong fhash8 (ulong level, char const *to_hash);
-    ulong fhash16 (ulong level, char const *to_hash);
-    
     #define F_BYTE(_) _&0x0f
     #define L_BYTE(_) _&0xf0 
     #define __CHAR_ZERO '0'
@@ -124,4 +98,30 @@
     #endif
 
 
+    void __btoh(uchar __c, uc __s);
+    void h_str_tl(char *__, uchar *__hash, ulong __len);
+    void __htostr(char *__str, uchar *hash);
+    char *__s_hash(char *__key, char *__hashkey);
+    ulong blaz_hash(char const *__data);
+    static void keccakf(ulong s[25]);
+    sha3_r sha3_init(void *p,ulong bit_size);
+    sha3_f sha3_set_flags(void *p,sha3_f flags);
+    void sha3_update(void *p,void const *buf_in,ulong len);
+    void const *sha3_finalize(void *ctx_p);
+    sha3_r sha3_hash_buffer(ulong bit_size,sha3_f cfg,const void *in,ulong in_bytes,void *out,ulong out_bytes);
+
+    const char *zero_address(ulong level);
+    void *__generate_lock(char const *__hash, ulong __hlen);
+    char const *hashof (ulong level, void const*to_hash, ulong the_hash_size);
+    uchar const *hash (ulong level, void const *to_hash, ulong the_hash_size);
+    ulong hash8 (ulong level, void const *to_hash, ulong the_hash_size);
+    ullong  hash24 (ulong level, void const *to_hash, ulong the_hash_size);
+    char const *fhashof(ulong level, char const *to_hash);
+    char const *fdhashof(ulong level, ulong fd, ulong filesize);
+    uchar const *fhash(ulong level, char const *to_hash);
+    ulong fhash4 (ulong level, char const *to_hash);
+    ulong fhash8 (ulong level, char const *to_hash);
+    ulong fhash16 (ulong level, char const *to_hash);
+
+    #define __HBAR__H 2
 #endif

@@ -2,8 +2,8 @@
 @-Protocol
 
 #ifndef __ATP__H
-	#include "utypes.h"
 	#define __ATP__H 1
+	#include "_512.h"
 
 	#define __AT_DEFINED '@'
 	#if __AT_DEFINED!=64
@@ -169,5 +169,6 @@
 	// into_st*__w3__(atp_act*act_lbb);
 	// into_st *dcloud(atp_act *_0xa_action);
 
+	#define __ATP__H 2
 #endif
 

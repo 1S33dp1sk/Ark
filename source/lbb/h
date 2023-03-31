@@ -1,7 +1,8 @@
 
 
 #ifndef __LBB__H
-	#include "utypes.h"
+	#define __LBB__H 1
+	#include "_512.h"
 	/**
 	 * d-lbb GET some_handler||path/to
 	 * 
@@ -43,9 +44,9 @@
 
 	// int get_kstat(char const *__path, k_stat *kfile);
 	// int get_sstat(char const *__path, s_stat *sfile);
-	// int get_mstat(char const *__path, m_stat *mfile);
+	int get_mstat(char const *__path, m_stat *mfile);
 
-	// void log_mstat(m_stat *mfile);
+	void log_mstat(m_stat *mfile);
 	// void log_sstat(s_stat *sfile);
 	// void log_kstat(k_stat *kfile);
 	// void log_strld(strld __strld);
@@ -63,6 +64,8 @@
 	#define __lbb_shard_flags (O_RDWR|O_APPEND|O_CREAT|O_EXCL|O_NOFOLLOW_ANY)
 	#define __lbb_lock_new (O_RDWR|O_CREAT|O_EXCL)
 	#define __lbb_default_flags (S_IRUSR|S_IWGRP|S_IWOTH)
+	#define __lbb_lock_reader (O_RDONLY)
+	#define __lbb_lock_writer (O_WRONLY)
 	#define __lbb_share_flags (O_RDONLY)
 	#define __lbb_private_mode (S_IRWXU|S_IXGRP|S_IXOTH)
 	#define __lbb_share_mode (S_IRWXU|S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)
@@ -200,5 +203,5 @@
 
 
 
-	#define __LBB__H 1
+	#define __LBB__H 2
 #endif

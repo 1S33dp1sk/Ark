@@ -2,10 +2,9 @@
 @-protocol
 
 #ifndef __ATP__H
-#include "karch_512.d"
-#include "atp.h"
+	#include "../headers/atp.h"
+    #include "constants.d"
 #endif
-
 
 
 #ifndef __atp_name
@@ -622,29 +621,29 @@ void *__arc__(aip_arc *st) {
 		printf("arg    :: %s\n", din_argument(into));
 	};
 
-	// get sockaddr, IPv4 or IPv6:
-	d_socket __sock_addr(struct sockaddr *sa) {
-		d_socket __sa; memset(&__sa,0,sizeof(d_socket));
+	// // get sockaddr, IPv4 or IPv6:
+	// d_socket __sock_addr(struct sockaddr *sa) {
+	// 	d_socket __sa; memset(&__sa,0,sizeof(d_socket));
 
-		if (sa->sa_family==AF_INET) {
-			__sa.s_protocol=__at_4;
-			__sa.s_address=&(((struct sockaddr_in*)sa)->sin_addr);
-		}
-		else {
-			__sa.s_protocol=__at_6;
-			__sa.s_address=&(((struct sockaddr_in6*)sa)->sin6_addr);
-		};
-		char s[INET6_ADDRSTRLEN];
-		ulong __s_size=str_rwings(__sa.s_ascii);
-		memset(__sa.s_ascii,0,__s_size);
-		memset(&s,0,sizeof(s));
-		char const *sockname=inet_ntop((int)__sa.s_protocol, __sa.s_address, s, sizeof(s));
-		memmove(__sa.s_ascii, sockname, __s_size);
-		#ifdef DEBUG
-			printf("socket @%s\n",sockname);
-		#endif
-		return __sa;
-	};
+	// 	if (sa->sa_family==AF_INET) {
+	// 		__sa.s_protocol=__at_4;
+	// 		__sa.s_address=&(((struct sockaddr_in*)sa)->sin_addr);
+	// 	}
+	// 	else {
+	// 		__sa.s_protocol=__at_6;
+	// 		__sa.s_address=&(((struct sockaddr_in6*)sa)->sin6_addr);
+	// 	};
+	// 	char s[INET6_ADDRSTRLEN];
+	// 	ulong __s_size=str_rwings(__sa.s_ascii);
+	// 	memset(__sa.s_ascii,0,__s_size);
+	// 	memset(&s,0,sizeof(s));
+	// 	char const *sockname=inet_ntop((int)__sa.s_protocol, __sa.s_address, s, sizeof(s));
+	// 	memmove(__sa.s_ascii, sockname, __s_size);
+	// 	#ifdef DEBUG
+	// 		printf("socket @%s\n",sockname);
+	// 	#endif
+	// 	return __sa;
+	// };
 
 	struct sockaddr *sock_aip_to_sa(aip_sock *sock){
 		struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_sockst)));
@@ -1259,14 +1258,13 @@ void *__arc__(aip_arc *st) {
 			#endif
 			return 2;
 		};
-		m_stat cm_st;
-		__mstat__(&cm_st);
+		m_stat cm_st; memset(&cm_st, 0, sizeof(m_stat));
 		#ifdef DEBUG
 			printf("getting mstat :: \n");
 		#endif
-		get_mstat(__address, &cm_st);
+		// get_mstat(__address, &cm_st);
 		#ifdef DEBUG
-			log_mstat(&cm_st);
+			// log_mstat(&cm_st);
 		#endif
 
 
@@ -1302,10 +1300,10 @@ void *__aip_sock__(aip_sock *sok) {
 		return sock_aip_to_sa(&__sok);
 	};
 
-	d_socket __aip_sock_addr(){
+	// d_socket __aip_sock_addr(){
 
-		return __sock_addr(__aip_sock_addr_sa());
-	};
+	// 	return __sock_addr(__aip_sock_addr_sa());
+	// };
 
 	void sock_errs(){
 		printf("value of EBADF = %d\n", EBADF);

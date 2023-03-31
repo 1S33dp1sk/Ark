@@ -1,13 +1,10 @@
 /// enk \\\
 encoder
 
-
 #ifndef __ENK__H
-#include "karch_512.d"
-#include "enk.h"
+    #include "../headers/enk.h"
+    #include "constants.d"
 #endif
-
-
 
 #ifndef __enk_name
     #define __enk_name "enkoder"
@@ -133,11 +130,11 @@ encoder
 
     sllong* dnc_i512(uchar *__buffer) {
         sllong temp=0;
-        sllong *res = __d3;
+        sllong res[3];
         for(ulong i=0;i<3;i+=1) {
             res[i]=dnc_i64(__buffer);
         };
-        return res;
+        return &res;
     };
 
     // ullong* dnc_u512(uchar *__buffer) {
@@ -147,8 +144,6 @@ encoder
     //     };
     //     return res;
     // };
-
-
     ulong pack(uchar *__buffer, char const *__format , ...){
         return 0;
     }

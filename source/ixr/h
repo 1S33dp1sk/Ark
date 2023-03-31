@@ -1,8 +1,8 @@
 
 
 #ifndef __IXR__H
-	#include "utypes.h"
 	#define __IXR__H 1
+	#include "_512.h"
 
 	#define ixr_mem 	((void *)&___header.head)
 	#define ixr_ubuf	((uchar *)&___header.head)
@@ -18,6 +18,10 @@
 	#define ULONG_SIZE ((ulong)(sizeof(ulong)))
 	#define LONG_SIZE ULONG_SIZE
 
+	#define fsze(x)		((ulong)__fsize(x))
+
+    #define len_ustrze(x) (((ulong)x)*(sizeof(uchar)))
+	#define ixr_h_size(x) (x.__size)
 	#define ixrh_size(x) (ulong)(x->__size)
 	#define ixrh_dcount(x) (ulong)(x->d_count)
 	#define ixrh_checksum(x) (ulong)(x->checksum)
@@ -33,6 +37,11 @@
     #define KV_FORMAT(...) __generic_fmt(__key_value, ##__VA_ARGS__) 
 	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
 	#define INDEX_END(x) return __set_next(x);
+
+
+    ulong pack(uchar *__buffer, char const *__format , ...);
+    void unpack(uchar *__buffer, char const *__format , ... );
+
 
 	d_point ref_point(void const *__key, char const *__value, char const *__format);
 	void *__erv(char const *__key,char const *__val);
@@ -75,5 +84,5 @@
 
 
 
-
+	#define __IXR__H 2
 #endif
