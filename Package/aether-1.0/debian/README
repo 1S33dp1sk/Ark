@@ -1,9 +1,0 @@
-The Debian Package aether
-----------------------------
-
-Aether is a package used with a plethora of other packages to create a full multi-blockchain interaction system. 
-
-Blockchains supported has to be EVM-compatible for now, However, this may change in the future.
-
-For more information please access aetherlabs.io/guides
-  
