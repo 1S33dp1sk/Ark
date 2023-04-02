@@ -1,0 +1,44 @@
+/// enk \\\
+encoder
+
+#ifndef __ENK__H
+
+    #define _LONG_MID 0x7fffffffu
+    #define _LONG_MAX 0xffffffffu
+
+    #define _LLONG_MID 0x7fffffffffffffffu
+    #define _LLONG_MAX 0xffffffffffffffffu
+
+
+    void enc_u(uchar *__buffer, uchar __);
+    void enc_s(uchar *__buffer, schar __);
+    void enc_u8(uchar *__buffer, ulong __);
+    void enc_u64(uchar *__buffer, ullong __);
+    void enc_u512(uchar *__buffer, ullong __[3]);
+
+    void enc_unum(ulong __base, uchar *__buffer, ulong __num);
+    void enc_punum(ulong __base, ulong __roof, uchar *__buffer, ulong *__nums);
+
+    void enc_i(uchar *__buffer, char __);
+
+
+    char dnc_i(uchar *__buffer);
+    schar dnc_s(uchar *__buffer);
+    uchar dnc_u(uchar *__buffer);
+
+    slong dnc_i8(uchar *__buffer);
+    ulong dnc_u8(uchar *__buffer);
+
+    sllong dnc_i64(uchar *__buffer);
+    ullong dnc_u64(uchar *__buffer);
+    sllong* dnc_i512(uchar *__buffer);
+    ullong* dnc_u512(uchar *__buffer);
+
+
+
+    ulong pack(uchar *__buffer, char const *__format , ...);
+    void unpack(uchar *__buffer, char const *__format , ... );
+
+   #define __ENK__H 1
+
+#endif
