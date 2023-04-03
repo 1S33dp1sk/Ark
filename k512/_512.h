@@ -200,9 +200,10 @@
         snprintf(__,sizeof __,"%s\n", __C_FMT_SPEC(x));\
         dprintf(fd,__,(x));\
     } __dPER
+
 	#define __ASCII(x) OUT_ENK_A(0,x)
 	#define __TEXT(x) OUT_ENK_A(0,#x);
-	#define __STRING(x) #x
+	#define __ARK(...) #__VA_ARGS__
 	/**
 	** NNE : x :: true if x is not 0x0000
 	**/

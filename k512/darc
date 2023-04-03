@@ -14,8 +14,7 @@
 			printf("arc\n");
 		}
 		else if (argc==2) {
-			#define ARG_INC argv[1]
-			#include __STRING(../arc/points)
+			#include __ARK("../points")
 		};
 		return 0;
 	};
