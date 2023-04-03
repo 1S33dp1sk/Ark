@@ -1,0 +1,41 @@
+/// d-prg \\\
+d-program
+
+dPRG(
+	string(var_name, "Hello World!")
+	out(var_name)
+	number(somenum, 134217728)
+	out(somenum)
+	array(c_array, ["123", 123, var_name])
+	out(c_array)
+)
+
+__dPRG
+	__LBB__(
+		IXR_OUT(0, ixr_h, indexer_address);
+		LBB_GET(bytes_shared);
+	);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

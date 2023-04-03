@@ -419,9 +419,9 @@ and loaded via a .o or .so
 		#define din_arg_n(x,n)	((char const *)(din_args(x)[n]))
 		#define din_argument(x) din_arg_n(x, 0)
 
-		#define into_caller(i, c) i.caller=(char const *)c;
-		#define into_type(i, t) i.req_at=(int)t;
-		#define into_args(i, a) i.args=(char const **)a;
+		#define into_caller(x,c)	x.i_caller=(char const *)c;
+		#define into_type(x,t)		x.i_switch=(int)t;
+		#define into_args(x,a)		x.i_args=(char const **)a;
 
 	#endif
 
@@ -748,6 +748,7 @@ and loaded via a .o or .so
 		#define aip_sockfd(x)	((ulong)(x.aip_sockfd))
 		#define aip_socklen(x)	((ulong)(x.aip_socklen))
 		#define aip_socket(x)	((ulong)(x->aip_sockst))
+		#define aip_sockname(x) ((char const *)socket_name(x->aip_sockst))
 	
 	#endif
 

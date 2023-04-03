@@ -1,7 +1,8 @@
-
+/// ATP \\\
+@-protocol
 
 #ifndef __ATP__H
-	#include "atp.h"
+	#include "headers/atp.h"
 #endif
 
 
@@ -13,26 +14,6 @@
 		case __http_rget: return "GET";
 		case __http_rpost: return "POST";
 		default: return NULL;
-		};
-	};
-
-	// misc
-	char const *__atp_names(int __at) {
-		switch(__at) {
-		case __lbb_none__:		return "#%d	NoEntry";
-		case __lbb_charms__:	return "#%d	@charms/";
-		case __lbb_yeild__:		return "#%d	@lbb";
-		case __lbb_info__:		return "#%d	:IXR:";
-		case __lbb_variable__:	return "#%d	var";
-		case aip_base:			return "#%d	K-lbb";
-		case aip_get:			return "#%d	K-@ATP<get>";
-		case aip_set:			return "#%d	K-@ATP<set>(varname){value}";
-		case aip_return: 		return "#%d	K-atp_fetch";
-		case aip_retain: 		return "#%d	K-atp_save";
-		case aip_retreive: 		return "#%d	K-atp_call";
-		case aip_dcloud: 		return "#%d	K-dcloud_connect";
-		case aip_next: 			return "#%d	K-&ATP->";
-		default: 				return "#%d	K-default";
 		};
 	};
 

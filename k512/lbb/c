@@ -1,7 +1,8 @@
-
+/// lbb \\\
+little black book
 
 #ifndef __LBB__H
-	#include "lbb.h"
+	#include "headers/lbb.h"
 #endif
 
 #ifndef __lbb_name
@@ -455,6 +456,49 @@ char const *conv_fields(m_stat *m_st){
 };
 
 
+char *flds(char const *__fldname) {
+	// convolute through the file to get
+	// the fields
+	if(__fldname==NULL){
+		#ifdef LOG_ERR
+			__TEXT(API : flds :: fld is null);
+		#endif
+		return NULL;
+	};
+	ulong __fld_n_size=strlen(__fldname);
+	#ifdef DEBUG
+		printf("flds : fldname :: %s ::: %lu\n", __fldname, __fld_n_size);
+	#endif
+
+	m_stat cm_st;
+	__mstat__(&cm_st);
+	int res=get_mstat(__fldname,&cm_st);
+	if(res==-1){
+		#ifdef LOG_ERR
+			__TEXT(Field not found);
+		#endif
+		return NULL;
+	};
+	#ifdef DEBUG
+		log_mstat(&cm_st);
+	#endif
+
+	
+	char const *cflds_head=conv_fields(&cm_st);
+	if(cflds_head==NULL){
+		#ifdef LOG_ERR
+			printf("cflds header is null\n");
+		#endif
+		return NULL;
+	};
+	// needs to index here
+
+	#ifdef OUTPUT
+		printf("'%s'\n",cflds_head);
+	#endif
+
+	return strdup(cflds_head);
+};
 
 /*******************************************************************/
 

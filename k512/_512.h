@@ -1,48 +1,11 @@
 #ifndef __KARCH_D512__
 
-/************************ h-constants ************************/
-
-#ifndef __H512__C
-	#include "utypes.h"
-	/********* types *********/
-	static __ul u;
-	static aip_sock __sok;
-	static aip_arc __arc;
-	/********* constants *********/
-	static ulong __cindex=0;
-	static ulong __ixr_fd=0x228;
-	static ulong ___offset=0;
-	static ixr_h ___header;
-	static ulong env_hash_0;
-	/********* unistd *********/
-	extern char **environ;
-	/********* http *********/
-	static char *__http_get="GET";
-	static char *__http_post="POST";
-	static char *wss_key_h="Sec-WebSocket-Key: ";
-	static char *wss_acc_h="Sec-WebSocket-Accept: ";		
-	static char *__reph="HTTP/1.1 200 OK\r\nContent-Type: text;\r\nContent-Length: 10\r\n\r\nHello Raed\r\n";
-	static char *__upgrade="HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nCache-Control: no-cache\r\nSec-WebSocket-Protocol: @-Protocol\r\n";
-	static char *__cwss="258EAFA5-E914-47DA-95CA-C5AB0DC85B11\0";
-	static const char *__http_protocol_version="HTTP/1.1";
-	static const char *__http_base="P S R\r\n";
-	static const char *__http_request_base="M P V\r\n";
-	static const char *__http_response_base="B S R\r\n";
-	/********* formats *********/
-	static const char *__head_fmt="_Q_Q_Q_\n";
-	static const char *__value_fmt="_Q:s:s_\n";
-	static const char *__file_fmt="_Q:s:s#Q_\n";
-	static const char *__dprg_fmt="_Q:s>s<s$s_\n";
-	static const char *__fld_fmt="_Q:s@s=s+h_\n";
-
-	#define __H512__C 1
-#endif
-
 /************************ h-defintions ************************/
 
 #ifndef __H512__D
+	#include "d/__lang"
 	#include "standard.h"
-	#include "darc/__lang"
+	#include "utypes.h"
 	#define LONG_MAX_COMPUTED_N_DIGITS 21 //logb(x) = loga(x) / loga(b)
 	#define __MA__S 0x000000000000000000000008
 	#define __GS__S __MA__S<<3
@@ -57,9 +20,27 @@
 	#define __vile ((void const *)(__FILE__))
 	#define __caller_namelen (ulong)str_rwings(__FILE__)
 	#define ARR_DELIM ",\0"
-	
-	#define __switcher(x) (int)(x->switcher)
-	#define ARC_GENERIC(x) (ulong)((1<<(x*3)))
+
+	#ifndef __USIZES
+	    #define _LONG_MID 0x7fffffffu
+	    #define _LONG_MAX 0xffffffffu
+	    #define _LLONG_MID 0x7fffffffffffffffu
+	    #define _LLONG_MAX 0xffffffffffffffffu
+	#define __USIZES 1
+	#endif
+
+	#ifndef __FL_BYTES
+        #define F_BYTE(__) __&0x0f
+        #define L_BYTE(__) __&0xf0
+	#define __FL_BYTES 1
+    #endif
+
+    #ifndef __CHAR_VARS
+        #define __CHAR_ZERO '0'
+        #define __CHAR_NULL '\0'
+        #define __CHAR_ALPH_A 'a'
+	#define __CHAR_VARS 1
+    #endif
 
 	#ifndef k512
 		#define k512(x) _Generic((x),\
@@ -252,14 +233,185 @@
 	#define LBB_SOCKET(x)		x^0140000
 	#define ARCH_MADE(x)		x^0000700
 	#define ARCH_SAVE(x)		x^0000007
-	
+
+	#define __switcher(x) (int)(x->switcher)
+	#define ARC_GENERIC(x) (ulong)((1<<(x*3)))
+
+	    /**
+     * Thanks for the all the contributions and good work from 
+     * the keccak team http://keccak.noekeon.org/
+     * and brainhub team crypto@brainhub.org 
+     * for their combined efforts on the implementation of the `sha-3` hash.
+     *
+    **/
+    #ifndef __keccak_constants
+        #define __size_sha3_context sizeof(struct __sha3_context)
+        #define __size_u64 sizeof(ullong)
+        #define __sha3_k_sponge_w (((1600)/__P_LEN)/__size_u64) //bits to byte
+        #define __sha3_k_use_flag 0x80000000 // flag for PURE keccak
+        #define __sha3_cw(x) ((x)&(~__sha3_k_use_flag))
+        #define __sha3_assert(rcond)
+        #define __sha3_trace(fmt,...)
+        #define __sha3_trace_buf(format,buf,l)
+        #define sha3_init256(p) sha3_init(p,256)
+        #define sha3_init384(p) sha3_init(p,384)
+        #define sha3_init512(p) sha3_init(p,512)
+        #define byte_to_hex __btoh
+        #define hash_to_strl h_str_tl 
+        #define hash_to_string __htostr
+        #define hbar_str __s_hash
+        #if defined(_MSC_VER)
+            #define __sha3_const(x) x
+        #else
+            #define __sha3_const(x) x##L
+        #endif
+    #endif
 
 
-	#define __H512__D 'k'
+
+    #ifndef __sha3_rot_l_64
+        #define __sha3_rot_l_64(x, y) (((x)<<(y))|((x)>>((__size_u64*8)-(y))))
+    #endif
+
+    #undef get16bits
+        #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
+        || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
+            #define get16bits(d) (*((const ulong *)(d)))
+    #endif
+
+    #if !defined (get16bits)
+        #define get16bits(d) ((((ulong) (((const uchar *)(d))[1]))<<8)+(ulong) (((const uchar *) (d))[0]))
+    #endif
+
+	#define __H512__D 1
 #endif
+
+/************************ h-constants ************************/
+
+#ifndef __H512__C
+	/********* types *********/
+	static __ul u;
+	static aip_sock __sok;
+	static aip_arc __arc;
+    static sha3_context __sha3;
+	/********* constants *********/
+	static ulong __cindex=0;
+	static ulong __ixr_fd=0x228;
+	static ulong ___offset=0;
+	static ixr_h ___header;
+	static ulong env_hash_0;
+	/********** books *********/
+	static void *__ne=(void *)'\0';
+	static const void *ne=(char const *)(void *)'\0';
+	static ulong ___lbb_offset=0;
+	static c_shard lbb_shard;
+	static c_shard *l_shard=&lbb_shard;
+	static m_stat *lbb_mstat=&(lbb_shard.c_stat);
+	/********* unistd *********/
+	extern char **environ;
+	/********* http *********/
+	static char *__http_get="GET";
+	static char *__http_post="POST";
+	static char *wss_key_h="Sec-WebSocket-Key: ";
+	static char *wss_acc_h="Sec-WebSocket-Accept: ";		
+	static char *__reph="HTTP/1.1 200 OK\r\nContent-Type: text;\r\nContent-Length: 10\r\n\r\nHello Raed\r\n";
+	static char *__upgrade="HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nCache-Control: no-cache\r\nSec-WebSocket-Protocol: @-Protocol\r\n";
+	static char *__cwss="258EAFA5-E914-47DA-95CA-C5AB0DC85B11\0";
+	static const char *__http_protocol_version="HTTP/1.1";
+	static const char *__http_base="P S R\r\n";
+	static const char *__http_request_base="M P V\r\n";
+	static const char *__http_response_base="B S R\r\n";
+	/********* formats *********/
+	static const char *__head_fmt="_Q_Q_Q_\n";
+	static const char *__value_fmt="_Q:s:s_\n";
+	static const char *__file_fmt="_Q:s:s#Q_\n";
+	static const char *__dprg_fmt="_Q:s>s<s$s_\n";
+	static const char *__fld_fmt="_Q:s@s=s+h_\n";
+  	static const ullong keccakf_rndc[24] = {
+            __sha3_const( 0x0000000000000001UL ), __sha3_const( 0x0000000000008082UL ),
+            __sha3_const( 0x800000000000808aUL ), __sha3_const( 0x8000000080008000UL ),
+            __sha3_const( 0x000000000000808bUL ), __sha3_const( 0x0000000080000001UL ),
+            __sha3_const( 0x8000000080008081UL ), __sha3_const( 0x8000000000008009UL ),
+            __sha3_const( 0x000000000000008aUL ), __sha3_const( 0x0000000000000088UL ),
+            __sha3_const( 0x0000000080008009UL ), __sha3_const( 0x000000008000000aUL ),
+            __sha3_const( 0x000000008000808bUL ), __sha3_const( 0x800000000000008bUL ),
+            __sha3_const( 0x8000000000008089UL ), __sha3_const( 0x8000000000008003UL ),
+            __sha3_const( 0x8000000000008002UL ), __sha3_const( 0x8000000000000080UL ),
+            __sha3_const( 0x000000000000800aUL ), __sha3_const( 0x800000008000000aUL ),
+            __sha3_const( 0x8000000080008081UL ), __sha3_const( 0x8000000000008080UL ),
+            __sha3_const( 0x0000000080000001UL ), __sha3_const( 0x8000000080008008UL )
+        };
+    static const ulong keccakf_rotc[24] = {
+            1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62,
+            18, 39, 61, 20, 44
+        };
+    static const ulong keccakf_piln[24] = {
+            10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20,
+            14, 22, 9, 6, 1
+        };
+	#define __H512__C 1
+#endif
+
 
 /************************ h-naming ************************/
 #ifndef __H512__N
+    #ifndef _D_HASH_H
+		#define _D_HASH_H 1
+		// sha3
+ 		void __btoh(uchar __c, uc __s);
+	    void h_str_tl(char *__, uchar *__hash, ulong __len);
+	    void __htostr(char *__str, uchar *hash);
+	    char *__s_hash(char *__key, char *__hashkey);
+	    ulong blaz_hash(char const *__data);
+	    static void keccakf(ulong s[25]);
+	    sha3_r sha3_init(void *p,ulong bit_size);
+	    sha3_f sha3_set_flags(void *p,sha3_f flags);
+	    void sha3_update(void *p,void const *buf_in,ulong len);
+	    void const *sha3_finalize(void *ctx_p);
+	    sha3_r sha3_hash_buffer(ulong bit_size,sha3_f cfg,const void *in,ulong in_bytes,void *out,ulong out_bytes);
+	    const char *zero_address(ulong level);
+	    void *__generate_lock(char const *__hash, ulong __hlen);
+	    char const *hashof (ulong level, void const*to_hash, ulong the_hash_size);
+	    uchar const *hash (ulong level, void const *to_hash, ulong the_hash_size);
+	    ulong hash8 (ulong level, void const *to_hash, ulong the_hash_size);
+	    ullong  hash24 (ulong level, void const *to_hash, ulong the_hash_size);
+	    char const *fhashof(ulong level, char const *to_hash);
+	    char const *fdhashof(ulong level, ulong fd, ulong filesize);
+	    uchar const *fhash(ulong level, char const *to_hash);
+	    ulong fhash4 (ulong level, char const *to_hash);
+	    ulong fhash8 (ulong level, char const *to_hash);
+	    ulong fhash16 (ulong level, char const *to_hash);
+	    char const *arch_namehash(char const *__name);
+	    ulong env_hash(char **__var);
+	    char const *varll_hash(void const **__vars, ulong __vcount);
+	    char const *arch_hash(void const *__);
+	    ulong arch_address(char const *__fpath, ulong __fld);
+	    char const *arch_checksum(char const **__content);
+	    char const *arch_cenv();
+    #endif
+	#ifndef _D_KODER_H
+	    #define _D_KODER_H 1
+	    // enkoding
+	    void enc_u(uchar *__buffer, uchar __);
+	    void enc_s(uchar *__buffer, schar __);
+	    void enc_u8(uchar *__buffer, ulong __);
+	    void enc_u64(uchar *__buffer, ullong __);
+	    void enc_u512(uchar *__buffer, ullong __[3]);
+	    void enc_unum(ulong __base, uchar *__buffer, ulong __num);
+	    void enc_punum(ulong __base, ulong __roof, uchar *__buffer, ulong *__nums);
+	    void enc_i(uchar *__buffer, char __);
+	    char dnc_i(uchar *__buffer);
+	    schar dnc_s(uchar *__buffer);
+	    uchar dnc_u(uchar *__buffer);
+	    slong dnc_i8(uchar *__buffer);
+	    ulong dnc_u8(uchar *__buffer);
+	    sllong dnc_i64(uchar *__buffer);
+	    ullong dnc_u64(uchar *__buffer);
+	    sllong* dnc_i512(uchar *__buffer);
+	    ullong* dnc_u512(uchar *__buffer);
+	    ulong pack(uchar *__buffer, char const *__format , ...);
+	    void unpack(uchar *__buffer, char const *__format , ... );
+	#endif
 	#ifndef _D_FILE_H
 		#define _D_FILE_H 1
 		// file
@@ -273,9 +425,6 @@
 		ulong __file_w(char const *__path);
 		ulong __file_x(char const *__path);
 		int __dgetfd(char const *__path);
-		#ifndef _D_FILE
-			#include "darc/__file"
-		#endif
 	#endif
 	#ifndef _D_STRING_H
 		#define _D_STRING_H 1
@@ -311,9 +460,6 @@
 		ulong str_cdelims(char const *__str, char const *__delim);
 		ulong arr_cdelims(char const *__str);
 		ulong sep_offset(char const *__str, char *__seperator);
-		#ifndef _D_STRING
-			#include "darc/__string"
-		#endif
 	#endif
 	#ifndef _D_LOG_H
 		#define _D_LOG_H 1
@@ -328,15 +474,13 @@
 		void log_at_protoname(atp_t atp_name);
 		void log_ixrh(ixr_h *ixrh);
 		void log_socket(aip_sock *sock);
+		char const *__atp_names(int __at);
 		void log_atp_names();
 		void log_content(content_st *content);
 		void log_into(d_into *into);
 		void log_keyvalue(char *key, char *value);
 		void lbb_usage();
 		void log_ixr_point(void *__);
-		#ifndef _D_LOG
-			#include "darc/__log"
-		#endif
 	#endif
 	#ifndef _D_ARCH_H
 		#define _D_ARCH_H 1
@@ -356,31 +500,19 @@
 		char const *__ecall(char const *__mod, char const *__name);
 		int __check_ectx(char const *__mod, char const *__name);
 		int __check_entry(char const *entry);
-		char const *arch_namehash(char const *__name);
-		ulong env_hash(char **__var);
-		char const *varll_hash(void const **__vars, ulong __vcount);
 		ulong arch_ufile(char const *__cpath);
 		lbb_t arch_tfile_lbb(char const *__cpath);
 		char const *arch_szfile(char const *__cpath);
-		char const *arch_hash(void const *__);
-		char const *arch_checksum(char const **__content);
 		int get_mstat(char const *__path, m_stat *mfile);
 		int arch_att(char const *__path, ulong __perm, ulong __fldsize);
-		char const *arch_dfile(char const *__name, ulong arch_perm, ulong tfile_size);
+		// char const *arch_dfile(char const *__name, ulong arch_perm, ulong tfile_size);
 		int arch_cfile(char const *cf_name, lbb_t lbb_ftype);
 		int arch_fperm(char const *__cpath, aip_sterm __sterm);
-		ulong arch_address(char const *__fpath, ulong __fld);
-		char const *arch_cenv();
 		void *__mstat__(m_stat *st);
-		char *flds(char const *__fldname);
-		#ifndef _D_ARCH
-			#include "darc/__main"
-		#endif
 	#endif
 	#define __H512__N 1
 #endif
 
 
-
-#define __KARCH_D512__ "K-arch512d"
+	#define __KARCH_D512__ "K-arch512d"
 #endif

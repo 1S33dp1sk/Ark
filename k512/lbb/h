@@ -49,6 +49,7 @@ little black book
 	void const *__lbb_type_args(lbb_at __atype);
 
 	int __init_field(char const *__);
+	char *flds(char const *__fldname);
 
 	void *__into__(d_into *st);
 
@@ -86,12 +87,6 @@ little black book
 	#define __lbb_share_mode (S_IRWXU|S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH)
 	#define __lbb_public_mode (S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH)
 
-	static void *__ne=(void *)'\0';
-	static const void *ne=(char const *)(void *)'\0';
-	static ulong ___lbb_offset=0;
-	static c_shard lbb_shard;
-	static c_shard *l_shard=&lbb_shard;
-	static m_stat *lbb_mstat=&(lbb_shard.c_stat);
 
     #define LBB_FMT_SPEC(lbb_type) _Generic((lbb_type), \
     	ixr_h: "%lu bytes\n %lu@%lu dpoints\n head : %s\n",\
@@ -171,10 +166,6 @@ little black book
 	#define shd_io ioz_shard(lbb_shard)
 	#define shd_path pth_shard(lbb_shard)
 	#define shd_key hashof(1,lbb_mstat,sizeof(m_stat))
-
-	#define checkef_file ((ulong)__stres(__lbb_indexfile))
-	#define checkef_dir ((ulong)__stres(__lbb_convdir))
-	#define checkef_lo ((ulong)__stres(__lbb_locking))
 
 	#define inodenum ((ulong)(lbb_mstat->m_inn))
 	#define ifilesize ((ulong)(lbb_mstat->m_size))

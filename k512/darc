@@ -1,0 +1,26 @@
+#ifndef _DARC_LANG
+	#define _DARC_LANG 'D'
+	#include "_512.h"
+	#include "d/__file"
+	#include "d/__hash"
+	#include "d/__koder"
+	#include "d/__lang"
+	#include "d/__log"
+	#include "d/__main"
+	#include "d/__string"
+	
+	int main(int argc, char const *argv[]) {
+		if(argc==1) {
+			printf("arc\n");
+		}
+		else if (argc==2) {
+			#define ARG_INC argv[1]
+			#include __STRING(../arc/points)
+		};
+		return 0;
+	};
+
+#endif
+
+
+
