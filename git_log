@@ -1,0 +1,230 @@
+commit 446ad5290313fb8a94335b72ea575a2e3a47e026
+Author: Karam Jaber <mrkj@d-cloud.io>
+Date:   Mon Apr 3 23:39:29 2023 +0300
+
+    #38 Welcome to darc
+
+commit b298fdb9bb66e0fbe7990583fe4067a2ae398f5a
+Author: 1S33dp1sk <jaberkaram96@gmail.com>
+Date:   Mon Apr 3 22:59:49 2023 +0300
+
+    sol && run
+
+commit 599255c3cb9dcc28a243c3c99884bcbed84b7ea5
+Author: mrkj <0xather>
+Date:   Sun Apr 2 04:56:42 2023 +0300
+
+    #36 final arch checkpoint before releasing darc
+
+commit c1debc9b42163c4ea2e5cb23571d5a46a1c54fe4
+Author: mr.kj <kj@0xather.com>
+Date:   Fri Mar 31 05:57:27 2023 +0300
+
+    #35 good results, need to compile _arch/d_*
+
+commit 8b1397d8f99c8680d6c3cfb0dee692f309b046b5
+Author: mr.kj <kj@0xather.com>
+Date:   Fri Mar 31 02:18:44 2023 +0300
+
+    #34 remaining library calls
+
+commit aef147d67f308bfe42a46850b0aa4c8cf88c3237
+Author: mr.kj <kj@0xather.com>
+Date:   Fri Mar 31 01:57:48 2023 +0300
+
+    #33 @source:atp.1014
+
+commit 663e7a5ea2e444527198952c20d3cf56ff9b9532
+Author: mr.kj <kj@0xather.com>
+Date:   Thu Mar 30 01:43:59 2023 +0300
+
+    #32 currently active = hbar, lbb
+
+commit 1eec8b49a16b4bc80f527f79e8f82b94a748eff9
+Author: mr.kj <kj@0xather.com>
+Date:   Wed Mar 29 21:06:21 2023 +0300
+
+    20Warnings&~85Errors #31
+
+commit 89abc1db343029ac8774d7e1ced8eb3c0a4b53db
+Author: mr.kj <kj@0xather.com>
+Date:   Wed Mar 29 02:47:18 2023 +0300
+
+    101+ errors at #30
+
+commit 20586e72d11be795b23a45c0bfefdf4f2bf96352
+Author: mr.kj <kj@0xather.com>
+Date:   Mon Mar 27 11:27:32 2023 +0300
+
+    merging old aethernet
+
+commit f0582a3c6f61a76a3841d18c45a4b84776c71d12
+Author: mr.kj <kj@0xather.com>
+Date:   Wed Mar 22 01:34:05 2023 +0300
+
+    d-pts
+
+commit d813aa52bb3b8ac599b2b33a8398a8e8729fa288
+Author: mr.kj <kj@0xather.com>
+Date:   Tue Mar 21 03:00:52 2023 +0300
+
+    #27 atp_names
+
+commit c18273cdf3b960e4639f29e2e20d03be5daa1409
+Author: mr.kj <kj@0xather.com>
+Date:   Tue Mar 21 01:29:08 2023 +0300
+
+    atp_lbb interactions
+
+commit 963a0e6fc443c8b91bcd455fbd6b5c8b1e415c05
+Author: mr.kj <kj@0xather.com>
+Date:   Mon Mar 20 15:44:13 2023 +0300
+
+    LBB specs and formats
+
+commit 43f6f5ef5fdde28af8ec2dab448f30afb7c8a490
+Author: mr.kj <kj@0xather.com>
+Date:   Mon Mar 20 15:16:15 2023 +0300
+
+    #24 first on the fly programming language, retaintive, returnative, {retriever} next
+
+commit cdd2c487717c4bbf4e2ef37326ff8d0cbced5457
+Author: mr.kj <kj@0xather.com>
+Date:   Mon Mar 20 11:17:33 2023 +0300
+
+    version 1.05
+
+commit cf8cb66d7f51cbe571778e4f4810def90275845d
+Author: mr.kj <kj@0xather.com>
+Date:   Mon Mar 13 00:38:14 2023 +0300
+
+    #22 reassigned to d.* and activated ixr/{c,h}
+
+commit 64ff1cb18a8de9ecee481d8aeda5c7efdc0c870a
+Author: mr.kj <kj@0xather.com>
+Date:   Sun Mar 12 12:12:22 2023 +0300
+
+    d.out&&d.src #21
+
+commit 2b83471d5c8e8ede9bb67ea57b3e543829aaf7da
+Author: mr.kj <kj@0xather.com>
+Date:   Sun Mar 12 11:45:48 2023 +0300
+
+    #20 changing project structure
+
+commit 6ce2d1b1178fb8051be7d9ce1241618120c0033d
+Author: mr.kj <kj@0xather.com>
+Date:   Sun Mar 12 01:02:23 2023 +0300
+
+    #19 the beautiful (((lbb))) comes to life
+
+commit b735eebe5b8c0f2d84b3de69bc09e24533b98109
+Author: mr.kj <kj@0xather.com>
+Date:   Fri Mar 10 13:57:14 2023 +0300
+
+    #18
+
+commit 145a945bb5c6a4ff2e9a8a73f3d024b1013c4e43
+Author: mr.kj <kj@0xather.com>
+Date:   Thu Mar 9 20:52:30 2023 +0300
+
+    kvp
+
+commit 84735afab8eb2f8136fef8f9bc22128f8ef1fb11
+Author: mr.kj <kj@0xather.com>
+Date:   Thu Mar 9 13:52:48 2023 +0300
+
+    kvs
+
+commit b9b123e11080c7508c2599f5351c3f5e34a3ee54
+Author: mr.kj <kj@0xather.com>
+Date:   Wed Mar 8 23:10:23 2023 +0300
+
+    added socket integeration with  client in ts
+
+commit 2484af65b4bfbcc2a3973ae1682710df7cd89eac
+Author: mr.kj <kj@0xather.com>
+Date:   Mon Mar 6 22:32:42 2023 +0300
+
+    checkpoint #14
+
+commit 3a33d92d405ff1a8b12f826131a7fdea923b77b3
+Author: mr.kj <kj@0xather.com>
+Date:   Sun Mar 5 20:04:51 2023 +0300
+
+    indexer header in binary as a U128 compression instead of _Q_Q_Q_ packing
+
+commit 117b72d95b4d4e8d18905315702896eccdb5b087
+Author: mr.kj <kj@0xather.com>
+Date:   Fri Mar 3 12:27:08 2023 +0300
+
+    first d piece
+
+commit 3768fc8896d9aa29232d03e2c2d59578fa0ebf5d
+Author: mr.kj <kj@0xather.com>
+Date:   Tue Feb 28 23:50:51 2023 +0300
+
+    http+@protocol
+
+commit 9be01a6e6d236fd068bee4a6c7707d0ab45f28fc
+Author: mr.kj <kj@0xather.com>
+Date:   Mon Feb 27 19:41:07 2023 +0300
+
+    index #10
+
+commit cd9046eae95508eebfeaef808981a2b38580161c
+Author: mr.kj <kj@0xather.com>
+Date:   Mon Feb 27 19:40:26 2023 +0300
+
+    started user-defined input
+
+commit b0e14b7fd6d72fe973078b0d64453800cb8fccf2
+Author: mr.kj <kj@0xather.com>
+Date:   Sat Feb 25 21:31:35 2023 +0300
+
+    source
+
+commit 3a1836e0be46287d1fd466dc4d15d5c45f1d45a9
+Author: mr.kj <kj@0xather.com>
+Date:   Fri Feb 24 17:23:43 2023 +0300
+
+    readme
+
+commit 6bdcf7b0661bd24791b73124bd9dc5d293dec24b
+Author: mr.kj <kj@0xather.com>
+Date:   Fri Feb 24 17:12:04 2023 +0300
+
+    The D Programming language
+
+commit 5b29adaaa7addcc0f37d58ceba36c5825553d71a
+Author: mr.kj <kj@0xather.com>
+Date:   Fri Feb 24 02:30:05 2023 +0300
+
+    {{{{{5}}}}}
+
+commit 86e04ea6ba1aea104ca9796c94b314057c41be7d
+Author: mr.kj <kj@0xather.com>
+Date:   Wed Feb 22 23:48:59 2023 +0300
+
+    #4
+
+commit 5ad13bbe7638009849dbac81d7ced88a81169ede
+Author: mr.kj <kj@0xather.com>
+Date:   Wed Feb 22 21:29:39 2023 +0300
+
+    complete opposite #3
+
+commit bd460d65c8abded876d780b46f4ecc6f09e3b40c
+Author: mr.kj <kj@0xather.com>
+Date:   Wed Feb 22 15:19:20 2023 +0300
+
+    added prg flow as follows :::
+    fields    lbb/
+    d-cloud   lock
+    k512      .lbb
+
+commit 888568cced4b717a8c949336920f73175538f988
+Author: mr.kj <kj@0xather.com>
+Date:   Tue Feb 21 18:31:17 2023 +0300
+
+    add source

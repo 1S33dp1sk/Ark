@@ -1,0 +1,13 @@
+#!/bin/bash
+
+_base="temp"
+
+if [ ! $- ]; then _base=$0; fi
+
+git log > $_base
+cat $_base | grep commit
+
+
+
+
+
