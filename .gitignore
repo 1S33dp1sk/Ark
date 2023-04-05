@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
 =======
 >>>>>>> b020af1 (added .gitignore)
 =======
@@ -12,6 +13,9 @@
 >>>>>>> 3e18750 (sub-merge of nets)
 =======
 >>>>>>> 3e33e62 (merge)
+=======
+>>>>>>> 1bd40ee (ignoring cached history)
+>>>>>>> ab41145 (ignoring cached history)
 flds
 d-cloud
 >>>>>>> fd027f3 (101+ errors at #30)
@@ -39,6 +43,7 @@ d-pts
 >>>>>>> d240973 (first d piece)
 =======
 d-pts
+<<<<<<< HEAD
 __pycache__
 <<<<<<< HEAD
 >>>>>>> 8201b72 (added gitignore)
@@ -75,6 +80,9 @@ kurl
 >>>>>>> 5c2d5f4 (alignments)
 =======
 =======
+=======
+*.pyc
+>>>>>>> 1bd40ee (ignoring cached history)
 *.gz
 *.pyc
 *.png
