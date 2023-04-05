@@ -8,18 +8,25 @@
 	#include "d/__log"
 	#include "d/__main"
 	#include "d/__string"
-	
-	int main(int argc, char const *argv[]) {
-		if(argc==1) {
-			printf("arc\n");
-		}
-		else if (argc==2) {
-			#include __ARK("../points")
-		};
-		return 0;
-	};
+
+
+dPRG(
+	if(__ARGC__==1) {
+		printf("arc\n");
+	}else {
+		printf("%s\n", __FILE__);
+	}
+);
 
 #endif
+
+
+
+
+
+
+
+
 
 
 

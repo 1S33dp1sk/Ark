@@ -51,6 +51,21 @@
 		ullong: ullong*,\
 		sllong: sllong*,\
 		default: NULL)
+
+		#define __k512(x ...)  _Generic((x),\
+		uchar: 0x01,\
+		ulong: 0x02,\
+		ullong: 0x03,\
+		schar: 0x10,\
+		slong: 0x12,\
+		sllong: 0x13,\
+		char const *: 0xa0,\
+		char const **: 0xa1,\
+		void const *: 0xb0,\
+		void const **: 0xb1,\
+		default: 0xff)
+
+		
 	#endif
 
 	//FMT_ASCII_SPEC

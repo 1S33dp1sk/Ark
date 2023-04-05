@@ -13,5 +13,7 @@
 	#define PROCESS 1
 	#define DEBUG 1
 	#define LOG_ERR 1
-	#include "h512/_512.h"
+	#include "../h512/_512.h"
 #endif
+
+
