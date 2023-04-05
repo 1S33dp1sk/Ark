@@ -20,7 +20,12 @@ d-atp
 d-cld
 d-lbb
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 6d7a5b5 (http+@protocol)
 =======
 d-pts
 >>>>>>> d240973 (first d piece)
+=======
+d-pts
+__pycache__
+>>>>>>> 8201b72 (added gitignore)
