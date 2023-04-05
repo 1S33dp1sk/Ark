@@ -1,0 +1,12 @@
+/// SOLIDITY \\\
+The ethereum contract lanaguge 
+
+@Protocol(chain, __LBB__(eth), __ARK__(
+
+))
+
+@Protocol(local, "127.0.1.1", "9999") => __ATP__(...)
+
+@Protocol(global, "web3.d-cloud.io") => __ATP__(...)
+
+@Protocol(universal, uname(IXR.sol))
