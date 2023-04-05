@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -31,10 +32,15 @@ node_modules
 sha
 hardhat
 =======
+=======
+flds
+@charms
+>>>>>>> 4c04f2f (ignoring cached history)
 udef
 d-atp
 d-cld
 d-lbb
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 6d7a5b5 (http+@protocol)
@@ -83,6 +89,10 @@ kurl
 =======
 *.pyc
 >>>>>>> 1bd40ee (ignoring cached history)
+=======
+d-pts
+*.pyc
+>>>>>>> 4c04f2f (ignoring cached history)
 *.gz
 *.pyc
 *.png
