@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+printf "@Testing auth\n"
+
+
+H_helloWorld="12b096b6159082166a8da265c1a00fd80f36fd02f81cc45f3d5e11f7ee38143a"
+
+HVAR=$(./bin/@auth 1 helloWorld)
+
+if [[ "$HVAR" == *"$H_helloWorld" ]]; then
+	printf "\tauthnication is \xE2\x9C\x94\n"
+else
+	printf "\tauthnication is not working\n output :: ${HVAR}\n"
+fi
+

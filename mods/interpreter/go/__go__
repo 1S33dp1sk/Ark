@@ -1,9 +1,0 @@
-/// GOLANG \\\
-The go language
-
-@Protocol(local, __LBB__(node, __ARK__(
-	
-))
-
-@Protocol(global, "go") => __ATP__(...)
-

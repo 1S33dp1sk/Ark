@@ -1,0 +1,113 @@
+.\" (C) Copyright 2022 kj <kj@aetherlabs.io>,
+.\"
+.TH Aether MAIN "August 20 2022"
+.SH NAME
+aether \- a CLI to create and interface between different blockchains
+
+.SH SYNOPSIS
+.B aether
+.RI [ command ]"..."[ options ] 
+.br
+.SH DESCRIPTION
+This manual page documents briefly the different
+.B aether
+commands and options associated with the program.
+.PP
+\fBaether\fP is a program let's you create MOR(servers) using LES(configurations)
+.SH COMMANDS
+This program and the sub-commands follow the usual GNU command line syntax, with commands
+directly following the main \fBaether\fP CLI and are invokable directly from the terminal/shell
+A summary of all the different commands and options is included below.
+For a complete description, see the Info files.
+.TP
+.B init
+Create an aether template.
+.TP
+.B run
+Run a particular node must be accompanied by \fB\-n(node name)\fP which will run the node requested
+.TP
+.B stop
+
+.TP
+.B config
+
+.TP
+.B change
+
+.TP
+.B dump
+
+.TP
+.B check
+
+.TP
+.B status
+
+.TP
+.B create
+
+.TP
+.B purge
+
+.TP
+.B list
+
+.TP
+.B update
+
+.TP
+.B log
+
+.TP
+.B log-tail
+
+.TP
+.B help
+
+.SH OPTIONS
+This program and the sub-commands follow the usual GNU command line syntax, with options starting
+with single dash (`-`) followed by the option CHAR and the argument for that option.
+.TP
+.B \-h
+Show summary of commands and options.
+.TP
+.B \-e
+Specifiy the enivroment file path MUST be a .conf file.
+.TP
+.B \-p
+Specify a base path of which the execution should take place
+.TP
+.B \-n
+Specify a node name.
+.TP
+.B \-b
+Specify the path for the ABIS file MUST be a .json file.
+.TP
+.B \-r
+Specify the path for the rpc file which contains the different chainIds and their WSS endpoints MUST be a .conf file
+.TP
+.B \-s
+Specify the script name.
+.TP
+.B \-d
+Specify the network id, more specifically the chainId for the network.
+.TP
+.B \-a
+Specify the node address of which the invokation will be from, if there's any non-payable or view functions that requires that `msg.sender` is not a ZERO_ADDRESS
+.TP
+.B \-t
+Specify the log type ( performance , transactions , status )
+.TP
+.B \-l
+Specify the log length in lines ( such as tail , see tail(1) for more information )
+.TP
+.B \-q
+Run the node quietly without logs and without consuming the current shell.
+.br
+
+.SH SEE ALSO
+.BR aether-reader (1),
+.BR aether-jsonifier (1).
+.BR aether-configurator (1).
+.BR aether-wrapper (1).
+.br

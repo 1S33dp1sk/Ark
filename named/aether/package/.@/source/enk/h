@@ -1,0 +1,117 @@
+#ifndef __ENK__H
+    #include "utypes.h"
+    #include <stdio.h>
+    #include <stdarg.h>
+    #include <string.h>
+    #include <ctype.h>
+    #include <stdint.h>
+    #include <unistd.h>
+    #include <stdlib.h>
+
+    #define packi16 pack_i_16
+    #define packi32 pack_i_32
+    #define packi64 pack_i_64
+    #define unpacki16 unpack_i_16
+    #define unpacki32 unpack_i_32
+    #define unpacki64 unpack_i_64
+    #define unpacki128 unpack_i_128
+    #define unpacku16 unpack_u_16
+    #define unpacku32 unpack_u_32
+
+    #define packu16(ubuf,num) (enc_unum(1,ubuf,num))
+    #define packu32(ubuf,num) (enc_unum(3,ubuf,num))
+    #define packu64(ubuf,num) (enc_unum(7,ubuf,num))
+    #define unpacku64(x) ((ulong *)unpack_u_64(x))
+
+    unsigned int pack(uchar *buf,char const *fmt,...);
+    void unpack(uchar *buf,char const *fmt,...);
+
+    // various encodings
+    void enc_unum(size_t base,uchar *buf,ulong i);
+    void enc_brnum(size_t base,size_t roof,uchar *buf,ulong *i);
+
+    //packing
+    void pack_i_16(uchar *buf,uns i);
+    void pack_i_32(uchar *buf,unsigned long int i);
+    void pack_i_64(uchar *buf,unsigned long long int i);
+
+    //unpacking
+    uns unpack_u_16(uchar *buf);
+    int unpack_i_16(uchar *buf);
+    unsigned long int unpack_u_32(uchar *buf);
+    long int unpack_i_32(uchar *buf);
+    ulong unpack_u_64(uchar *buf);
+    long long int unpack_i_64(uchar *buf);
+
+
+    #define __dPER while(1!=1);
+
+    #define __ASCII(x) OUT_ENK_A(0,x)
+    #define __TEXT(x) OUT_ENK_A(0,#x);
+
+    #define OUT_ENK_H(fd,x) do { \
+        char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
+        memset(&_,0,sizeof _);memset(&__,0,sizeof __);\
+        snprintf(_,sizeof _,"%s",FMT_HEXA_SPEC(x));\
+        ulong pack_sz=pack(__,_,x);\
+        if(pack_sz>0){write(fd,__,pack_sz);}\
+    } __dPER
+
+    #define OUT_ENK_A(fd,x) do { \
+        char __[4096];\
+        memset(&__,0,sizeof __);\
+        snprintf(__,sizeof __,"%s\n", FMT_ASCII_SPEC(x));\
+        dprintf(fd,__,(x));\
+    } __dPER
+
+
+    #define NOFB_TYPE(x) \
+        _Generic((x), \
+            signed char: (char)x, \
+            unsigned char:(uchar)x, \
+            int:(int)x, \
+            unsigned int:(uns)x, \
+            long int:(ulong)x, \
+            unsigned long int:(ulong)x, \
+            long long int:(tlong)x, \
+            unsigned long long int:(tlong)x, \
+            default:NULL)
+    
+
+    // printf friendly
+    #define FMT_ASCII_SPEC(__) \
+        _Generic((__), \
+            int: "%d",\
+            uns: "%u",\
+            char: "%c",\
+            long: "%ld",\
+            ulong: "%lu",\
+            tlong: "%llu",\
+            char *: "%s",\
+            char const *:"%s",\
+            long long: "%lld",\
+            default: "%x")
+
+    #define FMT_HEXA_SPEC(__) \
+        _Generic((__), \
+            char: "c",\
+            unsigned char: "C",\
+            short: "h",\
+            int: "h",\
+            uns: "H",\
+            long: "l",\
+            ulong: "L",\
+            long long: "q",\
+            tlong: "Q",\
+            char *: "s",\
+            default: "_")
+
+    #define LBB_OUT_FMT(__) \
+        _Generic((__), \
+            void * : void *,\
+            char * : char *,\
+            const char *: const char *,\
+            default: ulong*)
+
+    #define __ENK__H 1
+#endif

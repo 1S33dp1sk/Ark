@@ -1,0 +1,179 @@
+.\" (C) Copyright 2022 kj <kj@aetherlabs.io>,
+.\"
+.TH Aether READER
+.SH NAME
+aether\-reader I/O
+
+.SH SYNOPSIS
+.br
+CONFRD (Read key:=values)
+.br
+CONFCHG (Change key:=values)
+.br
+CONFDEL (Delete key:=values)
+
+.SH OPTIONS
+/-n [\fIfilename\fR]
+.br
+.TP
+/-p [\fIfilepath\fR]
+
+.SH DESCRIPTION:
+A library to manipulate Configuration files with the following command line arguments.
+.br
+The following steps explain how to make configuration:
+.IP "1." 3
+Specify the name of the default file, if it should be different.
+.br
+.B DEFAULT_FILENAME "default.conf"
+.B FILENAME_EXTENSION ".conf"
+.IP "2." 3
+Create a File Handle 
+.B ```c```
+.br
+.B file_t file = {0};
+.IP "3." 3
+Determine the "I/O operation" used in the command line. Returns '0' if not successful.
+.br
+.B get_operation(&file, argv, argc);
+.IP "4." 3
+Determine the "Options" used in the command line such as [-n or -p]
+.br
+.B -n  "filename" (e.g., conf_1)
+.br
+.B -p  "filepath/filename" (e.g., /home/Linux/Desktop/conf_2)
+.br
+.B get_options(&file, argv, argc);
+.IP "5." 3
+Finally, Execute the I/O operation
+.br
+.B IO_executor(&file, argv);
+
+.SH Examples
+.TP
+.B Complete Example 1 ```c```
+
+#include \[dq]config_reader.h
+
+int main(int argc, char **argv)
+{
+    if(!(argc >= 3)){return 0;}}
+
+    2. Create a File Handle
+    file_t file = {0};
+    
+    3. Determine the \[dq]I/O operation\[dq] used in the command line. Returns \[aq]0\[aq] if not successful.
+    if(!get_operation(&file, argv, argc)){return 0;}
+
+    4. Determine the \[dq]Options\[dq] used in the command line such as [-n or -p]
+    get_options(&file, argv, argc);
+
+    5. Finally, Execute the I/O operation
+    IO_executor(&file, argv);
+
+    return 0;
+}
+.TP
+.B Configuration File
+Filename : default.conf (Inside Current Working Directory)
+.nf
+ex1:=20,10,12
+ex2:=1
+ex3:=0
+ex4:=Calibration,Temperature
+ex5:=120
+ex6:=Upgrade
+\f[R]
+.fi
+.TP
+.B Terminal compilation
+.nf
+Linux\[at]Desktop101:\[ti]$ gcc config_reader.c main.c -o reader
+.fi
+.TP
+.SS e.g.1. Read Operation (default file)
+.IP
+.nf
+\f[C]
+
+Linux\[at]Desktop101:\[ti]$ ./reader CONFRD ex1
+20,10,12
+Linux\[at]Desktop101:\[ti]$
+\f[R]
+.fi
+.TP
+.SS e.g.2. Change & Read Operation (default file)
+.IP
+.nf
+\f[C]
+
+Linux\[at]Desktop101:\[ti]$ ./reader CONFCHG ex4 \[dq]Optimize, Humidity\[dq]
+Linux\[at]Desktop101:\[ti]$ ./reader CONFRD ex4
+Optimize, Humidity
+Linux\[at]Desktop101:\[ti]$
+\f[R]
+.fi
+.TP
+.SS e.g.3. Delete & Read Operation (default file)
+.IP
+.nf
+\f[C]
+
+Linux\[at]Desktop101:\[ti]$ ./reader CONFDEL ex5
+Linux\[at]Desktop101:\[ti]$ ./reader CONFRD ex5
+\[dq]NE\[dq]
+Linux\[at]Desktop101:\[ti]$
+\f[R]
+.fi
+.TP
+.B Example Usage using (-n or -p ):
+.SS Location of file I want to operate on : /home/Linux/Desktop/conf_1.conf
+.IP
+.nf
+.TP
+
+\f[C]
+
+ex1:=50
+ex4:=Calibration,Temperature
+ex5:=120
+ex6:=Upgrade
+\f[R]
+.fi
+.TP
+.B Terminal
+.IP
+.nf
+.TP
+
+\f[C]
+
+Linux\[at]Desktop101:\[ti]/Desktop/Test$ pwd
+/home/Linux/Desktop/Test
+Linux\[at]Desktop101:\[ti]/Desktop/Test$
+\f[R]
+.fi
+.TP
+.SS e.g.1. Read Operation ( Option: -p filepath/filename )
+.IP
+.nf
+\f[C]
+.TP
+
+Linux\[at]Desktop101:\[ti]/Desktop/Test$ ./reader CONFRD ex1 -p ../conf_1
+50
+Linux\[at]Desktop101:\[ti]/Desktop/Test$
+\f[R]
+.fi
+.TP
+.SS e.g.2. Read Operation ( Option: -n filename)
+.IP
+.nf
+\f[C]
+
+Linux\[at]Desktop101:\[ti]/Desktop/Test$ cd .. 
+Linux\[at]Desktop101:\[ti]/Desktop$ ./reader CONFRD ex2 -n conf_1
+Calibration,Temperature
+Linux\[at]Desktop101:\[ti]/Desktop/Test$
+\f[R]
+.fi

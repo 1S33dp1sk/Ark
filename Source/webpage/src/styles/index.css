@@ -1,0 +1,21 @@
+@import './fonts.css';
+@import './colors.css';
+
+@import '../pages/Landing/styles.css';
+@import '../pages/Guides/styles.css';
+@import '../pages/Logs/styles.css';
+@import '../pages/ComingSoon/styles.css';
+@import '../pages/Faucet/styles.css';
+
+@import '../pages/dApp/styles.css';
+
+@import '../layout/Navbar/styles.css';
+@import '../layout/Footer/styles.css';
+
+@import '../components/Loader/styles.css';
+@import '../components/WalletModal/styles.css';
+@import '../components/ParallaxCard/styles.css';
+@import '../components/FeatureGraph/styles.css';
+@import '../components/Searchbar/styles.css';
+@import '../components/Snackbar/styles.css';
+@import '../components/smallLaoder/styles.css';

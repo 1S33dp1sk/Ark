@@ -1,0 +1,4 @@
+PATH:=NODE_1
+CONNEC:=mydir
+CALL:=
+ENTRY:=welcome.py,welcome.cpp,welcome.js,welcome.c,README.md

@@ -1,9 +1,0 @@
-/// JAVASCRIPT \\\
-the javascript runtime language
-
-@Protocol(local, __LBB__(node, __ARK__(
-	
-))
-
-@Protocol(global, "npm-registry.com/package") => __ATP__(...)
-

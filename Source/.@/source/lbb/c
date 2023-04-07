@@ -1,0 +1,276 @@
+/// little black book \\\
+
+#ifndef __LBB__H
+#include "lbb.h"
+#endif
+#ifndef __lbb_name
+	#define __lbb_name "linked binary book"
+/**
+ * the lbb is what is known as a 
+ * `singular` || `singelton`
+ * which is a single instance of this header
+ * is to be defined at any time, generally
+ * at the time of inception of the `Lockfile`
+**/ 
+// must return 0
+int lbb_init(char const *cpath,char *fname){
+	// check if given path is null
+	char *bookname=fname;
+	if(bookname==NULL){
+		printf("instantiating `%s` ::: default args\n",__lbb_name);
+		bookname=__DEFAULT_LBB_NAME;
+	}
+	// init lbb shard
+	shard_st __shard=lbb_shard;
+	memset(&__shard,0,sizeof(shard_st));
+	// init lbb c-name-path
+	ulong c_len=strlen(cpath);
+	ulong n_len=strlen(bookname);
+	ulong cn_len=c_len+n_len;
+	if(cn_len>__LBB_KEY_SIZE){
+		printf("lbb-shard : key is not 256bytes\n");
+		return 1;
+	}
+	char pathname[cn_len];
+	memset(&pathname,0,cn_len);
+	memmove(pathname,cpath,c_len);
+	memmove(pathname+c_len,bookname,n_len);
+	memmove(__shard.__charms,pathname,cn_len);
+	// get file descriptor
+	int _fd=open(__shard.__charms,O_RDWR);
+	if(_fd==-1){
+		printf("lbb-shard : `%s` cannot be opened\n",__shard.__charms);
+		return 2;
+	}
+	__shard.__fd=_fd;
+	// get the file stats
+	struct stat stat_st;
+	memset(&stat_st,0,sizeof(struct stat));
+	if(stat(__shard.__charms,&stat_st)!=0){
+		printf("lbb-shard : stat cannot be obtained\n");
+		return 3;
+	}
+	__shard.__size=stsize(stat_st);
+	__shard.__iosz=stiosize(stat_st);
+	return 0;
+}
+
+ulong __writeb(uchar *content,uns c_size) {
+	ulong __fd=shd_fd;
+	if(__fd!=0){
+		ulong _size = (ulong)write(__fd,content,c_size);
+		#ifdef DEBUG
+			printf( "resof write :: %lu\n",_size);
+		#endif
+		return _size;
+	}	
+	return 0;
+}
+
+
+ulong lbb_print(char *kaddr){
+	ulong res=__writeb((uchar *)kaddr,strlen(kaddr));
+	return res;
+}
+
+char *__readb(){
+	ulong __res=0,__fsz=shd_sze,__fd=shd_fd;
+	uchar lbb_content[__fsz+1];
+	__res=read(__fd,lbb_content,__fsz);
+	if(__res==-1){
+		printf("cannot read lbb\n");
+		return NULL;
+	}
+	lbb_content[__fsz+1]='\0';
+	if((__res<__fsz)&&(__res>0)){
+		// means that reading was interuptted
+		// for some reason, like a pipe or sig
+		// so we can read from where we left off
+		__res=pread(__fd,(lbb_content+__res),(__fsz-__res),__res);
+	}
+	return strdup((char*)lbb_content);
+}
+
+void __closeb(){
+	close(shd_fd);
+	memset(&lbb_shard,0,sizeof(shard_st));
+}
+
+ulong __fillb(){ // create &-> fill the book
+	ulong __res=__writeb((uchar*)shd_key,__LBB_KEY_SIZE);
+	__closeb();
+	return __res;
+}
+
+int lbb(char const *att_charms,ulong lockfd){
+	ulong res=0;
+	memmove(&lbb_shard.__charms,att_charms,strlen(att_charms));
+	lbb_shard.__fd=lockfd;
+	#if LBB_LOCK
+		char *LOCKING="locked\n";
+		__writeb(testing,strlen(testing));
+		__closeb();
+	#endif
+	return res;
+}
+
+/**
+ * count spaces and tabs in `word`
+**/
+
+int spaces_and_tabs(char *word){
+	int count=0, x=0;
+	while(word[x]!='\0'){
+		if(word[x]==' '||word[x]=='	'){
+			count+=1;
+		}
+		x+=1;
+	}
+	return count;
+}
+
+void test_spaces_and_tabs() {
+	int spta_count=spaces_and_tabs(" aksd foa	sf");
+	printf("spaces+tabs count :: %d\n",spta_count);
+}
+
+/*******************************************************************/
+
+
+/**
+ * find `seperator` in `string`
+**/
+
+struct sepstr {
+	char *str;
+	int str_length;
+	char *sep;
+	int sep_offs;	
+};
+
+typedef struct sepstr spstr;
+
+ulong sep_offset(char *string,char *seperator) {
+	long x=0,y=0,len_count=0,offset_at=-1;
+	while(string[x]!='\0'){
+		if(string[x]==seperator[y]){
+			while(seperator[y]==string[y+x]){
+				y+=1;
+			}
+			if(seperator[y]=='\0'){
+				offset_at=x;
+			}
+			else{
+				y=0;
+			}
+		}
+		x+=1;
+	}
+
+	return offset_at==-1?(ulong)0:(ulong)offset_at;
+}
+
+spstr sepstr_offset(char *string, char *seperator) {
+	int x=0,y=0,len_count=0,offset_at=-1;
+	while(string[x]!='\0'){
+		if(string[x]==seperator[y]){
+			while(seperator[y]==string[y+x]){
+				y+=1;
+			}
+			if(seperator[y]=='\0'){
+				offset_at=x;
+			}
+			else{
+				y=0;
+			}
+		}
+		x+=1;
+	}
+	struct sepstr res = {
+		.str=string,
+		.str_length=x,
+		.sep=seperator,
+		.sep_offs=offset_at,
+	};
+	return res;
+}
+
+void log_sepstr(struct sepstr ss){
+	printf("string=%s\nlength=%d\nseperator=%s\noffset=%d\n",ss.str,ss.str_length,ss.sep,ss.sep_offs);
+}
+
+void test_init_sepstr(char const*fullstr, char const*sep) {
+	struct sepstr res;
+	if(fullstr==NULL||sep==NULL){
+		res=sepstr_offset("mykey:has a very niceth=ce value of ", "=c");
+	}
+	else {
+		res=sepstr_offset((char *)fullstr,(char *)sep);
+	}
+
+	log_sepstr(res);
+}
+
+int main_sepstr(int argc, char const *argv[]){
+	if(argc==3){
+		test_init_sepstr(argv[1],argv[2]);
+	}
+	else{
+		test_init_sepstr(NULL,NULL);
+	}
+	return 0;
+}
+
+/*******************************************************************/
+
+
+/**
+ * extract the string at offset
+**/
+
+struct __str {
+	int len;
+	char *data;
+};
+
+typedef struct __str strld;
+
+strld extract_atoff(char *str, ulong atoff){
+	strld res;
+	res.data=str+atoff;
+	char *s=str+atoff;
+	int c=0;
+	while(*s++){
+		c+=1;
+	}
+	res.len=c;
+	return res;
+}
+
+void log_str(struct __str __){
+	printf("string\n");
+	printf("length=%d\n",__.len);
+	printf("data:=%s\n",__.data);
+}
+
+int main_atoff(){
+	strld sep=extract_atoff("hello world\n",6);
+	log_str(sep);
+	return 0;
+}
+
+char *revstr(char *str){
+	ulong i=0, _iter=strlen(str);
+	char __reversed[_iter];
+	memset(&__reversed,0,_iter);
+	while(i<_iter){
+		// c=str[_iter];
+		__reversed[i]=str[_iter];
+		_iter-=1;i+=1;
+	}
+	return strdup(__reversed);
+}
+
+
+
+#endif

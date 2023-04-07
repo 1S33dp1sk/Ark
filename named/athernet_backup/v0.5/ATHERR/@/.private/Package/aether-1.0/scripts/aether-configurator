@@ -1,0 +1,9 @@
+#!/bin/python3
+
+
+from dev3 import LES
+from sys import argv
+
+if __name__ == '__main__':
+	_les = LES( argv[-1] )
+	_les.remake()

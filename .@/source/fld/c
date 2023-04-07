@@ -1,0 +1,28 @@
+#include <stdio.h>
+// this should be the mor
+#if _c
+	int fields(){
+		printf("in fields\n");
+		return 1;
+	}
+#else
+// this should be the les
+    int arch_env();
+    #include <unistd.h>
+	int main() {
+		printf("you like this?\n");
+		arch_env();
+		return 0;
+	}
+#endif
+
+
+
+
+
+
+
+
+
+
+

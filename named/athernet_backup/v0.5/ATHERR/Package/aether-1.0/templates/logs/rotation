@@ -1,0 +1,26 @@
+/var/log/aether/status.log
+{
+	rotate 1
+	daily
+	missingok
+	notifempty
+	compress
+}
+
+/var/log/aether/performance.log
+{
+	rotate 7
+	daily
+	missingok
+	notifempty
+	compress
+}
+
+/var/log/aether/transactions.log
+{
+	rotate 9
+	weekly
+	missingok
+	notifempty
+	compress
+}

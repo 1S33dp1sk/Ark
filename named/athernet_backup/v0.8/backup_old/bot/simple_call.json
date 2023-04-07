@@ -1,0 +1,47 @@
+{
+  "status": "pending",
+  "monitorId": "GETH_56_D_PROD",
+  "monitorVersion": "0.97.0",
+  "pendingTimeStamp": "2021-08-17T18:50:32.553Z",
+  "pendingBlockNumber": 10115468,
+  "hash": "0x2dbd84a35b65b0fdfc0cf9ddd03d3dc466ce1cc0b333972adce09acb9b4d2e9d", // TXN Hash
+  "from": "0xcA04D4c8805691Ca251Af3bc751429Ab884630d3", // Buyer
+  "to": "0x10ED43C718714eb63d5aA57B78B54704E256024E", // Exchange Or Another Address
+  "value": "0",
+  "gas": 181087,
+  "nonce": 78,
+  "blockHash": null,
+  "blockNumber": null,
+  "v": "0x93",
+  "r": "0x9b2bc65623829840825d047eafe9b4cd8e710ed32b2e670b3a4da9eed2386ae5",
+  "s": "0x25ebf7936efe2f711296a6be6937df3a3f82e55245b26ce91a57d04bad7a8829",
+  "input": "0x18cbafe50000000000000000000000000000000000000000001bd685dd559af911ea75e50000000000000000000000000000000000000000000000000034cea970200fde00000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000ca04d4c8805691ca251af3bc751429ab884630d300000000000000000000000000000000000000000000000000000000611c060b0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000bceee918077f63fb1b9e10403f59ca40c7061341000000000000000000000000bb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+  "gasPrice": "5000000000",
+  "gasPriceGwei": 5,
+  "type": 0,
+  "asset": "",
+  "watchedAddress": "0x10ed43c718714eb63d5aa57b78b54704e256024e", // Exchange Or Another Address
+  "direction": "incoming",
+  "counterparty": "0xcA04D4c8805691Ca251Af3bc751429Ab884630d3", // Buyer
+  "serverVersion": "0.119.1",
+  "eventCode": "txPool",
+  "timeStamp": "2021-08-17T18:50:32.548Z",
+  "system": "ethereum",
+  "network": "bsc-main",
+  "contractCall": {
+    "contractType": "Uniswap V2: Router 2",
+    "contractAddress": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+    "methodName": "swapExactTokensForETH",
+    "params": {
+      "amountIn": "33654052922714945103754725", // Value*1e-18 = 33,654,052.922714945103754725
+      "amountOutMin": "14863925914898398", // value*1e-18 =  0.01493824554447289
+      "path": [
+        "0xbCeeE918077F63fB1B9e10403F59cA40C7061341", // Incoming Token
+        "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c" // Outgoing Token
+      ],
+      "to": "0xcA04D4c8805691Ca251Af3bc751429Ab884630d3",
+      "deadline": "1629226507"
+    },
+    "contractName": "PancakeSwap: Router v2"
+  }
+}

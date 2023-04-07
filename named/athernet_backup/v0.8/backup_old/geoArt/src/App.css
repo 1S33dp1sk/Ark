@@ -1,0 +1,405 @@
+body {
+font-family: "Roboto", sans-serif;
+}
+
+
+/*TOP MENU*/
+.appbar{
+  height: 70px;
+  max-width: 1280px;
+  margin:    0 auto;
+
+}
+
+nav{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.appbar h2{
+  font-style: normal;
+  font-weight: 900;
+  font-size: 26px;
+  line-height: 38px;
+  color: #37447E;
+}
+.appbar h2 a{
+  text-decoration: none;
+}
+.appbar ul{
+  list-style: none;
+  width: 30%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.appbar ul li a{
+  text-decoration: none;
+  color: #505F98;
+}
+.appbar ul li a img{
+  width: 2vw;
+  height: 4vh;
+}
+
+/*HEADER*/
+header{
+ display: flex;
+ align-items: center;
+ max-width: 1280px;
+ margin:    0 auto;
+
+}
+
+header .hero-image{
+  position: relative;
+  float: left;
+  width: 50%;
+}
+
+header .hero-image img{
+  width: 100%;
+}
+
+header .hero-content{
+  margin-left: 4vh;
+  float: right;
+  width: 50%;
+}
+
+header .hero-content h1{
+  line-height: 66px;
+  color: #091133;
+
+}
+
+header .hero-content ul{
+  color: #505F98;
+  line-height: 30px;
+  max-width: 80%;
+}
+
+
+/*ABOUT THE ART*/
+
+.about {
+  text-align: center;
+  line-height: 3vh;
+  max-width: 1280px;
+  margin:    0 auto;
+
+}
+
+.about h3 {
+  color: #091133;
+  margin-top: 20vh ;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 48px;
+}
+
+.about ul {
+  margin: 4vh auto;
+  height: 10vh;
+  top: 64px;
+  line-height: 30px;
+  color: #505F98;
+}
+
+/*ABOUT THE ART - FEATURES*/
+.features{
+  display: flex;
+  align-items:center;
+  max-width: 1280px;
+  margin:0 auto;
+}
+
+.left_text {
+  max-width: 33%;
+  float: left;
+  margin-left: 3vh;
+}
+
+.left_text li{
+  list-style-type: none;
+  margin-top: 4vh;
+}
+
+.left_text  img{
+  max-height: 3vh;
+}
+
+.left_text  h4{
+  color: #091133;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.left_text  p{
+  color: #5D6970;
+  font-size: 12px;
+  line-height: 18px;
+  max-width: 90%;
+}
+
+.feature_img {
+  display: inline-block;
+  width: 33.333%;
+}
+
+.feature_img img{
+  width: 100%;
+}
+
+.right_text {
+  float: right;
+  width: 33.333%;
+  margin-left: 4vh;
+}
+
+.right_text li{
+  list-style-type: none;
+  margin-top: 4vh;
+}
+
+.right_text  img{
+  max-height: 3vh;
+}
+
+.right_text  h4{
+  color: #091133;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.right_text  p{
+  color: #5D6970;
+  font-size: 12px;
+  line-height: 18px;
+  max-width: 90%;
+}
+
+/*ABOUT THE MINTING AND SETUP*/
+
+.minting-container{
+  margin:30vh auto;
+  max-width: 1280px;
+
+}
+
+.minting{
+  display: flex;
+  max-height: 50vh;
+  max-width: 1280px;
+  margin:    0 auto;
+}
+
+.minting .image{
+  width: 50%;
+  float: left;
+}
+
+.minting .image img {
+  max-width: 100%;
+}
+
+.minting .text{
+  background: #FFF6E0;
+  mix-blend-mode: normal;
+  width: 50%;
+  float: right;
+
+}
+
+.minting .text h4{
+  color: #091133;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 48px;
+  margin-left: 10vh;
+  margin-top: 15vh;
+  margin-bottom: 3vh;
+}
+
+.minting .text p{
+  color: #6F7CB2;
+  font-size: 16px;
+  line-height: 26px;
+  margin-left: 10vh;
+
+}
+
+.setup{
+  display: flex;
+  max-height: 50vh;
+}
+
+.setup .image {
+  width: 50%;
+  float: left;
+  overflow:hidden;/* crops/cut off */
+}
+
+.setup .image img {
+  max-width: 100%;
+}
+
+
+.setup .text{
+  width: 50%;
+  float: right;
+  background: #FFF6E0;
+  mix-blend-mode: normal;
+
+}
+
+.setup .text h4{
+  color: #091133;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 48px;
+  margin-left: 10vh;
+  margin-top: 15vh;
+
+}
+
+.setup .text p{
+  color: #6F7CB2;
+  font-size: 16px;
+  line-height: 26px;
+  margin-left: 10vh;
+  margin-top: 2vh;
+  margin-right: 2vh;
+}
+
+/*ABOUT THE TEAM*/
+
+.team{
+  max-width: 1200px;
+  margin: 10vh auto;
+}
+.team h3{
+  margin: 5vh 0;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 48px;
+}
+.team h4{
+  margin: 0 40% 7vh 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 26px;
+  color: #6F7CB2;
+}
+
+.team ul{
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+}
+.team ul li{
+  width: 25%;
+}
+.team ul li img{
+  max-width: 100%;
+  max-height: 25vh;
+  margin-bottom:1vh ;
+}
+.team ul li h5{
+  margin-bottom: 1vh;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.team ul li h5 a{
+text-decoration: none;
+}
+
+.team ul li p{
+  color: #76848C;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  max-width: 28vh;
+}
+
+/*ABOUT THE DONATIONS*/
+
+.donation{
+  background-color: #FFF6E0;
+  max-width: 1280px;
+  height: 50vh;
+  margin: 0 auto;
+  margin-top: 10vh;
+  display: flex;
+}
+.donation .don-desc{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin:    0 auto;
+}
+.donation .don-img {
+  max-width: 50%;
+  margin:    0 auto;
+  overflow:hidden;
+}
+
+.don-desc h4{
+    width: 50%;
+    margin: 3vh auto;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 48px;
+    color: #091133;
+}
+.don-desc p{
+    width: 50%;
+    margin: 0 auto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 26px;
+    color: #6F7CB2;
+}
+
+.ftr{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 20vh;
+}
+.ftr ul{
+  display: flex;
+  justify-content: space-around;
+  width: 20%;
+  margin: 0 auto;
+  list-style: none;
+}
+.ftr ul li a{
+  text-decoration: none;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 24px;
+  color: #929ECC;
+}
+.ftr p{
+  text-align: center;
+  margin: 3vh 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 18px;
+  color: #CDD1D4;
+}

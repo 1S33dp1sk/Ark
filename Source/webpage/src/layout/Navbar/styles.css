@@ -1,0 +1,182 @@
+.appbar{
+    position: relative;
+    width: 100vw;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--lBlack);
+    padding: 0 3vw;
+}
+
+
+.appbar ul {
+    display: flex;
+    align-items: center;
+}
+.appbar ul li{
+    margin: 0 2vw;
+    cursor: pointer;
+    font-size: 14px;
+
+}
+.appbar button,#nav-btn{
+    width: 180px;
+    height: 40px;
+    background: transparent;
+    opacity: 0.8;
+    border: 1px solid #898A9A;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    font-size: 16px;
+    margin-right: 1em;
+}
+.appbar ul li:hover a{
+    color: var(--purple);
+}
+
+.mob_menu{
+    display: none;
+    user-select: none;
+}
+
+.appbar a, .appbar button, .mob_menu{
+    z-index: 2;
+}
+
+.appbar section{
+    display: flex;
+    align-items: center;
+}
+/* TOGGLE SWITCH */
+  
+  .toggle-btn {
+    position: relative;
+    width: 60px;
+    height: 25px;
+    margin: 0 auto;
+    border-radius: 40px;
+  }
+  
+  .toggle-btn input[type="checkbox"] {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: 0px;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 2;
+  }
+  
+  /* First toggle btn */
+  
+  #_1st-toggle-btn span {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    overflow: hidden;
+    opacity: 1;
+    background-color: #fff;
+    box-shadow: 0px 2px 20px #d9d9d9;
+    border-radius: 40px;
+    transition: 0.2s ease background-color, 0.2s ease opacity;
+  }
+  
+  #_1st-toggle-btn span:before,
+  #_1st-toggle-btn span:after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: 0.5s ease transform, 0.2s ease background-color;
+  }
+  
+  #_1st-toggle-btn span:before {
+    background-color: #fff;
+    transform: translate(-28px, 0px);
+    z-index: 1;
+  }
+  
+  #_1st-toggle-btn span:after {
+    background-color: #000;
+    transform: translate(5px, 0px);
+    z-index: 0;
+  }
+  
+  #_1st-toggle-btn input[type="checkbox"]:checked + span {
+    background-color: #000;
+  }
+  
+  #_1st-toggle-btn input[type="checkbox"]:active + span {
+    opacity: 0.5;
+  }
+  
+  #_1st-toggle-btn input[type="checkbox"]:checked + span:before {
+    background-color: #000;
+    transform: translate(25px, 1px);
+  }
+  
+  #_1st-toggle-btn input[type="checkbox"]:checked + span:after {
+    background-color: #fff;
+    transform: translate(31px, 1px);
+  }
+  
+  
+/* ------- */
+
+@media screen and (max-width: 992px) {
+  
+    .appbar ul {
+        position: absolute;
+        left: 0;
+        top: -100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--lBlack);
+        z-index: 0;
+    }
+    .mob_menu{
+        display: block;
+        cursor: pointer;
+        text-align: center;
+        margin: 0 2em;
+    }
+    .appbar button,#nav-btn{
+        font-size: 12px;
+    }
+
+    .appbar .res {
+        animation: tmenu 200ms ease;
+        top: 100%;
+        z-index: 0;
+
+    }
+
+    @keyframes tmenu {
+        from {
+            top: -100%;
+        }
+
+        to {
+            top: 100%;
+        }
+    }
+
+    .appbar .res li {
+        margin: 1vh 0;
+        padding: 1vh 0;
+    }
+
+    .toggle-btn{
+        display: none;
+    }
+}

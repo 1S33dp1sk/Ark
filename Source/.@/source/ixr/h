@@ -1,0 +1,45 @@
+#ifndef __IXR__H
+	#include "utypes.h"
+static ulong __cindex;
+	#include <unistd.h>
+	#include <string.h>
+	#include <sys/stat.h>
+	static struct stat __singleton;
+
+	/**
+	NNE(X)
+	@returns :   true if x is not 0x0000
+	*/
+	#define NNE(v) v==0x0000?0x01:0x00
+
+	#define sz8(x) ((ulong)__8sz(x))
+	#define fsze(x) ((ulong)__fsize(x))
+	#define iosze(x) ((ulong)__iosize(x))
+	#define dmde(x) ((uns)__dmode(x))
+	#define status(x) __statusof(x,&__singleton)
+	#define stres(x) __stres(x)
+	#define inodenum (ulong)__singleton.st_ino
+
+
+	int __stres(char const*cpath);
+	uns __8sz(uns __);
+	uns __dmode(char *cpath);
+	ulong __fsize(char *fpath);
+	ulong __iosize(char *fpath);
+	void *__statusof(char const *__file, struct stat *__);
+	#ifndef __AP_LOCKS__
+		int __ap_fifo(char const *__path) {
+			if (!mkfifo(__path,(S_IRWXU|S_IXGRP|S_IXOTH))){
+				return 1;
+			}
+			return 0;
+		}
+		#define __AP_LOCKS__ 1
+		#define ap_make __ap_fifo  
+	#endif
+
+
+
+	#define __IXR__H 1
+#endif
+
