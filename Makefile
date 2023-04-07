@@ -1,5 +1,8 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> x/master
 # 
 #####################################
 #			Shell/@net				#
@@ -36,6 +39,7 @@ charms:
 			$_ __att__; \
 		fi;\
 	fi;
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 #ather processor := _u_charm 
@@ -342,24 +346,121 @@ __@__:
 __shared__: __autogen_charms__
 	printf "shared"
 =======
+=======
+>>>>>>> x/master
+
+
+indexer_list:
+	#first is the basic unistd
 
 
 
 
-kmachid: libathernet  
-	__mhid
 
-__av_cmds__: 
-	@\@/ter env
+# .lbb exists ? __link__
+# charm exsists ? __att__
+# neither exsists? __init__
 
-ac:= cc -c -fpic 
+shell_att:$(shell ${@__})
+
+__att__: __@__ shell_att
+
+__link__:
+	./lbb start
+
+__clean_charms__:
+	rm -rf ${@charms}
+
+
+# when rebuilding source clean
+_check_source_: __clean_charms__
+	@if [ -d ${__@} ]; \
+		then if [ ! -d ${@charms} ]; then $_ _check_charms_;fi \
+	else \
+		printf "Cannot create @net without the source code. path :: ${__@}.\n"; return 1;\
+	fi
 
 
 
-__mhid: __av_cmds__ __av_netf__ __av_next
-	__mach__ 
+# must produce a charm file
+__init__: _check_source_
+	./arc ${@charms} lbb k-addr
+
 
 >>>>>>> x/machine
+
+
+
+
+
+
+
+#####################################
+#				Shorts				#
+#####################################
+__empty:=
+__binobjs:=${__bin}/*.o
+__devheaders:=${__dev}/*.h
+_snet:=${__src}/net
+_cnet:=${@charms}/net
+atherso:=libather.so
+athernetso:=libathernet.so
+atherlib:=${__lib}/${atherso}
+anetlib:=${__lib}/${athernetso__}
+
+# build charms as a list and then run another
+# make command to compile and then execute
+
+__ac:=$(cc -c -fpic)
+output:= -o ${@mymach} 
+ac:=$(addprefix $(addsuffix $(addprefix ${__ac},${@charms}),${output}),${libather})
+
+
+
+
+
+__build__: libathernet
+	@printf "Building charm indexer\n ${lib_ather}\n"
+	cc ${@charms}/fld.c -o lbb ${atherlib}
+
+# __shrd:= / funcs pages intpr
+# shrd_charms:=$(addprefix ${@charms},${__shrd})
+
+headers_att:=${@charms}/headers
+funcs_att:=${headers_att}/fun
+
+__ccc_dirs__:
+	if [ ! -d ${@charms} ]; then mkdir ${@charms}; fi;
+	if [ ! -d ${@charms}/headers ]; then mkdir ${@charms}/headers; fi
+	if [ ! -d ${@charms}/lbb ]; then mkdir ${@charms}/lbb; fi
+
+_check_charms_: __ccc_dirs__
+	if [ ! -d ${@charms} ]; then mkdir ${@charms}; fi;
+	if [ ! -d ${@charms}/headers ]; then mkdir ${@charms}/headers; fi
+	cp ${__src}/_h512.h ${headers_att}
+	cp ${__src}/standard.h ${headers_att}
+	cp ${__src}/utypes.h ${headers_att}
+	cat ${hbar_h} > ${_hbar}
+	cat ${hbar_c} >> ${_hbar}
+	cat ${enk_h} > ${_enk}
+	cat ${enk_c} >> ${_enk}
+	cat ${lbb_h} > ${_lbb}
+	cat ${lbb_c} >> ${_lbb}
+	if [ ! -d ${funcs_att} ]; then mkdir ${funcs_att}; fi
+	cp ${__src}/karc.c ${funcs_att}
+	cc ${funcs_att}/karc.c -o arc
+# 	if [ ! -d ${@charms}/pages ]; then mkdir ${@charms}/pages; fi
+# 	if [ ! -d ${@charms}/intrpt ]; then mkdir ${@charms}/intrpt; fi
+
+
+__@__:
+	if [ -f ${@__} ]; \
+		then rm -rf ${@__}; \
+	fi
+	cc ${__src}/att.c -o @;
+
+__shared__: __autogen_charms__
+	printf "shared"
 
 
 
@@ -375,6 +476,9 @@ __clevels__ := c cc ccc
 __FLAMES__:=__Mach_001F_001A_abcdefghijklmnopqrstuvwxyz__0x
 __FNAME_L_S__ = \n__Makefile_001F_001A_\n\tabcdefghijklmnopqrstuvwxyz\n__0x\n
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> x/master
 
 #####################################
 #			Extended @				#
@@ -387,8 +491,11 @@ __libsdir:=${__bindir}/libs
 att:=${__network}/@source
 net:=${__src}/net
 __0xadir:=${__charms}/0xa
+<<<<<<< HEAD
 =======
 >>>>>>> x/machine
+=======
+>>>>>>> x/master
 #####################################
 #				Morles				#
 #####################################
@@ -397,6 +504,7 @@ server:
 morles:
 	cc dev/net/morles.c -o @/server
 #####################################
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 #				Shell				#
@@ -431,6 +539,8 @@ atherlib:=${__libsdir}/${atherlib__}
 anetlib:=${__libsdir}/${anetlib__}
 #####################################
 >>>>>>> x/machine
+=======
+>>>>>>> x/master
 #				Clear				#
 #####################################
 clear_bin:
@@ -441,14 +551,19 @@ clear@:
 
 clear_att:
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if [ -d ${__src} ]; then rm -rf ${__src}; fi
 =======
 	if [ -d ${att} ]; then rm -rf ${att}; fi
 >>>>>>> x/machine
+=======
+	if [ -d ${__src} ]; then rm -rf ${__src}; fi
+>>>>>>> x/master
 
 cleared_remake:
 	if [ ! -d ${__bindir} ]; then mkdir ${__bindir}; fi
 	if [ ! -d ${_@} ]; then mkdir ${_@}; fi
+<<<<<<< HEAD
 <<<<<<< HEAD
 	if [ ! -d ${__src} ]; then mkdir  ${__src}; fi
 clear_common:
@@ -464,6 +579,16 @@ clear_common:
 	# maybe should iterate over them delete &-> copy
 	cp ${__devheaders} ${att}
 >>>>>>> x/machine
+=======
+	if [ ! -d ${__src} ]; then mkdir  ${__src}; fi
+clear_common:
+	# maybe should iterate over them delete &-> copy
+	cp ${__devheaders} ${__src}
+clean_bindir:
+	if [ -d ${__bindir} ]; then rm -rf ${__bindir}; fi
+
+clean_exits: clean_bindir
+>>>>>>> x/master
 clear_d: clear_bin clear@ clear_att cleared_remake clear_common 
 #####################################
 #				@Source				#
@@ -475,6 +600,7 @@ athernet_start: clean_libathernet libathernet
 #				libather			#
 #####################################
 <<<<<<< HEAD
+<<<<<<< HEAD
 lib_ather:= hbar enk ixr lbb fld
 __lib_ather__=$(addprefix __,$(addsuffix __,${lib_ather}))
 clean_libather: clean_hbar clean_enk clean_ixr clean_lbb
@@ -483,29 +609,42 @@ lib_ather:= hbar enk idxer zenv lbb fld
 __lib_ather__=$(addprefix __,$(addsuffix __,${lib_ather}))
 clean_libather: clean_hbar clean_enk clean_ixr clean_zenv clean_lbb
 >>>>>>> x/machine
+=======
+lib_ather:= hbar enk ixr lbb fld
+__lib_ather__=$(addprefix __,$(addsuffix __,${lib_ather}))
+clean_libather: clean_hbar clean_enk clean_ixr clean_lbb
+>>>>>>> x/master
 	@printf "clean :(cc): libather\n"
 	if [ -f ${o_hbar} ]; then rm ${o_hbar}; fi
 	if [ -f ${xer_o} ]; then rm ${xer_o}; fi
 	if [ -f ${o_enk} ]; then rm ${o_enk}; fi
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	if [ -f ${o_zenv} ]; then rm ${o_zenv}; fi
 >>>>>>> x/machine
+=======
+>>>>>>> x/master
 	if [ -f ${o_lbb} ]; then rm ${o_lbb}; fi
 	if [ -f ${atherlib} ]; then rm ${atherlib}; fi
 	@printf "\n"
 
 libather: ${__lib_ather__}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cc -shared $(addprefix ${__bin}/,$(addsuffix .o,${lib_ather})) -o ${atherlib}
 =======
 	cc -shared $(addprefix ${__bindir}/,$(addsuffix .o,${lib_ather})) -o ${atherlib}
 >>>>>>> x/machine
+=======
+	cc -shared $(addprefix ${__bin}/,$(addsuffix .o,${lib_ather})) -o ${atherlib}
+>>>>>>> x/master
 #####################################
 #		libather - Hash bar			#
 #####################################
 hbar:=hbar
 # file output
+<<<<<<< HEAD
 <<<<<<< HEAD
 @hbar:=${__src}/${hbar}
 __hbar:=${__src}/${hbar}
@@ -525,6 +664,18 @@ hbar_c:=${__hbar}/c
 hbar_h:=${__hbar}/h
 o_hbar:=${__bindir}/hbar.o
 >>>>>>> x/machine
+=======
+@hbar:=${__src}/${hbar}
+__hbar:=${__src}/${hbar}
+hbar__:=${__hbar}/${hbar}
+hbar_c:=${__hbar}/c
+hbar_h:=${__hbar}/h
+o_hbar:=${__bin}/hbar.o
+
+c_hbar:=${@charms}/${hbar}.c
+_hbar:=${@charms}/headers/${hbar}.h
+
+>>>>>>> x/master
 clean_hbar:
 	@printf "clean :: Hash bar\n"
 	if [ -f ${@hbar}.c ]; then rm ${@hbar}.c; fi
@@ -532,6 +683,7 @@ clean_hbar:
 	@printf "\n"
 
 __hbar__:
+<<<<<<< HEAD
 <<<<<<< HEAD
 	cat ${hbar_h} > ${_hbar}
 	cat ${hbar_c} > ${c_hbar}
@@ -570,38 +722,39 @@ __ixr__:
 	cat ${hbar_h} > ${@hbar}.h
 	cat ${hbar_c} > ${@hbar}.c
 	cc -c -fpic $(addsuffix .c,${@hbar}) -o ${o_hbar}
+=======
+	cat ${hbar_h} > ${_hbar}
+	cat ${hbar_c} > ${c_hbar}
+	cc -c -fpic ${c_hbar} -o ${o_hbar}
+>>>>>>> x/master
 #####################################
 #				Indexer				#
 #####################################
-ir:=ixr
-ixr:=idxer
-idxer:=indexer
+ixr:=ixr
 # file output
-xer_o:=${__bindir}/${ixr}.o
 # field for input
-@idxer:=${__dev}/${ir}
-cidxer:=${@idxer}/c
-hidxer:=${@idxer}/h
-# field for output
-_idxer:=${att}/${ixr}
+@ixr:=${__src}/${ixr}
+__ixr:=${__src}/${ixr}
+ixr__:=${__ixr}/${ixr}
 # for fields
-idxer_:=${_idxer}/${idxer}
-idxeroc:=${_idxer}.c
-idxeroh:=${_idxer}.h
+ixr_c:=${__ixr}/c
+ixr_h:=${__ixr}/h
+o_ixr:=${__bin}/${ixr}.o
+
+c_ixr:=${@charms}/${ixr}.c
+_ixr:=${@charms}/${ixr}.h
 # idxer@:=${_@}/${idxer}
-clean_ixr: clean_idxer clean_indexer
-clean_idxer:
-	@printf "clean : out : The ${idxer}\n"
+clean_ixr:
+	@printf "clean : in/out : The ${idxer}\n"
 	if [ -f ${idxer_}.c ]; then rm ${idxer_}.c; fi
 	if [ -f ${idxer_}.h ]; then rm ${idxer_}.h; fi
 	@printf "\n"
-clean_indexer:
-	@printf "clean : in : The ${idxer}\n"
 	if [ -d ${_idxer} ]; then rm -rf ${_idxer}; fi
 	if [ -f ${xer_o} ]; then rm ${xer_o}; fi
 	@printf "\n"
-__idxer__: 
+__ixr__: 
 # 	if [ ! -d ${_idxer} ]; then mkdir -p ${_idxer}; fi
+<<<<<<< HEAD
 	cat ${hidxer} > ${idxeroh}
 	cat ${cidxer} > ${idxeroc}
 	cc -c -fpic ${idxeroc} -o ${xer_o}
@@ -627,10 +780,16 @@ __zenv__:
 	cat ${zenv_c} > ${@zenv}.c
 	cc -c -fpic $(addsuffix .c,${@zenv}) -o ${o_zenv}
 >>>>>>> x/machine
+=======
+	cat ${ixr_c} > ${c_ixr}
+	cat ${ixr_h} > ${_ixr}
+	cc -c -fpic ${c_ixr} -o ${o_ixr}
+>>>>>>> x/master
 #################################
 #		Little Black Book		#
 #################################
 lbb:=lbb
+<<<<<<< HEAD
 <<<<<<< HEAD
 @lbb:=${__src}/${lbb}
 __lbb:=${__src}/${lbb}
@@ -649,6 +808,17 @@ lbb_c:=${__lbb}/c
 lbb_h:=${__lbb}/h
 o_lbb:=${__bindir}/lbb.o
 >>>>>>> x/machine
+=======
+@lbb:=${__src}/${lbb}
+__lbb:=${__src}/${lbb}
+lbb__:=${__lbb}/${lbb}
+lbb_c:=${__lbb}/c
+lbb_h:=${__lbb}/h
+o_lbb:=${__bin}/lbb.o
+
+c_lbb:=${@charms}/${lbb}.c
+_lbb:=${@charms}/headers/${lbb}.h
+>>>>>>> x/master
 
 clean_lbb:
 	@printf "clean :: Little black book\n"
@@ -658,6 +828,7 @@ clean_lbb:
 
 __lbb__:
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cat ${lbb_h} > ${_lbb}
 	cat ${lbb_c} > ${c_lbb}
 	cc -c -fpic ${c_lbb} -o ${o_lbb}
@@ -666,10 +837,16 @@ __lbb__:
 	cat ${lbb_c} > ${@lbb}.c
 	cc -c -fpic $(addsuffix .c,${@lbb}) -o ${o_lbb}
 >>>>>>> x/machine
+=======
+	cat ${lbb_h} > ${_lbb}
+	cat ${lbb_c} > ${c_lbb}
+	cc -c -fpic ${c_lbb} -o ${o_lbb}
+>>>>>>> x/master
 #################################
 #			Enkoder				#
 #################################
 enk:=enk
+<<<<<<< HEAD
 <<<<<<< HEAD
 @enk:=${__src}/${enk}
 __enk:=${__src}/${enk}
@@ -688,6 +865,17 @@ enk_c:=${__enk}/c
 enk_h:=${__enk}/h
 o_enk:=${__bindir}/enk.o
 >>>>>>> x/machine
+=======
+@enk:=${__src}/${enk}
+__enk:=${__src}/${enk}
+enk__:=${__enk}/${enk}
+enk_c:=${__enk}/c
+enk_h:=${__enk}/h
+o_enk:=${__bin}/enk.o
+
+c_enk:=${@charms}/${enk}.c
+_enk:=${@charms}/headers/${enk}.h
+>>>>>>> x/master
 clean_enk:
 	@printf "clean :: Enkoding\n"
 	if [ -f ${@enk}.c ]; then rm ${@enk}.c; fi
@@ -695,6 +883,7 @@ clean_enk:
 	@printf "\n"
 
 __enk__:
+<<<<<<< HEAD
 <<<<<<< HEAD
 	cat ${enk_h} > ${_enk}
 	cat ${enk_c} > ${c_enk}
@@ -737,21 +926,26 @@ ybin_zcharms: clean_ylink
 	link ${__ybin}/charms.c ${3c_temp}
 	cc ${3c_temp} -o ${@dir}/zcharms ${atherlib}
 	unlink ${3c_temp}
+=======
+	cat ${enk_h} > ${_enk}
+	cat ${enk_c} > ${c_enk}
+	cc -c -fpic ${c_enk} -o ${o_enk}
+>>>>>>> x/master
 #################################
-#		  libathernet.so		#
+#			  Fields			#
 #################################
-clean_libathernet: clean_netatt clean_fld clean_ter
+fld:=fld
+@fld:=${__src}/${fld}
+__fld:=${__src}/${fld}
+fld__:=${__fld}/${fld}
+fld_c:=${__fld}/c
+fld_h:=${__fld}/h
+o_fld:=${__bin}/fld.o
 
-clean_netatt:
-	@printf "clean ::: @net\n"
-	if [ -d ${netatt} ]; then rm -rf ${netatt}; fi
-	@printf "\n"
+c_fld:=${@charms}/${fld}.c
+_fld:=${@charms}/${fld}.h
 
-netatt:
-	if [ ! -d ${netatt} ]; then mkdir ${netatt}; fi
-	cp ${attnet}/*.h ${netatt}
-
-
+<<<<<<< HEAD
 libathernet: netatt fields ter_cm 
 #################################
 #			Ternary				#
@@ -811,6 +1005,8 @@ fld__:=${__dev}/${f3}
 fld_c:=${fld__}/c
 fld_h:=${fld__}/h
 >>>>>>> x/machine
+=======
+>>>>>>> x/master
 # field for output
 fields: clean_fld __fld__
 clean_fld:
@@ -819,6 +1015,7 @@ clean_fld:
 	if [ -f ${fld_o} ]; then rm ${fld_o}; fi
 	if [ -f ${attfld}.c ]; then rm ${attfld}.c; fi
 	@printf "\n"
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 __fld__:
@@ -863,27 +1060,58 @@ _check_compile:
 	${__cdir}/att ${__hostinfo}
 =======
 # 	if [ -f ${attfld}.h ]; then rm ${attfld}.h; fi
+=======
+>>>>>>> x/master
 
 __fld__:
-	cat ${fld_h} > ${attfld}.h
-	cat ${fld_c} > ${attfld}.c
-	cc -c -fpic $(addsuffix .c,${attfld}) -o ${fld_o}
-	cc $(addsuffix .c,${attfld}) -o ${@fld} 
+	cat ${fld_h} > ${_fld}
+	cat ${fld_c} > ${c_fld}
+	cc -c -fpic ${c_fld} -o ${o_fld}
+#################################
+#		  libathernet.so		#
+#################################
+
+mach_shell:
+	cc ${@charms}/fld.c -o ${shrd_fun}/mach ${atherlib}
+	
+
+libathernet: libather mach_shell
+	cp ${_snet}/* ${@charms}
+	cc ${@charms}/morles.c -o ${shrd_fun}/morles ${atherlib}
+	${shrd_fun}/mach shell
+
 #################################
 #		 check &-> build		#
 #################################
+ac:= cc -c -fpic 
+__mach__: clean_libather libather clean_libathernet libathernet
+	
+__av__: __av_cmds__ __av_net__ __av_next
 
+__hostinfo:=$(shell uname -s) $(shell uname -n) $(shell uname -m)
 
+ternnet_check:
+	@if [ ! -d ${__dev} ]; then printf "No development directory found\n"; fi
+	$_ _check_dirs
 
+_check_dirs:
+	if [ ! -d ${__charms} ]; then mkdir ${__charms}; fi 
+	if [ ! -d ${_@} ]; then mkdir ${_@}; fi 
+	if [ ! -d ${__network} ]; then mkdir ${__network}; fi
+	$_ _check_compile
 
-
-
-
+<<<<<<< HEAD
 >>>>>>> x/machine
+=======
+_check_compile:
+	cc ${__dev}/att.c -o att
+	${__cdir}/att ${__hostinfo}
+>>>>>>> x/master
 
 
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 # \
 mr. karam jaber.
@@ -935,6 +1163,8 @@ clean_bindir:
 
 
 
+=======
+>>>>>>> x/master
 # \
 mr. karam jaber.
 >>>>>>> x/machine

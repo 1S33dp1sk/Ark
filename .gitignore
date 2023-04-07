@@ -1,1 +1,8 @@
-
+*.gz
+*.pyc
+*.png
+*.svg
+node_modules
+.private
+sha
+hardhat
