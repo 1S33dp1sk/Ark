@@ -1,3 +1,4 @@
+<<<<<<< HEAD:include/src/katt/kurl.h
 /// what is my kurl ? \\\
 #define DEBUG
 
@@ -23,6 +24,73 @@ by mrkj
  */
 static ap __ap; // net point
 static lbb __lbb; // address book
+=======
+/// athernet \\\
+
+#ifndef __att__h
+    #define __anet_name "@pkgname@"
+    #define __anet_vers @pkgversion@
+    #include "probe.h"
+    #include "hbar.h"
+    #include "lbb.h"
+    static lbb __lbb; // address book
+    #include "lenk.h"
+    #include "points.h"
+    
+
+    #define __os_pre '.'
+    #define __os_prepend '/'
+    static const char _os_prepend[] = { '.' , '/' };
+
+    #define __att__len 4
+    #define att_id 64
+
+    #define __att_mac "@mac"
+    #define __att_loc "@loc"
+    #define __att_glo "@glo"
+    #define __att_blk "@blk"
+
+    char const *__get_arg_id( void const *__arg ) {
+        char const*_arg_id = __arg;
+        unsigned i = 0 , c = 0 , a_size = arr_size(_os_prepend);
+        for( ; i<a_size; i++ ){
+            if ( _arg_id[i] == _os_prepend[i] ) {
+                c+=1;
+            }
+        }
+        return c == 0 ? _arg_id : _arg_id+c;
+    }
+
+    int __check_att( void const*__arg ) {
+        char const *arg_id = __get_arg_id( __arg );
+        printf( "%s\n" , arg_id );  
+        uint32_t __cmp = super_fast_hash( arg_id , __att__len );
+        if ( arg_id[0] == att_id ) { //@
+            if ( __cmp == sfh(__att_mac) ) {
+                return kurl_i(kmem_alloc(1));
+            }
+            else if ( __cmp == sfh(__att_loc)) {
+                return kurl_ii(kmem_alloc(2));
+            }
+            else if ( __cmp == sfh(__att_glo)) {
+                return kurl_iii(kmem_alloc(3));
+            }
+            else if ( __cmp == sfh(__att_blk)) {
+                return kurl_iv(kmem_alloc(4));
+            }
+            else{
+                return kurl(kmem_alloc(0));
+            }
+        }
+    }
+
+#endif
+
+#ifndef __hat_name
+	#define __hat_name "hash_ather_token"
+#endif
+
+>>>>>>> include_in/main:att.h.in
 /**
  * The kurl
  * As a concept the kurl essentially provides a methodical way
@@ -65,22 +133,10 @@ typedef enum __r_types rtype;
  * if the current buffer @hat is 
  * is the actual content or the hash
  */
-struct _h_hat {
-    unsigned long __len;
-    void *__hat;
-};
-struct _st_addr {
-    unsigned char __level; // k-value 
-    char *__addr; // starting * address
-};
-struct __l {
-    struct _h_hat hat;
-    struct _st_addr addr; // address 
-    long size; // left size
-};
-#define __l_size struct __l
 
-typedef struct _h_hat kurl_t;
+
+
+
 
 
 

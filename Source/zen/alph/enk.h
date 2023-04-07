@@ -1,6 +1,11 @@
 /// lenk \\\
 left-to-right encoding num(k)
 
+<<<<<<< HEAD:Source/zen/alph/enk.h
+=======
+
+#ifndef lenk
+>>>>>>> include_in/main:lenk.h.in
 
 #ifndef __enk_name
     #define __enk_name "encoding_number_k"
@@ -483,4 +488,8 @@ left-to-right encoding num(k)
         *len = total; // return number actually sent here
         return n==-1?-1:0; // return -1 on failure, 0 on success
     }
+<<<<<<< HEAD:Source/zen/alph/enk.h
 #endif
+=======
+#endif
+>>>>>>> include_in/main:lenk.h.in
