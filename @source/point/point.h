@@ -15,6 +15,7 @@
  * points. 
  * 
  */
+<<<<<<< HEAD
 #ifndef point
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -39,6 +40,13 @@
 >>>>>>> in_vik/main
 =======
 	#define __ap_name "atherpoint"
+=======
+#if point
+	#ifndef __ap_name
+		#define __ap_name "atherpoint"
+	#endif
+
+>>>>>>> v9/athernet
 	#include "../probe.h"
 >>>>>>> anet_V9/athernet
 
