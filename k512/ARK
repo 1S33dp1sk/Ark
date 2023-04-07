@@ -8,6 +8,7 @@
 	#include "ark/__log.h"
 	#include "ark/__main.h"
 	#include "ark/__string.h"
+<<<<<<< HEAD
 	#include "headers/atp.h"
 	#include "headers/lbb.h"
 	#include "headers/ixr.h"
@@ -28,6 +29,22 @@ dPRG(
 
 
 #endif
+=======
+
+
+dPRG(
+	if(__ARGC__==1) {
+		printf("arc\n");
+	}else {
+		printf("%s\n", __FILE__);
+	}
+);
+
+#endif
+
+
+
+>>>>>>> 1250eda (renaming&restructure)
 
 
 

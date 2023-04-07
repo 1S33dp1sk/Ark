@@ -307,6 +307,33 @@
 		#define __H512__D 1
 	#endif
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	#ifndef __FL_BYTES
+        #define F_BYTE(__) __&0x0f
+        #define L_BYTE(__) __&0xf0
+	#define __FL_BYTES 1
+    #endif
+
+    #ifndef __CHAR_VARS
+        #define __CHAR_ZERO '0'
+        #define __CHAR_NULL '\0'
+        #define __CHAR_ALPH_A 'a'
+	#define __CHAR_VARS 1
+    #endif
+
+	#ifndef k512
+		#define k512(x) _Generic((x),\
+		uchar: uchar*,\
+		schar: schar*,\
+		slong: slong*,\
+		ulong: ulong*,\
+		ullong: ullong*,\
+		sllong: sllong*,\
+		default: NULL)
+=======
+>>>>>>> 1250eda (renaming&restructure)
 	/************************ h-constants ************************/
 
 	#ifndef __H512__C
@@ -373,6 +400,10 @@
 	            14, 22, 9, 6, 1
 	        };
 		#define __H512__C 1
+<<<<<<< HEAD
+=======
+>>>>>>> 8ad5c37 (renaming&restructure)
+>>>>>>> 1250eda (renaming&restructure)
 	#endif
 
 

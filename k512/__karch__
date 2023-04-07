@@ -13,8 +13,17 @@
 	#define PROCESS 1
 	#define DEBUG 1
 	#define LOG_ERR 1
+<<<<<<< HEAD
 	#include "_512.h"
 #endif
+=======
+<<<<<<< HEAD
+	#include "h512/_512.h"
+#endif
+=======
+	#include "_512.h"
+#endif
+>>>>>>> 1250eda (renaming&restructure)
 
 
 
@@ -75,3 +84,7 @@
 
 
 
+<<<<<<< HEAD
+=======
+>>>>>>> 8ad5c37 (renaming&restructure)
+>>>>>>> 1250eda (renaming&restructure)

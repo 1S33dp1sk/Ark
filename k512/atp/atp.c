@@ -1061,6 +1061,62 @@ void *__arc__(aip_arc *st) {
 		return 0;
 	};
 
+<<<<<<< HEAD:k512/atp/atp.c
+=======
+	lbb_entry __decode_arg(char const *argument) {
+		char const *point_buffer=argument;
+		// __info__
+		if(point_buffer==NULL) {
+			#ifdef PROCESS
+				printf("IXR\n");
+			#endif
+			return __lbb_info__;
+		}
+		// __@__
+		else if(*point_buffer==AT_DEFINED) {
+			// @
+			int __flag=0, i=0;
+			for(; i<__LBB_BASE_LEN; i++) {
+					if (point_buffer[i]==d_lbb[i]){
+						// @lbb
+						__flag+=1;
+					}				
+					if(point_buffer[i]==d_charms[i]) {
+						// @charms
+						__flag+=4;
+					};
+			};
+			if(__flag!=8) {
+				__flag=1;
+				for(; i<__D_CHARMS; i++) {
+					if(point_buffer[i]==d_charms[i]) {
+						__flag+=8;
+					};
+				};
+			};
+			#ifdef DEBUG
+				printf("flags : %d\n", __flag);
+			#endif
+			#ifdef PROCESS
+				printf("ATP\n");
+			#endif
+			switch(__flag) {
+			case 8:
+				return __lbb_variable__;
+			case 33:
+				return __lbb_charms__;
+			default:
+				return __lbb_atp__;
+			}
+		}
+		else {
+			#ifdef PROCESS
+				printf("LBB\n");
+			#endif
+			return __lbb_yeild__;
+		};
+	};
+>>>>>>> 1250eda (renaming&restructure):k512/atp/c
 
 	int __proto_at(char const *bufin) {
 

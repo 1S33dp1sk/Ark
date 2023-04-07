@@ -172,6 +172,7 @@
 
 	char const *__check_wss_key(char const *__msg);
 	char const *__get_hash(char const *__key);
+<<<<<<< HEAD:k512/atp/atp.h
 
 	void __ellrun(ulong __fd);
 	void *__arcell(void *c_arc);
@@ -202,6 +203,38 @@
 	void free_sok();
 	void free_args();
 
+=======
+
+	void __ellrun(ulong __fd);
+	void *__arcell(void *c_arc);
+	void *__arcstart(void *c_arc);
+	void *__sok_addr(struct sockaddr *sa);
+	void __ellcall(ulong __sockfd, char *reuse, ulong rsize);
+
+	int mor(c_req *request);
+	void *atp_step(arc_sizes arc_size);
+	int __point_run();
+	lbb_entry __decode_arg(char const *__);
+	atp_t __proto_at(char const *__);
+	int get_atp_type(char const *__call);
+	int decode_lbb_addr(char const *__addr);
+
+
+	void *__aip_sock__(aip_sock *sock);
+
+	atp_t stype_to_atype(sAF_t __stype);
+	void _socket_address_free(d_portal *__aip_portal);
+	char *__aip_sock_raw();
+	struct sockaddr *__aip_sock_addr_sa();
+	void sock_errs();
+	void __ellget(ulong __sockfd, char *reuse, ulong rsize);
+	void __ellsend(ulong __sockfd, char *reuse, ulong rsize);
+
+	void free_arc();
+	void free_sok();
+	void free_args();
+
+>>>>>>> 1250eda (renaming&restructure):k512/atp/h
 	int les(void *__args);
 
 	aip_st *h2act(ixr_h *h_request);

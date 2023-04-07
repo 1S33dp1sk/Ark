@@ -3,7 +3,12 @@ The indexer
 
 
 #ifndef __IXR__H
+<<<<<<< HEAD
 	#include "headers/ixr.h"
+=======
+	#include "../headers/ixr.h"
+	#include "constants.d"
+>>>>>>> 1250eda (renaming&restructure)
 #endif
 
 #ifndef __ixr_name 
@@ -243,7 +248,11 @@ The indexer
 			printf("reading :::\n");
 		#endif
 		uchar __head[29];ulong __hsz=sizeof(__head);memset(&__head, 0, __hsz);
+<<<<<<< HEAD
 		ulong __hfsize=fsze(d_atlbb);
+=======
+		ulong __hfsize=fsze(__lbb_indexfile);
+>>>>>>> 1250eda (renaming&restructure)
 		if(__hfsize<__hsz) {
 			__hsz=__hfsize;
 		};
@@ -305,15 +314,25 @@ The indexer
 
 	// obtain header properties { ENVIROMENT }
 	int __refresh_header() {
+<<<<<<< HEAD
 		___header.__size=fsze(d_atlbb);
 		___header.d_count=__cindex;
 		___header.checksum=fhash16(1, d_atlbb);
+=======
+		___header.__size=fsze(__lbb_indexfile);
+		___header.d_count=__cindex;
+		___header.checksum=fhash16(1, __lbb_indexfile);
+>>>>>>> 1250eda (renaming&restructure)
 		return 0;
 	}
 	// check if header exsits then retain 
 	// new header properties
 	int refresh_h() {
+<<<<<<< HEAD
 		if(!__stres(d_atlbb)) {
+=======
+		if(!__stres(__lbb_indexfile)) {
+>>>>>>> 1250eda (renaming&restructure)
 			#ifdef LOG_ERR
 				printf("indexfile does not exist\n");
 			#endif
@@ -339,7 +358,11 @@ The indexer
 			#endif
 			return -1;
 		};
+<<<<<<< HEAD
 		if(__stres(d_atlbb)) {
+=======
+		if(__stres(__lbb_indexfile)) {
+>>>>>>> 1250eda (renaming&restructure)
 			#ifdef LOG_ERR
 				printf("indexer already exists\n");
 			#endif
@@ -347,10 +370,17 @@ The indexer
 		};
 		__header__();
 		int ixr_fd=-1;
+<<<<<<< HEAD
 		ixr_fd=open(d_atlbb, __ixr_start_flags, __ixr_pmode);
 		if(ixr_fd==-1){
 			#ifdef LOG_ERR
 				printf("err : ixr :: failed to create index file ::: %s\n", d_atlbb);
+=======
+		ixr_fd=open(__lbb_indexfile, __ixr_start_flags, __ixr_pmode);
+		if(ixr_fd==-1){
+			#ifdef LOG_ERR
+				printf("indexer fd failed on create\n");
+>>>>>>> 1250eda (renaming&restructure)
 			#endif
 			return -1;
 		};
@@ -381,7 +411,11 @@ The indexer
 		};
 		if(__ixr_fd==0x228) {
 			int ixr_fd=-1;
+<<<<<<< HEAD
 			ixr_fd=open(d_atlbb, __ixr_access_flags, __ixr_pmode);
+=======
+			ixr_fd=open(__lbb_indexfile, __ixr_access_flags, __ixr_pmode);
+>>>>>>> 1250eda (renaming&restructure)
 			if(ixr_fd==-1){
 				#ifdef LOG_ERR
 					printf("Cannot open indexer file\n");
@@ -390,7 +424,11 @@ The indexer
 			};
 			__ixr_fd=(ulong)ixr_fd;
 			#ifdef DEBUG
+<<<<<<< HEAD
 				printf("Parsing index file :: %s\n", d_atlbb);
+=======
+				printf("Parsing index file :: %s\n", __lbb_indexfile);
+>>>>>>> 1250eda (renaming&restructure)
 				printf("file descriptor :open::%d\n",ixr_fd);
 			#endif
 		};
@@ -442,6 +480,16 @@ The indexer
     };
 
 
+<<<<<<< HEAD
+=======
+	void log_ixr_point(void *__) {
+		printf("point index 	: %lu\n",ist_index(__));
+		printf("point reference : %s\n", ist_ref(__));
+		printf("point name  	: %s\n", ist_name(__));
+	};
+
+
+>>>>>>> 1250eda (renaming&restructure)
 ixr_h *ixr_get(d_into *ist) {
 	ixr_h *header=__header__();
 	char const *var_name=(char const *)din_arg_n(ist, 1);
