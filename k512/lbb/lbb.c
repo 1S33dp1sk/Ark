@@ -584,7 +584,7 @@ void const *__lbb_function(char const *__name, void const *__intype, void const 
 
 	printf("lbb function ::%s(%s)=%s\n", __name, __lbb_call_generic(__intype), __lbb_resp_generic(__castout));
 
-	return __ne;
+	return ne;
 };
 
 void __free_ptr(void const *__) {
@@ -596,14 +596,14 @@ void const *__lbb_field(char const *__keyname, void const *__content) {
 	printf("lbb field <%s> ::: %p \n", __keyname, __content);
 
 	__free_ptr(__content);
-	return __ne;
+	return ne;
 };
 
 void const *__lbb_address(void *__) {
 
 	printf("lbb address @%p", __);
 
-	return __ne;
+	return ne;
 };
 
 void const *__lbb_type_args(lbb_at __atype) {
@@ -620,7 +620,7 @@ void const *__lbb_type_args(lbb_at __atype) {
 	default: return (void *(*)(__lbb_vp))&__lbb_address;
 
 	};
-	return __ne;
+	return ne;
 };
 
 int __init_field(char const *arg) {

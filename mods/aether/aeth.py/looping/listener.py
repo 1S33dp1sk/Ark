@@ -13,8 +13,7 @@ def active_filters( filter_list ):
 	~300s or 5 minutes before the WSS endpoint stops serving, and closes
 	idle connections.
 
-	Simply:  
-	X seconds = pollInterval + totalFilters/300  
+	{ a.k.a X seconds = pollInterval + totalFilters/300 }  
 '''
 async def event_loop( self ):
 	_chain_id = 0 

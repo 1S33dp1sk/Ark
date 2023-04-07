@@ -42,31 +42,28 @@
 		return __check_allowed(_addr)==0;
 	};
 
-	int check_command(d_into *into, char const **args) {
-		char const *__pntr=din_argument(into);
-		char const *__arghash=hashof(0, __pntr, 4);
-
-		if(strstr(__read_hash__,__arghash)!=NULL) {
+	int check_command(d_into *into) {
+		if(__read_hash__(din_argument(into))) {
 			printf("will read the hash\n");
 			return 0;   
 		}
-		else if (strstr(__write_hash__,__arghash)!= NULL){
+		else if (__write_hash__(din_argument(into))){
 			printf("will write a message to hash\n");
 			return 0;       
 		}
-		else if(strstr(__execute_hash__,__arghash)!=NULL) {
+		else if(__execute_hash__(din_argument(into))) {
 			printf("should execute the command \n");
 			return 0;
 		}
-		else if (strstr(__send_hash__,__arghash)!=NULL) {
+		else if (__send_hash__(din_argument(into))) {
 			printf("will send msg to hash\n");
 			return 0;
 		}
-		else if (strstr(__connect_hash__,__arghash)!=NULL) {
+		else if (__connect_hash__(din_argument(into))) {
 			printf("will try to connect to address\n");
 			return 0;
 		}
-		else if (strstr(__listen_hash__,__arghash)!=NULL) {
+		else if (__listen_hash__(din_argument(into))) {
 			printf("will try to listen on the address\n");
 			return 0;
 		}
@@ -1093,7 +1090,7 @@ void *__arc__(aip_arc *st) {
 			};
 			if(__flag!=8) {
 				__flag=1;
-				for(; i<dcharms_rwings; i++) {
+				for(; i<__D_CHARMS; i++) {
 					if(point_buffer[i]==d_charms[i]) {
 						__flag+=8;
 					};

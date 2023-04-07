@@ -1,0 +1,23 @@
+Alright, to do:
+
+we can use bash completion to reduce
+`ls -alh @charms/d.run/d-ark` to running @charms* 
+
+we would be able access **allowed** into `<sh(ls @charms/d.run/d-ark//*)>`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,8 +1,6 @@
 from generality.w3 import execViewCall,_bytesToHex
 from ..constants.contract_names import AETHER_HUB
 
-
-
 def ATxnReceive( self , chainId=0 , ATxnHash="" , **kwargs ):
 	_atxnHash = _bytesToHex( ATxnHash )
 	txnData = self.w3_atxnHash( chainId , _atxnHash )
@@ -77,7 +75,6 @@ def aetherBlock( self , chainId=0 ):
 	aetherer = _status['AETHERING_ADDRESS']
 	_txns = self.aether_txns()
 	_block = self.Block( _status['PREV_MASTERHASH'] , _status['AETHER_BLOCKNUM'] , [i['KchecK'] for i in _txns] , aetherer )['BLOCK']
-
 	if aetherer == self.w3_0xA( chainId ):
 		txn_hash = self.execBlock( chainId , self.encode_block( block=_block ) )
 		print( txn_hash )
