@@ -1,1 +1,0 @@
-# ATHERNET-HARDHAT tests
