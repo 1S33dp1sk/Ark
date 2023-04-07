@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 /// points \\\
 
 
@@ -31,15 +32,12 @@
 	
 =======
 /// d-pts \\\
+=======
+///Ark:alph\\\
+>>>>>>> 193a8cc (the Ark (Programming language))
 account points 
 
-@ __LBB__ -> IXR <darc> (
-	*p_into= __into__(&into),
-	*into_caller(into, argv[0])
-	*into_args(into, &argv[1]),
-	*into_type(into, get_atp_type(argv[1])),
-	&__protocol__(p_into),
-)
+@ __LBB__ -> IXR <ARK>
 
 @ => IXR.py(base, conf_gen, gw3, hash1, server, socks)
 @ => IXR.sh(call, change_author, commits, find_gits, multidir)	
