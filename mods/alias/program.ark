@@ -1,21 +1,10 @@
 /// d-prg \\\
 d-program
 
-<dPRG> (const uchar **xvar) {
-	*out(xvar)
-	*string(var_name, "Hello World!")
-	*in(var_name)
-	*number(somenum, 134217728)
-	*in(somenum)
-	*array(c_array, ["123", 123, var_name])
-	*in(c_array)
-	*in({direct})
-}
+@dPRG => (viles, string(var_name, "Hello World!"), in(var_name), number(somenum, 134217728), in(somenum), array(c_array, ["123", 123, var_name]), in(c_array),in({direct}))
 
-@dPRG => (
-	*IXR_OUT(0, ixr_h, indexer_address);
-	*LBB_GET(bytes_shared);
-);
+
+@dPRG => ( __LBB__ => (bytes_shared) -> IXR.out(0) );
 
 
 
