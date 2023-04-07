@@ -1,0 +1,64 @@
+#ifndef __ATP__H
+	#include "utypes.h"
+	#define ATP_SPEC_SIZE 8<<0x3
+	#define ATP_BUFFER_SIZE ATP_SPEC_SIZE<<0x3
+
+	#define NOFB_TYPE(x) _Generic((x), \
+										signed char: (char)x, \
+										unsigned char:(uchar)x, \
+										int:(int)x, \
+										unsigned int:(uns)x, \
+										long int:(ulong)x, \
+										unsigned long int:(ulong)x, \
+										long long int:(tlong)x, \
+										unsigned long long int:(tlong)x, \
+										default:NULL)
+
+	#define FMT_ASCII_SPEC(__) _Generic((__), \
+												int: "%d",\
+												uns: "%u",\
+												char: "%c",\
+												long: "%ld",\
+												ulong: "%lu",\
+												tlong: "%llu",\
+												char *: "%s",\
+												long long: "%lld",\
+												default: "%p")
+	#define FMT_HEXA_SPEC(__) _Generic((__), \
+												char: "c",\
+												unsigned char: "C",\
+												short: "h",\
+												int: "h",\
+												uns: "H",\
+												long: "l",\
+												ulong: "L",\
+												long long: "q",\
+												tlong: "Q",\
+												char *: "s",\
+												default: "_")
+
+	#define OUT_ASCII(fd,x) do { \
+		char __[ATP_SPEC_SIZE];\
+		memset(&__,0,sizeof __);\
+		snprintf(__,sizeof __, #x "%s\n", FMT_ASCII_SPEC(x));\
+		dprintf(fd,__,(x));\
+	}while(1!=1)
+	#define __ASCII(x) OUT_ASCII(0,x)
+
+	#define OUT_HEXA(fd,...) do { \
+		char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
+		memset(&_,0,sizeof _);memset(&__,0,sizeof __);\
+		snprintf(_,sizeof _,"%s",FMT_HEXA_SPEC(_));\
+	}while(1!=1)
+
+
+
+
+
+
+
+
+
+
+	#define __ATP__H 1
+#endif

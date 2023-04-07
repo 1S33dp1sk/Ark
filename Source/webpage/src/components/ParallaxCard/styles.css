@@ -1,0 +1,137 @@
+.main {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.wrap {
+  margin: 25px 50px;
+  transform-style: preserve-3d;
+  transform: perspective(100rem);
+  cursor: pointer;
+}
+
+.container {
+  --rX: 0;
+  --rY: 0;
+  --bX: 50%;
+  --bY: 80%;
+  
+  min-width: 10vw;
+
+  width: 250px;
+  height: 230px;
+  background: var(--lBlack);
+  opacity: 0.8;
+  border: 1px solid var(--lBlack);
+  position: relative;
+  transform: rotateX(calc(var(--rX) * 0.85deg)) rotateY(calc(var(--rY) * 0.75deg));
+  border-radius: 10px;
+  box-shadow: 0 0 3rem .5rem hsla(0, 0%, 0%, .2);
+  transition: transform .6s 1s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 3em;
+}
+
+.wrap:hover .parallaxContain h3 span {
+  color: var(--purple);
+}
+
+.wrap:hover .parallaxContain h3 {
+  color: var(--white);
+}
+
+.wrap:hover .container {
+  opacity: 1;
+}
+
+.parallaxContain div h5 {
+  visibility: hidden;
+}
+
+.wrap:hover .parallaxContain h5 {
+  visibility: visible;
+  color: var(--white);
+}
+
+.parallaxContain {
+  text-align: center;
+}
+
+.parallaxContain h1 {
+  letter-spacing: 2px;
+  color: var(--white);
+  text-transform: capitalize;
+  font-size: 24px;
+}
+.parallaxContain h3 {
+  letter-spacing: 1px;
+  color: var(--tlWhite);
+  text-align: center;
+  font-size: 12px;
+
+}
+.container::before,
+.container::after {
+  content: "";
+
+  width: 2rem;
+  height: 2rem;
+
+  position: absolute;
+  z-index: 2;
+
+  opacity: .3;
+  transition: .3s;
+}
+
+.container::before {
+  top: 2rem;
+  right: 2rem;
+
+  border-bottom-width: 0;
+  border-left-width: 0;
+}
+
+.container::after {
+  bottom: 2rem;
+  left: 2rem;
+
+  border-top-width: 0;
+  border-right-width: 0;
+}
+
+.container--active {
+  transition: none;
+}
+
+.container img {
+	width: 60px;
+	height: 60px;
+  filter: drop-shadow(0px 0px 30px rgba(221, 217, 243, 0.5));
+}
+
+.container h4 {
+	font-size: 0.8em;
+}
+
+
+.wrap:hover .container::before,
+.wrap:hover .container::after {
+  width: calc(100% - 4rem);
+  height: calc(100% - 4rem);
+}
+
+@media screen and (max-width:992px){
+  .main{
+    margin: 0;
+  }
+  .parallaxContain h3 {
+    font-size: 0.8em;
+  }
+}

@@ -1,0 +1,383 @@
+@import './Dao/styles.css';
+@import './Bonds/styles.css';
+@import './Tokens/styles.css';
+@import './Factory/styles.css';
+@import './Welcome/styles.css';
+/* ------------------------------------ */
+
+/* start welcome animation */
+.overlay {
+    height: 0px;
+    padding: 0px;
+    border: 130em solid var(--black);
+    position: fixed;
+    left: 50%;
+    top: 100%;
+    display: block;
+    box-sizing: initial;
+    overflow: hidden;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    animation: puff 0.5s 1.8s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards, borderRadius 0.2s 2.3s linear forwards, hide 0.1s 2.4s ease forwards;
+}
+#ball {
+    background: linear-gradient(180deg, #6D7889 0%, #2D3DD2 100%);
+    width: 56px;
+    height: 56px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    overflow: hidden;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 2;
+    animation: init 0.5s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards, moveDown 1s 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards, moveUp 1s 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, hide 0.1s 1.8s ease forwards;
+}
+.dApp {
+    min-height: 100vh;
+    height: 900px;
+    display: flex;
+    justify-content: space-between;
+    color: var(--white);
+    background: var(--black);
+    padding: 4em 2em;
+}
+.dApp nav {
+    width: 350px;
+    height: 100%;
+    letter-spacing: 0.1em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.dApp nav a {
+    display: block;
+    text-transform: uppercase;
+}
+.dApp nav ul li:first-child span {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    -moz-border-radius: 7.5px;
+    -webkit-border-radius: 7.5px;
+    border-radius: 7.5px;
+    margin-left: 1em;
+    filter: saturate(100);
+}
+.dApp nav ul {
+    padding: 1em;
+}
+.dApp nav ul li {
+    margin: 2em 0;
+}
+.dApp nav ul li a {
+    font-size: 20px;
+    color: var(--purple);
+}
+.dApp nav li:hover {
+    cursor: pointer;
+    color: var(--white);
+}
+.dApp nav ul ol {
+    padding-left: 2em;
+}
+.dApp nav ul ol li a {
+    text-transform: uppercase;
+    font-size: 16px;
+    color: var(--white);
+    font-weight: bold;
+    width: 200px;
+    height: 40px;
+    border: 1px solid #4205F0;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    text-align: center;
+    line-height: 40px;
+}
+/* ------------------- */
+.d-body {
+    width: 90%;
+    height: 100%;
+    border-radius: 25px;
+    border: 0.1em var(--purple) solid;
+    overflow-y: scroll;
+    overscroll-behavior: contain;
+    box-shadow: 0px 0px 40px rgba(66, 5, 240, 0.8);
+    background: linear-gradient(180deg, #6D7889 0%, #2D3DD2 100%);
+}
+.d-body a {
+    display: block;
+    padding: 1em;
+}
+.d-body #title {
+    text-align: center;
+    font-size: 35px;
+    padding: 0.8em 0 0.4em;
+    transform: translateY(-100px);
+    animation: title 1s ease forwards;
+}
+.d-body #desc {
+    text-align: justify;
+    font-size: 16px;
+    margin: 1em 0 2em 0;
+    line-height: 30px;
+    white-space: pre-wrap;
+    font-weight: bold;
+    transform: translateX(-100vw);
+    animation: desc 1s ease forwards;
+    animation-delay: 0.5s;
+}
+.d-body #d-search {
+    width: 95%;
+    height: 50px;
+    padding: 0 1vw;
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    box-sizing: content-box;
+    background: #ffffff none repeat scroll 0px center;
+    font-size: inherit;
+    color: var(--purple);
+    margin-bottom: 2em;
+}
+.dapp-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.dapp-content {
+    height: 85%;
+    width: 80%;
+    margin: 0 auto;
+    padding: 1em;
+}
+.action-btn {
+    width: 80%;
+    margin: 0 auto;
+    isolation: isolate;
+    padding: 1em 0;
+}
+.action-btn button {
+    width: 130px;
+    height: 40px;
+    font-size: 16px;
+    float: right;
+    background: transparent;
+    border-radius: 10px;
+    opacity: 0;
+    animation: act_but 1s ease forwards;
+    animation-delay: 1.5s;
+}
+.raise {
+    display: none;
+    position: relative;
+    padding: 1em 0;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    margin: 1em 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px;
+}
+.raise img {
+    transform: rotateZ(-90deg);
+}
+.bonds,
+.bond,
+.dao,
+.proposal,
+.deploy,
+.factory,
+.chain-tf {
+    animation: cont 1.5s ease forwards;
+    animation-delay: 1s;
+    opacity: 0;
+}
+
+/* ANIMATIONS */
+@keyframes title {
+    from {
+        transform: translateY(-100px);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+@keyframes desc {
+    from {
+        transform: translateX(-100vw);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+@keyframes cont {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+@keyframes act_but {
+    0% {
+        transform: scale(1, 1) translateY(0);
+    }
+
+    10% {
+        transform: scale(1.1, .9) translateY(0);
+    }
+
+    30% {
+        transform: scale(.9, 1.1) translateY(-50px);
+        opacity: 1;
+
+    }
+
+    50% {
+        transform: scale(1, 1) translateY(0);
+        opacity: 1;
+
+    }
+
+    100% {
+        transform: scale(1, 1) translateY(0);
+        opacity: 1;
+    }
+}
+@keyframes init {
+    0% {
+        width: 0px;
+        height: 0px;
+    }
+
+    100% {
+        width: 56px;
+        height: 56px;
+        margin-top: 0px;
+        opacity: 1;
+    }
+}
+@keyframes puff {
+    0% {
+        top: 100%;
+        height: 0px;
+        padding: 0px;
+    }
+
+    100% {
+        top: 50%;
+        height: 100%;
+        padding: 0px 100%;
+    }
+}
+@keyframes borderRadius {
+    0% {
+        border-radius: 50%;
+    }
+
+    100% {
+        border-radius: 0px;
+    }
+}
+@keyframes moveDown {
+    0% {
+        top: 50%;
+    }
+
+    50% {
+        top: 40%;
+    }
+
+    100% {
+        top: 100%;
+    }
+}
+@keyframes moveUp {
+    0% {
+        background: var(--purple);
+        top: 100%;
+    }
+
+    50% {
+        top: 40%;
+    }
+
+    100% {
+        top: 50%;
+        background: var(--purple);
+    }
+}
+@keyframes moveIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes hide {
+    0% {
+        visibility: visible;
+    }
+
+    100% {
+        visibility: hidden;
+    }
+}
+/* MOBILE */
+@media screen and (max-width:992px) {
+    .dApp {
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+    }
+    .dApp nav {
+        width: 90%;
+        align-items: center;
+    }
+    .d-body #title {
+        white-space: pre-wrap;
+        line-height: 60px;
+        padding: 0;
+    }
+    .d-body #d-search {
+        width: 95%;
+        padding: 0 1em;
+    }
+    .d-body {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 0px;
+    }
+    .raise {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dapp-content {
+        height: 100%;
+        width: 95%;
+    }
+    .action-btn {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 2em;
+    }
+    .action-btn button {
+        flex-grow: 1;
+        float: none;
+    }
+}
