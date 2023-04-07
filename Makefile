@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> x/master
 # 
@@ -42,6 +43,9 @@ charms:
 <<<<<<< HEAD
 
 <<<<<<< HEAD
+=======
+
+>>>>>>> temp/source
 #ather processor := _u_charm 
 a:=att#address
 b:=bal#balance
@@ -70,6 +74,7 @@ x:=xlv#xolve
 y:=ybs#ybase
 z:=zai#zai
 
+<<<<<<< HEAD
 =======
 misc:
 	cc @source/misc.c -o shared/programs/misc ./shared/libather.so
@@ -1168,3 +1173,5 @@ clean_bindir:
 # \
 mr. karam jaber.
 >>>>>>> x/machine
+=======
+>>>>>>> temp/source
