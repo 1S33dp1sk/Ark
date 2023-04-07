@@ -3,14 +3,14 @@
 #ifndef __att__h
     #define __anet_name "@pkgname@"
     #define __anet_vers @pkgversion@
-    #include "aprobe.h"
-    #include "hbar/hbar.h"
-    #include "lbb/lbb.h"
-    #include "nai/nai.h"
-    #include "point/point.h"
-    #include "lenk/lenk.h"
-    #include "kurl/kurl.h"
+    #include "probe.h"
+    #include "hbar.h"
+    #include "lbb.h"
+    static lbb __lbb; // address book
+    #include "lenk.h"
+    #include "points.h"
     
+
     #define __os_pre '.'
     #define __os_prepend '/'
     static const char _os_prepend[] = { '.' , '/' };
@@ -59,119 +59,10 @@
 
 #endif
 
-
-#ifndef klevels
-	#define klevels 7
-	enum __k {
-		__ki = 1,
-		__kii = 2,
-		__kiii = 4,
-		__kiv = 8,
-		__kv = 64,
-		__kvi = 4096,
-		__kvii = 16384,
-	};
-	#define kl_array unsigned int[] = { \
-		__ki,	\
-		__kii,	\
-		__kiii,	\
-		__kiv,	\
-		__kv,	\
-		__kvi,	\
-		__kvii	\
-	}
-	unsigned __kswitch( unsigned __ ) {
-		switch( __ ) { 
-			case 0: 
-				return __ki; 
-			case 1: 
-				return __kii; 
-			case 2: 
-				return __kiii; 
-			case 3: 
-				return __kiv;
-			case 4: 
-				return __kv;
-			case 5: 
-				return __kvi;
-			case 6: 
-				return __kvii; 
-			default:
-				return 16;
-		}
-	}
-	#define charm_len(l) (__kswitch(l)*__kswitch(l))
-	#define kmem_alloc(l) malloc(charm_len(l))
-#endif
-
 #ifndef __hat_name
 	#define __hat_name "hash_ather_token"
 #endif
 
-#ifndef kurl_star
-	#if kurl_i
-		#include "k__/_i.h"
-	#elif kurl_ii
-		#include "k__/_ii.h"
-	#elif kurl_iii
-		#include "k__/_iii.h"
-	#elif kurl_iv
-		#include "k__/_iv.h"
-	#endif
-#endif
-
-#ifndef ikp
-	// can define kurl as { px , px1 , ... }
-	// apply kurl = for p in kurl : ()
-	#define p0 little_black_book()
-	#define att book_reference()
-	#define hat book_key()
-	#define pat book_point()
-	#define p1 atherpoint( pat )
-#endif
-
-int kurl( void *__ ) {
-    if ( sizeof __ == 1 ) {
-        #define ik__len 8
-    }
-    #include "__k.h"
-    ulong lbb_inn = p0; // 8-long-lbb-inn
-    printf( "lbb inodenum :: %ld\n" , lbb_inn );
-    char *lbb_ref = att;
-    printf( "lbb current ref :: %s\n" , lbb_ref );
-    char *lbb_key = hat;
-    printf( "lbb current key :: %s\n" , lbb_key );
-    char *lbb_des = pat;
-    printf( "lbb current point :: %s\n" , lbb_des );
-    int ap_lbb = p1;
-    printf( "ather point reader :: %d\n" , ap_lbb );
-}
-
-/// what is my kurl ? \\\
-#define DEBUG
-
-#ifndef kurl
-/// what is my kurl ? \\\
-by mrkj
-
-/**
- */
-#include "hbar/hbar.h"
-/**
- * the k-value should be identified by a single character
- * in the following order ( k , @ , # , 0 , 1 , 2 , 3 )
- * where k indicates *num > 3
- */
-#include "point/point.h"
-#include "lbb/lbb.h"
-
-
-/**
- * atherpoints have kurls or are in a kurling
- * any particular kurl can be described using ::
- */
-static ap __ap; // net point
-static lbb __lbb; // address book
 /**
  * The kurl
  * As a concept the kurl essentially provides a methodical way
@@ -214,22 +105,10 @@ typedef enum __r_types rtype;
  * if the current buffer @hat is 
  * is the actual content or the hash
  */
-struct _h_hat {
-    unsigned long __len;
-    void *__hat;
-};
-struct _st_addr {
-    unsigned char __level; // k-value 
-    char *__addr; // starting * address
-};
-struct __l {
-    struct _h_hat hat;
-    struct _st_addr addr; // address 
-    long size; // left size
-};
-#define __l_size struct __l
 
-typedef struct _h_hat kurl_t;
+
+
+
 
 
 
