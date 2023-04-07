@@ -1,6 +1,0 @@
-PATH:=Aether
-CONNC:=
-CALL:=
-ENTRY {
-	#echo Hello
-}

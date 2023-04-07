@@ -1,8 +1,0 @@
-PATH:=Aether
-CONNC:=evm
-CALL:=aether-evm
-ENTRY { 
-	#echo EVM
-	#move python3 cool
-	##somecompiler_
-}
