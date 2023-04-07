@@ -1,0 +1,6 @@
+node_modules
+client/Aether
+client/aether
+build/
+typechain/
+.not_git/

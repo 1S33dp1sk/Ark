@@ -1,0 +1,5 @@
+usr/bin/* usr/bin
+etc/aether/configs/* etc/aether/configs
+etc/aether/contracts/* etc/aether/contracts
+etc/aether/logs/rotation /etc/logrotate.d/aether
+var/log/aether/* var/log/aether

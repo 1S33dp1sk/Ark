@@ -1,0 +1,127 @@
+/// ixr \\\
+The indexer
+#ifndef __IXR__H
+	#include "utypes.h"
+	#include "standard.h"
+	
+	static ulong __cindex=0;
+	static ulong __ixr_fd=0x228;
+	static ulong ___offset=0;
+	static ixr_h ___header;
+
+	static const char *__head_fmt="_Q_Q_Q_\n";
+	static const char *__value_fmt="_Q:s:s_\n";
+	static const char *__file_fmt="_Q:s:s#Q_\n";
+	static const char *__dprg_fmt="_Q:s>s<s$s_\n";
+	static const char *__fld_fmt="_Q:s@s=s+h_\n";
+
+	#define ixrh_size(x) (ulong)(x->__size)
+	#define ixrh_dcount(x) (ulong)(x->d_count)
+	#define ixrh_checksum(x) (ulong)(x->checksum)
+	#define ixrh_head(x) ((uchar *)x->head)
+
+	#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
+	#define sz8(x) ((ulong)__8sz(x))
+	#define fsze(x) ((ulong)__fsize(x))
+	#define iosze(x) ((ulong)__iosize(x))
+	#define dmde(x) ((uns)__dmode(x))
+	#define inn(x) (ulong)__inodenum(x)
+	#define status(x) __statusof(x)
+	#define stres(x) __stres(x)
+    #define len_ustrze(x) (((ulong)x)*(sizeof(uchar)))
+	#define ixr_h_size(x) (x.__size)
+	
+	#define __REF__(...) ref_point(__VA_ARGS__, #__VA_ARGS__, IXR_FMT(__VA_ARGS__))
+	#define index_reference(...) __REF__(__VA_ARGS__)
+    #define KV_FORMAT(...) __generic_fmt(__key_value, ##__VA_ARGS__) 
+	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
+	#define INDEX_END(x) return __set_next(x);
+
+	#define __RUN__(x) __dPRG __INDEXER__(x)
+
+	#define __dPRG int main(int argc, char const*argv[]) 
+	#define __ARGC__ argc
+	#define __ARGV__ argv
+	#define __INDEXER__(...) {\
+		if(!checkef_file){INDEXER(NULL);}\
+		__ARGC__;\
+		__ARGV__;\
+		__VA_ARGS__;\
+		return 0;\
+	}
+    #define dPRG(...) __dPRG __INDEXER__(__VA_ARGS__)
+
+	#define uc_size(x) ((ulong)(x*sizeof(uchar)))
+	#define ULONG_MAX_DIGITS 21
+	#define ULONG_SIZE ((ulong)(sizeof(ulong)))
+	#define LONG_SIZE ULONG_SIZE
+
+    #define IXR_FMT(__) _Generic((__), \
+		char 		: "c",\
+		char*		: "s",\
+		char const*	: "s",\
+		int*		: "h",\
+		uns*		: "H",\
+		long*		: "l",\
+		ulong*		: "L",\
+		tlong*		: "Q",\
+		default 	: "_")
+
+    #define IXR_ARG(__) _Generic((__), \
+		char*					: (char*)x,\
+		char const *			: (char const *)x,\
+		unsigned char*			: (uchar*)x,\
+		int*					: (int*)x,\
+		unsigned int*			: (uns*)x,\
+		long int*				: (ulong*)x,\
+		unsigned long int*		: (ulong*)x,\
+		long long int*			: (tlong*)x, \
+		unsigned long long int*	: (tlong*)x, \
+		default					: NULL)
+
+	ixr_h *indexer_header();
+	dpoint_t ref_point(void const *__key, char const *__value, char const *__format);
+	ulong __fsize(char const *__fpath);
+	ulong __iosize(char const *__fpath);
+	ulong __inodenum(char const *__fpath);
+	ulong __file_r(char const *__fpath);
+	ulong __file_w(char const *__fpath);
+	ulong __file_x(char const *__fpath);
+	ulong str_rwings(char const *__);
+	ulong __rwings(void const*__);
+	ulong fhash16(uns level, char const*filepath);
+	ulong __index_increment();
+	ulong __set_next(char const *__head);
+	ulong __idx_start();int __stres(char const *__cpath);
+    ulong __ixr_argument(char const *__format, void const *__);
+	uns __dmode(char const *__fpath);
+    char const *__generic_fmt(fmt_t __format, ...);
+	char const *fhashof(unsigned level, char const *file_path);
+	char const *__getcaller();
+	char const *__irv(char const *__key, char const *__val);
+	char const *__xreference(char const *__);
+	char const *hashof(unsigned level, void const *to_hash, ulong hashlen);
+    char const *ixr_format(ixr_t index_type);
+	void *__header__();
+	void log_fmt_t(fmt_t __format);
+	void log_dpoint(dpoint_t *dst);
+	void log_ixrh(ixr_h *ixrh);
+    void unpack(uchar *buf,char const *fmt,...);
+   	unsigned int pack(uchar *bufin, char const *buffmt, ...);
+	int __rd_ixrh();
+	int __wt_ixrh();
+	int __indexer__(char const *__id);
+	int __exact_match(char const *_a, char const *_b);
+	int __index_r(char const *idxnr);
+	int __index_irn(char const *key, char const *val);
+	int __index_ixn(char const *key);
+	int __index_caller();
+	int __index_point(dpoint_t *dst);
+	int refresh_h();
+	int indexer_start();
+	int refer_index(void *__ptr, void *__ref, char *__prname);
+	ulong str_cdelims(char const *__args, char const *c);
+
+
+	#define __IXR__H 1
+#endif

@@ -1,0 +1,27 @@
+$( document ).ready(function() {
+	$('.icon_menu a').click(function() {
+		var checkElement = $(this).next();
+		if((checkElement.is('ul')) && (checkElement.is(':visible'))) {
+			checkElement.slideUp('normal');
+			$('.icon_menu > a > img.btn_mmenu').attr("src", "/images/btn_nav.png");
+			$('.icon_menu > a > img.btn_mmenu2').attr("src", "/images/icon_globe.jpg");
+		}
+		if((checkElement.is('ul')) && (!checkElement.is(':visible'))) {
+			$('#cssmenu ul ul:visible').slideUp('normal');
+			checkElement.slideDown('normal');
+			$('.icon_menu > a > img.btn_mmenu').attr("src", "/images/btn_nav_close.png");
+			$('.icon_menu > a > img.btn_mmenu2').attr("src", "/images/icon_globe.jpg");
+		}
+		if($(this).closest('li').find('ul').children().length == 0) {
+			return true;
+		} else {
+			return false;	
+		}		
+	});
+
+});
+$(function(){
+	$(".icon_menu a").click(function(){
+		$(".box_expand").toggle('slow');
+	});
+});	

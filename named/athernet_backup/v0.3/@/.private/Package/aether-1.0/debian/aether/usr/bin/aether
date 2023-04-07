@@ -1,0 +1,505 @@
+#!/bin/bash
+
+
+#constants
+#
+# define the base dir vars
+AETHER_BASE=/etc/aether
+DEFAULT_ENV_PATH=${AETHER_BASE}/env.conf
+DEFAULT_RPC_PATH=${AETHER_BASE}/rpc.conf
+DEFAULT_ABIS_PATH=${AETHER_BASE}/ABIS.json
+
+# define default package params
+LOGS_DIR=/var/log/aether
+LOGS_PERFORMANCE=${LOGS_DIR}/performance.log
+LOGS_TRANSACTIONS=${LOGS_DIR}/transactions.log
+LOGS_STATUS=${LOGS_DIR}/status.log
+
+AETHER_HOME="/home/$(whoami)/.aether"
+
+# define commands installed 
+CMD_READER='aether-reader'
+CMD_JSONIFY='aether-jsonifier'
+CMD_WRAPPER='aether-wrapper'
+CMD_CONFIGURATOR='aether-configurator'
+CMD_AETHER='aether'
+
+
+# define colors for a cool ux
+NC='\033[0m'
+PURPLE='\033[1;94m'
+PINK='\033[1;35m'
+LIGHT_BLUE='\033[1;36m'
+WHITE='\033[1;37m'
+DARK_GREY='\033[0;37m'
+GREEN='\033[1;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+
+
+# define the current aether action
+MAIN_FLAG=$1
+PARTIAL_FLAG=$2
+
+# shortcut for $(shift 1) before iterating using `getopts`
+shift 
+
+# check all executables and dirs
+CHECK(){
+    if [ -f "/usr/bin/${CMD_READER}" -a -f "/usr/bin/${CMD_JSONIFY}" -a -f "/usr/bin/${CMD_WRAPPER}" -a -f "/usr/bin/${CMD_AETHER}" -a -f "/usr/bin/${CMD_CONFIGURATOR}" ]; then
+        printf "${PURPLE}Aether${NC} :: ${GREEN}SUCCESS${NC} -> ${WHITE}Executables Check${NC}.\n"    
+    else
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}No excutables files found${NC}.\n"
+        exit
+    fi
+    if [ -d "${AETHER_BASE}" -a -d "${LOGS_DIR}" -a -d "${AETHER_HOME}" ]; then
+        printf "${PURPLE}Aether${NC} :: ${GREEN}SUCCESS${NC} -> ${WHITE}Configurations Check${NC}.\n"    
+    else 
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}No configuration directories found${NC}.\n"
+        exit
+    fi
+}
+
+# initialize aether
+INIT() {
+    if [ ! -d ${AETHER_HOME} ]; then
+        mkdir ${AETHER_HOME}
+        NODE_NAME="DEFAULT"
+        BASE_PATH=${AETHER_HOME}/DEFAULT.node
+        NODE_CONFIG
+    else
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}Aether already initialized${NC}.\n"
+        exit
+    fi        
+}
+
+# remove the node and it's 
+# directory in ${AETHER_HOME}
+PURGE_NODE() {
+    if [ -z ${NODE_NAME} ]; then
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}Node name not specified${NC}.\n"
+        exit
+    else
+        rm -rf ${AETHER_HOME}/${NODE_NAME}.node
+    fi
+}
+
+# create the basis needed for 
+# the node 
+NODE_BASIS(){
+    if [ ! -f "${BASE_PATH}/config.json" ]; then
+
+        if [ ! -f "${BASE_PATH}/env.json" ]; then
+
+            if [[ -z "${ENV_PATH}" ]] || [[ ! -f "${ENV_PATH}" ]]; then
+                printf "${PURPLE}Aether${NC} :: ${YELLOW}WARNING${NC} -> ${WHITE}Default Enviroment is used${NC}.\n"
+                ENV_PATH=${DEFAULT_ENV_PATH}
+            fi
+            cp ${ENV_PATH} .
+            cmd="${CMD_JSONIFY} env.conf"
+            eval "${cmd}" &>/dev/null & disown;
+            mv "env.conf.json" ${BASE_PATH}/conf.json
+            rm env.conf
+        fi
+        if [ ! -f "${BASE_PATH}/rpc.json" ]; then
+
+            if [[ -z "${RPC_PATH}" ]] || [[ ! -f "${RPC_PATH}" ]]; then
+                printf "${PURPLE}Aether${NC} :: ${YELLOW}WARNING${NC} -> ${WHITE}Default RPC is used${NC}.\n"
+                RPC_PATH=${DEFAULT_RPC_PATH}
+            fi
+            cp ${RPC_PATH} .
+            cmd="${CMD_JSONIFY} rpc.conf"
+            eval "${cmd}" &>/dev/null & disown;
+            mv "rpc.conf.json" ${BASE_PATH}/rpc.json
+            rm rpc.conf
+        fi
+        if [ ! -f "${BASE_PATH}/abis.json" ]; then
+            if [[ -z "${ABIS_PATH}" ]] || [[ ! -f "${ABIS_PATH}" ]]; then
+                printf "${PURPLE}Aether${NC} :: ${YELLOW}WARNING${NC} -> ${WHITE}Default ABIS are used${NC}.\n"
+                ABIS_PATH=${DEFAULT_ABIS_PATH}
+            fi
+            cp ${ABIS_PATH} .
+        fi
+    fi
+    cp -r ${BASE_PATH}/* ${AETHER_HOME}/${NODE_NAME}.node
+    rm conf.json && rm rpc.json && rm ABIS.json
+    mv ${AETHER_HOME}/${NODE_NAME}.node/${NODE_NAME}.py ${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_
+    echo '#!/usr/bin/aether-wrapper' | cat - ${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_ > temp && mv temp ${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_
+    chmod u+x ${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_
+}
+
+# create configurations files
+# for ${NODE_NAME}
+NODE_CONFIG(){
+    if [ -z "${NODE_NAME}" ]; then
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}No node name specified${NC}.\n"
+        exit
+    elif [ -d "${AETHER_HOME}/${NODE_NAME}.node" ]; then
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}Node exists${NC}.\n"
+        exit
+    else
+        mkdir -p ${AETHER_HOME}/${NODE_NAME}.node
+        NODE_BASIS
+        cmd="${CMD_WRAPPER} ${CMD_CONFIGURATOR} ${AETHER_HOME}/${NODE_NAME}.node"
+        eval "${cmd}" &>/dev/null & disown;
+    fi
+}
+
+# create a new node with conf files
+# using ${NODE_NAME}
+CREATE_NODE() {
+    if [ -z ${BASE_PATH} ]; then
+        BASE_PATH="$(pwd)"
+    fi
+    if [ -z "${NODE_NAME}" ]; then
+        count=0
+        for PY_FILE in $(find *.py); do 
+            count+=1
+        done
+        if [ "${count}" != "01" ]; then
+            printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}Please specify entry file name${NC}.\n"
+            exit
+        fi
+        NODE_NAME=$(basename ${PY_FILE%.*})
+        printf "${PURPLE}Aether${NC} :: ${GREEN}SUCCESS${NC} -> ${WHITE}Creating a new node : ${LIGHT_BLUE}${NODE_NAME}${NC}.\n"
+    fi
+    NODE_CONFIG
+}
+
+# get status of ${NODE_NAME}
+STATUS(){
+    if [[ -z "${NODE_NAME}" ]] || [[ ! -d "${AETHER_HOME}/${NODE_NAME}.node/" ]]; then
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}Specify a valid node name${NC}.\n"
+        exit
+    fi
+    NODE_STATUS=".OFFLINE"
+    PVAR=$(pgrep -f _${NODE_NAME}_)
+    if [ -z "$PVAR" ]; then
+        printf ".OFFLINE" > ${AETHER_HOME}/${NODE_NAME}.node/.status
+        printf "${PURPLE}Aether${NC} :: ${LIGHT_BLUE}${NODE_NAME}${NC} : ${WHITE}OFFLINE${NC}.\n"
+    else
+        printf ".ONLINE" > ${AETHER_HOME}/${NODE_NAME}.node/.status
+        printf "${PURPLE}Aether${NC} :: ${LIGHT_BLUE}${NODE_NAME}${NC} : ${GREEN}ONLINE${NC}.\n"
+    fi
+}
+
+# list all available nodes
+LIST_NODES() {
+    dirs=(${AETHER_HOME}/*/)
+    for s in "${dirs[@]}"
+    do
+        NODE_NAME=$(basename "$s" .node)
+        if [ "$NODE_NAME" != "DEFAULT" ]; then
+            STATUS
+        else
+            continue
+        fi
+    done
+}
+
+# show the last 5 lines of all log files
+SHOW_LOG_TAIL(){
+    if [ -z "${LOG_LENGTH}" ]; then
+        LOG_LENGTH=5
+    fi
+
+    P_LOGS=$(tail -${LOG_LENGTH} "${LOGS_PERFORMANCE}")
+    T_LOGS=$(tail -${LOG_LENGTH} "${LOGS_TRANSACTIONS}")
+    L_LOGS=$(tail -${LOG_LENGTH} "${LOGS_STATUS}")
+
+    printf "${PURPLE}Aether${NC} :: ${LIGHT_BLUE}Performance${NC} -> \n${P_LOGS}\n\n\n"
+    printf "${PURPLE}Aether${NC} :: ${LIGHT_BLUE}Transactions${NC} -> \n${T_LOGS}\n\n\n"
+    printf "${PURPLE}Aether${NC} :: ${LIGHT_BLUE}Status${NC} -> \n${L_LOGS}\n\n\n"
+}
+
+# show content of the log file
+SHOW_LOG() {
+    if [ -z ${LOG_TYPE} ]; then
+        printf "${PURPLE}Aether${NC} :: ${YELLOW}WARNING${NC} -> ${WHITE}Log type not specified${NC}.\n"
+        SHOW_LOG_TAIL
+    fi
+    case $LOG_TYPE in
+        p|performance|PERFORMANCE)
+            cat "${LOGS_PERFORMANCE}"
+            ;;
+        t|txn|transaction|transactions|TRANSACTION|TRANSACTIONS)
+            cat "${LOGS_TRANSACTIONS}"
+            ;;
+        o|online)
+            cat "${LOGS_STATUS}"
+            ;;
+    esac
+}
+
+# run the node
+RUN_NODE() {
+    if [ -z ${NODE_NAME} ]; then
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}No node name specified${NC}.\n"
+        exit
+    elif [ ! -f {AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_ ]; then
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}No node name specified${NC}.\n"
+        exit
+    else
+        cmd="${AETHER_HOME}/${NODE_NAME}.node/_${NODE_NAME}_"
+        if [ ${QUIET} ]; then
+            eval "${cmd}"
+        else
+            eval "${cmd}" &>/dev/null & disown;
+        fi
+    fi
+}
+
+# stop the node
+STOP_NODE() {
+    if [ -z ${NODE_NAME} ]; then
+        printf "${PURPLE}Aether${NC} :: ${RED}ERROR${NC} -> ${WHITE}No node name specified${NC}.\n"
+        exit
+    fi  
+    PVAR=$(pgrep -f _${NODE_NAME}_)
+    kill -9 ${PVAR} &>/dev/null
+    printf ".OFFLINE" > ${AETHER_HOME}/${NODE_NAME}.node/.status
+    printf "${PURPLE}Aether${NC} :: ${LIGHT_BLUE}${NODE_NAME}${NC} -> ${WHITE}Stopped${NC}.\n"
+}
+
+# display the current
+# default configs
+READ_CONFIG() {
+    ENV_DATA=$(cat ${DEFAULT_ENV_PATH})
+    RPC_DATA=$(cat ${DEFAULT_RPC_PATH})
+    printf "${PURPLE}Aether${NC} :: ${LIGHT_BLUE}Enviroment${NC} -> \n${ENV_DATA}\n\n\n"
+    printf "${PURPLE}Aether${NC} :: ${LIGHT_BLUE}RPC${NC} -> \n${RPC_DATA}\n\n\n"
+}
+
+# change the configs
+# based on the path supplied
+CHANGE_CONFIG() {
+    if [ ! -z ${BASE_PATH} ]; then
+        if [[ -f ${BASE_PATH}/env.conf ]] || [[ -f ${BASE_PATH}/rpc.conf ]] || [[ -f ${BASE_PATH}/ABIS.json ]]; then
+            cp ${BASE_PATH}/* ${AETHER_BASE}
+            exit
+        fi
+    else
+        if [[ ! -z ${ENV_PATH} ]]; then
+            if [[ -f ${ENV_PATH} ]] || [[ -f ${ENV_PATH}/env.conf ]]; then
+                cp ${ENV_PATH} ${AETHER_BASE}
+            fi
+        fi
+        if [[ ! -z ${RPC_PATH} ]]; then
+            if [[ -f ${RPC_PATH} ]] || [[ -f ${RPC_PATH}/rpc.conf ]]; then
+                cp ${RPC_PATH} ${AETHER_BASE}
+            fi
+        fi
+        if [[ ! -z ${ABIS_PATH} ]]; then
+            if [[ -f ${ABIS_PATH} ]] || [[ -f ${ABIS_PATH}/abis.json ]]; then
+                cp ${ABIS_PATH} ${AETHER_BASE}
+            fi
+        fi
+    fi
+}
+
+# dump the current configs
+# as files in the current path
+DUMP_CONFIG() {
+    ENV_DATA=$(cat ${DEFAULT_ENV_PATH})
+    RPC_DATA=$(cat ${DEFAULT_RPC_PATH})
+    ABIS_DATA=$(cat ${DEFAULT_ABIS_PATH})
+
+    BASE_PATH=$(pwd)
+
+    printf "${ENV_DATA}" > ${BASE_PATH}/env.conf
+    printf "${RPC_DATA}" > ${BASE_PATH}/rpc.conf
+    printf "${ABIS_DATA}" > ${BASE_PATH}/ABIS.json
+}
+
+# display help message
+HELP() {
+    printf "The ${PURPLE}Aether${NC} Connection, simply ${PURPLE}0xAether${NC}|${PURPLE}0xA${NC} \n"
+    printf "Syntax: run a command [${PURPLE}aether${NC} <${WHITE}command${NC}> ${LIGHT_BLUE}-option(s)${NC} ]\n"
+    printf "Command(s) avaliable :\n"
+
+    printf "\n${WHITE}init${NC} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NC} ${WHITE}init${NC} ${LIGHT_BLUE}-s${NC}"
+    printf "\n\t Description : initiates aether from the original package. used in MAKEFILE."
+
+    printf "\n${WHITE}setup${NC} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NC} ${WHITE}setup${NC} -e template-env.conf -r template-rpc.conf"
+    printf "\n\t Description : creates a new default configration for node(s)."
+
+    printf "\n${WHITE}make${NC} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NC} ${WHITE}make${NC} -n NODE_NAME"
+    printf "\n\t Description : initiates a fresh node with a new node name for the address provided"
+
+    printf "\n${WHITE}remove${NC} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NC} remove -n NODE_NAME"
+    printf "\n\t Description : removes the node files and directories"
+
+    printf "\n${WHITE}run${NC}|${WHITE}stop${NC} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NC} run -n NODE_NAME"
+    printf "\n\t Description : toggles the node state, will switch regardless of initial state"
+
+    printf "\n${WHITE}log${NC} :" 
+    printf "\n\t Syntax : ${PURPLE}aether${NC} log -t LOG_TYPE"
+    printf "\n\t Description : writes to stdout the output of LOG_TYPE.\n p|PERFORMANCE , t|TRANSACTIONS , o|ONLINE"
+
+    printf "\n${WHITE}log-tail${NC} :" 
+    printf "\n\t Syntax : ${PURPLE}aether${NC} log-tail"
+    printf "\n\t Description : writes to stdout the last 5 lines of PERFORMANCE|TRANSACTIONS|ONLINE logs"
+
+    printf "\n${WHITE}status${NC} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NC} status -n NODE_NAME"
+    printf "\n\t Description : query the status for the node name specified"
+
+    printf "\n${WHITE}purge${NC} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NC} purge"
+    printf "\n\t Description : removes all current Aether setups & nodes"
+
+    printf "\n${WHITE}help${NC} :"
+    printf "\n\t Syntax : ${PURPLE}aether${NC} help"
+    printf "\n\t Description : display this help screen"
+
+    printf "\n\nOption(s) avaliable :\n\n"
+
+    printf -- "${PURPLE}-e${NC}\t( env|iroment ) -> Specify an Aether router address , and caller key in \`template-env.conf\`\n"
+    printf -- "${PURPLE}-r${NC}\t( json|RPC ) -> Specify the WSS endpoints for the blockchains supported in \`template-rpc.conf\`\n"
+    printf -- "${PURPLE}-n${NC}\t( name ) -> Specify the 8 hex-digit node name\n"
+    printf -- "${PURPLE}-a${NC}\t( address ) -> Specify the Node Address. ECDSA publickey \n\t\`aether add -a 0xANodeAddress.. \`\n"
+    printf -- "${PURPLE}-t${NC}\t( type|LOG ) -> Specify the LOG TYPE : p|PERFORMANCE , t|TRANSACTIONS , o|ONLINE \n"
+    printf -- "${PURPLE}-l${NC}\t( logging : -> false,true for quiet logging \n"
+    printf -- "${PURPLE}-i${NC}\t( interactive ) -> for shell prompt.\n "
+}
+
+# upcoming feature
+UPCMING_OPRTIN() {
+    printf "${PURPLE}Aether${NC} -> ${WHITE}Operation not avaliable yet${NC}\n"
+    exit
+}
+
+# unknown operation
+UNKNWN_OPRTIN() {
+    printf "${PURPLE}Aether${NC} -> ${WHITE}Unknown Operation${NC} \n"
+    exit
+}
+
+# unknown option
+UNKNWN_OPTIN() {
+    printf "${PURPLE}Aether${NC} -> ${WHITE}Unknown Option${NC} \n"
+    exit
+}
+
+# iterate over the options provided and attach to vars
+# will be used inside functions depending on ${MAIN_FLAG}
+while getopts :e:n:q:b:r:s:d:a:t:h:l: option; do
+    case "${option}" in
+        e)
+            ENV_PATH=${OPTARG}
+            ;;
+        p)
+            BASE_PATH=${OPTARG}
+            ;;
+        n)
+            NODE_NAME=${OPTARG}
+            ;;
+        b)
+            ABIS_PATH=${OPTARG}
+            ;;
+        r)
+            RPC_PATH=${OPTARG}
+            ;;
+        s)
+            SCRIPT_NAME=${OPTARG}
+            ;;
+        d)
+            NETWORK_ID=${OPTARG}
+            ;;
+        a)
+            NODE_ADDRESS=${OPTARG}
+            ;;
+        t)
+            LOG_TYPE=${OPTARG}
+            ;;
+        l)
+            LOG_LENGTH=${OPTARG}
+            ;;
+        q)
+            QUIET=true
+            ;;
+        h)
+            HELP
+            ;;
+        *)
+            UNKNWN_OPTIN
+            ;;
+    esac
+done
+
+# exec any command gotten via the shell on `$1`
+case $MAIN_FLAG in
+    init)
+        # initiate the aether home
+        INIT
+        ;;
+    run)
+        # start the executable for the node
+        RUN_NODE
+        ;;
+    stop)
+        # stop the executable for the node
+        STOP_NODE
+        ;;
+    config)
+        # check which command for configs
+        # via the partial flag
+        case $PARTIAL_FLAG in
+            change)
+                CHANGE_CONFIG
+                ;;
+            dump)
+                DUMP_CONFIG
+                ;;
+            *)
+                READ_CONFIG
+                ;;
+            esac
+        ;;
+    check)
+        # checks for conf files and then initiates aether
+        CHECK
+        ;;
+    status)
+        # checks the logs for the node 
+        STATUS
+        ;;
+    create)
+        # create new node with default configs
+        CREATE_NODE
+        ;;
+    purge)
+        # remove a particular node
+        PURGE_NODE
+        ;;
+    list)
+        # list all nodes defined in `Aether/nodes/` except default.
+        LIST_NODES
+        ;;
+    update)
+        # updates chains based on current aether-conf params for all nodes.
+        UPCMING_OPRTIN
+        ;;
+    log-tail)
+        # shows the last n|5 lines of all the log files
+        SHOW_LOG_TAIL
+        ;;
+    log)
+        # outputs the complete log of choice
+        SHOW_LOG
+        ;;
+    help)
+        # show help and quit
+        HELP
+        ;;
+    *)
+        # unknown operation
+        UNKNWN_OPRTIN
+        ;;
+esac
+

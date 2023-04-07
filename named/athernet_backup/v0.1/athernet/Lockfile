@@ -1,0 +1,4 @@
+# $ m4 Lockfile
+define(``:'',`seperator')
+include(`.lbb')
+m4exit

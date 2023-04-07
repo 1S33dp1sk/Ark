@@ -1,0 +1,26 @@
+Format: 1.8
+Date: Thu, 18 Aug 2022 18:43:55 +0300
+Source: aether-build-deps
+Binary: aether-build-deps
+Built-For-Profiles: noudeb
+Architecture: all
+Version: 1.0
+Distribution: unstable
+Urgency: low
+Maintainer: Equivs Dummy Package Generator <kj@strix>
+Changed-By: Equivs Dummy Package Generator <kj@strix>
+Description:
+ aether-build-deps - build-dependencies for aether
+Changes:
+ aether-build-deps (1.0) unstable; urgency=low
+ .
+   * First version
+Checksums-Sha1:
+ b39c8868d579f04d548291a7a749a0d9d0f7dee3 1942 aether-build-deps_1.0_all.deb
+ d2bf424bf217c3cbb9452cf8d279faf179077696 6819 aether-build-deps_1.0_amd64.buildinfo
+Checksums-Sha256:
+ bb9b356b3ecea4482d7c0f0591ac67a4e3633c77b21817d4f315642c61239463 1942 aether-build-deps_1.0_all.deb
+ 2bb13973eda4879b34fcc78b29151fa3dfa373818479e95f54766b684b772d4a 6819 aether-build-deps_1.0_amd64.buildinfo
+Files:
+ fcc192a1beceb4ae50589aaea164a55f 1942 devel optional aether-build-deps_1.0_all.deb
+ 19225c76f820546004c4d6a20648e995 6819 devel optional aether-build-deps_1.0_amd64.buildinfo

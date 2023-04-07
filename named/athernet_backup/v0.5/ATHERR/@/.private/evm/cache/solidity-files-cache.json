@@ -1,0 +1,1743 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/home/kj/Aether/evm/contracts/Context/AetherCtx.sol": {
+      "lastModificationDate": 1659061168450,
+      "contentHash": "76af151b45e9a1cd9d4bef11e9a29607",
+      "sourceName": "contracts/Context/AetherCtx.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAetherCtx.sol",
+        "../Common/IAetherCall.sol",
+        "../Common/IRouterCall.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherCtx"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/KeeperAether.sol": {
+      "lastModificationDate": 1659058285396,
+      "contentHash": "3a15573ae3b8fb382b11fbfef8e77211",
+      "sourceName": "contracts/Keeper/KeeperAether.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Treasury/Treasury.sol",
+        "./IKeeperAether.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "KeeperAether"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/DAO/AetherDAO.sol": {
+      "lastModificationDate": 1659057876351,
+      "contentHash": "5cb6cc1e6b87d1bfa6cc5764cbaff329",
+      "sourceName": "contracts/DAO/AetherDAO.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Keeper/KeeperAether.sol",
+        "../Token/AetherToken.sol",
+        "./Proposals/Proposals.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherDAO"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Token/AetherToken.sol": {
+      "lastModificationDate": 1659060736950,
+      "contentHash": "8042613a102b7a873841333c0dc06667",
+      "sourceName": "contracts/Token/AetherToken.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Context/AetherCtx.sol",
+        "../DAO/Memberships/IMemberships.sol",
+        "../DAO/AetherDAO.sol",
+        "../Keeper/Tracker/Tracker.sol",
+        "../Keeper/KeeperAether.sol",
+        "../Node/AetherNode.sol",
+        "../Common/IOwner.sol",
+        "./IAetherToken.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherToken"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/HUB/AetherHUB.sol": {
+      "lastModificationDate": 1659061523796,
+      "contentHash": "99b6d1b1e7c98b5bb79ba0dc7b264f4d",
+      "sourceName": "contracts/HUB/AetherHUB.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../DAO/Vars/IVars.sol",
+        "../Context/AetherCtx.sol",
+        "./IAetherHUB.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherHUB"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Factory/AetherFactory.sol": {
+      "lastModificationDate": 1659060487091,
+      "contentHash": "240892fa9a1e60675404bf7072f629d4",
+      "sourceName": "contracts/Factory/AetherFactory.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Router/AetherRouter.sol",
+        "../Context/AetherCtx.sol",
+        "../Keeper/IKeeperAether.sol",
+        "../Proxy/AetherProxy.sol",
+        "../Node/AetherNode.sol",
+        "./IAetherFactory.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherFactory"
+      ]
+    },
+    "/home/kj/Aether/evm/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1657337714873,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Router/AetherRouter.sol": {
+      "lastModificationDate": 1659059707793,
+      "contentHash": "de6ddbff05479edac83533bf21f53885",
+      "sourceName": "contracts/Router/AetherRouter.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAetherRouter.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherRouter"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Proxy/AetherProxy.sol": {
+      "lastModificationDate": 1659060384852,
+      "contentHash": "58bc37a0791ea9739b0a25c3b188144f",
+      "sourceName": "contracts/Proxy/AetherProxy.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Context/AetherCtx.sol",
+        "./IAetherProxy.sol",
+        "../Libraries/StorageSlot.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherProxy"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Common/IAetherCommon.sol": {
+      "lastModificationDate": 1659059231972,
+      "contentHash": "2ffcc096a6515cc639592f227eceabab",
+      "sourceName": "contracts/Common/IAetherCommon.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherBasic",
+        "ContextOwner"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/DAO/Vars/Vars.sol": {
+      "lastModificationDate": 1659056339523,
+      "contentHash": "440dbc813e66164c03d62be9e6e6e4e8",
+      "sourceName": "contracts/DAO/Vars/Vars.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../Context/AetherCtx.sol",
+        "./IVars.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Vars"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/DAO/Vars/IVars.sol": {
+      "lastModificationDate": 1659056349699,
+      "contentHash": "a2c39a6bd038a3c9a1e4e04200b5e5b5",
+      "sourceName": "contracts/DAO/Vars/IVars.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IVars"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/DAO/Memberships/Memberships.sol": {
+      "lastModificationDate": 1659060752845,
+      "contentHash": "004429e5c70d2a4eabbeb69ae5e73326",
+      "sourceName": "contracts/DAO/Memberships/Memberships.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IMemberships.sol",
+        "../Vars/Vars.sol",
+        "../../Bond/AetherBonds.sol",
+        "../../Keeper/Tracker/ITracker.sol",
+        "../../Token/IAetherToken.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Memberships"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/DAO/Memberships/IMemberships.sol": {
+      "lastModificationDate": 1659056428846,
+      "contentHash": "aabfa1adfbb5729ce2cfff7c76175834",
+      "sourceName": "contracts/DAO/Memberships/IMemberships.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IMemberships"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/Tracker/ITracker.sol": {
+      "lastModificationDate": 1659058633609,
+      "contentHash": "5ee54bca361db3eb531ea3ab63605957",
+      "sourceName": "contracts/Keeper/Tracker/ITracker.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ITracker"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Token/IAetherToken.sol": {
+      "lastModificationDate": 1659057667777,
+      "contentHash": "50363636879ed93f30cfdd6a4fde5558",
+      "sourceName": "contracts/Token/IAetherToken.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherToken"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/Tracker/Tracker.sol": {
+      "lastModificationDate": 1659058654129,
+      "contentHash": "40da59a419f8d7b0765e02dc5e53c02e",
+      "sourceName": "contracts/Keeper/Tracker/Tracker.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../Factory/IAetherFactory.sol",
+        "../Index/Index.sol",
+        "./ITracker.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Tracker"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/DAO/Proposals/Proposals.sol": {
+      "lastModificationDate": 1659058210180,
+      "contentHash": "bc1d2f129a8ec403389def946f07df70",
+      "sourceName": "contracts/DAO/Proposals/Proposals.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Memberships/Memberships.sol",
+        "./IProposals.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Proposals"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/Treasury/Treasury.sol": {
+      "lastModificationDate": 1659060712574,
+      "contentHash": "7873eb7b0a16f9fd46ca3968c378c326",
+      "sourceName": "contracts/Keeper/Treasury/Treasury.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../Bond/AetherBonds.sol",
+        "../Transaction/Transaction.sol",
+        "./ITreasury.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Treasury"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/IKeeperAether.sol": {
+      "lastModificationDate": 1659058270788,
+      "contentHash": "e76b289a360bf3daffa181c55232123d",
+      "sourceName": "contracts/Keeper/IKeeperAether.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IKeeperAether"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/Transaction/Transaction.sol": {
+      "lastModificationDate": 1659058074937,
+      "contentHash": "e38c16385dd153d820c987b1e84ae938",
+      "sourceName": "contracts/Keeper/Transaction/Transaction.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Tracker/Tracker.sol",
+        "./ITransaction.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Transaction"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/Treasury/ITreasury.sol": {
+      "lastModificationDate": 1659058101653,
+      "contentHash": "dade51d6c73d897f07017868953cef94",
+      "sourceName": "contracts/Keeper/Treasury/ITreasury.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ITreasury"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/Transaction/ITransaction.sol": {
+      "lastModificationDate": 1659058076733,
+      "contentHash": "e808021740f792e25ce05aa4f55d5a43",
+      "sourceName": "contracts/Keeper/Transaction/ITransaction.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ITransaction"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Factory/IAetherFactory.sol": {
+      "lastModificationDate": 1659060009911,
+      "contentHash": "b856bf4d330e7f7c4e24081275f1fdf0",
+      "sourceName": "contracts/Factory/IAetherFactory.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Common/IAetherContractTypes.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherFactory"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/Index/Index.sol": {
+      "lastModificationDate": 1659057854479,
+      "contentHash": "310de3234e6332ebe54417710af2b544",
+      "sourceName": "contracts/Keeper/Index/Index.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../Context/AetherCtx.sol",
+        "../../Token/IAetherToken.sol",
+        "../../DAO/IAetherDAO.sol",
+        "./IIndex.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Index"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/DAO/IAetherDAO.sol": {
+      "lastModificationDate": 1659058327971,
+      "contentHash": "cf430e25de66b373ebeb6e67338033f9",
+      "sourceName": "contracts/DAO/IAetherDAO.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherDAO"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Keeper/Index/IIndex.sol": {
+      "lastModificationDate": 1659057799464,
+      "contentHash": "9542b454666793c3402ba8cadb8784c3",
+      "sourceName": "contracts/Keeper/Index/IIndex.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IIndex"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/DAO/Proposals/IProposals.sol": {
+      "lastModificationDate": 1659056643368,
+      "contentHash": "4bfb742b2f99a2954f75992e32b847b0",
+      "sourceName": "contracts/DAO/Proposals/IProposals.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IProposals"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/HUB/IAetherHUB.sol": {
+      "lastModificationDate": 1659059101197,
+      "contentHash": "969cba921575a49446825c8985d130c7",
+      "sourceName": "contracts/HUB/IAetherHUB.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherHUB"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Bond/AetherBonds.sol": {
+      "lastModificationDate": 1659056905663,
+      "contentHash": "8d3e838f359b98ce594a4fb5a110f346",
+      "sourceName": "contracts/Bond/AetherBonds.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Context/AetherCtx.sol",
+        "./IAetherBonds.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherBonds",
+        "IERC721Receiver"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Bond/IAetherBonds.sol": {
+      "lastModificationDate": 1659056902183,
+      "contentHash": "2e275ffffb4510af9b2e21e941402684",
+      "sourceName": "contracts/Bond/IAetherBonds.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherBonds"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Context/IAetherCtx.sol": {
+      "lastModificationDate": 1659060969976,
+      "contentHash": "f488ec676c7733b0a74333f4fdba721c",
+      "sourceName": "contracts/Context/IAetherCtx.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Common/IAether0xID.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherCtx"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Common/IAetherCall.sol": {
+      "lastModificationDate": 1659059834976,
+      "contentHash": "c7544bce518587f2119ec15802193990",
+      "sourceName": "contracts/Common/IAetherCall.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherCall"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Common/IRouterCall.sol": {
+      "lastModificationDate": 1659060069610,
+      "contentHash": "013ca64bc9410af5cc1875bf2c424859",
+      "sourceName": "contracts/Common/IRouterCall.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAether0xID.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IRouterCall"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Common/IAether0xID.sol": {
+      "lastModificationDate": 1659059305228,
+      "contentHash": "183f8e29c8f1820f03bb5f9d1a99d9c5",
+      "sourceName": "contracts/Common/IAether0xID.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAether0xID"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Node/AetherNode.sol": {
+      "lastModificationDate": 1659060781393,
+      "contentHash": "9a2662a0716c85ac0556c905f061535a",
+      "sourceName": "contracts/Node/AetherNode.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../HUB/IAetherHUB.sol",
+        "./Access/Access.sol",
+        "./IAetherNode.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AetherNode"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Common/IOwner.sol": {
+      "lastModificationDate": 1659060180394,
+      "contentHash": "7dc2f0ccd66b3b3102c690ec2f05b806",
+      "sourceName": "contracts/Common/IOwner.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IOwner"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Common/IAetherContractTypes.sol": {
+      "lastModificationDate": 1659059992979,
+      "contentHash": "9072286604cdc46ff313a114745c1454",
+      "sourceName": "contracts/Common/IAetherContractTypes.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherContractTypes"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Node/Access/Access.sol": {
+      "lastModificationDate": 1659060681006,
+      "contentHash": "0ec6cd29213b6911b7ce6349c7532109",
+      "sourceName": "contracts/Node/Access/Access.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAccess.sol",
+        "../../Context/IAetherCtx.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Access"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Node/IAetherNode.sol": {
+      "lastModificationDate": 1659060766357,
+      "contentHash": "63821cbfbc68f7620132d29c40c6df74",
+      "sourceName": "contracts/Node/IAetherNode.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherNode"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Node/Access/IAccess.sol": {
+      "lastModificationDate": 1659060683974,
+      "contentHash": "c312800f4d354bfefabf983d32bb9884",
+      "sourceName": "contracts/Node/Access/IAccess.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAccess"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Router/IAetherRouter.sol": {
+      "lastModificationDate": 1659061143879,
+      "contentHash": "2179c74d02079a016c3d911a04eff5f6",
+      "sourceName": "contracts/Router/IAetherRouter.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Common/IRouterCall.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherRouter"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Proxy/IAetherProxy.sol": {
+      "lastModificationDate": 1659060338540,
+      "contentHash": "adecbc323509252bb8f43a341c9d818f",
+      "sourceName": "contracts/Proxy/IAetherProxy.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherProxy"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Libraries/StorageSlot.sol": {
+      "lastModificationDate": 1659060400756,
+      "contentHash": "29ca09c97ddc2caeb512cc595a7fcde8",
+      "sourceName": "contracts/Libraries/StorageSlot.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "StorageSlot"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/HUB/V2AetherHub.sol": {
+      "lastModificationDate": 1660402285042,
+      "contentHash": "82762e894198a7f62b4f18d8c2710987",
+      "sourceName": "contracts/HUB/V2AetherHub.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../DAO/Vars/IVars.sol",
+        "../Context/AetherCtx.sol",
+        "../Libraries/_0xAether.sol",
+        "./IAetherHubV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "V2AetherHub"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/HUB/IAetherHubV2.sol": {
+      "lastModificationDate": 1659133650296,
+      "contentHash": "b6064209a3f94e0b27c1e187f3b0c443",
+      "sourceName": "contracts/HUB/IAetherHubV2.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAetherHubV2"
+      ]
+    },
+    "/home/kj/Aether/evm/contracts/Libraries/_0xAether.sol": {
+      "lastModificationDate": 1660402398353,
+      "contentHash": "fef1e10ac3e600da5b80c437135ccadb",
+      "sourceName": "contracts/Libraries/_0xAether.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../HUB/IAetherHubV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "_0xAether"
+      ]
+    }
+  }
+}

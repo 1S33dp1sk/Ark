@@ -1,0 +1,35 @@
+Format: 1.8
+Date: Tue, 16 Aug 2022 01:53:49 +0300
+Source: aether
+Binary: aether
+Built-For-Profiles: noudeb
+Architecture: source amd64
+Version: 1.0
+Distribution: UNRELEASED
+Urgency: medium
+Maintainer: kj <kj@aetherlabs.io>
+Changed-By: kj <kj@aetherlabs.io>
+Description:
+ aether     - The on-chain blockchain.
+Changes:
+ aether (1.0) UNRELEASED; urgency=medium
+ .
+   * Initial Release.
+Checksums-Sha1:
+ 3b1116d95578e47527dfa97a7181749b90271a7b 571 aether_1.0.dsc
+ b7236fe1920a504c0f4d2b30ae69493a57a3f50c 32436 aether_1.0.tar.xz
+ 60f2a05cabbff8397593ef9c78a9f6343f7ff01e 3088 aether-dbgsym_1.0_amd64.ddeb
+ edf1242ebbdc7f56e9326d9b88284908c9cf0363 8342 aether_1.0_amd64.buildinfo
+ ae332d73465fd83c7fd91b711d46874fea6870c0 29106 aether_1.0_amd64.deb
+Checksums-Sha256:
+ daa61064f8a542bf2af33fa9e71ef81e5fc00d18aacf00e161676524bf78d4f4 571 aether_1.0.dsc
+ 7498d4e888fe5f2a4377c96cf5a134da7cfe7902a592b07808b2ce655cc01653 32436 aether_1.0.tar.xz
+ 8250d7f934a25eb258675e19b9590c7cec90d52578e0aa800d8c432d89f79d2a 3088 aether-dbgsym_1.0_amd64.ddeb
+ 894446cab4a6fb318d256122bc02051fa18dae60c190fd56e7c2bf9fdca5a58d 8342 aether_1.0_amd64.buildinfo
+ 083fb5871a392860d75b5e1bdd1b5631af6e90f55db1f0ebbd847494d884c718 29106 aether_1.0_amd64.deb
+Files:
+ 4f0b0680e50c2b5f4cdc68cedf938062 571 blockchain optional aether_1.0.dsc
+ e417000acdc886990fb6e55c16c6ea70 32436 blockchain optional aether_1.0.tar.xz
+ c88b981f10794c5dcbe71c67d547f338 3088 debug optional aether-dbgsym_1.0_amd64.ddeb
+ ddb29cdb0850991b82a3bf87ebd59856 8342 blockchain optional aether_1.0_amd64.buildinfo
+ 641d696ff40ce84c69fdcdd9b02c9a90 29106 blockchain optional aether_1.0_amd64.deb

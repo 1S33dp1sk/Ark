@@ -1,0 +1,53 @@
+#!/bin/bash
+
+
+case $1 in 
+	deploy)
+		npx hardhat run scripts/initial.ts --network cid4321
+		npx hardhat run scripts/initial.ts --network cid1234
+		;;
+	receiver)
+		npx hardhat run scripts/secondary.ts --network cid1234
+		;;
+	call)
+		npx hardhat run scripts/aether_call.ts --network cid1234
+		;;
+	mine)
+		npx hardhat run scripts/aether_mine.ts --network cid1234
+		;;
+	start)
+		gnome-terminal --window --title "EVM CID#1234" -- ganache-cli --p 1234 -l 10000000 --account "0xc9ff8606e315a8bb8ab276f925485bb8cd5bd8f65bd479824292fb54274ff98d,100000000000000000000" --account "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6,100000000000000000000"
+		gnome-terminal --window --title "EVM CID#4321" -- ganache-cli --p 4321 -l 10000000 --account "0xc9ff8606e315a8bb8ab276f925485bb8cd5bd8f65bd479824292fb54274ff98d,100000000000000000000" --account "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6,100000000000000000000"
+		;;
+	silent-start)
+		gnome-terminal --window --title "EVM CID#1234" -- ganache-cli --p 1234 -l 10000000 --account "0xc9ff8606e315a8bb8ab276f925485bb8cd5bd8f65bd479824292fb54274ff98d,100000000000000000000" --account "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6,100000000000000000000" &>/dev/null & disown
+		gnome-terminal --window --title "EVM CID#4321" -- ganache-cli --p 4321 -l 10000000 --account "0xc9ff8606e315a8bb8ab276f925485bb8cd5bd8f65bd479824292fb54274ff98d,100000000000000000000" --account "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6,100000000000000000000" &>/dev/null & disown
+		;;
+	compile)
+		npx hardhat compile
+		;;
+	test)
+		npx hardhat test
+		;;
+	status)
+		PVAR=$(pgrep -f ganache)
+		if [[ -z "$PVAR" ]]; then
+			printf "OFFLINE\n"
+		else
+			printf "ONLINE\n"
+		fi
+		;;
+	kill)
+		PVAR=$(pgrep -f ganache)
+		kill -9 ${PVAR} &>/dev/null
+		;;
+	hub)
+		printf "\n 0xAetherHub on ChainId : 1234\n"
+		npx hardhat run scripts/hub_details.ts --network cid1234
+		printf "\n 0xAetherHub on ChainId : 4321\n"
+		npx hardhat run scripts/hub_details.ts --network cid4321
+		;;
+	*)
+		printf "\n No such command \n"
+		;;
+esac
