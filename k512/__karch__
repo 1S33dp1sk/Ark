@@ -15,17 +15,22 @@
 	#define LOG_ERR 1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	#include "_512.h"
 #endif
 =======
 =======
 >>>>>>> 920cf7a (k512&mods)
+=======
+>>>>>>> 9904db0 (k512&mods)
 <<<<<<< HEAD
 	#include "h512/_512.h"
 #endif
 =======
 =======
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 	#include "_512.h"
 #endif
 >>>>>>> 1250eda (renaming&restructure)
@@ -91,6 +96,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 8ad5c37 (renaming&restructure)
 >>>>>>> 1250eda (renaming&restructure)
@@ -99,3 +105,10 @@
 =======
 >>>>>>> 374d343 (k512&mods)
 >>>>>>> 920cf7a (k512&mods)
+=======
+>>>>>>> 8ad5c37 (renaming&restructure)
+=======
+>>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
+>>>>>>> 9904db0 (k512&mods)

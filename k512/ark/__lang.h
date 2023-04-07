@@ -7,6 +7,7 @@
 	#define __ARGC__ argc
 	#define __ARGV__ argv
 <<<<<<< HEAD
+<<<<<<< HEAD
 	#define d_charms "@charms/d.\0"
 	#define d_lbb "@charms/d.lbb\0"
 	#define d_atlbb "@charms/d.lbb/.lbb\0"
@@ -43,13 +44,18 @@
 		printf("sizeof type-d : %lu\n",sizeof(d));\
 	}
 =======
+=======
+>>>>>>> e7dcc72 (k512&mods)
 	#define checkef_file ((ulong)__stres(__lbb_indexfile))
 	#define checkef_dir ((ulong)__stres(__lbb_convdir))
 	#define checkef_lo ((ulong)__stres(__lbb_locking))
 	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
     #define dPRG(...) __dPRG {__VA_ARGS__;}
 	#define __DPRG__(...) __LBB__(__VA_ARGS__) __dPER
+<<<<<<< HEAD
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 	#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
 	#define sz8(x)		((ulong)__8sz(x))
 	#define fsze(x)		((ulong)__fsize(x))
@@ -62,6 +68,7 @@
 	#define ixr_h_size(x) (x.__size)
 	#define __lock_reader (O_RDONLY)
 	#define __lock_writer (O_WRONLY)
+<<<<<<< HEAD
 <<<<<<< HEAD
 	#define arch_filename d_atlbb
 	#define __init_method__(...) (#__VA_ARGS__)()
@@ -131,6 +138,8 @@
 
 >>>>>>> b21fe21 (Threeway convos {LBB,IXR,ATP})
 =======
+=======
+>>>>>>> e7dcc72 (k512&mods)
 	#define d_charms "@charms/d.\0"
 	#define d_lbb "@charms/d.lbb\0"
 	#define d_atlbb "@charms/d.lbb/.lbb\0"
@@ -169,5 +178,8 @@
 		ulong __VA_SIZE__=__rwings(__VARGS__);\
 		__BASE__(__ARGC__#__VA_ARGS__, __VARGS__, __VA_SIZE__, __ARGV__, __ARGV__[0]);\
 	}
+<<<<<<< HEAD
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 #endif		

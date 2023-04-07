@@ -309,9 +309,12 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> 920cf7a (k512&mods)
+=======
+>>>>>>> 9904db0 (k512&mods)
 <<<<<<< HEAD
 	#ifndef __FL_BYTES
         #define F_BYTE(__) __&0x0f
@@ -341,7 +344,12 @@
 =======
 =======
 >>>>>>> 374d343 (k512&mods)
+<<<<<<< HEAD
 >>>>>>> 920cf7a (k512&mods)
+=======
+=======
+>>>>>>> e7dcc72 (k512&mods)
+>>>>>>> 9904db0 (k512&mods)
 	/************************ h-constants ************************/
 
 	#ifndef __H512__C
@@ -410,6 +418,7 @@
 		#define __H512__C 1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 8ad5c37 (renaming&restructure)
 >>>>>>> 1250eda (renaming&restructure)
@@ -418,6 +427,13 @@
 =======
 >>>>>>> 374d343 (k512&mods)
 >>>>>>> 920cf7a (k512&mods)
+=======
+>>>>>>> 8ad5c37 (renaming&restructure)
+=======
+>>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
+>>>>>>> 9904db0 (k512&mods)
 	#endif
 
 

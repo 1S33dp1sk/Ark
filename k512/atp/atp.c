@@ -1023,16 +1023,22 @@ void *__arc__(aip_arc *st) {
 		// size defined by `arc_sizes` which can be 
 		// accessed via the lbb
 <<<<<<< HEAD
+<<<<<<< HEAD
 		atp_data *data=__atp_pointer();
 		if (arc_size==__step_addr) {
 =======
+=======
+>>>>>>> e7dcc72 (k512&mods)
 		atp_data *data;
 		if (arc_size==__step_point) {
 			
 			return __atp_pointer();
 		}
 		else if (arc_size==__step_addr) {
+<<<<<<< HEAD
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 			__arcfork();
 			if arc_process {
 				__atp_pointer();
@@ -1066,14 +1072,19 @@ void *__arc__(aip_arc *st) {
 	};
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	int *__point_run() {
 =======
 	int __point_run() {
 >>>>>>> 374d343 (k512&mods)
+=======
+	int __point_run() {
+>>>>>>> e7dcc72 (k512&mods)
 		void *__=atp_step(512);
 		return 0;
 	};
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD:k512/atp/atp.c
@@ -1132,6 +1143,8 @@ void *__arc__(aip_arc *st) {
 >>>>>>> f2996b1 (inconsistancy)
 =======
 >>>>>>> 920cf7a (k512&mods)
+=======
+>>>>>>> 9904db0 (k512&mods)
 
 	int __proto_at(char const *bufin) {
 
@@ -1151,6 +1164,8 @@ void *__arc__(aip_arc *st) {
 >>>>>>> f2996b1 (inconsistancy)
 =======
 =======
+=======
+>>>>>>> e7dcc72 (k512&mods)
 	lbb_entry __decode_arg(char const *argument) {
 		char const *point_buffer=argument;
 		// __info__
@@ -1207,12 +1222,19 @@ void *__arc__(aip_arc *st) {
 
 	atp_t __proto_at(char const *bufin) {
 		int __res=0;
+<<<<<<< HEAD
 >>>>>>> 374d343 (k512&mods)
+<<<<<<< HEAD
 >>>>>>> 920cf7a (k512&mods)
+=======
+=======
+>>>>>>> e7dcc72 (k512&mods)
+>>>>>>> 9904db0 (k512&mods)
 		/**
 		 * AT-protocol entries always start with '@'
 		 */
 		if(*bufin++!=__at__) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 			#ifdef DEBUG
 				printf("@-call is not correctly formatted\n");
@@ -1224,6 +1246,11 @@ void *__arc__(aip_arc *st) {
 			__res&=~__lbb_atp__;
 		}
 >>>>>>> 374d343 (k512&mods)
+=======
+
+			__res&=~__lbb_atp__;
+		}
+>>>>>>> e7dcc72 (k512&mods)
 		/**
 		 * payloads always start with
 		 * numbers
@@ -1231,6 +1258,7 @@ void *__arc__(aip_arc *st) {
 		 * which is basically the address
 		 */
 		if((*bufin>=0x30)&&(*bufin<=0x39)){
+<<<<<<< HEAD
 <<<<<<< HEAD
 			#ifdef DEBUG
 <<<<<<< HEAD
@@ -1245,6 +1273,8 @@ void *__arc__(aip_arc *st) {
 			#endif
 =======
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 			__res=aip_set;
 		}
 		/**
@@ -1256,11 +1286,14 @@ void *__arc__(aip_arc *st) {
 		 */
 		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
 <<<<<<< HEAD
+<<<<<<< HEAD
 			#ifdef DEBUG
 				printf("Subprotocol -> %s\n", bufin);
 			#endif
 =======
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 			__res=aip_get;
 		}
 		/**
@@ -1273,11 +1306,14 @@ void *__arc__(aip_arc *st) {
 		 */
 		else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 			#ifdef DEBUG
 				printf("@<%s>\n", bufin);
 			#endif
 =======
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 			__res=aip_retain;
 		}
 		/**
@@ -1289,6 +1325,7 @@ void *__arc__(aip_arc *st) {
 		return (atp_t)__res;
 	};
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 	lbb_entry __decode_arg(char const *argument) {
@@ -1351,6 +1388,8 @@ void *__arc__(aip_arc *st) {
 		int res=__lbb_none__;
 		return __decode_arg(proto_call);
 =======
+=======
+>>>>>>> e7dcc72 (k512&mods)
 	int get_atp_type(char const *proto_call) {
 		int res=__lbb_none__;
 		res=__decode_arg(proto_call);
@@ -1358,21 +1397,29 @@ void *__arc__(aip_arc *st) {
 			return __proto_at(proto_call);
 		}
 		return res;
+<<<<<<< HEAD
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 	};
 
 	int decode_lbb_addr(char const *__arg) {
 		ulong _addr_len=str_rwings(__arg);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 374d343 (k512&mods)
+=======
+
+>>>>>>> e7dcc72 (k512&mods)
 		if(check_addr(__arg)==-1){
 			#ifdef LOG_ERR
 				printf("address is not correctly formatted\n");
 			#endif
 			return 1;
 		};
+<<<<<<< HEAD
 <<<<<<< HEAD
 		ulong _addr_max=__LBB_BASE_LEN+_addr_len;
 		char __address[_addr_max];
@@ -1381,6 +1428,8 @@ void *__arc__(aip_arc *st) {
 		memmove((__address+__LBB_BASE_LEN), __arg, _addr_len);
 		__address[_addr_max]='\0';
 =======
+=======
+>>>>>>> e7dcc72 (k512&mods)
 
 		ulong _addr_max=__LBB_BASE_LEN+_addr_len;
 		char __address[_addr_max];
@@ -1389,7 +1438,10 @@ void *__arc__(aip_arc *st) {
 		memmove((__address+__LBB_BASE_LEN), __arg, _addr_len);
 		__address[_addr_max]='\0';
 
+<<<<<<< HEAD
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 		#ifdef DEBUG
 			printf("decoding lbb address :: \n");
 		#endif
@@ -1408,10 +1460,15 @@ void *__arc__(aip_arc *st) {
 			log_mstat(&cm_st);
 		#endif
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 
 >>>>>>> 374d343 (k512&mods)
+=======
+
+
+>>>>>>> e7dcc72 (k512&mods)
 		return 0;
 	};
 

@@ -43,10 +43,14 @@ int __ap_fifo(char const *__path){
 ulong __ap_writer() {
 	ulong retres;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	int __fd=open(d_lock,__lbb_lock_writer);
 =======
 	int __fd=open(__lbb_locking,__lbb_lock_writer);
 >>>>>>> 374d343 (k512&mods)
+=======
+	int __fd=open(__lbb_locking,__lbb_lock_writer);
+>>>>>>> e7dcc72 (k512&mods)
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open writer\n");
@@ -60,10 +64,14 @@ ulong __ap_writer() {
 	#endif
 	lbb_shard.c_fd=_fd;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if(get_mstat(d_lock, lbb_mstat)) {
 =======
 	if(get_mstat(__lbb_locking, lbb_mstat)) {
 >>>>>>> 374d343 (k512&mods)
+=======
+	if(get_mstat(__lbb_locking, lbb_mstat)) {
+>>>>>>> e7dcc72 (k512&mods)
 		#ifdef LOG_ERR
 			printf("cannot obtain mounted status for Writer on FIFO\n");
 		#endif
@@ -77,10 +85,14 @@ MUST NOT HAVE ANY LOCKING BITS
 ulong __ap_reader() {
 	ulong retres=0;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	int __fd=open(d_lock,__lbb_lock_reader);
 =======
 	int __fd=open(__lbb_locking,__lbb_lock_reader);
 >>>>>>> 374d343 (k512&mods)
+=======
+	int __fd=open(__lbb_locking,__lbb_lock_reader);
+>>>>>>> e7dcc72 (k512&mods)
 	if(__fd==-1){
 		printf("cannot open reader\n");
 		_exit(1);
@@ -91,10 +103,14 @@ ulong __ap_reader() {
 	#endif
 	lbb_shard.c_fd=_fd;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if(get_mstat(d_lock, lbb_mstat)) {
 =======
 	if(get_mstat(__lbb_locking, lbb_mstat)) {
 >>>>>>> 374d343 (k512&mods)
+=======
+	if(get_mstat(__lbb_locking, lbb_mstat)) {
+>>>>>>> e7dcc72 (k512&mods)
 		#ifdef LOG_ERR
 			printf("cannot obtain mounted status for READER on FIFO\n");
 		#endif
@@ -393,10 +409,14 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		printf("fld count : %lu\n", __fld_count);
 	#endif
 <<<<<<< HEAD
+<<<<<<< HEAD
 	char const *fld_name=__combine_str(d_lbb, __fn);
 =======
 	char const *fld_name=__combine_str(__lbb_convdir, __fn);
 >>>>>>> 374d343 (k512&mods)
+=======
+	char const *fld_name=__combine_str(__lbb_convdir, __fn);
+>>>>>>> e7dcc72 (k512&mods)
 	ulong c=0,_res=0,__offset=0;
 
 	// create entry in lbb

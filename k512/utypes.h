@@ -617,6 +617,7 @@ and loaded via a .o or .so
 	#endif
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// static const char *d_atlbb = "@charms/lbb/.lbb\0";
 	// static const char *d_lbb = "@charms/lbb\0";
 	// static const char *__lbb_locking = "@charms/lock\0";
@@ -625,6 +626,11 @@ and loaded via a .o or .so
 	static const char *__lbb_convdir = "@charms/lbb\0";
 	static const char *__lbb_locking = "@charms/lock\0";
 >>>>>>> 374d343 (k512&mods)
+=======
+	static const char *__lbb_indexfile = "@charms/lbb/.lbb\0";
+	static const char *__lbb_convdir = "@charms/lbb\0";
+	static const char *__lbb_locking = "@charms/lock\0";
+>>>>>>> e7dcc72 (k512&mods)
 
 	#define __LBB_TYPES { lbb_t, lbb_size, lbb_entry }
 #endif
@@ -716,9 +722,12 @@ and loaded via a .o or .so
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	#define IXR(...) __ASCII(__VA_ARGS__)
 =======
 >>>>>>> 374d343 (k512&mods)
+=======
+>>>>>>> e7dcc72 (k512&mods)
 	#define __IXR_TYPES { ixr_t, ixr_st, ixr_h }
 #endif
 

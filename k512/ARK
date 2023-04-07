@@ -11,8 +11,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 920cf7a (k512&mods)
+=======
+>>>>>>> 9904db0 (k512&mods)
 	#include "headers/atp.h"
 	#include "headers/lbb.h"
 	#include "headers/ixr.h"
@@ -61,6 +64,8 @@ dPRG(
 >>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 =======
 =======
+=======
+>>>>>>> e7dcc72 (k512&mods)
 
 
 dPRG(
@@ -75,8 +80,14 @@ dPRG(
 
 
 
+<<<<<<< HEAD
 >>>>>>> 374d343 (k512&mods)
+<<<<<<< HEAD
 >>>>>>> 920cf7a (k512&mods)
+=======
+=======
+>>>>>>> e7dcc72 (k512&mods)
+>>>>>>> 9904db0 (k512&mods)
 
 
 
