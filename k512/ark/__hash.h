@@ -6,7 +6,11 @@
 	#define _D_HASH 1
 
 	void __btoh(uchar __c, uc __s) {
+<<<<<<< HEAD
 		uns i=1, t=0;
+=======
+		ulong i=1, t=0;
+>>>>>>> 374d343 (k512&mods)
 		__s[0] = __s[1] = __CHAR_ZERO;
 		__s[2] = __CHAR_NULL;
 		while(__c) {
@@ -17,7 +21,11 @@
 			else {
 				__s[i] = __CHAR_ALPH_A+t-10;
 			};
+<<<<<<< HEAD
 			i--;__c>>=4;
+=======
+			__c>>=4;i--;
+>>>>>>> 374d343 (k512&mods)
 		}
 	};
 
@@ -32,7 +40,11 @@
 
 	void __htostr(char *__str, uchar *__hash) {
 		#ifdef DEBUG
+<<<<<<< HEAD
 			printf( "starting string :: %s\n " , __str );
+=======
+		printf( "starting string :: %s\n " , __str );
+>>>>>>> 374d343 (k512&mods)
 		#endif
 		ulong __c=0;
 		for (;__c<32; __c+=1) {
@@ -41,7 +53,11 @@
 			strncat(__str, (char *)__, 3);
 		}
 		#ifdef DEBUG
+<<<<<<< HEAD
 			printf( " hash :: %s\n" , __str );
+=======
+		printf( " hash :: %s\n" , __str );
+>>>>>>> 374d343 (k512&mods)
 		#endif
 	};
 	/**
@@ -335,10 +351,17 @@
 	**/ 
 	char const *zero_address(ulong level){
 		switch(level){
+<<<<<<< HEAD
 		case 0: return "0x00000000";
 		case 1: return "0x0000000000000000";
 		case 2: return "0x00000000000000000000000000000000";
 		case 3: return "0x0000000000000000000000000000000000000000000000000000000000000000";
+=======
+		case 0: return "0x0000";
+		case 1: return "0x00000000";
+		case 2: return "0x0000000000000000";
+		case 3: return "0x00000000000000000000000000000000";
+>>>>>>> 374d343 (k512&mods)
 		default: return "0";
 		}
 	};
@@ -410,7 +433,11 @@
 	}
 	// raw 
 	uchar const *hash( ulong level , void const *tohash , ulong thsize ) {
+<<<<<<< HEAD
 		#ifdef DEBUG
+=======
+		#ifdef DEBUG_HASH
+>>>>>>> 374d343 (k512&mods)
 			char const *_strhash=(char const *)tohash;
 			printf("hash : string to hash :: %s\n",_strhash);
 		#endif
@@ -436,7 +463,11 @@
 					return NULL;        
 			}
 			char __hsized[hash_size];
+<<<<<<< HEAD
 			memset(&__hsized, 0, hash_size);
+=======
+			memset( &__hsized , 0 , hash_size );
+>>>>>>> 374d343 (k512&mods)
 			uchar *__hptr;
 			sha3_init( &__sha3 , hash_size );
 			sha3_set_flags( &__sha3 , k_flag );

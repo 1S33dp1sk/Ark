@@ -308,7 +308,10 @@
 	#endif
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 920cf7a (k512&mods)
 <<<<<<< HEAD
 	#ifndef __FL_BYTES
         #define F_BYTE(__) __&0x0f
@@ -333,7 +336,12 @@
 		sllong: sllong*,\
 		default: NULL)
 =======
+<<<<<<< HEAD
 >>>>>>> 1250eda (renaming&restructure)
+=======
+=======
+>>>>>>> 374d343 (k512&mods)
+>>>>>>> 920cf7a (k512&mods)
 	/************************ h-constants ************************/
 
 	#ifndef __H512__C
@@ -401,9 +409,15 @@
 	        };
 		#define __H512__C 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 8ad5c37 (renaming&restructure)
 >>>>>>> 1250eda (renaming&restructure)
+=======
+>>>>>>> 8ad5c37 (renaming&restructure)
+=======
+>>>>>>> 374d343 (k512&mods)
+>>>>>>> 920cf7a (k512&mods)
 	#endif
 
 

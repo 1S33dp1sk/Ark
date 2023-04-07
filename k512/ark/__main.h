@@ -287,6 +287,40 @@
 		};
 	};
 
+<<<<<<< HEAD
+    char const *arch_dfile(char const *__name, ulong arch_perm, ulong tfile_size) {
+        // generate file name from path and size
+        char const *__cpath=__ecall("var", __name);
+=======
+<<<<<<< HEAD
+    // char const *arch_dfile(char const *__name, ulong arch_perm, ulong tfile_size) {
+    //     // generate file name from path and size
+    //     char const *__cpath=__ecall("var", __name);
+>>>>>>> 920cf7a (k512&mods)
+        
+        if(stres(__cpath)){
+            #ifdef DEBUG
+                printf("file already exists\n");
+            #endif
+            return zero_address(3);
+        };
+
+        char const *tlbb_name=(char const *)typed_lbbfilename(fsize);
+        char const *__raw_fname=__combine_str(__cpath, tlbb_name);
+        char const *__arch_filename=arch_namehash(__raw_fname);
+        
+<<<<<<< HEAD
+=======
+    //     if(!arch_att(__arch_filename, arch_perm, tfile_size)){
+    //         #ifdef DEBUG
+    //             printf("failed to create dfile\n");
+    //         #endif
+    //         return zero_address(3);
+    //     };
+
+    //     return __arch_filename;
+    // };
+=======
     char const *arch_dfile(char const *__name, ulong arch_perm, ulong tfile_size) {
         // generate file name from path and size
         char const *__cpath=__ecall("var", __name);
@@ -302,6 +336,7 @@
         char const *__raw_fname=__combine_str(__cpath, tlbb_name);
         char const *__arch_filename=arch_namehash(__raw_fname);
         
+>>>>>>> 920cf7a (k512&mods)
         if(!arch_att(__arch_filename, arch_perm, tfile_size)){
             #ifdef DEBUG
                 printf("failed to create dfile\n");
@@ -311,6 +346,10 @@
 
         return __arch_filename;
     };
+<<<<<<< HEAD
+=======
+>>>>>>> 374d343 (k512&mods)
+>>>>>>> 920cf7a (k512&mods)
 
 	int arch_cfile(char const *cf_name, lbb_t lbb_ftype){
 		// creates the arch file needed

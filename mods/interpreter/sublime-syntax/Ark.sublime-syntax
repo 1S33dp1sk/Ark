@@ -1,11 +1,31 @@
 %YAML 1.2
 name: ARK
+<<<<<<< HEAD
 
 file_extensions: [d, arc, darc, ARK, lbb, __karch__, __lang, __main, __file, __hash, __koder, __string, __log, d-ark, d-cloud, d-program, d-points, d-platform]
 scope: d-source
 first_line_match: |-
   (?xi:
     ^ \s* /// .*? -\*- .*? \bc\b(?![#+]) .*? -\*-  # editorconfig
+=======
+file_extensions:
+  - ark
+  - darc
+  - d-
+  - _
+  - __
+  - __file 
+  - __lang 
+  - __log 
+  - __main 
+  - __string
+  - __hash
+  - __koder
+scope: source.example-c
+first_line_match: |-
+  (?xi:
+    ^ \s* // .*? -\*- .*? \bc\b(?![#+]) .*? -\*-  # editorconfig
+>>>>>>> 920cf7a (k512&mods)
   )
 variables:
   # number digits
@@ -14,12 +34,16 @@ variables:
   dec_digit: '\d'
   hex_digit: '\h'
   att_digit: '@'
+<<<<<<< HEAD
   intr_addr_in: '<'
   intr_addr_out: '>'
   point_arr_strt: '('
   point_arr_end: ')'
   payload_args_strt: '{'
   payload_args_end: '}'
+=======
+
+>>>>>>> 920cf7a (k512&mods)
   dec_digits: '{{dec_digit}}+'
 
   # number exponents
@@ -34,6 +58,7 @@ variables:
   double_suffix: '[fFlL]'
   float_suffix: '[fF]'
   integer_suffix: '[lL]{1,2}[uU]?|[uU][lL]{0,2}'
+<<<<<<< HEAD
   att_aliases: '[arkalias|aether|interpreter]'
 
   identifier: \b[[:alpha:]_][[:alnum:]_]*\b # upper and lowercase
@@ -47,12 +72,27 @@ variables:
   windows_types: 'APIENTRY|ATOM|BOOL|BOOLEAN|BYTE|CALLBACK|CCHAR|CHAR|COLORREF|CONST|DWORD|DWORDLONG|DWORD_PTR|DWORD32|DWORD64|FLOAT|HACCEL|HALF_PTR|HANDLE|HBITMAP|HBRUSH|HCOLORSPACE|HCONV|HCONVLIST|HCURSOR|HDC|HDDEDATA|HDESK|HDROP|HDWP|HENHMETAFILE|HFILE|HFONT|HGDIOBJ|HGLOBAL|HHOOK|HICON|HINSTANCE|HKEY|HKL|HLOCAL|HMENU|HMETAFILE|HMODULE|HMONITOR|HPALETTE|HPEN|HRESULT|HRGN|HRSRC|HSZ|HWINSTA|HWND|INT|INT_PTR|INT8|INT16|INT32|INT64|LANGID|LCID|LCTYPE|LGRPID|LONG|LONGLONG|LONG_PTR|LONG32|LONG64|LPARAM|LPBOOL|LPBYTE|LPCOLORREF|LPCSTR|LPCTSTR|LPCVOID|LPCWSTR|LPDWORD|LPHANDLE|LPINT|LPLONG|LPSTR|LPTSTR|LPVOID|LPWORD|LPWSTR|LRESULT|PBOOL|PBOOLEAN|PBYTE|PCHAR|PCSTR|PCTSTR|PCWSTR|PDWORD|PDWORDLONG|PDWORD_PTR|PDWORD32|PDWORD64|PFLOAT|PHALF_PTR|PHANDLE|PHKEY|PINT|PINT_PTR|PINT8|PINT16|PINT32|PINT64|PLCID|PLONG|PLONGLONG|PLONG_PTR|PLONG32|PLONG64|POINTER_32|POINTER_64|POINTER_SIGNED|POINTER_UNSIGNED|PSHORT|PSIZE_T|PSSIZE_T|PSTR|PTBYTE|PTCHAR|PTSTR|PUCHAR|PUHALF_PTR|PUINT|PUINT_PTR|PUINT8|PUINT16|PUINT32|PUINT64|PULONG|PULONGLONG|PULONG_PTR|PULONG32|PULONG64|PUSHORT|PVOID|PWCHAR|PWORD|PWSTR|QWORD|SC_HANDLE|SC_LOCK|SERVICE_STATUS_HANDLE|SHORT|SIZE_T|SSIZE_T|TBYTE|TCHAR|UCHAR|UHALF_PTR|UINT|UINT_PTR|UINT8|UINT16|UINT32|UINT64|ULONG|ULONGLONG|ULONG_PTR|ULONG32|ULONG64|UNICODE_STRING|USHORT|USN|VOID|WCHAR|WINAPI|WORD|WPARAM'
   stdint: 'const|ulong|ullng|uchar|schar|slong|sllng'
   intrpec: '\<\s*\w+(?:\([^)]+\))?\s*\>'
+=======
+
+  identifier: \b[[:alpha:]_][[:alnum:]_]*\b # upper and lowercase
+  macro_identifier: \b[[:upper:]_][[:upper:][:digit:]_]{2,}\b # only uppercase, at least 3 chars
+  control_keywords: 'break|case|continue|default|do|else|for|goto|if|_Pragma|return|switch|while'
+  basic_types: 'asm|__asm__|auto|bool|_Bool|char|_Complex|double|float|_Imaginary|int|long|short|signed|unsigned|void'
+  before_tag: 'struct|union|enum'
+  microsoft_types: '__int8|__int16|__int32|__int64'
+  windows_types: 'APIENTRY|ATOM|BOOL|BOOLEAN|BYTE|CALLBACK|CCHAR|CHAR|COLORREF|CONST|DWORD|DWORDLONG|DWORD_PTR|DWORD32|DWORD64|FLOAT|HACCEL|HALF_PTR|HANDLE|HBITMAP|HBRUSH|HCOLORSPACE|HCONV|HCONVLIST|HCURSOR|HDC|HDDEDATA|HDESK|HDROP|HDWP|HENHMETAFILE|HFILE|HFONT|HGDIOBJ|HGLOBAL|HHOOK|HICON|HINSTANCE|HKEY|HKL|HLOCAL|HMENU|HMETAFILE|HMODULE|HMONITOR|HPALETTE|HPEN|HRESULT|HRGN|HRSRC|HSZ|HWINSTA|HWND|INT|INT_PTR|INT8|INT16|INT32|INT64|LANGID|LCID|LCTYPE|LGRPID|LONG|LONGLONG|LONG_PTR|LONG32|LONG64|LPARAM|LPBOOL|LPBYTE|LPCOLORREF|LPCSTR|LPCTSTR|LPCVOID|LPCWSTR|LPDWORD|LPHANDLE|LPINT|LPLONG|LPSTR|LPTSTR|LPVOID|LPWORD|LPWSTR|LRESULT|PBOOL|PBOOLEAN|PBYTE|PCHAR|PCSTR|PCTSTR|PCWSTR|PDWORD|PDWORDLONG|PDWORD_PTR|PDWORD32|PDWORD64|PFLOAT|PHALF_PTR|PHANDLE|PHKEY|PINT|PINT_PTR|PINT8|PINT16|PINT32|PINT64|PLCID|PLONG|PLONGLONG|PLONG_PTR|PLONG32|PLONG64|POINTER_32|POINTER_64|POINTER_SIGNED|POINTER_UNSIGNED|PSHORT|PSIZE_T|PSSIZE_T|PSTR|PTBYTE|PTCHAR|PTSTR|PUCHAR|PUHALF_PTR|PUINT|PUINT_PTR|PUINT8|PUINT16|PUINT32|PUINT64|PULONG|PULONGLONG|PULONG_PTR|PULONG32|PULONG64|PUSHORT|PVOID|PWCHAR|PWORD|PWSTR|QWORD|SC_HANDLE|SC_LOCK|SERVICE_STATUS_HANDLE|SHORT|SIZE_T|SSIZE_T|TBYTE|TCHAR|UCHAR|UHALF_PTR|UINT|UINT_PTR|UINT8|UINT16|UINT32|UINT64|ULONG|ULONGLONG|ULONG_PTR|ULONG32|ULONG64|UNICODE_STRING|USHORT|USN|VOID|WCHAR|WINAPI|WORD|WPARAM'
+  stdint: 'int8_t|int16_t|int32_t|int64_t|uint8_t|uint16_t|uint32_t|uint64_t|int_least8_t|int_least16_t|int_least32_t|int_least64_t|uint_least8_t|uint_least16_t|uint_least32_t|uint_least64_t|int_fast8_t|int_fast16_t|int_fast32_t|int_fast64_t|uint_fast8_t|uint_fast16_t|uint_fast32_t|uint_fast64_t|intptr_t|uintptr_t|intmax_t|intmax_t|uintmax_t|uintmax_t'
+>>>>>>> 920cf7a (k512&mods)
   declspec: '__declspec\(\s*\w+(?:\([^)]+\))?\s*\)'
   storage_classes: 'static|extern|register|{{declspec}}'
   type_qualifier: 'const|volatile'
   compiler_directive: 'inline|restrict|__restrict__|__restrict'
   modifiers: '{{storage_classes}}|{{type_qualifier}}|{{compiler_directive}}'
+<<<<<<< HEAD
   non_func_keywords: 'if|for|switch|while|decltype|sizeof|__declspec|__attribute__|__dPRG|dPRG'
+=======
+  non_func_keywords: 'if|for|switch|while|decltype|sizeof|__declspec|__attribute__'
+>>>>>>> 920cf7a (k512&mods)
 
 contexts:
   main:
@@ -143,12 +183,15 @@ contexts:
           (\[[^\]]+\]|[am]s|[diouxXDOUeEfFgGaACcSspn%]) # conversion type
       scope: constant.other.placeholder.c
   keywords:
+<<<<<<< HEAD
     - match: \b__ATP__\b
       scope: keyword.control.flow.goto.c
     - match: \b__LBB__\b
       scope: keyword.control.flow.break.c
     - match: \b__IXR__\b
       scope: keyword.control.flow.continue.c
+=======
+>>>>>>> 920cf7a (k512&mods)
     - match: \bbreak\b
       scope: keyword.control.flow.break.c
     - match: \bcontinue\b
@@ -173,9 +216,15 @@ contexts:
       scope: variable.other.readwrite.static.mac-classic.c
 
   constants:
+<<<<<<< HEAD
     - match: \b(NE|NULL|true|false|TRUE|FALSE)\b
       scope: constant.language.c
     - match: \b(__FILE__|__LINE__|dPRG)\b
+=======
+    - match: \b(__func__|NULL|true|false|TRUE|FALSE)\b
+      scope: constant.language.c
+    - match: \b(__FILE__|__FUNCTION__|__LINE__)\b
+>>>>>>> 920cf7a (k512&mods)
       scope: support.constant.c
     # common C constant naming idiom -- kConstantVariable
     - match: '\bk[A-Z]\w*\b'
@@ -204,9 +253,12 @@ contexts:
       scope: support.type.windows.c
     - match: \b(AbsoluteTime|Boolean|Byte|ByteCount|ByteOffset|BytePtr|CompTimeValue|ConstLogicalAddress|ConstStrFileNameParam|ConstStringPtr|Duration|Fixed|FixedPtr|Float32|Float32Point|Float64|Float80|Float96|FourCharCode|Fract|FractPtr|Handle|ItemCount|LogicalAddress|OptionBits|OSErr|OSStatus|OSType|OSTypePtr|PhysicalAddress|ProcessSerialNumber|ProcessSerialNumberPtr|ProcHandle|Ptr|ResType|ResTypePtr|ShortFixed|ShortFixedPtr|SignedByte|SInt16|SInt32|SInt64|SInt8|Size|StrFileName|StringHandle|StringPtr|TimeBase|TimeRecord|TimeScale|TimeValue|TimeValue64|UInt16|UInt32|UInt64|UInt8|UniChar|UniCharCount|UniCharCountPtr|UniCharPtr|UnicodeScalarValue|UniversalProcHandle|UniversalProcPtr|UnsignedFixed|UnsignedFixedPtr|UnsignedWide|UTF16Char|UTF32Char|UTF8Char)\b
       scope: support.type.mac-classic.c
+<<<<<<< HEAD
     - match: \b({{ark_symbols}})\b
       scope: constant.numeric.value.c
 
+=======
+>>>>>>> 920cf7a (k512&mods)
 
   numbers:
     # https://en.cppreference.com/w/c/language/floating_constant
@@ -257,6 +309,10 @@ contexts:
         5: invalid.illegal.numeric.suffix.c
 
     # https://en.cppreference.com/w/c/language/integer_constant
+<<<<<<< HEAD
+=======
+
+>>>>>>> 920cf7a (k512&mods)
     # binary integer (C23)
     - match: \b(0[bB])({{bin_digit}}*)(?:({{integer_suffix}})|({{bin_suffix}}))?
       scope: meta.number.integer.binary.c
@@ -292,8 +348,11 @@ contexts:
         2: constant.numeric.suffix.c
         3: invalid.illegal.numeric.suffix.c
 
+<<<<<<< HEAD
     # - match: '@\w*'
       # scope: keyword.operator.assignment.augmented.c
+=======
+>>>>>>> 920cf7a (k512&mods)
   operators:
     - match: (?:\+\+|--)
       scope: keyword.operator.arithmetic.c
@@ -729,6 +788,7 @@ contexts:
         - include: statements
 
   parens:
+<<<<<<< HEAD
     - match: \[
       scope: punctuation.section.brackets.begin.c
       push:
@@ -739,6 +799,8 @@ contexts:
         - include: expressions
 
   argsarr:
+=======
+>>>>>>> 920cf7a (k512&mods)
     - match: \(
       scope: punctuation.section.group.begin.c
       push:
@@ -749,6 +811,7 @@ contexts:
         - include: expressions
 
   brackets:
+<<<<<<< HEAD
     - match: \(
       scope: punctuation.section.group.begin.c
       push:
@@ -758,6 +821,25 @@ contexts:
           pop: true
         - include: expressions
 
+=======
+    - match: \[
+      scope: punctuation.section.brackets.begin.c
+      push:
+        - meta_scope: meta.brackets.c
+        - match: \]
+          scope: punctuation.section.brackets.end.c
+          pop: true
+        - include: expressions
+
+  att:
+    - match: \@
+      scope: keyword.control.c
+      push:
+        - meta_content_scope: meta.group.c
+          scope: punctuation.separator.c
+        - match: \)
+          pop: true
+>>>>>>> 920cf7a (k512&mods)
 
   case-default:
     - match: '\b(default|case)\b'
@@ -782,7 +864,10 @@ contexts:
         - match: \)\)
           scope: meta.group.c punctuation.section.group.end.c
           pop: true
+<<<<<<< HEAD
     - match: \b
+=======
+>>>>>>> 920cf7a (k512&mods)
     - match: \b(__declspec)(\()
       captures:
         1: storage.modifier.c
@@ -926,6 +1011,10 @@ contexts:
     - include: preprocessor-rule-other-statements
 
   preprocessor-expressions:
+<<<<<<< HEAD
+=======
+    - include: incomplete-inc
+>>>>>>> 920cf7a (k512&mods)
     - include: preprocessor-macro-define
     - include: pragma-mark
     - include: preprocessor-other
@@ -1298,6 +1387,7 @@ contexts:
         - match: ^
           pop: true
 
+<<<<<<< HEAD
   protocol_assign:
     - match: ^(\s*{{protocol_design}})+\s*$
       captures: variable.function.parameters.c
@@ -1306,6 +1396,8 @@ contexts:
         - match: ^
           scope: punctuation.section.group.end.c
           pop: true
+=======
+>>>>>>> 920cf7a (k512&mods)
 
   preprocessor-convention-ignore-uppercase-calls-without-semicolon:
     - match: ^\s*({{macro_identifier}})\s*(\()(?=[^)]*\)\s*$)
@@ -1344,6 +1436,7 @@ contexts:
         - include: strings
         - match: '\S+'
           scope: string.unquoted.c
+<<<<<<< HEAD
     - match: ^@\w+
       scope: comment.line.banner.c
       captures: comment.line.double-slash.c
@@ -1397,6 +1490,8 @@ contexts:
               push:
               - meta_scope: punctuation.defintion.string.end.c
                 pop: true
+=======
+>>>>>>> 920cf7a (k512&mods)
     - match: ^\s*(#\s*(?:include|include_next|import))\b
       captures:
         1: keyword.control.import.include.c

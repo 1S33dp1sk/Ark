@@ -6,4 +6,8 @@ The Python interpreter
 
 )))
 
+<<<<<<< HEAD
 @Protocol(global, "pypi.org/packages/") => __ATP__(...)
+=======
+@Protocol(global, "pypi.org/packages/") => __ATP__(...)
+>>>>>>> 920cf7a (k512&mods)

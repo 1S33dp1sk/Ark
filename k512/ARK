@@ -10,6 +10,9 @@
 	#include "ark/__string.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 920cf7a (k512&mods)
 	#include "headers/atp.h"
 	#include "headers/lbb.h"
 	#include "headers/ixr.h"
@@ -54,7 +57,26 @@ dPRG(
 >>>>>>> 1250eda (renaming&restructure)
 =======
 #endif
+<<<<<<< HEAD
 >>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
+=======
+=======
+
+
+dPRG(
+	if(__ARGC__==1) {
+		printf("arc\n");
+	}else {
+		printf("%s\n", __FILE__);
+	}
+);
+
+#endif
+
+
+
+>>>>>>> 374d343 (k512&mods)
+>>>>>>> 920cf7a (k512&mods)
 
 
 
