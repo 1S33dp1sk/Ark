@@ -1061,6 +1061,7 @@ void *__arc__(aip_arc *st) {
 		return 0;
 	};
 
+<<<<<<< HEAD
 <<<<<<< HEAD:k512/atp/atp.c
 =======
 	lbb_entry __decode_arg(char const *argument) {
@@ -1113,6 +1114,8 @@ void *__arc__(aip_arc *st) {
 		};
 	};
 >>>>>>> 1250eda (renaming&restructure):k512/atp/c
+=======
+>>>>>>> f2996b1 (inconsistancy)
 
 	int __proto_at(char const *bufin) {
 
@@ -1120,12 +1123,15 @@ void *__arc__(aip_arc *st) {
 		int __res=0;
 		printf("@-Protocol<%c> : %d\n",bufin[0], __res);
 
+<<<<<<< HEAD
 =======
 	int __proto_at(char const *bufin) {
 
 		int __res=0;
 		printf("@-Protocol<%c> : %d\n",bufin[0], __res);
 >>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
+=======
+>>>>>>> f2996b1 (inconsistancy)
 		/**
 		 * AT-protocol entries always start with '@'
 		 */
@@ -1144,10 +1150,14 @@ void *__arc__(aip_arc *st) {
 		if((*bufin>=0x30)&&(*bufin<=0x39)){
 			#ifdef DEBUG
 <<<<<<< HEAD
+<<<<<<< HEAD
 				printf("Storage Number (%s)\n", bufin);
 =======
 				printf("Storage Number <%s>\n", bufin);
 >>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
+=======
+				printf("Storage Number (%s)\n", bufin);
+>>>>>>> f2996b1 (inconsistancy)
 			#endif
 			__res=aip_set;
 		}

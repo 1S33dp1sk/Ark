@@ -14,6 +14,7 @@
 };
 
 
+<<<<<<< HEAD
 @dPRG -> ( __LBB__ => (bytes_shared) -> IXR.out(0) );
 
 
@@ -52,21 +53,21 @@ account points
 >>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 
 
+=======
+>>>>>>> f2996b1 (inconsistancy)
 @dPRG -> ( __LBB__ => (bytes_shared) -> IXR.out(0) );
 
 
-@dPRG -> (viles, 
-	string(var_name, "Hello World!"), 
-	in(var_name), 
-	number(somenum, 134217728), 
-	in(somenum), 
-	array(c_array, 
-	["123", 123, var_name]), 
-	in(c_array),
-	in({direct})
-)
+@dPRG -> (	string(var_name, "Hello World!"), in(var_name) );
+
+@dPRG -> ( number(somenum, 134217728),  in(somenum) );
+
+@dPRG -> ( array(c_array, 
+	["123", 123, var_name]), in(c_array)); 
 
 
+
+@charms => ark;
 
 
 

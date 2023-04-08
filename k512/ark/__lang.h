@@ -54,8 +54,11 @@
 	#define __lock_reader (O_RDONLY)
 	#define __lock_writer (O_WRONLY)
 	#define arch_filename d_atlbb
+	#define __init_method__(...) (#__VA_ARGS__)()
+	#define __base_address ((char const *)hashof(0, __FILE__, str_rwings(__FILE__)-1))
 
 
+	#define __INIT__(t) __ASCII(hashof(1, "okok", 3));
 
 <<<<<<< HEAD
 =======
