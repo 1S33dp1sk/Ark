@@ -58,7 +58,7 @@
 	#define __base_address ((char const *)hashof(0, __FILE__, str_rwings(__FILE__)-1))
 
 
-	#define __INIT__(t) __ASCII(hashof(1, "okok", 3));
+	#define __INIT__(t) __ASCII(hash(1, "okok", 3));
 
 <<<<<<< HEAD
 =======
