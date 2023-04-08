@@ -9,6 +9,7 @@
 	#include "ark/__main.h"
 	#include "ark/__string.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 	#include "headers/atp.h"
 	#include "headers/lbb.h"
 	#include "headers/ixr.h"
@@ -30,21 +31,30 @@ dPRG(
 
 #endif
 =======
+=======
+	#include "headers/atp.h"
+	#include "headers/lbb.h"
+	#include "headers/ixr.h"
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 
 
 dPRG(
-	if(__ARGC__==1) {
-		printf("arc\n");
-	}else {
-		printf("%s\n", __FILE__);
+	switch(__ARGC__) {
+	case 1: __ASCII(__FILE__); break;
+	case 2: __ASCII(__ARGV__) break;
+	default: __ARK__(__ARGV__); break;		
+	// case 2: __LBB__(__ARGV__) break;
+	// default: __IXR__ break;
 	}
 );
 
-#endif
 
 
-
+<<<<<<< HEAD
 >>>>>>> 1250eda (renaming&restructure)
+=======
+#endif
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 
 
 

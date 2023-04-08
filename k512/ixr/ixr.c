@@ -249,10 +249,14 @@ The indexer
 		#endif
 		uchar __head[29];ulong __hsz=sizeof(__head);memset(&__head, 0, __hsz);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		ulong __hfsize=fsze(d_atlbb);
 =======
 		ulong __hfsize=fsze(__lbb_indexfile);
 >>>>>>> 1250eda (renaming&restructure)
+=======
+		ulong __hfsize=fsze(d_atlbb);
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 		if(__hfsize<__hsz) {
 			__hsz=__hfsize;
 		};
@@ -315,6 +319,7 @@ The indexer
 	// obtain header properties { ENVIROMENT }
 	int __refresh_header() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		___header.__size=fsze(d_atlbb);
 		___header.d_count=__cindex;
 		___header.checksum=fhash16(1, d_atlbb);
@@ -323,16 +328,25 @@ The indexer
 		___header.d_count=__cindex;
 		___header.checksum=fhash16(1, __lbb_indexfile);
 >>>>>>> 1250eda (renaming&restructure)
+=======
+		___header.__size=fsze(d_atlbb);
+		___header.d_count=__cindex;
+		___header.checksum=fhash16(1, d_atlbb);
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 		return 0;
 	}
 	// check if header exsits then retain 
 	// new header properties
 	int refresh_h() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		if(!__stres(d_atlbb)) {
 =======
 		if(!__stres(__lbb_indexfile)) {
 >>>>>>> 1250eda (renaming&restructure)
+=======
+		if(!__stres(d_atlbb)) {
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 			#ifdef LOG_ERR
 				printf("indexfile does not exist\n");
 			#endif
@@ -359,10 +373,14 @@ The indexer
 			return -1;
 		};
 <<<<<<< HEAD
+<<<<<<< HEAD
 		if(__stres(d_atlbb)) {
 =======
 		if(__stres(__lbb_indexfile)) {
 >>>>>>> 1250eda (renaming&restructure)
+=======
+		if(__stres(d_atlbb)) {
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 			#ifdef LOG_ERR
 				printf("indexer already exists\n");
 			#endif
@@ -370,6 +388,7 @@ The indexer
 		};
 		__header__();
 		int ixr_fd=-1;
+<<<<<<< HEAD
 <<<<<<< HEAD
 		ixr_fd=open(d_atlbb, __ixr_start_flags, __ixr_pmode);
 		if(ixr_fd==-1){
@@ -381,6 +400,12 @@ The indexer
 			#ifdef LOG_ERR
 				printf("indexer fd failed on create\n");
 >>>>>>> 1250eda (renaming&restructure)
+=======
+		ixr_fd=open(d_atlbb, __ixr_start_flags, __ixr_pmode);
+		if(ixr_fd==-1){
+			#ifdef LOG_ERR
+				printf("err : ixr :: failed to create index file ::: %s\n", d_atlbb);
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 			#endif
 			return -1;
 		};
@@ -412,10 +437,14 @@ The indexer
 		if(__ixr_fd==0x228) {
 			int ixr_fd=-1;
 <<<<<<< HEAD
+<<<<<<< HEAD
 			ixr_fd=open(d_atlbb, __ixr_access_flags, __ixr_pmode);
 =======
 			ixr_fd=open(__lbb_indexfile, __ixr_access_flags, __ixr_pmode);
 >>>>>>> 1250eda (renaming&restructure)
+=======
+			ixr_fd=open(d_atlbb, __ixr_access_flags, __ixr_pmode);
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 			if(ixr_fd==-1){
 				#ifdef LOG_ERR
 					printf("Cannot open indexer file\n");
@@ -425,10 +454,14 @@ The indexer
 			__ixr_fd=(ulong)ixr_fd;
 			#ifdef DEBUG
 <<<<<<< HEAD
+<<<<<<< HEAD
 				printf("Parsing index file :: %s\n", d_atlbb);
 =======
 				printf("Parsing index file :: %s\n", __lbb_indexfile);
 >>>>>>> 1250eda (renaming&restructure)
+=======
+				printf("Parsing index file :: %s\n", d_atlbb);
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 				printf("file descriptor :open::%d\n",ixr_fd);
 			#endif
 		};

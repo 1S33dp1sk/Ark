@@ -1093,25 +1093,21 @@ void *__arc__(aip_arc *st) {
 						__flag+=8;
 					};
 				};
-			};
-			#ifdef DEBUG
-				printf("flags : %d\n", __flag);
-			#endif
-			#ifdef PROCESS
-				printf("ATP\n");
-			#endif
-			switch(__flag) {
-			case 8:
-				return __lbb_variable__;
-			case 33:
-				return __lbb_charms__;
-			default:
+			}else {
+				#ifdef PROCESS
+					printf("ATP\n");
+				#endif
+				#ifdef DEBUG
+					printf("flags : %d\n", __flag);
+				#endif
 				return __lbb_atp__;
 			}
+			return __proto_at(&(*argument++));
 		}
 		else {
 			#ifdef PROCESS
 				printf("LBB\n");
+				printf("Request :: %s\n", argument);
 			#endif
 			return __lbb_yeild__;
 		};
@@ -1120,9 +1116,16 @@ void *__arc__(aip_arc *st) {
 
 	int __proto_at(char const *bufin) {
 
+<<<<<<< HEAD
 		int __res=0;
 		printf("@-Protocol<%c> : %d\n",bufin[0], __res);
 
+=======
+	int __proto_at(char const *bufin) {
+
+		int __res=0;
+		printf("@-Protocol<%c> : %d\n",bufin[0], __res);
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 		/**
 		 * AT-protocol entries always start with '@'
 		 */
@@ -1140,7 +1143,11 @@ void *__arc__(aip_arc *st) {
 		 */
 		if((*bufin>=0x30)&&(*bufin<=0x39)){
 			#ifdef DEBUG
+<<<<<<< HEAD
 				printf("Storage Number (%s)\n", bufin);
+=======
+				printf("Storage Number <%s>\n", bufin);
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
 			#endif
 			__res=aip_set;
 		}

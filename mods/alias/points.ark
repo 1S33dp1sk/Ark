@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 /// points \\\
 
 
@@ -46,13 +47,31 @@ account points
 
 
 
+=======
+/// points \\\
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
+
+
+@dPRG -> ( __LBB__ => (bytes_shared) -> IXR.out(0) );
+
+
+@dPRG -> (viles, 
+	string(var_name, "Hello World!"), 
+	in(var_name), 
+	number(somenum, 134217728), 
+	in(somenum), 
+	array(c_array, 
+	["123", 123, var_name]), 
+	in(c_array),
+	in({direct})
+)
 
 
 
 
 
-
-
-
-
+<<<<<<< HEAD
 >>>>>>> 1250eda (renaming&restructure)
+=======
+	
+>>>>>>> 3c2a301 (Threeway convos {LBB,IXR,ATP})
