@@ -181,7 +181,7 @@
 
 	int mor(c_req *request);
 	void *atp_step(arc_sizes arc_size);
-	int __point_run();
+	int *__point_run();
 	lbb_entry __decode_arg(char const *__);
 	int __proto_at(char const *__);
 	int get_atp_type(char const *__call);

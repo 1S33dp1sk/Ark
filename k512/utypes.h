@@ -709,6 +709,7 @@ and loaded via a .o or .so
 	typedef enum __lbb_add_t lbb_at;
 
 
+	#define IXR(...) __ASCII(__VA_ARGS__)
 	#define __IXR_TYPES { ixr_t, ixr_st, ixr_h }
 #endif
 

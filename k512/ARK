@@ -15,8 +15,8 @@
 
 dPRG(
 	switch(__ARGC__) {
-	case 1: __ASCII(__FILE__); break;
-	case 2: __ASCII(__ARGV__) break;
+	case 1: __INIT__(a); break;
+	case 2: __TEXT(2) break;
 	default: __ARK__(__ARGV__); break;		
 	// case 2: __LBB__(__ARGV__) break;
 	// default: __IXR__ break;
