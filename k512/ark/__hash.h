@@ -6,7 +6,7 @@
 	#define _D_HASH 1
 
 	void __btoh(uchar __c, uc __s) {
-		ulong i=1, t=0;
+		uns i=1, t=0;
 		__s[0] = __s[1] = __CHAR_ZERO;
 		__s[2] = __CHAR_NULL;
 		while(__c) {
@@ -17,7 +17,7 @@
 			else {
 				__s[i] = __CHAR_ALPH_A+t-10;
 			};
-			__c>>=4;i--;
+			i--;__c>>=4;
 		}
 	};
 
@@ -32,7 +32,7 @@
 
 	void __htostr(char *__str, uchar *__hash) {
 		#ifdef DEBUG
-		printf( "starting string :: %s\n " , __str );
+			printf( "starting string :: %s\n " , __str );
 		#endif
 		ulong __c=0;
 		for (;__c<32; __c+=1) {
@@ -41,7 +41,7 @@
 			strncat(__str, (char *)__, 3);
 		}
 		#ifdef DEBUG
-		printf( " hash :: %s\n" , __str );
+			printf( " hash :: %s\n" , __str );
 		#endif
 	};
 	/**
@@ -436,7 +436,7 @@
 					return NULL;        
 			}
 			char __hsized[hash_size];
-			memset( &__hsized , 0 , hash_size );
+			memset(&__hsized, 0, hash_size);
 			uchar *__hptr;
 			sha3_init( &__sha3 , hash_size );
 			sha3_set_flags( &__sha3 , k_flag );
