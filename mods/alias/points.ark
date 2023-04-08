@@ -1,27 +1,30 @@
-/// d-pts \\\
-account points 
-
-@ __LBB__ -> IXR <darc> (
-	*p_into= __into__(&into),
-	*into_caller(into, argv[0])
-	*into_args(into, &argv[1]),
-	*into_type(into, get_atp_type(argv[1])),
-	&__protocol__(p_into),
-)
-
-@ => IXR.py(base, conf_gen, gw3, hash1, server, socks)
-@ => IXR.sh(call, change_author, commits, find_gits, multidir)	
+/// points \\\
 
 
 
+@ark -> (mrkj, 
+	=> __ATP__ (data, __ARK__(
+
+		)), __LBB__ (lang, args, __ARK__(
+	
+			))) {
+};
+
+
+@dPRG -> ( __LBB__ => (bytes_shared) -> IXR.out(0) );
+
+
+@dPRG -> (	string(var_name, "Hello World!"), in(var_name) );
+
+@dPRG -> ( number(somenum, 134217728),  in(somenum) );
+
+@dPRG -> ( array(c_array, 
+	["123", 123, var_name]), in(c_array)); 
 
 
 
+@charms => ark;
 
 
 
-
-
-
-
-
+	

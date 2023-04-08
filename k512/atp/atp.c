@@ -1022,12 +1022,8 @@ void *__arc__(aip_arc *st) {
 		// we generate a kept reference for a certain
 		// size defined by `arc_sizes` which can be 
 		// accessed via the lbb
-		atp_data *data;
-		if (arc_size==__step_point) {
-			
-			return __atp_pointer();
-		}
-		else if (arc_size==__step_addr) {
+		atp_data *data=__atp_pointer();
+		if (arc_size==__step_addr) {
 			__arcfork();
 			if arc_process {
 				__atp_pointer();
@@ -1060,22 +1056,89 @@ void *__arc__(aip_arc *st) {
 		return strdup(data->addr);
 	};
 
-	int __point_run() {
+	int *__point_run() {
 		void *__=atp_step(512);
 		return 0;
 	};
+
+
+	int __proto_at(char const *bufin) {
+
+		int __res=0;
+		printf("@-Protocol<%c> : %d\n",bufin[0], __res);
+
+		/**
+		 * AT-protocol entries always start with '@'
+		 */
+		if(*bufin++!=__at__) {
+			#ifdef DEBUG
+				printf("@-call is not correctly formatted\n");
+			#endif
+			return __res&~__lbb_atp__;
+		};
+		/**
+		 * payloads always start with
+		 * numbers
+		 * 
+		 * which is basically the address
+		 */
+		if((*bufin>=0x30)&&(*bufin<=0x39)){
+			#ifdef DEBUG
+				printf("Storage Number (%s)\n", bufin);
+			#endif
+			__res=aip_set;
+		}
+		/**
+		 * protocol requests always start with
+		 * CAPITAL ASCII
+		 *
+		 * examples including the http
+		 * GET & POST & LBB & ATP & ATM ...
+		 */
+		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
+			#ifdef DEBUG
+				printf("Subprotocol -> %s\n", bufin);
+			#endif
+			__res=aip_get;
+		}
+		/**
+		 * interpreters are always called using 
+		 * small leter ascii
+		 * to complement the entire suite of the call, 
+		 * so an interpreter doesn't
+		 * have to be a specific call, could be a * 
+		 * such as a prg, or a prg entry point.
+		 */
+		else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
+			#ifdef DEBUG
+				printf("@<%s>\n", bufin);
+			#endif
+			__res=aip_retain;
+		}
+		/**
+		* will exit with grace if unknown
+		*/
+		else {
+			__res=aip_next;
+		};
+		return (atp_t)__res;
+	};
+
 
 	lbb_entry __decode_arg(char const *argument) {
 		char const *point_buffer=argument;
 		// __info__
 		if(point_buffer==NULL) {
 			#ifdef PROCESS
-				printf("IXR\n");
+				printf("ptr <%s>\n", hashof(0, argument, str_rwings(argument)));
 			#endif
 			return __lbb_info__;
 		}
 		// __@__
 		else if(*point_buffer==AT_DEFINED) {
+			#ifdef PROCESS
+				printf("Book (%s)\n", zero_address(1));
+			#endif
 			// @
 			int __flag=0, i=0;
 			for(; i<__LBB_BASE_LEN; i++) {
@@ -1095,104 +1158,48 @@ void *__arc__(aip_arc *st) {
 						__flag+=8;
 					};
 				};
-			};
-			#ifdef DEBUG
-				printf("flags : %d\n", __flag);
-			#endif
-			#ifdef PROCESS
-				printf("ATP\n");
-			#endif
-			switch(__flag) {
-			case 8:
-				return __lbb_variable__;
-			case 33:
-				return __lbb_charms__;
-			default:
+			}else {
+				#ifdef PROCESS
+					printf("ATP\n");
+				#endif
+				#ifdef DEBUG
+					printf("flags : %d\n", __flag);
+				#endif
 				return __lbb_atp__;
 			}
+			return __proto_at(&(*argument++));
 		}
 		else {
+			int *res=0;
+			int *(*temp)() = &__point_run;
 			#ifdef PROCESS
-				printf("LBB\n");
+				printf("IXR : Request :: %s\n", argument);
 			#endif
 			return __lbb_yeild__;
 		};
 	};
 
-	atp_t __proto_at(char const *bufin) {
-		int __res=0;
-		/**
-		 * AT-protocol entries always start with '@'
-		 */
-		if(*bufin++!=__at__) {
 
-			__res&=~__lbb_atp__;
-		}
-		/**
-		 * payloads always start with
-		 * numbers
-		 * 
-		 * which is basically the address
-		 */
-		if((*bufin>=0x30)&&(*bufin<=0x39)){
-			__res=aip_set;
-		}
-		/**
-		 * protocol requests always start with
-		 * CAPITAL ASCII
-		 *
-		 * examples including the http
-		 * GET & POST & LBB & ATP & ATM ...
-		 */
-		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
-			__res=aip_get;
-		}
-		/**
-		 * interpreters are always called using 
-		 * small leter ascii
-		 * to complement the entire suite of the call, 
-		 * so an interpreter doesn't
-		 * have to be a specific call, could be a * 
-		 * such as a prg, or a prg entry point.
-		 */
-		else if((*bufin>=0x61)&&(*bufin<=0x7a)) {
-			__res=aip_retain;
-		}
-		/**
-		* will exit with grace if unknown
-		*/
-		else {
-			__res=aip_next;
-		};
-		return (atp_t)__res;
-	};
 
 	int get_atp_type(char const *proto_call) {
 		int res=__lbb_none__;
-		res=__decode_arg(proto_call);
-		if(res==__lbb_atp__) {
-			return __proto_at(proto_call);
-		}
-		return res;
+		return __decode_arg(proto_call);
 	};
 
 	int decode_lbb_addr(char const *__arg) {
 		ulong _addr_len=str_rwings(__arg);
-
 		if(check_addr(__arg)==-1){
 			#ifdef LOG_ERR
 				printf("address is not correctly formatted\n");
 			#endif
 			return 1;
 		};
-
 		ulong _addr_max=__LBB_BASE_LEN+_addr_len;
 		char __address[_addr_max];
 		memset(&__address, 0, sizeof(__address));
-		memmove(__address, __lbb_convdir, __LBB_BASE_LEN);
+		memmove(__address, d_lbb, __LBB_BASE_LEN);
 		memmove((__address+__LBB_BASE_LEN), __arg, _addr_len);
 		__address[_addr_max]='\0';
-
 		#ifdef DEBUG
 			printf("decoding lbb address :: \n");
 		#endif
@@ -1210,8 +1217,6 @@ void *__arc__(aip_arc *st) {
 		#ifdef DEBUG
 			log_mstat(&cm_st);
 		#endif
-
-
 		return 0;
 	};
 

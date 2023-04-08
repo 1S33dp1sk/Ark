@@ -243,7 +243,7 @@ The indexer
 			printf("reading :::\n");
 		#endif
 		uchar __head[29];ulong __hsz=sizeof(__head);memset(&__head, 0, __hsz);
-		ulong __hfsize=fsze(__lbb_indexfile);
+		ulong __hfsize=fsze(d_atlbb);
 		if(__hfsize<__hsz) {
 			__hsz=__hfsize;
 		};
@@ -305,15 +305,15 @@ The indexer
 
 	// obtain header properties { ENVIROMENT }
 	int __refresh_header() {
-		___header.__size=fsze(__lbb_indexfile);
+		___header.__size=fsze(d_atlbb);
 		___header.d_count=__cindex;
-		___header.checksum=fhash16(1, __lbb_indexfile);
+		___header.checksum=fhash16(1, d_atlbb);
 		return 0;
 	}
 	// check if header exsits then retain 
 	// new header properties
 	int refresh_h() {
-		if(!__stres(__lbb_indexfile)) {
+		if(!__stres(d_atlbb)) {
 			#ifdef LOG_ERR
 				printf("indexfile does not exist\n");
 			#endif
@@ -339,7 +339,7 @@ The indexer
 			#endif
 			return -1;
 		};
-		if(__stres(__lbb_indexfile)) {
+		if(__stres(d_atlbb)) {
 			#ifdef LOG_ERR
 				printf("indexer already exists\n");
 			#endif
@@ -347,10 +347,10 @@ The indexer
 		};
 		__header__();
 		int ixr_fd=-1;
-		ixr_fd=open(__lbb_indexfile, __ixr_start_flags, __ixr_pmode);
+		ixr_fd=open(d_atlbb, __ixr_start_flags, __ixr_pmode);
 		if(ixr_fd==-1){
 			#ifdef LOG_ERR
-				printf("indexer fd failed on create\n");
+				printf("err : ixr :: failed to create index file ::: %s\n", d_atlbb);
 			#endif
 			return -1;
 		};
@@ -381,7 +381,7 @@ The indexer
 		};
 		if(__ixr_fd==0x228) {
 			int ixr_fd=-1;
-			ixr_fd=open(__lbb_indexfile, __ixr_access_flags, __ixr_pmode);
+			ixr_fd=open(d_atlbb, __ixr_access_flags, __ixr_pmode);
 			if(ixr_fd==-1){
 				#ifdef LOG_ERR
 					printf("Cannot open indexer file\n");
@@ -390,7 +390,7 @@ The indexer
 			};
 			__ixr_fd=(ulong)ixr_fd;
 			#ifdef DEBUG
-				printf("Parsing index file :: %s\n", __lbb_indexfile);
+				printf("Parsing index file :: %s\n", d_atlbb);
 				printf("file descriptor :open::%d\n",ixr_fd);
 			#endif
 		};
