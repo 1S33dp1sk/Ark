@@ -102,6 +102,7 @@ node_modules
 sha
 hardhat
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> d24e147 (merge)
 <<<<<<< HEAD
 >>>>>>> 3e33e62 (merge)
@@ -110,3 +111,6 @@ hardhat
 typechain/
 >>>>>>> a51c16d (otf(on-the-fly) typechain)
 >>>>>>> 2a4c45c (otf(on-the-fly) typechain)
+=======
+typechain/
+>>>>>>> e2c3b2b (otf(on-the-fly) typechain)
