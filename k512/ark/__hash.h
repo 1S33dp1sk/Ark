@@ -410,7 +410,7 @@
 	}
 	// raw 
 	uchar const *hash( ulong level , void const *tohash , ulong thsize ) {
-		#ifdef DEBUG_HASH
+		#ifdef DEBUG
 			char const *_strhash=(char const *)tohash;
 			printf("hash : string to hash :: %s\n",_strhash);
 		#endif
