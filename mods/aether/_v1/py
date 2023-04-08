@@ -1,9 +1,0 @@
-#!/bin/python3
-
-# @reaction = {
-# 	'ATxnReceive'		:	self.ATxnReceive,
-# 	'ATxnRequest'		:	self.ATxnRequest,
-# 	'ABlockBind'		:	self.ABlockBind,
-# 	'NodeRegistered'	:	self.NodeRegistered
-# }.get( @arg<str>{1} , lambda: 'Unknown Event' )
-

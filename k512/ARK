@@ -8,20 +8,24 @@
 	#include "ark/__log.h"
 	#include "ark/__main.h"
 	#include "ark/__string.h"
+	#include "headers/atp.h"
+	#include "headers/lbb.h"
+	#include "headers/ixr.h"
 
 
 dPRG(
-	if(__ARGC__==1) {
-		printf("arc\n");
-	}else {
-		printf("%s\n", __FILE__);
+	switch(__ARGC__) {
+	case 1: __ASCII(__FILE__); break;
+	case 2: __ASCII(__ARGV__) break;
+	default: __ARK__(__ARGV__); break;		
+	// case 2: __LBB__(__ARGV__) break;
+	// default: __IXR__ break;
 	}
 );
 
+
+
 #endif
-
-
-
 
 
 

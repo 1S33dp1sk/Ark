@@ -335,10 +335,10 @@
 	**/ 
 	char const *zero_address(ulong level){
 		switch(level){
-		case 0: return "0x0000";
-		case 1: return "0x00000000";
-		case 2: return "0x0000000000000000";
-		case 3: return "0x00000000000000000000000000000000";
+		case 0: return "0x00000000";
+		case 1: return "0x0000000000000000";
+		case 2: return "0x00000000000000000000000000000000";
+		case 3: return "0x0000000000000000000000000000000000000000000000000000000000000000";
 		default: return "0";
 		}
 	};

@@ -1095,39 +1095,39 @@ void *__arc__(aip_arc *st) {
 						__flag+=8;
 					};
 				};
-			};
-			#ifdef DEBUG
-				printf("flags : %d\n", __flag);
-			#endif
-			#ifdef PROCESS
-				printf("ATP\n");
-			#endif
-			switch(__flag) {
-			case 8:
-				return __lbb_variable__;
-			case 33:
-				return __lbb_charms__;
-			default:
+			}else {
+				#ifdef PROCESS
+					printf("ATP\n");
+				#endif
+				#ifdef DEBUG
+					printf("flags : %d\n", __flag);
+				#endif
 				return __lbb_atp__;
 			}
+			return __proto_at(&(*argument++));
 		}
 		else {
 			#ifdef PROCESS
 				printf("LBB\n");
+				printf("Request :: %s\n", argument);
 			#endif
 			return __lbb_yeild__;
 		};
 	};
 
-	atp_t __proto_at(char const *bufin) {
+	int __proto_at(char const *bufin) {
+
 		int __res=0;
+		printf("@-Protocol<%c> : %d\n",bufin[0], __res);
 		/**
 		 * AT-protocol entries always start with '@'
 		 */
 		if(*bufin++!=__at__) {
-
-			__res&=~__lbb_atp__;
-		}
+			#ifdef DEBUG
+				printf("@-call is not correctly formatted\n");
+			#endif
+			return __res&~__lbb_atp__;
+		};
 		/**
 		 * payloads always start with
 		 * numbers
@@ -1135,6 +1135,9 @@ void *__arc__(aip_arc *st) {
 		 * which is basically the address
 		 */
 		if((*bufin>=0x30)&&(*bufin<=0x39)){
+			#ifdef DEBUG
+				printf("Storage Number <%s>\n", bufin);
+			#endif
 			__res=aip_set;
 		}
 		/**
@@ -1145,6 +1148,9 @@ void *__arc__(aip_arc *st) {
 		 * GET & POST & LBB & ATP & ATM ...
 		 */
 		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
+			#ifdef DEBUG
+				printf("Subprotocol -> %s\n", bufin);
+			#endif
 			__res=aip_get;
 		}
 		/**
@@ -1169,11 +1175,7 @@ void *__arc__(aip_arc *st) {
 
 	int get_atp_type(char const *proto_call) {
 		int res=__lbb_none__;
-		res=__decode_arg(proto_call);
-		if(res==__lbb_atp__) {
-			return __proto_at(proto_call);
-		}
-		return res;
+		return __decode_arg(proto_call);
 	};
 
 	int decode_lbb_addr(char const *__arg) {
@@ -1189,7 +1191,7 @@ void *__arc__(aip_arc *st) {
 		ulong _addr_max=__LBB_BASE_LEN+_addr_len;
 		char __address[_addr_max];
 		memset(&__address, 0, sizeof(__address));
-		memmove(__address, __lbb_convdir, __LBB_BASE_LEN);
+		memmove(__address, d_lbb, __LBB_BASE_LEN);
 		memmove((__address+__LBB_BASE_LEN), __arg, _addr_len);
 		__address[_addr_max]='\0';
 

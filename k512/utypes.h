@@ -616,9 +616,9 @@ and loaded via a .o or .so
 
 	#endif
 
-	static const char *__lbb_indexfile = "@charms/lbb/.lbb\0";
-	static const char *__lbb_convdir = "@charms/lbb\0";
-	static const char *__lbb_locking = "@charms/lock\0";
+	// static const char *d_atlbb = "@charms/lbb/.lbb\0";
+	// static const char *d_lbb = "@charms/lbb\0";
+	// static const char *__lbb_locking = "@charms/lock\0";
 
 	#define __LBB_TYPES { lbb_t, lbb_size, lbb_entry }
 #endif

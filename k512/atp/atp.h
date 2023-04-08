@@ -183,7 +183,7 @@
 	void *atp_step(arc_sizes arc_size);
 	int __point_run();
 	lbb_entry __decode_arg(char const *__);
-	atp_t __proto_at(char const *__);
+	int __proto_at(char const *__);
 	int get_atp_type(char const *__call);
 	int decode_lbb_addr(char const *__addr);
 

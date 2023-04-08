@@ -1,22 +1,22 @@
-///Ark:alph\\\
-account points 
-
-@ __LBB__ -> IXR <ARK>
-
-@ => IXR.cc(cloud.ark)
-@ => IXR.py(base, conf_gen, gw3, hash1, server, socks)
-@ => IXR.sh(call, change_author, commits, find_gits, multidir)	
+/// points \\\
 
 
+@dPRG -> ( __LBB__ => (bytes_shared) -> IXR.out(0) );
 
 
-
-
-
-
-
-
+@dPRG -> (viles, 
+	string(var_name, "Hello World!"), 
+	in(var_name), 
+	number(somenum, 134217728), 
+	in(somenum), 
+	array(c_array, 
+	["123", 123, var_name]), 
+	in(c_array),
+	in({direct})
+)
 
 
 
 
+
+	

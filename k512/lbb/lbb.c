@@ -42,7 +42,7 @@ int __ap_fifo(char const *__path){
 // socket connections or commands , etc..
 ulong __ap_writer() {
 	ulong retres;
-	int __fd=open(__lbb_locking,__lbb_lock_writer);
+	int __fd=open(d_lock,__lbb_lock_writer);
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open writer\n");
@@ -55,7 +55,7 @@ ulong __ap_writer() {
 		printf("Writer : fifo opened :: %lu\n",_fd);
 	#endif
 	lbb_shard.c_fd=_fd;
-	if(get_mstat(__lbb_locking, lbb_mstat)) {
+	if(get_mstat(d_lock, lbb_mstat)) {
 		#ifdef LOG_ERR
 			printf("cannot obtain mounted status for Writer on FIFO\n");
 		#endif
@@ -68,7 +68,7 @@ ulong __ap_writer() {
 MUST NOT HAVE ANY LOCKING BITS
 ulong __ap_reader() {
 	ulong retres=0;
-	int __fd=open(__lbb_locking,__lbb_lock_reader);
+	int __fd=open(d_lock,__lbb_lock_reader);
 	if(__fd==-1){
 		printf("cannot open reader\n");
 		_exit(1);
@@ -78,7 +78,7 @@ ulong __ap_reader() {
 		printf("Reader : fifo opened :: %lu\n",_fd);
 	#endif
 	lbb_shard.c_fd=_fd;
-	if(get_mstat(__lbb_locking, lbb_mstat)) {
+	if(get_mstat(d_lock, lbb_mstat)) {
 		#ifdef LOG_ERR
 			printf("cannot obtain mounted status for READER on FIFO\n");
 		#endif
@@ -376,7 +376,7 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		printf("fld file  : %lu\n", __fd);
 		printf("fld count : %lu\n", __fld_count);
 	#endif
-	char const *fld_name=__combine_str(__lbb_convdir, __fn);
+	char const *fld_name=__combine_str(d_lbb, __fn);
 	ulong c=0,_res=0,__offset=0;
 
 	// create entry in lbb
