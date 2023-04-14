@@ -1,9 +1,0 @@
-/// PYTHON \\\
-The Python interpreter
-
-
-@Protocol(local, __LBB__(python3, __ARK__(
-
-)))
-
-@Protocol(global, "pypi.org/packages/") => __ATP__(...)
