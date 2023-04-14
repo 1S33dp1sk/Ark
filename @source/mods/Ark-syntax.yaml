@@ -34,6 +34,7 @@ variables:
   double_suffix: '[fFlL]'
   float_suffix: '[fF]'
   integer_suffix: '[lL]{1,2}[uU]?|[uU][lL]{0,2}'
+  att_aliases: '[arkalias|aether|interpreter]'
 
   att_aliases: '[alias|aether|interpreter]'
   identifier: \b[[:alpha:]_][[:alnum:]_]*\b # upper and lowercase
@@ -52,7 +53,11 @@ variables:
   type_qualifier: 'const|volatile'
   compiler_directive: 'inline|restrict|__restrict__|__restrict'
   modifiers: '{{storage_classes}}|{{type_qualifier}}|{{compiler_directive}}'
+<<<<<<< HEAD:@source/mods/Ark-syntax.yaml
   non_func_keywords: 'if|for|switch|while|decltype|sizeof|__declspec|__attribute__|__dPRG'
+=======
+  non_func_keywords: 'if|for|switch|while|decltype|sizeof|__declspec|__attribute__|__dPRG|dPRG'
+>>>>>>> 9600cac263044b54562f75edae69bb146f40aa8f:mods/interpreter/sublime-syntax/Ark.sublime-syntax
 
 contexts:
   main:
@@ -295,7 +300,10 @@ contexts:
 
     # - match: '@\w*'
       # scope: keyword.operator.assignment.augmented.c
+<<<<<<< HEAD:@source/mods/Ark-syntax.yaml
   
+=======
+>>>>>>> 9600cac263044b54562f75edae69bb146f40aa8f:mods/interpreter/sublime-syntax/Ark.sublime-syntax
   operators:
     - match: (?:\+\+|--)
       scope: keyword.operator.arithmetic.c
