@@ -1,7 +1,6 @@
 
 
-## Use files as variables :)
-
+running `make` will create the base for @source and the second `make` will create a virtual enviroment inside **@charms**.
 
 ## The main build
 	We want to build a completely isolated virtual enviroment where the root of the env is `@charms` being the build directory. 
