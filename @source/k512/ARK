@@ -15,9 +15,10 @@
 #include "headers/lbb.h"
 #include "headers/ixr.h"
 
-	
 dPRG(
-	portal("0.0.0.0");	
+	script(alphabet, 0)
+	printf("name : %lu\n", alphabet.__hash)
+
 )
 
 

@@ -11,19 +11,19 @@
 	#define __D_CHARMS 4
 	#define __dPRG struct __c_shard *main(__ARGC__,__ARGV__) 
 	#define __cPRG int main(int argc, char const*argv[]) 
-	#define dPRG(...) __cPRG {__VA_ARGS__;}
 	#define __ARGC__ argc
 	#define __ARGV__ argv
-	#define F_ARG __VA_ARGS__[1]
-	#define M_ARG __VA_ARGS__[0]
 	#define __lock_reader (O_RDONLY)
 	#define __lock_writer (O_WRONLY)
-	#define __address(l,x) ((char const *)hashof(l, x, str_rwings(x)))
-	#define base_address(l) ((char const *)__address(l, __FILE__))
 	#define __base_address ((char const *)base_address(0))
-	
-
 	#define ARK_BASE __base_address
+	#define M_ARG(...) (__VA_ARGS__)[0]
+	#define F_ARG(...) (__VA_ARGS__)[1]
+	#define __IXR "IXR\0"
+	#define dPRG(...) __cPRG {__VA_ARGS__;}
+	#define base_address(l) ((char const *)__address(l, __FILE__))
+	#define __address(l,x) ((char const *)hashof(l, x, str_rwings(x)))
+
 
 
 	// base for charms
@@ -66,17 +66,16 @@
 		if(*__VA_ARGS__[1]!='@'){ get_atp_type(__VA_ARGS__[1] ); }\
 		else { lbb_argument(__VA_ARGS__[1]); };\
 	};
-	#define __IXR__(c_name, shard_props) {\
+	#define __IXR__ {\
 		__TEXT(IXR);\
+	};
+	#define __LBB__(type, key, value) {\
+		__TEXT(lbb);\
 		static char dbuf[__A_LEN];memset(&dbuf, 0, sizeof(dbuf));\
 		memset(lbb_mstat, 0, sizeof(m_stat));\
 		memset(l_shard,0,sizeof(c_shard));\
 		printf("getting shard .:%s:. \n",__base_address);\
 		if(!check_archfile) { arch_att(arch_filename, 3, __API_LEN); };\
-	};
-	#define __LBB__(type, key, value) {\
-		__TEXT(lbb);\
-		__set_next("\n");\
 	};
 	#define BASE(d_atp, d_lbb, d_ixr, argc, entry, ...) {\
 		__TEXT(Ark ⚡);\
@@ -96,15 +95,35 @@
 	} __dPER
 
 
+	#define __r_operation &
+	#define __into_op =>
+	#define __t_operation 3
+
+	#define __call_base(...) str_a4offset(__VA_ARGS__, sep_offset(#__VA_ARGS__, "&->"))+__t_operation
+	#define modbase_call(x) __combine_str(run_mod, __call_base(x))
+
+	#define Scratch(...) printf("%s\n", modbase_call("base.py"))
+
+	#define __dRUN(in, ...) {\
+		char const *__mbase_call=modbase_call(#in);\
+		execvp(__mbase_call, ne);\
+		printf("%s\n", __mbase_call);\
+	};
+
+
+
+
 	#define Ark(x, ...) {\
-		__ASCII(x);\
-		__ASCII(_Generic((__VA_ARGS__), \
-			int: "run &=>",\
+		__ASCII(#x);\
+		__ASCII(_Generic((__VA_ARGS__[0]), \
+			int: "run &->",\
 			char const *: "@-Protocol",\
 			char const **: "C-Program",\
 			d_into const *: "D-Program",\
-			d_ark const *: dark(int)));\
-	} break;
+			d_ark const *: dark(int),\
+			IXR: "Indexer => ",\
+		default:"default"));\
+	};
 
 
 
@@ -125,10 +144,10 @@
 	#define __init_method__(x, ...) x==0?&info:&zero;
 	#define __INFO__(x,...) { info(); }
 
-	
 
+
+	
 	#define ATP(a) __ATP__(a); break;
-	#define IXR(c,s) __IXR__(c,s) break;
 	#define LBB(t,k,v) __LBB__(t,k,v); break;
 
 

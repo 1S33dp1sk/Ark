@@ -4,6 +4,10 @@
 
 #ifndef _D_ARCH
 	#define _D_ARCH 1
+	#define charm_mod __mod_call(charms_d)
+	#define run_mod __combine_str(charm_mod, "run/")
+
+	
 
 	char const *__get_atname(char const *__naming) {
 		if(!__atchar(*__naming)){
@@ -92,9 +96,6 @@
 
 	/********* mods *********/
 
-	#define __osdelim_offset 3
-	#define charm_mod __mod_call(charms_d)
-	#define run_mod __combine_str(charm_mod, "run/")
 
 	char const *__charm_call(char const *entryhash, char const *__cname) {
 		ulong cname_len=str_rwings(__cname), eff_len=str_rwings(run_mod);
@@ -124,8 +125,8 @@
 		memmove((cc_ptr+c_sep), __mname, __flen);
 
 		#ifdef DEBUG
+			printf("mod : call :: %s\n", charmcall);
 		#endif
-		printf("mod : call :: %s\n", charmcall);
 
 		return strdup(charmcall);
 	};
@@ -139,6 +140,7 @@
 
 		return __combine_str(__dirname, __os_delim);
 	};
+
 
 	char const *__ecall(char const *__mod, char const *__name) {
 		char const *__callbase=__dcall(__charm_call(NULL,__mod));

@@ -343,16 +343,16 @@ int get_sstat(char const *__path, s_stat *sfile) {
 		printf("offset of @ is %lu characters\n", off_at);
 	#endif
 
-	char *faddr=str_b4offset(_path,off_at);
-	sfile->sa_len=str_rwings(faddr);
+	char const *_baddr=str_b4offset(_path,off_at);
+	sfile->sa_len=str_rwings(_baddr);
 
-	char *fipat=str_a4offset(_path,off_at);
-	sfile->se_len=str_rwings(fipat);
+	char const *_4addr=str_a4offset(_path,off_at);
+	sfile->se_len=str_rwings(_4addr);
 
-	memmove((&sfile->s_addr),faddr,sfile->sa_len);
-	memmove((&sfile->s_ipv),fipat,sfile->se_len);
+	memmove((&sfile->s_addr),_baddr,sfile->sa_len);
+	memmove((&sfile->s_ipv),_4addr,sfile->se_len);
 
-	if(fipat==NULL){
+	if(_4addr==NULL){
 		return -1;
 	}
 

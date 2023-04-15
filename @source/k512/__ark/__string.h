@@ -6,6 +6,7 @@
 	#define _D_STRING 1
 
 	int __nullchar(char __c) {
+		// check if char is NULL
 		if(__c==0x00) {
 			return 1;
 		};
@@ -260,13 +261,19 @@
 		return strdup(temp);
 	};
 
-	char *str_a4offset(char const *string, ulong offset){
-		ulong flen=str_rwings(string)+1;//to offset the offset 
-		if(flen<offset){return NULL;}
-		ulong slen=flen-offset;
+	char const *str_a4offset(char const *string, ulong offset){
+		//to offset the offset
+		ulong c=0, flen=str_rwings(string)+1,  slen=flen-offset; 
+		if(flen<offset){
+			return ne;
+		}
 		char temp[slen];
-		memset(&temp,0,sizeof temp);
-		snprintf(temp,slen,"%s",(string+offset));
+		while(c<slen) {
+			#ifdef DEBUG
+				printf("temp : %s\n", temp);
+			#endif
+			temp[c]=string[c+offset-1];c+=1;
+		}
 		return strdup(temp);
 	};
 
@@ -313,11 +320,12 @@
 
 	ulong str_cdelims(char const *__str, char const *__dlm) {
 		ulong count=0, temp=0, length=str_rwings(__str);
-		char *substr=(char *)__str;
+		char const *substr=(char *)__str;
 		d_str *subs;		
 		while((temp=__sep_atoff(substr, __dlm))>=1) {
 			if(!count){
 				count=1;
+
 				subs=(d_str*)malloc(sizeof(d_str));
 				subs->__=str_a4offset(substr, temp);
 				subs->__len=str_rwings(substr);
@@ -327,15 +335,19 @@
 				count+=1;
 				substr=str_a4offset(substr, temp);
 				++substr;subs++;
-				printf("type     :%c: %s\n\n",*substr, (char *)__arg__(substr));
-					// string(temp, substr)
-				// subs->__next=&temp;
 			}else {
 			
 			};
 		};
 		return count;
 	};
+
+	char const *__c_arr_delimiter(char const *__) {
+		ulong __b4len=str_cdelims(__, ARR_DELIM);
+		char const *__b4 = str_b4offset(__,__b4len);
+		printf("%s\n", __b4);
+		return strdup(__b4);
+	}
 
 	ulong arr_cdelims(char const *__str) {
 		// add 1 more to create an array

@@ -94,7 +94,8 @@ loaded via a .o or .so
 			char const *chkref;
 		};
 	typedef struct __ptr_addr atp_pointer;
-		#define __ptr__(x) ((ptr_st *)(x->ptr))
+		#define __ptr__(...)
+		#define ptr_main(x) ((ptr_st *)(x->ptr))
 		#define ptr_addr(x) cis_address(x)
 		#define ptr_chkref(x) cis_chkref(x)
 		#define ptr_addrlen(x) cis_address(x)
@@ -331,13 +332,41 @@ loaded via a .o or .so
 			#define str_val(x) (char const *)(x.__)
 			#define str_nxt(x) (d_str *)(x.__next)
 			#define string(x,y) d_str x; \
-			x.__=(char const *)y; \
-			x.__len=str_rwings(y); \
+			x.__=(char const *)&y;\
+			x.__len=str_rwings(x.__);\
 			x.__next=&x;\
 
 	#endif
+
 /**
+dPRG(
+	var(my_str, "Alpha")
+	printf("%s\n", my_str.__val)
+)
+ *
+ * D => *
+**/
+	#ifndef d_var
+		struct __var_d {
+			ulong __ref;
+			char const *__;
+			char const *__val;
+			struct __var_d* __next;
+		};
+	typedef struct __var_d d_var;
+		#define __var()
+		#define var(a,...) d_var a; {\
+			a.__val = (char const *)&__VA_ARGS__;\
+		};\
+
+	#endif
+/**
+dPRG(
+	program(alpha, IXR&->py_wrapper.sh)
+)
  * D => *Program
+ * 
+ * 
 **/
 	#ifndef d_prg
 			struct __program_d {
@@ -350,11 +379,18 @@ loaded via a .o or .so
 				struct __program_d* __next;
 			};
 	typedef struct __program_d d_prg;
-			static const ulong size_dprg=sizeof(d_prg);
-			#define dprg_in(x) ((char const *)x->prg_in)
-			#define dprg_out(x) ((char const *)x->prg_out)
-			#define dprg_handler(x) ((char const *)x->prg_handler)
-			#define program(x) d_prg x;\
+		static const ulong size_dprg=sizeof(d_prg);
+		#define dprg_in(x) ((char const *)x->prg_in)
+		#define dprg_out(x) ((char const *)x->prg_out)
+		#define dprg_handler(x) ((char const *)x->prg_handler)
+		#define program(x, ...) d_prg x;{\
+			char const *__call_path=modbase_call(#__VA_ARGS__);\
+			printf("program @%s\n", __call_path);\
+			execvp(__call_path, ne);\
+		};\
+	
+
+
 
 	#endif
 /**
@@ -366,7 +402,7 @@ loaded via a .o or .so
 				void **__;
 				struct __array_d* __next;
 			};
-	typedef struct __array_d d_array;
+	typedef struct __array_d d_arr;
 			#define array_count(x) (ulong)(x->__count)
 			#define array_elems(x) (void *)(x->__)
 			#define array(x, ...) int y; d_array x; \
@@ -409,13 +445,14 @@ loaded via a .o or .so
 				struct __pointer_d* __next;
 			};
 	typedef struct __pointer_d d_pointer;
-			#define ptr_count(x) ((ulong)(x->count))
-			#define ptr_content(x) ((ulong)(x->content))
-			#define pointer(x, v) d_pointer x; \
-				x.__content=vcontent(v);\
-				x.__count=content_count(v);\
-				x.__llhash=varll_hash(v, x.__count);\
-				x.__next=&x;\
+		#define ptr_hash(x) ((char const *)x->__llhash)
+		#define ptr_count(x) ((ulong)(x->__count))
+		#define ptr_content(x) ((void const **)(x->__content))
+		#define pointer(x, v) d_pointer x; \
+			x.__content=vcontent(v);\
+			x.__count=content_count(v);\
+			x.__llhash=varll_hash(v, x.__count);\
+			x.__next=&x;\
 
 	#endif
 /**
@@ -431,9 +468,12 @@ loaded via a .o or .so
 			};
 	typedef struct __point_d d_point;
 			static const ulong size_dpoint=sizeof(d_point);
+			#define point_cname(x)	((char const *)(x.c_name))
 			#define dpoint_p(x)		((d_point *)x)
 			#define dpoint_fmt(x)	((char const *)dpoint_p(x)->c_fmt)
-			#define point(x, a) d_point x;\
+			#define point(x, a)\
+				d_point x;\
+					x.c_name=(char const *)&a;\
 			
 	#endif
 /**
@@ -644,7 +684,10 @@ loaded via a .o or .so
 		};
 		typedef struct __ark_d d_ark;
 			#define dark(dtype, ...) 3
+			#define c_dlm(x) (char const *)__c_arr_delimiter(#x)
 	#endif
+
+
 
 	#define __D_TYPES { d_num, d_str, d_prg, d_arr, d_script, d_point, d_into, d_pia, d_socket, d_http, d_lock, d_mod, d_switcher, d_ark }
 #endif
@@ -695,6 +738,16 @@ loaded via a .o or .so
 		#define entry_name(x) __atp_names(x)
 		#define log_entry(x) log_str(entry_name(x))
 
+	
+	enum __lbb_add_t {
+		__command, 
+		__filepath, 
+		__function,
+		__field,
+		__addr
+	};
+	typedef enum __lbb_add_t lbb_at;
+
 	#endif
 	#define __LBB_TYPES { lbb_t, lbb_size, lbb_entry }
 #endif
@@ -725,17 +778,13 @@ loaded via a .o or .so
 	typedef enum __ixr_types ixr_t;
 
 	#ifndef ixr_st
-			struct __ixr_st {
-				ulong c_index;
-				char const *c_name;
-				uchar const *c_ref;
-			};
-	typedef struct __ixr_st ixr_st;
-			#define ixr_cis_p(x) ((ixr_st *)(&x))
-			#define ixr_cis(x) ((ixr_st *)x)
-			#define ist_index(x) ((ulong)(ixr_cis(x)->c_index))
-			#define ist_name(x)	 ((char const *)(ixr_cis(x)->c_name))
-			#define ist_ref(x) ((uchar const *)(ixr_cis(x)->c_ref))
+		struct __ixr_st {
+			ulong c_index;
+			char const *c_name;
+			uchar const *c_ref;
+		};
+	typedef struct __ixr_st IXR;
+;		// ;
 	#endif
 
 	#ifndef __fmt_t
@@ -774,15 +823,6 @@ loaded via a .o or .so
 
 	#endif
 
-	
-	enum __lbb_add_t {
-		__command, 
-		__filepath, 
-		__function,
-		__field,
-		__addr
-	};
-	typedef enum __lbb_add_t lbb_at;
 
 
 	#define __IXR_TYPES { ixr_t, ixr_st, ixr_h }

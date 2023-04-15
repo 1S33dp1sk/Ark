@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 # define colors for a cool ux
 NC='\033[0m'

@@ -84,6 +84,7 @@
 #endif
 
 #ifndef __os_name
+#define __os_delim_offset 3
 #define __os_delim "/\0"
     #if HAVE_TARGET_CONDITIONALS_H
         #include <targetConditionals.h>

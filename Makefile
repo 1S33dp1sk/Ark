@@ -287,13 +287,14 @@ mod_aeth:
 	@if [ ! -d ${__aeth} ]; then printf "err: !aeth.d\n"&return 2; fi;
 	@if [ -d ${aeth__} ]; then printf "err: ${aeth}&->!0"; fi;
 	mkdir ${aeth__}; cp -r ${__aeth}/* ${aeth__};
-	chmod u+x ${aeth__}//*;
+	chmod u+rwx ${aeth__}//*;
 
 mods_intro:
 	@printf "\n{MODS}\n"
 
 _mods:
 	cp -r ${__mods}//* ${@charms}/d.run
+	chmod u+x ${run@charms}//*
 # $(__mods__)
 mods_init: mods_intro _mods
 #################################

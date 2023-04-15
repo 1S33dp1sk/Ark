@@ -144,11 +144,11 @@
 		__TEXT(Use lbb as :: `d-lbb /path/to/file`);
 	};
 
-	void log_ixr_point(void *__) {
-		printf("point index 	: %lu\n",ist_index(__));
-		printf("point reference : %s\n", ist_ref(__));
-		printf("point name  	: %s\n", ist_name(__));
-	};
+	// void log_ixr_point(void *__) {
+	// 	printf("point index 	: %lu\n",ist_index(__));
+	// 	printf("point reference : %s\n", ist_ref(__));
+	// 	printf("point name  	: %s\n", ist_name(__));
+	// };
 
 
 	#define __H512__L 1

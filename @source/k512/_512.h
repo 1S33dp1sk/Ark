@@ -188,20 +188,20 @@
 				default:"unknown")
 
 		#define fmt_out(x) log_str(_Generic((x), \
-			num:(char const *)(x.__),\
-			str:(char const *)(x.__),\
-			arr:(char const *)(x.__),\
+			d_num:(char const *)(x.__),\
+			d_str:(char const *)(x.__),\
+			d_arr:(char const *)(x.__),\
 			default:__NADA__\
 		));
 
-		#define out(x) fmt_out(x);
 
 		#define out_fmt(x) log_str(_Generic((x), \
-			num:"number",\
-			str:"string",\
-			arr:"array",\
-			default:"dPRG"\
-		));
+			d_num:"@number",\
+			d_str:"@string",\
+			d_arr:"@array",\
+			default:"@dPRG"));
+
+		#define out(x) out_fmt(x);
 
 	    #define OUT_ENK_H(fd,x) do { \
 	        char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
@@ -218,6 +218,14 @@
 	        dprintf(fd,__,(x));\
 	    } __dPER
 
+	    #define __ARK_FMT(x) _Generic((x), \
+			d_point: point_cname(x),\
+		    default: "#NE")
+
+	    #define OUT(x, ...) { \
+	    	char const *__=__ARK_FMT(__VA_ARGS__);\
+	    	write(x, __, str_rwings(__));\
+	    };
 
 		#define __ASCII(x) OUT_ENK_A(0,x)
 		#define _ENK_A(x,y) x##y
@@ -474,7 +482,7 @@
 			char *str_b4offset(char const *__str, ulong __offset);
 			char *stn_b4offset(char const *__str, ulong __offset);
 			char *str_a4woffset(char const *__str, ulong __offset);
-			char *str_a4offset(char const *__str, ulong __offset);
+			char const *str_a4offset(char const *__str, ulong __offset);
 			char const *expand_atoffset(char const *__str, char const *__expantion, ulong __offset);
 			char const *expand(char const *__str, char const *__expantion, ulong __offset);
 			char const *__expand_str(char const *__str, char const *__expantion);

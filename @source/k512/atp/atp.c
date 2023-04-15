@@ -86,7 +86,7 @@
 	    char const *arg=(char const *)dbuffer;
 	    ulong main_offset=0, __alen=str_rwings(arg);
 		pia(pst, "temp");
-	    char *ptr_interchange, *__ptrname, *__interpreter, *__args, *__payload;
+	    char const *ptr_interchange, *__ptrname, *__interpreter, *__args, *__payload;
 	    do {
 	        c__+=1;
 	        if(!__flags) {
@@ -327,7 +327,7 @@
 		};
 
 		// recenter the `arg` to be able to extract the correct offset
-		char *_ptrcomplete=str_a4offset(--arg, ptr_name_offset);
+		char const *_ptrcomplete=str_a4offset(--arg, ptr_name_offset);
 		ulong intrpt_path_offset=sep_offset(_ptrcomplete, ">");
 		char *__interpreter=str_b4offset(_ptrcomplete, intrpt_path_offset);
 		memmove(via_ptr(pst), __interpreter, __I_LEN);
@@ -345,9 +345,9 @@
 
 		// seperate the bracket insides by seperating the `{`
 		// and making use of the fact that `}` should be at end of data inp (eodi)
-		char *_intrargs=str_a4offset(_ptrcomplete, __interpreter_len);
+		char const *_intrargs=str_a4offset(_ptrcomplete, __interpreter_len);
 		ulong args_path_offset=sep_offset(_intrargs, "{");
-		char *__args=str_a4offset(_intrargs, args_path_offset);
+		char const *__args=str_a4offset(_intrargs, args_path_offset);
 		ulong arg_length=str_rwings((char const *)__args);
 		ulong __arg_offset=arg_length-1;
 		if(__args[__arg_offset]!='}'){
@@ -388,8 +388,8 @@
 			printf("decoding aetherpoint :: \n");
 		#endif
 		ulong pnt_offset=sep_offset(in_argument(into), charms_d);
-		char *point=str_a4offset(in_argument(into), pnt_offset);
-		return strdup(point);
+		char const *point_name=str_a4offset(in_argument(into), pnt_offset);
+		return strdup(point_name);
 	};
 
 	content_st *crt_http_content(char const *__, content_pm __type) {
@@ -797,7 +797,7 @@ void *__arc__(aip_arc *st) {
 			#endif
 			return NULL;
 		}
-		char *temp=str_a4offset(__msg, __offset+str_rwings(wss_key_h));
+		char const *temp=str_a4offset(__msg, __offset+str_rwings(wss_key_h));
 		__offset=sep_offset(temp, "\n");
 		temp=str_b4offset(temp, __offset);
 		#ifdef DEBUG

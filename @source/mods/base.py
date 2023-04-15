@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3
 
 def str_seperator(x):
 	if ':=' in x:
@@ -27,11 +27,12 @@ class alphabet:
 				"next":"%d"%(i+1),
 			})
 
-	def __write_file(self, __path):
+	def write_file(self, __path):
 		with open(__path,'w') as fout:
 			fout.write("#autogen")
+			fout.write(str(self.alpha))
 
-	def __read_make(self, __cwd,_list):
+	def read_make(self, __cwd,_list):
 		assert len( _list ) == 26 #alphadef
 		if (__cwd.endswith("/charms")):
 			print("in charms\n")
@@ -45,8 +46,10 @@ class alphabet:
 
 
 
+
 if __name__ == '__main__':
 	__base=alphabet()
+	__base.write_file("alphabet")
 	print(__base.alpha)
 
 
