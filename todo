@@ -1,5 +1,0 @@
-#remove extentions while building and add local library fetch instead
-#add checks for
-	IXR 
-	&->
-	&&__len>0
