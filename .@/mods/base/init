@@ -1,0 +1,14 @@
+/// 3nit \\\
+
+#define __lbb_shared_bytes 1200
+#define caller __FILE__
+dPRG(
+	LBB(
+		string(mystr, "Hello World\n")
+	)
+	__IXR__(
+		lbb(shared_bytes)
+	);
+
+	printf("%lu\n", IXR->mods_count)
+)
