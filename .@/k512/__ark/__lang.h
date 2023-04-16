@@ -24,14 +24,13 @@
 	#define base_address(l) ((char const *)__address(l, __FILE__))
 	#define __address(l,x) ((char const *)hashof(l, x, str_rwings(x)))
 
-
-
 	// base for charms
 	#define charms_d "@charms/d.\0"
+	#define d_charms "charms"
 	#define CHARMS_BASE (ulong)str_rwings(charms_d)
 
 	// LBB
-	#define d_lbb "lbb/\0"
+	#define d_lbb "lbb\0"
 	#define LBB_BASE (ulong)str_rwings(d_lbb)
 
 	// ATP
@@ -39,16 +38,16 @@
 	#define ATP_BASE (ulong)str_rwings(d_atp)
 
 	// IXR
-	#define d_ixr "out/\0"
+	#define d_ixr "out\0"
 	#define IXR_BASE (ulong)str_rwings(d_ixr)
 
 	// SRC
-	#define d_src "src/\0"
+	#define d_src "src\0"
 	#define SRC_BASE (ulong)str_rwings(d_src)
 
 
 	#define d_sep ":\0"
-	#define arch_filename "@charms/__3c__\0"
+	#define arch_filename "@charms/d.lbb/.lbb\0"
 	#define arch_callport "9999"
 	#define checkef_file(x,y) ((ulong)__stres(x)&&(ulong)__stres(y))
 	#define checkef_dir(x) ((ulong)__stres(x))
@@ -61,13 +60,36 @@
 		m_stat ms = (m_stat *)(aptr);\
 		log_mstat(ms);\
 	};
-	#define __ATP__(...) char const *x[2];{\
+	#define __ATP__(...) const void **temp; {\
 		__TEXT(@-Protocol);\
-		x[0]=#__VA_ARGS__;x[1]=NULL;\
-		if(*x[0]!='@'){ get_atp_type(x[1] ); }\
-		else { __ASCII(x[0]);lbb_argument(x[1]); };\
+		int x=lbb_argument(#__VA_ARGS__);\
+		temp=(const void**)&#__VA_ARGS__;\
+		switch(x) {\
+			case __lbb_none__: 		return __no_entry__(#__VA_ARGS__);\
+			case __lbb_charms__: 	return __field__(#__VA_ARGS__);\
+			case __lbb_variable__:	return __point__(#__VA_ARGS__);\
+			case __lbb_info__:		return __info__(#__VA_ARGS__);\
+			case __lbb_yeild__:		return __w3__(#__VA_ARGS__);\
+			case __lbb_atp__:		x = get_atp_type(#__VA_ARGS__);\
+			default: break;\
+		};\
+		switch(x) {\
+			case aip_base:		return ixr_export(#__VA_ARGS__);\
+			case aip_return:	return ixr_run(#__VA_ARGS__);\
+			case aip_retreive:	return ixr_collect(#__VA_ARGS__);\
+			case aip_retain:	return ixr_save(#__VA_ARGS__);\
+			case aip_set:		return atp_set(#__VA_ARGS__);\
+			case aip_get:		return atp_get(#__VA_ARGS__);\
+			case aip_next:		x = get_ixr_type(#__VA_ARGS__);\
+			default: break;\
+		};\
+		switch(x) {\
+			case 1: printf("1 arg"); break;\
+			case 2: printf("2 args"); break;\
+			default: printf("2+ args"); break;\
+		};\
+		return ne__;\
 	};
-	#define __IXR__(...) ixr_h *IXR=(ixr_h*)&___header
 
 	#define __LBB__ {\
 		__TEXT(lbb);\
@@ -77,14 +99,7 @@
 		printf("getting shard .:%s:. \n",__base_address);\
 		if(!check_archfile) { arch_att(arch_filename, 3, __API_LEN); };\
 	};
-	#define BASE(d_atp, d_lbb, d_ixr, argc, entry, ...) {\
-		__TEXT(Ark ⚡);\
-		__ASCII(d_atp); __ASCII(d_lbb);\__ASCII(d_ixr);\
-		do {\
-		_Generic((*entry), \
-			const char *: printf("var[%d]: %s\n", argc, entry[argc]));\
-		}while(--argc!=0);\
-	};
+
 	#define __VARS__(...) {\
 		__ARGC__; __ARGV__;\
 		__TEXT(__ARGV__);\
@@ -122,8 +137,6 @@
 		default:"default"));\
 	};
 
-
-
 	#define s_into(x) (char const *)(x)[0]
     #define info() __ASCII(__os_name);__ASCII(__FILE__)
 	#define zero(x)  ((char const *)(&(zero_address)));
@@ -136,6 +149,9 @@
 	#define status(x) __statusof(x)
 	#define stres(x) __stres(x)
     #define len_ustrze(x) (((ulong)x)*(sizeof(uchar)))
+    #define ixr_shared_size ((ulong)___header.shared_size)
+    #define ixr_mods_count	((ulong)___header.mods_count)
+    #define ixr_pub_address	((char const *)___header.pub_key)
 	#define ixr_h_size(x) (x.shared_size)
 	#define __DPRG__(...) __LBB__(__VA_ARGS__) __dPER
 	#define __init_method__(x, ...) x==0?&info:&zero;

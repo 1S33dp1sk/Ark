@@ -1,6 +1,6 @@
-/// 3nit \\\
+/// init \\\
 
-#define __lbb_shared_bytes 1200
+#define __lbb_shared_bytes 4096
 #define caller __FILE__
 dPRG(
 	LBB(
@@ -9,6 +9,5 @@ dPRG(
 	__IXR__(
 		lbb(shared_bytes)
 	);
-
-	printf("%lu\n", IXR->mods_count)
+	log_ixr(*IXR);	
 )

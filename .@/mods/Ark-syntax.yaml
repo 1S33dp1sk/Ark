@@ -34,9 +34,8 @@ variables:
   double_suffix: '[fFlL]'
   float_suffix: '[fF]'
   integer_suffix: '[lL]{1,2}[uU]?|[uU][lL]{0,2}'
-  att_aliases: '[arkalias|aether|interpreter]'
 
-  att_aliases: '[alias|aether|interpreter]'
+  att_aliases: '[alias|aeth|interpreter|base|cfg|constants|contracts|errors|hub|io|looping|onchain|tests]'
   identifier: \b[[:alpha:]_][[:alnum:]_]*\b # upper and lowercase
   ark_symbols: 'LBB|IXR|ATP|ARK'
   protocol_design: \b@[[:upper:]]{2,}\b

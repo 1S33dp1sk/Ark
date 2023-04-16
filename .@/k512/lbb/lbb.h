@@ -58,14 +58,14 @@ little black book
 	void *__into__(d_into *st);
 	lbb_entry __decode_arg(char const *__);
 
-	d_into *__no_entry__(aip_st *proto_call);
-	d_into *__info__(aip_st *proto_call);
-	d_into *__pointer__(aip_st *proto_call);
-	d_into *__field__(aip_st *proto_call);
-	d_into *__w3__(aip_st *proto_call);
-	d_into *__point__(aip_st *proto_call);
-	d_into *dcloud(aip_st *proto_call);
-	d_into *act2args(aip_st *proto_call);
+	int __no_entry__(void *proto_call);
+	int __info__(void *proto_call);
+	int __pointer__(void *proto_call);
+	int __field__(void *proto_call);
+	int __w3__(void *proto_call);
+	int __point__(void *proto_call);
+	d_into *dcloud(void *proto_call);
+	int act2args(aip_st *proto_call);
 
 	#define __LBB__H 1
 

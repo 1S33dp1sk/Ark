@@ -474,7 +474,7 @@ dPRG(
 			};
 	typedef struct __point_d d_point;
 			static const ulong size_dpoint=sizeof(d_point);
-			#define point_cname(x)	((char const *)(x.c_name))
+			#define point_cname(x)	((char const *)(x->c_name))
 			#define dpoint_p(x)		((d_point *)x)
 			#define dpoint_fmt(x)	((char const *)dpoint_p(x)->c_fmt)
 			#define point(x, a)\
@@ -670,7 +670,7 @@ dPRG(
 			char const *path;
 		};
 	typedef struct __lock_d d_lock;
-		#define __d_lock "@charms/d.lbb/.lbb"
+		#define __d_lock arch_filename
 		#define d_lock(...) _d_lock x; x.path=#__VA_ARGS__;
 
 	#endif
@@ -679,9 +679,10 @@ dPRG(
 **/
 	#ifdef d_mod
 		struct __mod_d {
-
+			ulong x;
 		};
 	typedef struct __mod_d d_mod;
+		#define aliases(...) { __VA_ARGS__; }
 
 	#endif
 
@@ -846,9 +847,14 @@ dPRG(__LBB__)
 				ulong mods_count; // d_count;
 				char const *pub_key; // checksum;
 				uchar header[__A_LEN]; //head[__I_LEN]
+				struct __ixr_h* __next;
 			};
 	typedef struct __ixr_h ixr_h;
 		#define ixr_header ixr_h
+		#define ixr_address(x) ((char const *)(x->pub_key))
+		#define __IXR__(...) ixr_h *IXR=(ixr_h*)&___header; {\
+			__refresh_header();\
+		};\
 
 	#endif
 

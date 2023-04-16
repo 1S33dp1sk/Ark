@@ -10,6 +10,10 @@
 		write(0,"\n",1);
 	};
 
+	void log_ixr(ixr_h ixr) {
+		return log_ixrh(&ixr);
+	};
+
 	void log_dpoint(d_point *dst_point) {
 		printf("dst point :: \n");
 		printf("@%lu\n", dst_point->c_index);
@@ -67,14 +71,14 @@
 		default:			printf("ATP <dcloud> 		:::\n"); break;
 		};
 	};
-	
+
+	#define __ixr_shared(x) "shared_size":(x)
+
+	#define ixr_shared(x) __ixr_shared(#x)
+
 	void log_ixrh(ixr_h *ixrh) {
 		// log indexer prototype
-		printf("\nindexer head ::\n");
-		printf("\tshared_size=%lu,", ixrh->shared_size);
-		printf("\tmods_count=%lu,", ixrh->mods_count);
-		printf("\tpublic_key=%s,", ixrh->pub_key);
-		printf("\n");
+		_log(0,ixrh);
 	};
 
 	void log_socket(aip_sock sock) {

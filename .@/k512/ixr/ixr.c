@@ -9,7 +9,15 @@ The indexer
 #ifndef __ixr_name 
 	#define __ixr_name "indexer"
 
-
+	int get_ixr_type(void const *__args) {
+		char const **args = (char const **)__args;
+		ulong arg_count=arr_cdelims((char const *)args);
+		#ifdef DEBUG
+			printf("arg count : %lu\n", arg_count);
+		#endif
+		int __temp=(int)arg_count;
+		return __temp;
+	};
 
 	#define IXR_FILE __d_lock
 
@@ -286,9 +294,14 @@ The indexer
 
 	// obtain header properties { ENVIROMENT }
 	int __refresh_header() {
-		___header.shared_size=fsze(IXR_FILE);
+		printf("%s = {\n", IXR_FILE);
+		___header.shared_size=__fsize(IXR_FILE);
+		printf("\tshared size : %lu,\n", ___header.shared_size);
 		___header.mods_count=__cindex;
-		___header.pub_key=tostr(fhash16(1, IXR_FILE));
+		printf("\tmods count : %lu,\n", ___header.mods_count);
+		___header.pub_key=fhashof(2, IXR_FILE);
+		printf("\tpublic key : lbb(%s)\n", ___header.pub_key);
+		printf("}\n");
 		return 0;
 	}
 	// check if header exsits then retain 
@@ -471,24 +484,26 @@ ixr_h *ixr_pcollect(d_into ist) {
 };
 
 
-ixr_h *ixr_export(aip_st *_intro) {
-	printf("IXR&->export ::\n");
-	return (ixr_h *)ne;
+int ixr_export(void *__aip_into) {
+	printf("IXR->export :\n");
+	return 0;
 };
 
-ixr_h *ixr_run(aip_st *_intro) {
-	return (ixr_h *)ne;
-
-};
-
-ixr_h *ixr_save(aip_st *_intro) {
-	return (ixr_h *)ne;
+int ixr_run(void *__aip_into) {
+	printf("IXR&->run ::\n");
+	return 1;
 
 };
 
-ixr_h *ixr_collect(aip_st *_intro) {
-	return (ixr_h *)ne;
+int ixr_save(void *__aip_into) {
+	printf("IXR&save :::\n");
+	return 2;
 
+};
+
+int ixr_collect(void *__aip_into) {
+	printf("IXR:collect::\n");
+	return 3;
 };
 
 

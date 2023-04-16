@@ -319,26 +319,18 @@
 	};
 
 	ulong str_cdelims(char const *__str, char const *__dlm) {
-		ulong count=0, temp=0, length=str_rwings(__str);
-		char const *substr=(char *)__str;
-		d_str *subs;		
-		while((temp=__sep_atoff(substr, __dlm))>=1) {
-			if(!count){
-				count=1;
-
-				subs=(d_str*)malloc(sizeof(d_str));
-				subs->__=str_a4offset(substr, temp);
-				subs->__len=str_rwings(substr);
-				subs->__next=NULL;
-			}
-			else if (count) {
-				count+=1;
-				substr=str_a4offset(substr, temp);
-				++substr;subs++;
-			}else {
-			
+		ulong count=0, length=str_rwings(__str);
+		#ifdef DEBUG
+			printf("cdelims : %s :: %s\n", __dlm, __str);
+		#endif
+		int c=0, temp=0;
+		do {
+			temp=__sep_atoff(&__str[temp], __dlm);
+			if ((temp>0)||(__str[temp]==*__dlm)) {
+				__str=str_a4woffset(__str, temp);
+				count+=1;c+=temp;
 			};
-		};
+		} while(temp!=-1);
 		return count;
 	};
 
@@ -352,11 +344,24 @@
 	ulong arr_cdelims(char const *__str) {
 		// add 1 more to create an array
 		// #err if more elements than arg_count specifies
-		ulong arg_count=str_cdelims(__str, ARR_DELIM)+1;
-		return arg_count;
+		ulong arg_count=str_cdelims(__str, ",");
+		return arg_count!=0?arg_count:1;
 	};
 
-	ulong sep_offset(char const *string, char *seperator) {
+	char const *__offset_arg(char const *__string, ulong __arg) {
+		if(__arg>4096) { 
+			printf("arguments are converted to fields according to the size"); 
+			_exit(2); 
+		}
+		else {
+			void *temp = malloc(__arg);
+			memset(temp, 0, __arg);
+			memmove(temp, __string, __arg);
+			return temp;			
+		};
+	}
+
+	ulong sep_offset(char const *string, char const *seperator) {
 		#ifdef DEBUG
 			printf("string : %s\n", string);
 		#endif

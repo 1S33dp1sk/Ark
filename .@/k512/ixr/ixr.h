@@ -5,10 +5,10 @@ The indexer
 	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
 	#define indexer_check() if (!checkef_file){INDEXER(NULL);};
 	
-	ixr_h *ixr_export(aip_st *_intro);
-	ixr_h *ixr_run(aip_st *_intro);
-	ixr_h *ixr_save(aip_st *_intro);
-	ixr_h *ixr_collect(aip_st *_intro);
+	int ixr_export(void *_intro);
+	int ixr_run(void *_intro);
+	int ixr_save(void *_intro);
+	int ixr_collect(void *_intro);
 	
 	#define ixr_mem 	((void *)&___header.header)
 	#define ixr_ubuf	((uchar *)&___header.header)
@@ -44,6 +44,7 @@ The indexer
 
 	d_point ref_point(void const *__key, char const *__value, char const *__format);
 	char const *ixr_format(ixr_t idx_type);
+	int get_ixr_type(void const *__args);
 	char const *__kaddress(char const *__hash);
 	void *__erv(char const *__key,char const *__val);
 	ulong __set_next_p(void *__);

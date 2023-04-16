@@ -667,52 +667,71 @@ void *__into__(d_into *st) {
 	return memset(st, 0, sizeof(d_into));
 };
 
-	d_into *__no_entry__(aip_st *proto_call) {
+	int __no_entry__(void *proto_call) {
 		#ifdef PROCESS
 			printf("No Entry.\n");
 		#endif
 		_exit(1);
-		return NULL;
+		return ne__;
 	}
 
-	d_into *__info__(aip_st *proto_call) {
+
+	#define evaluate(...) __VA_ARGS__;
+
+	#define debug(...) do {\
+		ulong __len=str_rwings(#__VA_ARGS__);\
+		ulong __delims=arr_cdelims(#__VA_ARGS__);\
+		if(__delims>1) {\
+			void const **__vargs = variable_args(__delims, #__VA_ARGS__, ARR_DELIM);\
+			ulong c=0; do {\
+				printf("vargs[%lu] : %s\n", c, (char const *)__vargs[c]);\
+				c+=1;\
+			}while(c<=__delims);\
+			char const *__var=evaluate(__vargs[1]);\
+			printf("%s",__var);\
+		};\
+	} __dPER;
+
+	int __info__(void *proto_call) {
 		#ifdef PROCESS
 			printf("@info\n");
 		#endif
-		return NULL;
+
+		return ne__;
 	};
 
-	d_into *__pointer__(aip_st *proto_call) {
-		char const *ptr_name = aip_base(proto_call);
+	int __pointer__(void *proto_call) {
+		char const *ptr_name = base_address(0);
 		#ifdef PROCESS
 			printf("@pointer:%s\n", ptr_name);
 		#endif
-		return NULL;
+		return ne__;
 	};
 
-	d_into *__field__(aip_st *proto_call) {
-		char const *fld_name = aip_base(proto_call);
+	int __field__(void *proto_call) {
+		char const *fld_name = base_address(1);
 		#ifdef PROCESS
 			printf("@field: %s\n", fld_name);
 		#endif
-		return NULL;
+		debug("Field",fld_name,"temp",ne__)
+		return ne__;
 	};
 
-	d_into *__w3__(aip_st *proto_call) {
+	int __w3__(void *proto_call) {
 
-		return NULL;
+		return ne__;
 	}
 
-	d_into *__point__(aip_st *proto_call) {
-		char const *point_name = aip_base(proto_call);
+	int __point__(void *proto_call) {
+		char const *point_name = base_address(2);
 		#ifdef PROCESS
 			printf("@point: %s\n", point_name);
 		#endif
-		return NULL;
+		return ne__;
 	};
 
-	d_into *dcloud(aip_st *proto_call) {
-		char const *dc_address=aip_arg(proto_call, 1);
+	d_into *dcloud(void *proto_call) {
+		char const *dc_address=base_address(3);
 		#ifdef PROCESS
 			printf("d-%s\n", dc_address);
 		#endif
@@ -721,14 +740,14 @@ void *__into__(d_into *st) {
 
 	#define p_switcher(x) (x->switcher)
 
-	d_into *act2args(aip_st *proto_call) {
+	int act2args(aip_st *proto_call) {
 		switch(p_switcher(proto_call)) {
 		case -1 : return __no_entry__(proto_call);
 		case 0  : return __info__(proto_call);
 		case 1  : return __pointer__(proto_call);
 		case 2  : return __field__(proto_call);
 		case 3  : return __pointer__(proto_call);
-		default : return dcloud(proto_call);
+		default: return ne__;
 		};
 	};
 
@@ -738,51 +757,56 @@ void *__into__(d_into *st) {
 		// __info__
 		if(point_buffer==NULL) {
 			#ifdef PROCESS
-				__TEXT(Pointer); __ASCII(uname(argument));
+				printf("Info (%s)\n", base_address(0));
 			#endif
 			return __lbb_info__;
 		}
 		else if(*point_buffer=='@') { // AT_DEFINED '@' => __@__
-			#ifdef PROCESS
-				printf("Book (%s)\n", zero_address(1));
-			#endif
 			// @
 			int __flag=0, i=0;
-			for(; i<LBB_BASE; i++) {
-					if (point_buffer[i]==d_lbb[i]){
-						// @lbb
-						__flag+=1;
-					}				
-					if(point_buffer[i]==charms_d[i]) {
-						// @charms
-						__flag+=4;
-					};
+			point_buffer = &point_buffer[1];
+			for(; i<3; i++) {
+				if (point_buffer[i]==d_lbb[i]){
+					// lbb
+					__flag+=1;
+				}
+				else if(point_buffer[i]==d_charms[i]) {		
+					// charms
+					__flag+=4;
+				};
 			};
-			if(__flag!=8) {
-				__flag=1;
-				for(; i<__D_CHARMS; i++) {
-					if(point_buffer[i]==charms_d[i]) {
+			if(__flag==3) {
+				#ifdef PROCESS
+					printf("Book (%s)\n", base_address(1));
+					printf("@Query\n");
+				#endif
+				return __lbb_variable__;
+			}
+			else if (__flag==12) {
+				for(i=0; i<6; i++) {
+					if(point_buffer[i]==d_charms[i]) {
 						__flag+=8;
 					};
 				};
-			return 0;
-			}else {
-				printf("prototype : ATP :: %s ::: %d\n", &(*argument++), __flag);
+				if(__flag==60) {
+					#ifdef PROCESS
+						printf("@charms-pointer : %s\n", &point_buffer[i]);
+					#endif
+					return __lbb_charms__;
+				};
+				#ifdef PROCESS
+					printf("unknown point : %s\n", &point_buffer[i]);
+				#endif
+				return 0;
+			}
+			else {
+				#ifdef PROCESS
+					printf("ATP ::: %s\n", argument);
+				#endif
 				return __lbb_atp__;
-				// #ifdef PROCESS
-				// 	printf("ATP\n");
-				// #endif
-				// #ifdef DEBUG
-				// 	printf("flags : %d\n", __flag);
-				// #endif
 			};
 		}
 		else {
-			int *res=0;
-			// int *(*temp)() = (&(*argument));
-			// #ifdef PROCESS
-			// 	__ASCII(argument);
-			// #endif
 			return __lbb_yeild__;
 		};
 	};

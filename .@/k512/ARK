@@ -15,7 +15,7 @@
 
 #ifdef ARK
 
-#include "../d.run/base/init"
+#include "../d.run/base/main"
 
 
 #endif

@@ -179,12 +179,15 @@
 	int mor(void *crequest);
 	void *atp_step(arc_sizes arc_size);
 	int *__point_run();
-	int __proto_at(char const *__);
 	int get_atp_type(char const *__call);
 	int decode_lbb_addr(char const *__addr);
 
 	int __sokres(char const *__port);
 
+	int atp_set(void *args);
+	int atp_get(void *args);
+	int atp_rdo(void *args);
+	int atp_next(void *args);
 
 	void *__aip_sock__(aip_sock *sock);
 

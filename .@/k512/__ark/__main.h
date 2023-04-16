@@ -357,6 +357,76 @@
 		return memset(st, 0, sizeof(m_stat));
 	};
 
+
+	// _Generic((&__str[sep_idx]), 
+// 				char *: base[c]=(char const *)__str,
+// 				char const *: base[c]=(char const *)__str,
+// 				default: base[c]=(void const *)__str
+// 			);
+	void const **variable_args(ulong d_count, char const *__str, char const *__delim) {
+		ulong d_comp = d_count + 2;
+		void const **base=malloc((sizeof(void *)*d_comp));
+		base[0] = (void const *) base_address(0);
+		ulong _c=0,_sep=0;
+		void *temp;
+		do {
+			_sep=sep_offset(__str, __delim);
+			printf("seperator @%lu\n", _sep);
+			temp=malloc(_sep);
+			memmove(temp, __str, _sep);
+			if(!_c) {
+				__str+=_sep;++__str;
+			}
+			else {
+				__str+=_sep+1;
+			}
+			_c+=1;
+			printf("string : %lu :: %s\n", _c, __str);
+			base[_c]=(char const *)temp;
+		} while (_c<d_count-1);
+
+		// ulong _sep=sep_offset(__str, __delim);
+		// void *temp =malloc(_sep);
+		// memmove(temp, __str, _sep);
+		// __str+=_sep;
+		// printf("string : %s\n", ++__str);
+		// base[1] = (char const *) temp;
+
+		// _sep=sep_offset(__str, __delim);
+		// printf("seperator @%lu\n", _sep);
+		// temp =malloc(_sep);
+		// memmove(temp, __str, _sep);
+		// __str+=_sep+1;
+		// printf("string : %s\n", __str);
+		// base[2] = (char const *) temp;
+
+		// _sep=sep_offset(__str, __delim);
+		// printf("seperator @%lu\n", _sep);
+		// temp =malloc(_sep);
+		// memmove(temp, __str, _sep);
+		// __str+=_sep+1;
+		// printf("string : %s\n", __str);
+		// base[3] = (char const *) temp;
+
+		// printf("seperator @%lu\n", _sep);
+		// temp =malloc(_sep);
+		// memmove(temp, __str, _sep);
+		// __str+=_sep+1;
+		// printf("string : %s\n", __str);
+		// base[4] = (char const *) temp;
+
+		return base;
+	};
+
+
+
+
+
+
+
+
+
+
 	
 
 

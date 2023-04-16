@@ -3,7 +3,7 @@
 #else
 #define __KARCH_D512__ 512
 
-	/************************ h-defintions ************************/
+	/************************ Defintions ************************/
 
 	#ifndef __H512__D
 		#include "standard.h"
@@ -217,20 +217,36 @@
 	        dprintf(fd,__,(x));\
 	    } __dPER
 
+		#define TEXT_ARG(k,...)  OUT_ENK_A(0, #__VA_ARGS__)
+
+	    #define dout(fn, x) {\
+	    ulong temp=str_rwings(#x);\
+	    write(!__exact_match(fn, "mach")?!__exact_match(fn, "local")?3:2:1,#x,temp);\
+		}
+
+		#define __ark_next(x) (x->__next)
+
 	    #define __ARK_FMT(x) _Generic((x), \
-			d_point: point_cname(x),\
+	    	char *: (char const *)x,\
+			char const *: x,\
+			ixr_h*: __ark_next(x),\
+			d_point*: __ark_next(x),\
 		    default: "#NE")
 
-	    #define OUT(x, ...) { \
-	    	char const *__=__ARK_FMT(__VA_ARGS__);\
+	    #define _log(x, ...) { \
+	    	void const *__=__ARK_FMT(__VA_ARGS__);\
 	    	write(x, __, str_rwings(__));\
 	    };
 
-		#define __ASCII(x) OUT_ENK_A(0,x)
+
+	    #define ixr_module(x) ixr_#x
+
+
 		#define _ENK_A(x,y) x##y
 		#define __ENK(x,y) __STRING(x##y)
 		#define __ERR(x) OUT_ENK_A(0,__ENK(Err, x));
 		#define __TEXT(x) OUT_ENK_A(0,#x);
+		#define __ASCII(x) OUT_ENK_A(0,x)
 		#define __ARK(...) #__VA_ARGS__
 		#define __HASH(x) write(0, hashof(3, x, str_rwings(x)), 32);
 		/**
@@ -313,7 +329,7 @@
 		#define __H512__D 1
 	#endif
 
-	/************************ h-constants ************************/
+	/************************ Constants ************************/
 
 	#ifndef __H512__C
 		/********* types *********/
@@ -350,6 +366,7 @@
 		/********* constants *********/
 		static ulong __cindex=0;
 		static const ulong __ne__ =(ulong)00000000U;
+		static const char ne__='\0';
 		static void *__ne=(void *)'\0';
 		static const void *ne=(char const *)(void *)'\0';
 		static const void **NE=(void const **)&ne;
@@ -382,8 +399,7 @@
 		#define __H512__C 1
 	#endif
 
-
-	/************************ h-naming ************************/
+	/************************ Naming ************************/
 	#ifndef __H512__N
 	    #ifndef _D_HASH_H
 			#define _D_HASH_H 1
@@ -489,7 +505,7 @@
 			char const *__combine_str(char const *__str_1, char const *__str_2);
 			ulong str_cdelims(char const *__str, char const *__delim);
 			ulong arr_cdelims(char const *__str);
-			ulong sep_offset(char const *__str, char *__seperator);
+			ulong sep_offset(char const *__str, char const *__seperator);
 		#endif
 		#ifndef _D_LOG_H
 			#define _D_LOG_H 1
@@ -544,6 +560,7 @@
 			int arch_cfile(char const *cf_name, lbb_t lbb_ftype);
 			int arch_fperm(char const *__cpath, aip_sterm __sterm);
 			void *__mstat__(m_stat *st);
+			void const **variable_args(ulong __var_count, char const *__str, char const *__delim);
 		#endif
 		#define __H512__N 1
 	#endif

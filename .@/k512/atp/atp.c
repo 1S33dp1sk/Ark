@@ -1021,6 +1021,28 @@
 		return 0;
 	};
 
+	int atp_set(void *args) {
+		printf("%s : \n", (char const *)args);
+
+		return 1;
+	};
+	int atp_get(void *args) {
+		printf("GET : %s\n", (char const *)args);
+
+		return 2;
+	};
+	int atp_rdo(void *args) {
+		printf("do {%s} r;", (char const *)args);
+
+		return 3;
+	};
+	int atp_next(void *args) {
+		printf("NXT : %s\n", (char const *)args);
+
+		return 4;
+	};
+	
+
 	void log_proto(int retval, char const *bufin) {
 		if(!retval) {
 		}else {
@@ -1035,15 +1057,29 @@
 		}
 	}
 
-	int __proto_at(char const *bufin) {
-		// check null, to start atp?
+	void *__atp_pointer() {
+		atp_pointer *atp_p=malloc(sizeof(atp_pointer));
+		memset(atp_p, 0, sizeof(atp_pointer));
+		__arcpid();
+		#ifdef PROCESS
+			printf("ATP<arcpid> = %lu\n", __arc.__pid);
+		#endif
+		atp_p->ptr = atp_p;
+		sprintf(atp_p->addr, "%lu", __arc.__pid);
+		atp_p->chkref = hash_follow(0, atp_p->addr);
+		#ifdef DEBUG
+			printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->addr, atp_p->chkref);
+		#endif
+		return atp_p->ptr;
+	}
+
+	int get_atp_type(char const *bufin) {
 		/**
 		 * AT-protocol entries always start with '@'
 		 */
-		if(*bufin==__at__) {
+		if(*bufin++!=__at__) {
 			return 0;
 		};
-
 		/**
 		 * payloads always start with
 		 * numbers
@@ -1051,7 +1087,7 @@
 		 * which is basically the address
 		 */
 		if((*bufin>=0x30)&&(*bufin<=0x39)){
-			return aip_set;
+			return aip_get;
 		}
 		/**
 		 * protocol requests always start with
@@ -1061,7 +1097,7 @@
 		 * GET & POST & LBB & ATP & ATM ...
 		 */
 		else if((*bufin>=0x41)&&(*bufin<=0x5a)){
-			return aip_get;
+			return aip_set;
 		}
 		/**
 		 * interpreters are always called using 
@@ -1080,31 +1116,6 @@
 		else {
 			return aip_next;
 		};
-
-	};
-
-	void *__atp_pointer() {
-		atp_pointer *atp_p=malloc(sizeof(atp_pointer));
-		memset(atp_p, 0, sizeof(atp_pointer));
-		__arcpid();
-		#ifdef PROCESS
-			printf("ATP<arcpid> = %lu\n", __arc.__pid);
-		#endif
-		atp_p->ptr = atp_p;
-		sprintf(atp_p->addr, "%lu", __arc.__pid);
-		atp_p->chkref = hash_follow(0, atp_p->addr);
-		#ifdef DEBUG
-			printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->addr, atp_p->chkref);
-		#endif
-		return atp_p->ptr;
-	}
-
-	int get_atp_type(char const *proto_call) {
-		int res=__proto_at(proto_call);
-		if(res){
-			printf("atp: prototype call ::: %d\n", res);
-		}
-		return res;
 	};
 
 	int decode_lbb_addr(char const *__arg) {
