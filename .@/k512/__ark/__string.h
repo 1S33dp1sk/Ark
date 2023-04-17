@@ -261,10 +261,10 @@
 		return strdup(temp);
 	};
 
-	char const *str_a4offset(char const *string, ulong offset){
+	char const *__a4offset(char const *__string, ulong __offset, int __flag) {
 		//to offset the offset
-		ulong c=0, flen=str_rwings(string)+1,  slen=flen-offset; 
-		if(flen<offset){
+		ulong c=0, flen=str_rwings(__string)+1,  slen=flen-__offset; 
+		if(flen<__offset){
 			return ne;
 		}
 		char temp[slen];
@@ -272,9 +272,27 @@
 			#ifdef DEBUG
 				printf("temp : %s\n", temp);
 			#endif
-			temp[c]=string[c+offset-1];c+=1;
+			temp[c]=__string[c+__offset];
+			c+=1;
+		};
+		if(!__flag) {
+			char *__=(char *)&temp;
+			strdup(__+=1);
 		}
 		return strdup(temp);
+	};
+
+	char const *str_a4offset(char const *string, ulong offset){
+
+		return __a4offset(string, offset, 1);
+	};
+
+	char const *__handler_str(char const *string) {
+		int __soffet=__sep_atoff(string, ".");
+		if(__soffet==-1) {
+			return NULL;
+		};
+		return __a4offset(string, __soffet, 0);
 	};
 
 	char const *expand_atoffset(char const *__str, char const *expantion, ulong __offset) {
@@ -291,7 +309,7 @@
 		return (char const *)strdup(__);
 	};
 
-	char const *expand(char const *__str, char const *expantion, ulong __offset) {
+	char const *__expand(char const *__str, char const *expantion, ulong __offset) {
 		ulong __strlen=str_rwings(__str);
 		ulong __explen=str_rwings(expantion);
 		ulong __len=__strlen+__explen+1;
@@ -302,9 +320,14 @@
 		return (char const *)strdup(__);
 	};
 
+	char const *expand(char const *__string, char const *__exp) {
+
+		return __expand(__string, __exp, str_rwings(__string));
+	}
+
 	char const *__expand_str(char const *__str, char const *__expantion) {
 
-		return expand(__str, __expantion, str_rwings(__str));
+		return __expand(__str, __expantion, str_rwings(__str));
 	}
 
 	char const *__combine_str(char const *str1, char const *str2) {
@@ -364,10 +387,13 @@
 	ulong sep_offset(char const *string, char const *seperator) {
 		#ifdef DEBUG
 			printf("string : %s\n", string);
+			printf("seperator : %s\n", seperator);
 		#endif
 		int tempres=__sep_atoff(string, seperator);
 		if(tempres==-1){
 			#ifdef LOG_ERR
+				__TEXT(Err : Call Unsigned)
+				__ASCII(string)
 				printf("unsigned call\n");
 				printf("%s <%s?>", string, seperator);
 				_exit(1);
@@ -375,12 +401,14 @@
 			#endif
 			return 0;
 		}
-		else if (!tempres) {
-			return 0;
-		} else {
+		else {
+			if(!tempres) {
+				return 0;
+			};
 			return (ulong)tempres;
-		};
-	};
+		}
+
+	}
 #endif
 
 

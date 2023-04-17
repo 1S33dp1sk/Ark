@@ -1,3 +1,6 @@
+#configuration 
+# Level 2 LBB
+# 8<<3*3 = 512bytes
 #!/bin/bash
 
 

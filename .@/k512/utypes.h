@@ -86,6 +86,8 @@ loaded via a .o or .so
 #endif
 
 #ifndef __ADDR_TYPES
+	#define evaluate(...) __VA_ARGS__
+	#define stringify(...) #__VA_ARGS__
 
 	#ifndef atp_pointer
 		struct __ptr_addr {
@@ -332,9 +334,9 @@ loaded via a .o or .so
 			#define str_val(x) (char const *)(x.__)
 			#define str_nxt(x) (d_str *)(x.__next)
 			#define string(x,y) d_str x; \
-			x.__=(char const *)&y;\
-			x.__len=str_rwings(x.__);\
-			x.__next=&x;\
+				x.__=(const char *)&stringify(y);\
+				x.__len=str_rwings(x.__);\
+				x.__next=&x;\
 
 	#endif
 
@@ -373,8 +375,8 @@ dPRG(
 				ulong c_index;
 				char const *c_name;
 				uchar const *c_ref;
-				char const *prg_in;
-				char const *prg_out;
+				char const *prg_path;
+				char *const *prg_args;
 				char const *prg_handler;
 				struct __program_d* __next;
 			};
@@ -383,15 +385,15 @@ dPRG(
 		#define dprg_in(x) ((char const *)x->prg_in)
 		#define dprg_out(x) ((char const *)x->prg_out)
 		#define dprg_handler(x) ((char const *)x->prg_handler)
+		#define dprg_run(x) execve(x.prg_path, x.prg_args, ne)
 		#define program(x,i,...) d_prg x;{\
-			char const *__call_path=modbase_call(#i);\
-			void * const *__call_args=(void *const *)arg_content(__VA_ARGS__);\
-			printf("program @%s(%s)\n", #i, (char const *)__call_args[0]);\
-			execvp(__call_path, (char *const *)__call_args);\
+			x.prg_path=modbase_call(#i);\
+			x.prg_args=(char *const *)arg_content(__VA_ARGS__);\
+			x.prg_handler=gprg_handler(i);\
+			log_program(&x);\
+			dprg_run(x);\
 		};\
 	
-
-
 
 	#endif
 /**
@@ -682,7 +684,7 @@ dPRG(
 			ulong x;
 		};
 	typedef struct __mod_d d_mod;
-		#define aliases(...) { __VA_ARGS__; }
+
 
 	#endif
 
@@ -697,21 +699,11 @@ dPRG(
 			#define switcher(x,y,...) d_switcher x;
 	#endif
 
-/**
- * D => 
-**/
-	#ifndef d_ark
-		struct __ark_d {
-
-		};
-		typedef struct __ark_d d_ark;
-			#define dark(dtype, ...) 3
-			#define c_dlm(x) (char const *)__c_arr_delimiter(#x)
-	#endif
 
 
 
-	#define __D_TYPES { d_num, d_str, d_prg, d_arr, d_script, d_point, d_into, d_pia, d_socket, d_http, d_lock, d_mod, d_switcher, d_ark }
+
+	#define __D_TYPES { d_num, d_str, d_prg, d_arr, d_script, d_point, d_into, d_pia, d_socket, d_http, d_lock, d_mod, d_switcher, d_ixr }
 #endif
 
 /**
@@ -781,6 +773,7 @@ dPRG(__LBB__)
 #endif
 
 #ifndef __IXR_TYPES
+	#ifndef __ixr_types
 	/**
 	 * putting this here because i have a tendency to
 	 * forget things like this when i am developing.
@@ -797,22 +790,13 @@ dPRG(__LBB__)
 	 * 
 	**/
 	enum __ixr_types {
-		__ixr_header,
+		__header__,
 		ixr_point,
 		ixr_file,
 		ixr_dprg,
 		ixr_fld
 	};
 	typedef enum __ixr_types ixr_t;
-
-	#ifndef ixr_st
-		struct __ixr_st {
-			ulong c_index;
-			char const *c_name;
-			uchar const *c_ref;
-		};
-	typedef struct __ixr_st IXR;
-;		// ;
 	#endif
 
 	#ifndef __fmt_t
@@ -841,24 +825,34 @@ dPRG(__LBB__)
 		#define ZERO_FORMAT(x)	x==nfmt?1:0
 	#endif
 
+
+
+
+
+/** IXR **/
+
 	#ifndef ixr_h
 			struct __ixr_h {
 				ulong shared_size; // __size;
 				ulong mods_count; // d_count;
 				char const *pub_key; // checksum;
-				uchar header[__A_LEN]; //head[__I_LEN]
+				char const *alias;
+				void *session;
+				int c_res;
+				uchar __[__A_LEN]; //head[__I_LEN]
 				struct __ixr_h* __next;
 			};
 	typedef struct __ixr_h ixr_h;
-		#define ixr_header ixr_h
 		#define ixr_address(x) ((char const *)(x->pub_key))
-		#define __IXR__(...) ixr_h *IXR=(ixr_h*)&___header; {\
-			__refresh_header();\
-		};\
+		#define __IXR__(a,b,...) \
+			&___header;\
+			___header.alias = __ixr_strt(#a);\
+			IXR -> alias=(char const *)&a;\
+			program(_ixr_prg, IXR&->tests/hello_world.py, b);\
+			dprg_run(_ixr_prg);\
+			indexer_pause();\
 
 	#endif
-
-
 
 	#define __IXR_TYPES { ixr_t, ixr_st, ixr_h }
 #endif

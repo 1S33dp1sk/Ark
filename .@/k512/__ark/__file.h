@@ -4,6 +4,48 @@
 
 #ifndef _D_FILE
 	#define _D_FILE 1
+
+	uchar const *__dbook(char const *__cpath, ulong __size) {
+		m_stat cm_st;
+		int res=get_mstat(__cpath, &cm_st);
+		if(res!=0){
+			return NULL;
+		}
+		return __readb(__size, __dgetfd(__cpath), 0);
+	};
+
+	uchar const *__readb(ulong f_size, ulong f_d, ulong r_o){
+		ulong __res=r_o,__fsz=f_size,__fd=f_d;
+		uchar lbb_content[__fsz+1];
+		int __tempres=read(__fd,lbb_content,__fsz);
+		if(__tempres==-1){
+			printf("cannot read lbb\n");
+			return NULL;
+		};
+		__res=(ulong)__tempres;
+		lbb_content[__fsz+1]='\0';
+		if((__res<__fsz)&&(__res>0)){
+			// means that reading was interuptted
+			// for some reason, like a pipe or sig
+			// so we can read from where we left off
+			__res=pread(__fd,(lbb_content+__res),(__fsz-__res),__res);
+		};
+		return (uchar const *)strdup((char*)lbb_content);
+	};
+
+
+	ulong __writeb(uchar *content,ulong c_size, ulong __fd) {
+		if(__fd!=0){
+			long _size = write(__fd,content,c_size);
+			#ifdef DEBUG
+				printf( "resof write :: %ld\n",_size);
+			#endif
+			return (ulong)_size;
+		}	
+		return 0;
+	};
+
+
 	void *__statusof(char const *__path) {
 	    struct stat __;
 	    memset(&__,0,sizeof(struct stat));

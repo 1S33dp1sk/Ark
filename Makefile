@@ -129,11 +129,9 @@ charms:
 #################################
 #			  ARK   			#
 #################################
-ark_prgs:=ark cloud points program platform
-install:
+bin_install:
 	if [ -d ${out@charms} ]; then if [ -f ${out@charms}/ARK ]; then \
 	sudo cp ${out@charms}/ARK /usr/bin/@; fi; fi;
-# 	if [ -d ${@charms} ]; then sudo cp -r ../Ark/@charms ///Ark; fi;
 
 #source
 _ark_in:

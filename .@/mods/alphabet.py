@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+from sys import argv
+
 def str_seperator(x):
 	if ':=' in x:
 		return 0x21
@@ -49,7 +51,10 @@ class alphabet:
 
 if __name__ == '__main__':
 	__base=alphabet()
-	__base.write_file("alphabet")
+	if(argv):
+		print("python3 alphabet :: \n")
+		for i in argv:
+			print(i)
 	print(__base.alpha)
 
 

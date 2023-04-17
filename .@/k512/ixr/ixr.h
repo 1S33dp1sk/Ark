@@ -2,18 +2,22 @@
 The indexer
 
 #ifndef __IXR__H
-	#define INDEXER(x) x!=NULL?__indexer__(x):indexer_start()
+	#define INDEXER(x) char const *x!=NULL?__indexer__(x):__ixr_strt(x)
 	#define indexer_check() if (!checkef_file){INDEXER(NULL);};
 	
 	int ixr_export(void *_intro);
 	int ixr_run(void *_intro);
 	int ixr_save(void *_intro);
 	int ixr_collect(void *_intro);
+	int indexer_pause();
+	void log_header();
+
+	char const * __ixr_strt(char const *x);
 	
-	#define ixr_mem 	((void *)&___header.header)
-	#define ixr_ubuf	((uchar *)&___header.header)
-	#define ixr_buf		((char *)&___header.header)
-	#define ixr_head	((char const *)&___header.header)
+	#define ixr_mem 	((void *)&___header.__)
+	#define ixr_ubuf	((uchar *)&___header.__)
+	#define ixr_buf		((char *)&___header.__)
+	#define ixr_head	((char const *)&___header.__)
 	#define ixr_h_args ___header.shared_size, ___header.mods_count, ___header.pub_key
 	
 	// unistd flags for `open`&`creat`
@@ -62,7 +66,6 @@ The indexer
 	ulong __set_unext(uchar const *__head);
 	int __index_urn(uchar const *_key, char const *_val);
 	int __index_point(d_point *dst);	
-	ixr_h *__header__();
 	int __header_in();
 	int __load_header();
 	int __rd_ixrh();

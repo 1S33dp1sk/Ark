@@ -9,7 +9,8 @@
 	#define __PASS_MIN_D 0x8
 	#define __PASS_MIN_C 3
 	#define __D_CHARMS 4
-	#define __dPRG struct __c_shard *main(__ARGC__,__ARGV__) 
+	#define Alpha ixr_h *IXR = 
+	#define __dPRG ixr_h *main(int argc, char const*argv[])
 	#define __cPRG int main(int argc, char const*argv[]) 
 	#define __ARGC__ argc
 	#define __ARGV__ argv
@@ -23,6 +24,18 @@
 	#define dPRG(...) __cPRG {__VA_ARGS__;}
 	#define base_address(l) ((char const *)__address(l, __FILE__))
 	#define __address(l,x) ((char const *)hashof(l, x, str_rwings(x)))
+
+	#define README __readme
+	#define mod(...) mod_##__VA_ARGS__
+	#define readme(x) #x##"/README.md"
+	#define __readme(x){\
+		_ixr_prg.prg_handler = "/usr/bin/nano";\
+		program(_ixr_prg, IXR&->x/README.md);\
+		dprg_run(_ixr_prg);\
+	}
+
+
+
 
 	// base for charms
 	#define charms_d "@charms/d.\0"
@@ -91,13 +104,20 @@
 		return ne__;\
 	};
 
-	#define __LBB__ {\
-		__TEXT(lbb);\
-		static char dbuf[__A_LEN];memset(&dbuf, 0, sizeof(dbuf));\
+	#define __shard__() {\
+		printf("lbb<%s> getting shard .::. \n",__base_address);\
 		memset(lbb_mstat, 0, sizeof(m_stat));\
 		memset(l_shard,0,sizeof(c_shard));\
-		printf("getting shard .:%s:. \n",__base_address);\
-		if(!check_archfile) { arch_att(arch_filename, 3, __API_LEN); };\
+	};
+	
+	#define __dbuf__() {\
+		static char dbuf[__A_LEN];memset(&dbuf, 0, sizeof(dbuf));\
+	};
+
+	#define __arch__() !check_archfile?arch_att(arch_filename, 3, __API_LEN):0;
+
+	#define __LBB__ {\
+		__shard__();__dbuf__();__arch__();\
 	};
 
 	#define __VARS__(...) {\
@@ -111,19 +131,16 @@
 
 
 	#define __r_operation &
-	#define __into_op =>
+	#define __into_call "&->"
 	#define __t_operation 3
 
-	#define __call_base(...) str_a4offset(__VA_ARGS__, sep_offset(#__VA_ARGS__, "&->"))+__t_operation
+	#define __call__(a,l) str_a4offset(a, sep_offset(#a, l))+str_rwings(l)-1
+
+	#define __call_base(...) __call__(__VA_ARGS__, __into_call)
 	#define modbase_call(x) __combine_str(run_mod, __call_base(x))
 
-	#define Scratch(...) printf("%s\n", modbase_call("base.py"))
+	#define Scratch(...) printf("%s\n", modbase_call(#__VA_ARGS__))
 
-	#define __dRUN(in, ...) {\
-		char const *__mbase_call=modbase_call(#in);\
-		execvp(__mbase_call, ne);\
-		printf("%s\n", __mbase_call);\
-	};
 
 	#define Ark(x, ...) {\
 		__ASCII(#x);\
@@ -157,11 +174,14 @@
 	#define __init_method__(x, ...) x==0?&info:&zero;
 	#define __INFO__(x,...) { info(); }
 
+	#define gprg_handler(...) ((char const *)__handler_str(#__VA_ARGS__))
 
 
 	
-	#define ATP(a) __ATP__(a); break;
+	#define ATP(a) __ASCII(cool);
 
+
+	#define __TERMINAL_PAGE_CLEAR "\n\n\n\n\n\n\n"
 
 
 

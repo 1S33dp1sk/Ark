@@ -282,7 +282,7 @@
 
 		#define ARC_GENERIC(x) (ulong)((1<<(x*3)))
 		#define __tempok "some args"
-		#define arg_content(x) ((const char *[]){#x,ne})
+		#define arg_content(...) ((const char *[]){#__VA_ARGS__,ne})
 
 		/**
 	     * Thanks for the all the contributions and good work from 
@@ -358,7 +358,7 @@
 		static const char *__http_request_base="M P V\r\n";
 		static const char *__http_response_base="B S R\r\n";
 		/********* formats *********/
-		static const char *__head_fmt="_Q_Q_Q_\n";
+		static const char *__header_fmt="_Q_Q_Q_\n";
 		static const char *__value_fmt="_Q:s:s_\n";
 		static const char *__file_fmt="_Q:s:s#Q_\n";
 		static const char *__dprg_fmt="_Q:s>s<s$s_\n";
@@ -461,8 +461,11 @@
 		#ifndef _D_FILE_H
 			#define _D_FILE_H 1
 			// file
+			uchar const *__dbook(char const *__cpath, ulong __size);
+			uchar const *__readb(ulong __fsize, ulong __fd, ulong __ro);
 	    	void *__statusof(char const *__path);
 			int __stres(char const *__path);
+			ulong __writeb(uchar *content,ulong c_size, ulong __fd);
 			ulong __fsize(char const *__path);
 			ulong __iosize(char const *__path);
 			ulong __inodenum(char const *__path);
@@ -500,7 +503,8 @@
 			char *str_a4woffset(char const *__str, ulong __offset);
 			char const *str_a4offset(char const *__str, ulong __offset);
 			char const *expand_atoffset(char const *__str, char const *__expantion, ulong __offset);
-			char const *expand(char const *__str, char const *__expantion, ulong __offset);
+			char const *__expand(char const *__string, char const *__expantion, ulong __offset);
+			char const *expand(char const *string, char const *exp);
 			char const *__expand_str(char const *__str, char const *__expantion);
 			char const *__combine_str(char const *__str_1, char const *__str_2);
 			ulong str_cdelims(char const *__str, char const *__delim);
@@ -534,6 +538,7 @@
 			char const *uname(const char *__filename);
 			char const *__get_atnmae(char const *__naming);
 			char const *__getcaller();
+			char const *caller();
 			char const *charm_call(char const *entry, char const *name);
 			int __entry_valid(char const *__);
 			ulong vcontent_count(void const **__vc);

@@ -8,7 +8,7 @@ little black book
 #ifndef __lbb_name
 	#define __lbb_name "linked binary book"
 
-
+	#define LBB_FILE __d_lock
 // increment the cindex
 ulong __index_increment() {
 	__cindex+=1;
@@ -227,38 +227,6 @@ ulong __run_ap(ulong __size){
 
 /*******************************************************************/
 
-
-ulong __writeb(uchar *content,ulong c_size) {
-	ulong __fd=shd_fd;
-	if(__fd!=0){
-		ulong _size = (ulong)write(__fd,content,c_size);
-		#ifdef DEBUG
-			printf( "resof write :: %lu\n",_size);
-		#endif
-		return _size;
-	}	
-	return 0;
-};
-
-char const *__readb(ulong f_size, ulong f_d,ulong r_o){
-	ulong __res=r_o,__fsz=f_size,__fd=f_d;
-	uchar lbb_content[__fsz+1];
-	int __tempres=read(__fd,lbb_content,__fsz);
-	if(__tempres==-1){
-		printf("cannot read lbb\n");
-		return NULL;
-	};
-	__res=(ulong)__tempres;
-	lbb_content[__fsz+1]='\0';
-	if((__res<__fsz)&&(__res>0)){
-		// means that reading was interuptted
-		// for some reason, like a pipe or sig
-		// so we can read from where we left off
-		__res=pread(__fd,(lbb_content+__res),(__fsz-__res),__res);
-	};
-	return (char const *)strdup((char*)lbb_content);
-};
-
 void __readin(char *buffer, ulong size, ulong stfd) {
 	ulong __res=0,__fsz=size,__fd=stfd;
 	int __tempres=0;
@@ -271,13 +239,13 @@ void __readin(char *buffer, ulong size, ulong stfd) {
 
 
 void lbb_close(){
-	close(shd_fd);
+	close(lbb_fd);
 	memset(&lbb_shard,0,sizeof(c_shard));
 };
 
 
 ulong __fillb(){ // create &-> fill the book
-	ulong __res=__writeb((uchar*)shd_key,LBB_BUFFER_SIZE);
+	ulong __res=__writeb((uchar*)lbb_key,LBB_BUFFER_SIZE, __dgetfd(LBB_FILE));
 	lbb_close();
 	return __res;
 };
@@ -286,16 +254,14 @@ ulong __fillb(){ // create &-> fill the book
 
 ulong write_book(char *content, ulong csize) {
 
-	return __writeb((uchar*)content,csize);
+	return __writeb((uchar*)content,csize, __dgetfd(LBB_FILE));
 };
 
-char const *read_book(char const *__cpath){ 
-	m_stat cm_st;
-	int res=get_mstat(__cpath, &cm_st);
-	if(res!=0){
-		return NULL;
-	}
-	return __readb(cm_st.m_size, __dgetfd(__cpath), 0);
+
+
+char const *read_book(char const *__cpath, ulong __size){ 
+	
+	return (char const *)__dbook(__cpath, __size);
 };
 
 ulong reset_book(){
@@ -304,7 +270,7 @@ ulong reset_book(){
 };
 
 ulong lbb_print(char *kaddr){
-	ulong res=__writeb((uchar *)kaddr,str_rwings(kaddr));
+	ulong res=__writeb((uchar *)kaddr,str_rwings(kaddr), __dgetfd(LBB_FILE));
 	return res;
 };
 
@@ -315,7 +281,7 @@ int lock_lbb(char const *__cpath,ulong __lock){
 		SET_LBB_FD(__lock);
 	#endif
 	char *LOCKING="locked\n";
-	__writeb((uchar *)LOCKING,str_rwings(LOCKING));
+	__writeb((uchar *)LOCKING,str_rwings(LOCKING), __dgetfd(__cpath));
 	lbb_close();
 	return res;
 };
@@ -428,13 +394,13 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		int __tempres=pread(__fd,(void *)__buffer,4096,__offset);
 		if(__tempres==-1) {
 			#ifdef LOG_ERR
-				printf("%s : convolution :: could not read file ::: %s\n", "@LBB", shd_path);
+				printf("%s : convolution :: could not read file ::: %s\n", "@LBB", lbb_path);
 			#endif
 			return NULL;
 		}
 		else if (__tempres==0) {
 			#ifdef LOG_ERR
-				printf("%s : convolution :: file is empty ::: %s\n", "@LBB", shd_path);
+				printf("%s : convolution :: file is empty ::: %s\n", "@LBB", lbb_path);
 			#endif
 			continue;
 		}
@@ -544,7 +510,7 @@ int get_freader(m_stat *mst) {
 	ulong __fd=(ulong)_fd;
 	lbb_shard.c_fd=__fd;
 	#ifdef DEBUG
-		printf("Reader : file opened :: %lu\n",shd_fd);
+		printf("Reader : file opened :: %lu\n",lbb_fd);
 	#endif
 	return 0;
 };
@@ -592,22 +558,22 @@ char const *__lbb_filepath(char const *__fpath, aip_sterm __term) {
 		return NULL;
 	};
 	#ifdef PROCESS
-		printf("lbb@%lu<%lu>\n", shd_fd, shd_sze);
+		printf("lbb@%lu<%lu>\n", lbb_fd, lbb_sze);
 	#endif
-	ulong count=__flds_count(shd_sze);
-	char const *convres=__conv_fields(shd_key,shd_fd,count);
+	ulong count=__flds_count(lbb_sze);
+	char const *convres=__conv_fields(lbb_key,lbb_fd,count);
 
 	lbb_close();
 	if(convres==NULL) {
 		#ifdef LOG_ERR
 			printf("could not do a convolution for path : %s\n", __fpath);
 		#endif
-		return shd_path;
+		return lbb_path;
 	};
 	#ifdef OUTPUT
-		printf("@lbb%s\n filepath : %s\n", shd_key, __fpath);
+		printf("@lbb%s\n filepath : %s\n", lbb_key, __fpath);
 	#endif
-	return shd_key;
+	return lbb_key;
 };
 
 void const *__lbb_function(char const *__name, void const *__intype, void const *__castout) {
@@ -674,9 +640,6 @@ void *__into__(d_into *st) {
 		_exit(1);
 		return ne__;
 	}
-
-
-	#define evaluate(...) __VA_ARGS__;
 
 	#define debug(...) do {\
 		ulong __len=str_rwings(#__VA_ARGS__);\

@@ -1003,8 +1003,14 @@ class Node( Dynamic , Logger , Configuration ):
 			self.log_status( False )
 			self.loop.close()
 
+
+cfg = Configuration()
+	print('cfg ')
+
 if __name__ == '__main__':
+	cfg = Configuration()
+	print('cfg ')
 	# sys.argv[-2] -> path
 	# sys.argv[-1] -> node name
-	node = Node( argv[-2] , argv[-1] )
-	node.start()
+	# node = Node( argv[-2] , argv[-1] )
+	# node.start()

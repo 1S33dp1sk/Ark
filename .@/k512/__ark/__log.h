@@ -154,6 +154,15 @@
 	// 	printf("point name  	: %s\n", ist_name(__));
 	// };
 
+	void log_program(d_prg *prg) {
+		printf("call : %s", prg->prg_path);
+		ulong c=0;
+		while(prg->prg_args[c]) {
+			printf(" :: %s", prg->prg_args[c]);c+=1;
+		}
+		//printf("!%s\n", prg->prg_handler);
+	};
+
 
 	#define __H512__L 1
 #endif

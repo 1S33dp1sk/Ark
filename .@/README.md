@@ -1,6 +1,7 @@
 ## Usage 
-Running `make` **once** will setup the base for @source and any resulting RVEs.
-Running `make` **again** will create a runtime virtual enviroment.
+Running `make` **once** will setup the base for @source.      
+
+Running `make` **again** will create a runtime virtual enviroment.     
  & the corresponding IXR (Image Execution Runner) dubbed `@` can be used as an executable, compilier, interpreter and header former.
  	-> grants `@` privilages to load, execute and run processes that access files through **@charms/** directory.
 
@@ -8,30 +9,36 @@ Running `make` **again** will create a runtime virtual enviroment.
 Consisting of a *k512* base architicture & custom *mods* that can be directly integerated in the build through the IXR.
 
 
-1. ## d.lbb/   
+## 1.*d.lbb/*   
 
 	stores, distributes and requests inpar-data according to the collection path.    
 
-2. ## d.out/   
+## 2.*d.out/*   
 
-	a versitalie system build, detecting the operating system processor architicture, which associates the object files in this directory to be able to execute files by referencing their matching build systems. This coupled with the associated addresses of said binaries on the network, will show the redundency on which replicating data on different machines might not be a necessacity to run on the machine.    
+A versitalie system build, detecting the operating system processor architicture of which associates the object files in this directory to be able to execute files by referencing their matching build systems. **ATP** couples `fields` which are an ARK type, that distributes contents of file with the associated addresses to the network. Comparitivly showing that the redundencies which arise from replicating data on different machines to run binaries might not be the best way of communciation.
 
-3. ## d.src/   
+## 3.*d.src/*   
 
 	the source code of the main functionality of ARK.    
 
-4. ## d.run/   
-	Adding custom libraries can be considered as an example 
-	Library name : `HelloArk`
-	Directory(Folder) name : `mods/HelloArk`
-	Entry point is the script : `start.py` which includes the sample `if __name__ == '__main__'` 
-	The script can be accessed inside a **`dPRG`** using the following snippet:
-		```ark
-			program(HelloArk, IXR&->HelloArk/start.py)
-		```
-		The symbol `&->` implies the lexical equivalent of its counterpart *And Then*. 
-		Now *`HelloArk`* variable can be accessed to know the author, size, content, hash, and if allowed grants the ability to execute it.
-	**Providing the field address is required for handling certain path executions, including distributed snips, parameters and arguments.**
+## 4.*d.run/*   
+Adding custom libraries can be considered as an example     
+
+Library name : `HelloArk`.     
+
+Directory(Folder) name : `mods/HelloArk`.    
+
+Entry point is the script : `start.py` which includes the sample `if __name__ == '__main__'`      
+
+The script can be accessed inside a **`dPRG`** using the following snippet:      
+
+	```ark
+		program(HelloArk, IXR&->HelloArk/start.py)
+	```      
+The symbol `&->` implies the lexical equivalent of its counterpart *And Then*. 
+	Now *`HelloArk`* variable can be accessed to know the author, size, content, hash, and if allowed grants the ability to execute it.       
+
+**Providing the field address is required for handling certain path executions, including distributed snips, parameters and arguments.**
 
 
 

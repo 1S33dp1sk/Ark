@@ -24,6 +24,13 @@
 		return (char const *)__FILE__;
 	};
 
+	char const *caller() {
+		char const *__=__getcaller();
+		char const *__hash=hashof(1, __, str_rwings(__));
+		return expand("lbb", __hash);
+	};
+
+
 	int __entry_valid(char const *__) {
 		char c=*__;
 		if(!__atchar(c)){

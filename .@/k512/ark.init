@@ -1,13 +1,11 @@
 /// init \\\
 
-#define __lbb_shared_bytes 4096
-#define caller __FILE__
 dPRG(
 	LBB(
 		string(mystr, "Hello World\n")
 	)
-	__IXR__(
-		lbb(shared_bytes)
-	);
+	log(lbb(shared_bytes))
+	log(mystr)
 	log_ixr(*IXR);	
 )
+

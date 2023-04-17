@@ -16,14 +16,12 @@ little black book
 	int lbb_argument(char const *__arg);
 	void purge_shard();
 	ulong __run_ap(ulong __size);
-	ulong __writeb(uchar *__content, ulong __size);
-	char const *__readb(ulong __fsize, ulong __fd, ulong __ro);
 	void __readin(char *buffer, ulong __size, ulong __stfd);
 	void lbb_close();
 	ulong __fillb();
 
 	ulong write_book(char *content, ulong csize);
-	char const *read_book(char const *__cpath);
+	char const *read_book(char const *__cpath, ulong __dsize);
 	ulong reset_book();
 	ulong lbb_print(char *kaddr);
 	
@@ -165,11 +163,11 @@ little black book
 	#define sze_shard(x) ((ulong)((x.c_stat).m_size))
 	#define ioz_shard(x) ((ulong)((x.c_stat).m_blksz))
 
-	#define shd_fd fld_shard(lbb_shard)
-	#define shd_sze sze_shard(lbb_shard)
-	#define shd_io ioz_shard(lbb_shard)
-	#define shd_path pth_shard(lbb_shard)
-	#define shd_key hashof(1,lbb_mstat,sizeof(m_stat))
+	#define lbb_fd fld_shard(lbb_shard)
+	#define lbb_sze sze_shard(lbb_shard)
+	#define lbb_io ioz_shard(lbb_shard)
+	#define lbb_path pth_shard(lbb_shard)
+	#define lbb_key hashof(1,lbb_mstat,sizeof(m_stat))
 
 	#define inodenum ((ulong)(lbb_mstat->m_inn))
 	#define ifilesize ((ulong)(lbb_mstat->m_size))

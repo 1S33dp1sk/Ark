@@ -1,3 +1,19 @@
+#define constants	IXR&->constants/
+#define contracts	IXR&->contracts/
+#define mod_aeth	IXR&->aeth/
+#define mod_base	IXR&->base/
+#define mod_cfg		IXR&->cfg/
+#define mod_crypt	IXR&->crypt/
+#define mod_err		IXR&->errors/
+#define mod_hub		IXR&->hub/
+#define mod_io		IXR&->io/
+#define mod_loop	IXR&->looping/
+#define mod_chain	IXR&->onchain/
+#define mod_start	IXR&->strt/
+#define mod_tests	IXR&->tests/
+#define mod_alphabet	IXR&->alphabet.py
+#define mod_syntax		IXR&->Ark-syntax.yaml
+#define mod_bridge		IXR&->bridge.py
+#define mod_wrap		IXR.py&->wrapper.sh
+#define mod_utils		IXR.py&->utils.py
 
-#define alias_name "1S33dp1sk"
-#define w3_config IXR&->aeth/w3.py

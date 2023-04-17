@@ -186,6 +186,7 @@ class GenErr(Exception):
 
 # Context Execution
 if __name__ == '__main__':
+	print("w3.py >>> \n")
 	if len( argv ) > 1:
 		_filename = argv[1] if ( argv[1].startswith( './' ) or argv[1].startswith( '/' ) ) else './%s'%argv[1]
 		exec( open( _filename ).read() )
