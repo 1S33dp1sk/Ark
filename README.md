@@ -2,6 +2,8 @@
 
 Ark is a versatile programming language designed to tackle common programming challenges by providing a unique approach to distributed storage, shared memory, concurrency, and error handling. With its innovative syntax and features, Ark offers developers a powerful tool for building efficient and reliable applications.
 
+[Current main](./.@/mods/base/main)
+
 ## Key Concepts
 
 ### 1. Default Type Initialization
