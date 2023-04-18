@@ -6,7 +6,7 @@ Running `make` **again** will create a runtime virtual enviroment.
  	-> grants `@` privilages to load, execute and run processes that access files through **@charms/** directory.
 
 # Main Build
-Consisting of a *k512* base architicture & custom *mods* that can be directly integerated in the build through the IXR.
+	Consisting of a *k512* base architicture & custom *mods* that can be directly integerated in the build through the IXR.
 
 
 ## 1.*d.lbb/*   
@@ -15,7 +15,7 @@ Consisting of a *k512* base architicture & custom *mods* that can be directly in
 
 ## 2.*d.out/*   
 
-A versitalie system build, detecting the operating system processor architicture of which associates the object files in this directory to be able to execute files by referencing their matching build systems. **ATP** couples `fields` which are an ARK type, that distributes contents of file with the associated addresses to the network. Comparitivly showing that the redundencies which arise from replicating data on different machines to run binaries might not be the best way of communciation.
+	A versitalie system build, detecting the operating system processor architicture.
 
 ## 3.*d.src/*   
 
