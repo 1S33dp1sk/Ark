@@ -22,8 +22,8 @@
 	#define F_ARG(...) (__VA_ARGS__)[1]
 	#define __IXR "IXR\0"
 	#define dPRG(...) __cPRG {__VA_ARGS__;}
-	#define base_address(l) ((char const *)__address(l, __FILE__))
-	#define __address(l,x) ((char const *)hashof(l, x, str_rwings(x)))
+	#define base_address(l) ((char const *)__address_base(l, __FILE__))
+	#define __address_base(l,x) ((char const *)hashof(l, x, str_rwings(x)))
 
 	#define README __readme
 	#define mod(...) mod_##__VA_ARGS__

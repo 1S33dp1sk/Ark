@@ -81,7 +81,7 @@
 		_log(0,ixrh);
 	};
 
-	void log_socket(aip_sock sock) {
+	void log_socket(aip_sock *sock) {
 
 		printf("socket @%s\n",aip_sockname(sock));
 	};

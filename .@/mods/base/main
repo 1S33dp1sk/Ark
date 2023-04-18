@@ -12,16 +12,6 @@ dPRG(
 			aeth 'an evm distributed blockchain'
 			base 'ark scripts'
 			wrap '@-protocol'
-		},
-		cfg,crypto,err,hub,io,loop,
-		chain,start,tests,alphabet,
-		syntax,bridge,utils)
+		})
 	)
-
-	dprg_run(_ixr_prg);
-
-	printf("IXR -> alias		'%s'\n", IXR->alias);
-	printf("IXR -> pub_key		'%s'\n", IXR->pub_key);
-	printf("IXR -> shared_size	'%lu'\n", IXR->shared_size);
-	printf("IXR -> mods_count	'%lu'\n", IXR->mods_count);
 )

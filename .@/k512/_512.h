@@ -335,7 +335,7 @@
 		/********* types *********/
 		static __ul u;
 		static aip_sock __sok;
-		static aip_arc __arc;
+		static arc_st __arc;
 	    static sha3_context __sha3;
 		/********** books *********/
 		static ulong ___lbb_offset=0;
@@ -523,7 +523,7 @@
 			void log_process_schema(ulong p_pid, ulong c_pid);
 			void log_at_protoname(atp_t atp_name);
 			void log_ixrh(ixr_h *ixrh);
-			void log_socket(aip_sock sock);
+			void log_socket(aip_sock *sock);
 			char const *__atp_names(int __at);
 			void log_atp_names();
 			void log_content(content_st *content);

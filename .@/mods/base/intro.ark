@@ -1,0 +1,32 @@
+
+
+
+dPRG(
+	Alpha __IXR__ (
+		"1S33dp1sk", "0xaether.eth",
+		lbb(ark,atp,ixr,lbb),
+		ATP({
+			aeth 'an evm distributed blockchain'
+			base 'ark scripts'
+			wrap '@-protocol'
+		},
+		cfg,crypto,err,hub,io,loop,
+		chain,start,tests,alphabet,
+		syntax,bridge,utils)
+	)
+
+	program(_0xA, IXR&->bridge);
+	dprg_run(_0xA)
+
+	out(IXR->alias)
+	out(IXR->pub_key)
+	out(IXR->shared_size)
+	out(IXR->mods_count)
+)
+
+
+
+
+
+
+

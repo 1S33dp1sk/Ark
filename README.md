@@ -14,12 +14,14 @@ Ark handles concurrency and parallelism through single-process-chains and nested
 Ark enables distributed storage address initialization through the `dPRG(__LBB__)` function, which creates a 1200-byte shared memory. The LBB is a key feature that creates addresses based on distributed storage and allows access to variables via direct API calls in the program, as well as through terminal interfacing. This feature is useful for decentralized applications or systems requiring high availability, eliminating the need for replicating databases or relying on a single point of failure.
 
 ### 4. IXR, MOD, and ATP: Core of Ark's System Architecture
-- **IXR (Image Execution Runner)** provides binary images for different architectures, enabling seamless integration of executables from other languages, such as Python or TypeScript.
-- **MODs (short for modifications)** are extensions or libraries that can be easily integrated into Ark projects.
-- **ATP (Ark Terminal Protocol)** is a versatile feature that takes a single argument, an execution string, and evaluates it based on the input. ATP can serve multiple purposes based on its identifiers:
-  - As At-Protocol (@-Protocol), it interprets the first character as a command.
-  - As Aether Transfer Protocol (Aeth), it enables the transfer of data across different blockchain networks.
-  - When called with capital letters and a valid protocol name, such as @GET or @ETH, ATP uses the corresponding pre-defined protocol (e.g., HTTP or Ethereum).
+- **IXR (Image Execution Runner)** provides binary images for different architectures, enabling seamless integration of executables from other languages, such as Python or TypeScript.     
+
+- **MODs (short for modifications)** are extensions or libraries that can be easily integrated into Ark projects.       
+
+- **ATP (Ark Terminal Protocol)** is a versatile feature that takes a single argument, an execution string, and evaluates it based on the  input. ATP can serve multiple purposes based on its identifiers:
+  - @-Protocol, it interprets the first character as a command.
+  - Aether Transfer Protocol, it enables the transfer of data across different blockchain networks.
+  - Ark Terminal Protocol Kmorphimisim when called shapes into any request processing by a valid protocol name, such as @LBB or @IXR, ATP can also poly into a corresponding pre-defined standard protocol (e.g., HTTP(s) or Ethereum).
 
 These three components are critical to Ark's system architecture, providing flexibility and adaptability when building projects.
 

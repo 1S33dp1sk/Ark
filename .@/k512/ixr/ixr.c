@@ -349,14 +349,14 @@ The indexer
 
 	// start the indexer 
 char const *__ixr_strt(char const *__ixr_alias) {
-		printf("IXR : strt :: %s\n", __ixr_alias);
+		// printf("IXR : strt :: %s\n", __ixr_alias);
 		// if the indexer has not been instantiated but has
 		// a different value than the original constant
 		if(__ixr_fd!=0x228){
 			#ifdef LOG_ERR
 				printf("trying to instantiate indexer that is not on %d", 0x228);
 			#endif
-			return ne;
+			_exit(0x228);
 		};
 		if(__stres(IXR_FILE)) {
 			#ifdef DEBUG
@@ -374,6 +374,7 @@ char const *__ixr_strt(char const *__ixr_alias) {
 			return ne;
 		};
 		__ixr_fd=(ulong)ixr_fd;
+		
 		#ifdef DEBUG
 			printf("Indexer started ::: %lu\n",__ixr_fd);
 		#endif

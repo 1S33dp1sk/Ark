@@ -442,12 +442,12 @@
 		return __config_prop(c_key, c_val);
 	};
 
-	void *__arc__(aip_arc *st) {
+	void *__arc__(arc_st *st) {
 
-		return memset(st, 0, sizeof(aip_arc));
+		return memset(st, 0, sizeof(arc_st));
 	};
 
-	aip_sock __arcsocket() {
+	aip_sock __address() {
 		aip_sock __sok; 
 		memset(&__sok,0,sizeof(aip_sock));
 
@@ -514,15 +514,6 @@
 		return __sok;
 	};
 	
-	void __arcfork(){
-
-		__arc.__fork=fork();
-	};
-
-	void __arcsok(){
-
-		__arc.__sok=__arcsocket();
-	};
 
 	ulong __aipfd() {
 
@@ -754,7 +745,7 @@
 		printf("decoding msg : %d :: %s\n", rbytes , smsg);
 		if(*smsg=='@'){
 			printf("should initiate ATP for : ");
-			log_socket(*sock);
+			log_socket(sock);
 		};
 
 		return "@\0";
@@ -918,9 +909,9 @@
 	};
 
 	void *__arcell(void *c_stp) {
-		aip_sock __socket =__arcsocket();
+		aip_sock *__socket =__arc_socket(c_stp);
 		log_socket(__socket);
-		d_portal saddr_st=__sock_addr(sock_aip_to_sa(&__socket));
+		d_portal saddr_st=__sock_addr(sock_aip_to_sa(__socket));
 
 		ulong socket_fd=socket_fd(__socket);
 		ulong socket_len=socket_len(__socket);
@@ -973,53 +964,71 @@
 		close(__sockfd);
 	};
 
-	void *atp_step(arc_sizes arc_size){
-		// we generate a kept reference for a certain
-		// size defined by `arc_sizes` which can be 
-		// accessed via the lbb
-		atp_data *data;
-		if (arc_size==__step_addr) {
-			__arcfork();
-			if arc_process {
-				data=__atp_pointer();
-			};
-			#ifdef PROCESS
-				printf("{ ARC } => fork: \n");
-			#endif
-			data=__atp_pointer();
-			return data;
-		}
-		else if (arc_size==__step_sok) {
-			__arcsok();
-			#ifdef PROCESS
-				printf("{ ARC } => socket: \n");
-			#endif
-				data=__atp_pointer();
-			return data;
-		}
-		else if (arc_size==__step_start) {
-			#ifdef DEBUG
-				printf("ARC : listen :: \n");
-			#endif
-				data=__atp_pointer();
-				les(data);
-			return data;
-		}
-		else if (arc_size==__step_mor) {
-			#ifdef DEBUG
-				printf("ARC : send :: \n");
-			#endif
-				data=__atp_pointer();
-			mor(data);
-			return data;
-		};
-		return strdup(data->addr);
-	};
+	#define __ARC_PROCESS arc_process
 
-	int *__point_run() {
-		void *__=atp_step(512);
-		return 0;
-	};
+	#define atp_step(__,...) {\
+	if (\
+		if __ARC_PROCESS {\
+			void const *__data=__arc__();\
+		} && \
+		switch(__) {\
+			case arc_pointer:\
+				__TEXT(ARC => fork);\
+				return __atp_pointer(__data);\
+			case arc_address:\
+				__TEXT(ARC => address);\
+				return __arc_address(__data);\
+			case arc_point:\
+				__TEXT(ARC => point);\
+				return __arc_socket((char const *)__data);\
+			case arc_socket:\
+				__TEXT(ARC => point);\
+				return __arc_point(__VA_ARGS__);\
+			default :\
+				__TEXT(ARC => node);\
+				return __arc_node(#__VA_ARGS__[0], &__VA_ARGS__[1]);\
+	}){ __TEXT(exit); };\
+}
+
+	// void *__atp_step(arc_type __){
+	// 	// we generate a kept reference for a certain
+	// 	// size defined by `arc_sizes` which can be 
+	// 	// accessed via the lbb
+	// 	void *__data;
+	// 	if arc_process {
+	// 		__data=__atp_pointer();
+	// 		};
+	// 		if (__==arc_pointer) {
+	// 			#ifdef DEBUG
+	// 				printf("ARC => fork : \n");
+	// 			#endif
+	// 			__arc_address(__data);
+	// 		}
+	// 		else if (__==arc_address) {
+	// 			#ifdef DEBUG
+	// 				printf("ARC => address : \n");
+	// 			#endif
+	// 			__arc_address(__data);
+	// 		}
+	// 		else if (__==arc_point) {
+	// 			#ifdef DEBUG
+	// 				printf("ARC => point : \n");
+	// 			#endif
+	// 			__arc_socket(__data);
+	// 		}
+	// 		else if (__==arc_node) {
+	// 			#ifdef DEBUG
+	// 				printf("ARC => send : \n");
+	// 			#endif
+	// 				__data=__atp_pointer();
+	// 			__arc_point(__data);
+	// 		};
+	// 		return strdup(__data->addr);
+	// };
+
+	// void *__point_run() {
+	// 	void *__=atp_step(512);
+	// };
 
 	int atp_set(void *args) {
 		printf("%s : \n", (char const *)args);
@@ -1175,7 +1184,7 @@
 		return (char *)&__sok.aip_sockst;
 	};
 
-	struct sockaddr *__aip_sock_addr_sa(){
+	struct sockaddr *aip2sockaddr(){
 
 		return sock_aip_to_sa(&__sok);
 	};
@@ -1239,7 +1248,21 @@
 		free_sok();
 	};
 
-	int les(void *args) {
+	void *__arc_pointer(void const *aipd){
+
+		__arc.__fork=fork();
+
+		return __arc.__next;
+	};
+
+	void *__arc_address(void const *cert){
+
+		__arc.__sok=__address();
+
+		return __arc.__next;
+	};
+
+	void *__arc_socket(char const *pname) {
 		printf("d-cloud : atp {les}\n");
 
 		int sockfd, temp_fd, __yes=1, __rv;
@@ -1257,7 +1280,7 @@
 			#ifdef DEBUG
 				fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(__rv));
 			#endif
-			return 1;
+			return NULL;
 		};
 		for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
 			if((sockfd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
@@ -1293,15 +1316,16 @@
 				__ellrun(sockfd);
 			}
 		}
-
-		return 0;
+		return __arc.__next;
 	};	
 
-	int mor(void *crequest) {
+	void *__arc_point(char const *to, char const *type, void *data) {
 		// ATP(request, @self);
-		printf("d-cloud : atp {mor} :: %p\n", crequest);
-		char const *request_base=(char const *)crequest;
-		printf("address : %s\n", request_base);
+		printf("d-cloud : atp {mor} :: %p\n", to);
+		char const *request_base=(char const *)to;
+		#ifdef PROCESS
+			printf("address : %s\n", request_base);
+		#endif
 		int sockfd, temp_fd, __yes=1, __rv;
 		struct addrinfo hints,*__servinfo, *temp;
 		memset(&hints, 0,sizeof(struct addrinfo));
@@ -1317,7 +1341,7 @@
 			#ifdef DEBUG
 				fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(__rv));
 			#endif
-			return 1;
+			return NULL;
 		};
 		for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
 			if((sockfd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
@@ -1339,7 +1363,7 @@
 			#ifdef LOG_ERR
 				__TEXT(Err : Mor :: Cannot establish connection);
 			#endif
-			return -1;
+			return NULL;
 		}		
 		memset(&buf, 0, sizeof(buf));
 		inet_ntop(temp->ai_family, __sok_addr((struct sockaddr *)temp->ai_addr), buf, sizeof buf);
@@ -1348,10 +1372,14 @@
 			printf("client: connecting to %s\n", buf);
 		#endif
 		__ellcall(sockfd, (char *)&buf, sizeof(buf)-1);
-	 
 		close(sockfd);
-		return 0;
-	};	
+		return __arc.__next;
+	};
+
+	void *__arc_node(char const *idkey, void **args) {
+
+		return __arc.__next;
+	};
 
 
 aip_st *h2act(ixr_h *h_request) {

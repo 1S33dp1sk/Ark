@@ -142,7 +142,7 @@ _ark_out:
 	cc ${src@charms}/ark.c -o @ ${aetherlib}
 
 ark_intro:
-	@printf "\n{{{{{{{{{ARK}}}}}}}}}\n"
+	@printf "\n{{{{{{{{{⚡}}}}}}}}}\n"
 
 __ark__:  
 	cc -c -fpic ${src@charms}/ark.c -o ${out@charms}/ark.o

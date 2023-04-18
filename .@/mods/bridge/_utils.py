@@ -3,12 +3,14 @@ from sys import argv
 from string import ascii_lowercase,hexdigits
 from json import loads,dumps
 from web3 import Web3
-from eth_abi import encode_abi,is_encodable
+from eth_abi import encode,is_encodable
 from re import sub
 from random import randint
 
 # Web3
 ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
+ARGS=argv
 
 def _bytesToHex( _bytes: bytes ) -> str :
 	if type( _bytes ) != bytes:
@@ -51,6 +53,65 @@ def execActionCall( _contract , _w3 : Web3 , _function : str , _params : dict , 
 	_txn = w3_function( *args ).buildTransaction( _params )
 	txn = _w3.eth.send_raw_transaction( _w3.eth.account.sign_transaction( _txn, private_key=_pvt ).rawTransaction )
 	return _w3.toHex( txn )
+
+
+def all_of( self , attrType ):
+	__all = []
+	if attrType == self.w3_conn:
+		for i in self.conf_chains( return_type=int ):
+			__all.append( { self.a_conn( i ) : attrType( i ) } )
+		return __all
+	elif attrType == self.w3_contract:
+		for i in self.conf_chains( return_type=int ):
+			for j in self.chain_contracts( i ):
+				__all.append( { self.a_contract( i , j ) : attrType( i , j ) } )
+		return __all
+	elif attrType == self.w3_events:
+		return self.w3_events()
+	else:
+		for i in self.conf_chains( return_type=int ):
+			for j in self.chain_contracts( i ):
+				for k in self.w3_events( i , j ):
+					__all.append( { self.a_filter( i , j , k.event_name ) :  attrType( i , j , k.event_name ) } )
+		return __all
+
+def _partial( _dict ):
+	assert( type( _dict ) == dict )
+	values = []
+	_dictKeys = list( _dict.keys() )
+	for i in _dictKeys:
+		value = _dict.get( i )
+		if value != '0x' or value != b'' or value != [] or value != 0:
+			values.append( value )
+	return len( _dictKeys ) != len( values )
+
+def pathify( self , aether_path : str , node_name : str ):
+	self.node_name = node_name
+	if not self.node_name:
+		self.log_error( 0 )
+
+	self.aether_path = aether_path
+	if not isdir( aether_path ):
+		self.log_error( 1 )
+
+	self.node_path = '%s/nodes/%s.node'%( self.aether_path , self.node_name )
+	if not isdir( self.node_path ):
+		self.log_error( 7 )
+
+	self._logPath =  '%s/logs'%self.aether_path
+	if not isdir( self._logPath ):
+		self.log_error( 8 )
+
+	self._execPath = '%s/__%s__'%( self.node_path , node_name )
+	if not isfile( self._execPath ):
+		self.log_error( 9 )
+
+	self._confPath = '%s/.conf/config.json'%self.node_path
+	if not isfile( self._confPath ):
+		self.log_error( 2 )
+
+	self._cachePath = '%s/.A-block.json'%self.node_path
+
 
 
 # Generality
@@ -99,7 +160,7 @@ def __populate( _dictName:str , _dict:dict ) -> dict :
 	
 	return({ _dictName : _dict })
 
-def __nuke( _dict: dict ) -> tuple :
+def __trim( _dict: dict ) -> tuple :
 	
 	return list( _dict )[0]
 
@@ -184,11 +245,18 @@ class GenErr(Exception):
 		}
 		return _switch.get( self.errorName , None )
 
-# Context Execution
-if __name__ == '__main__':
-	print("w3.py >>> \n")
-	if len( argv ) > 1:
-		_filename = argv[1] if ( argv[1].startswith( './' ) or argv[1].startswith( '/' ) ) else './%s'%argv[1]
-		exec( open( _filename ).read() )
-	else:
-		raise GenErr( 'no_path' )
+class Settings:
+	def __init__( self , DAO_contract ):
+		 pass
+	def __new__( self , DAO_contract ):
+		temp = DAOVARS()
+		DAOVARS = list(filter(None,[ i if not i[0].startswith('_') else None for i in temp.__class__.__dict__.items()]))
+		DAO_VARS = {}
+		for _var in self.DAOVARS:
+			DAO_VARS.update( __populate( _var[0] , eval( 'DAO_contract.functions.%s().call()'%_var[1] ) ) )
+		return DAO_VARS
+
+
+
+
+

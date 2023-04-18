@@ -77,11 +77,11 @@
 	#define p_interpreter(p) ((char const *)(p.interpreter))
 	#define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
 
-	#define socket_fd(x) (ulong)(x.aip_sockfd)
+	#define socket_fd(x) (ulong)(x->aip_sockfd)
 	#define sock_fd(x) (ulong)(x->aip_sockfd)
-	#define socket_len(x) (ulong)(x.aip_socklen)
+	#define socket_len(x) (ulong)(x->aip_socklen)
 	#define sock_len(x) (ulong)(x->aip_socklen)
-	#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(&x)
+	#define socket_staddr(x) (struct sockaddr *) sock_aip_to_sa(x)
 
 	#define addr_args(x) ((x->ptr),(x->addr), #x)
     #define len_strze(x) (((ulong)x)*(sizeof(char)))
@@ -144,9 +144,13 @@
 	char const *__config_prop(char const *__str_1, char const *__str_2);
 	char const *http_config(char const *cfg_key, char const *cfg_val);
 
-	void *__arc__(aip_arc *__aip_arc);
-	void __arcfork();
-	void __arcsok();
+	void *__arc__(arc_st *__aip);
+	void *__arc_pointer(void const *aipd);
+	void *__arc_address(void const *aip_cert);
+	void *__arc_socket(char const *p_name);
+	void *__arc_point(char const *to, char const *type, void *data);
+	void *__arc_node(char const *id_key, void **args);
+	
 	ulong __aipfd();
 	ulong __aiplen();
 	void __arcpid();
@@ -177,8 +181,7 @@
 	void __ellcall(ulong __sockfd, char *reuse, ulong rsize);
 
 	int mor(void *crequest);
-	void *atp_step(arc_sizes arc_size);
-	int *__point_run();
+	// void *__point_run();
 	int get_atp_type(char const *__call);
 	int decode_lbb_addr(char const *__addr);
 
@@ -194,7 +197,7 @@
 	atp_t stype_to_atype(sAF_t __stype);
 	void _socket_address_free(d_portal *__aip_portal);
 	char *__aip_sock_raw();
-	struct sockaddr *__aip_sock_addr_sa();
+	struct sockaddr *aip2sockaddr();
 	void sock_errs();
 	void __ellget(ulong __sockfd, char *reuse, ulong rsize);
 	void __ellsend(ulong __sockfd, char *reuse, ulong rsize);

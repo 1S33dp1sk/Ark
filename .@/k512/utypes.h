@@ -390,7 +390,6 @@ dPRG(
 			x.prg_path=modbase_call(#i);\
 			x.prg_args=(char *const *)arg_content(__VA_ARGS__);\
 			x.prg_handler=gprg_handler(i);\
-			log_program(&x);\
 			dprg_run(x);\
 		};\
 	
@@ -656,7 +655,7 @@ dPRG(
 				char s_ascii[__I_LEN];
 			};
 		typedef struct __portal_d d_portal;
-			#define portal(x) atp_step(__step_start)
+			#define portal(a,...) atp_step(a,__VA_ARGS__)
 			#define __socket_protocol(x) ((ulong)(x.s_protocol))
 			#define socket_proto(x) ((atp_t)(x.s_protocol))
 			#define socket_address(x) ((void *)(x.s_address))
@@ -827,6 +826,9 @@ dPRG(__LBB__)
 
 
 
+#define TRAVERSE(a,b,...) int x=a;do {\
+	OUT_ENK_A(x, __VA_ARGS__);x+=1;\
+}while(x<b);
 
 
 /** IXR **/
@@ -847,9 +849,8 @@ dPRG(__LBB__)
 		#define __IXR__(a,b,...) \
 			&___header;\
 			___header.alias = __ixr_strt(#a);\
+			TRAVERSE(3,3,#a);\
 			IXR -> alias=(char const *)&a;\
-			program(_ixr_prg, IXR&->tests/hello_world.py, b);\
-			dprg_run(_ixr_prg);\
 			indexer_pause();\
 
 	#endif
@@ -890,30 +891,30 @@ dPRG(__LBB__)
 		    d_portal aip_sockst;
 		};
 	typedef struct __sok_st aip_sock;
-		#define aip_sockfd(x)	((ulong)(x.aip_sockfd))
-		#define aip_socklen(x)	((ulong)(x.aip_socklen))
-		#define aip_socket(x)	((ulong)(x.aip_sockst))
-		#define aip_sockname(x) ((char const *)socket_name(x.aip_sockst))
+		#define aip_sockfd(x)	((ulong)(x->aip_sockfd))
+		#define aip_socklen(x)	((ulong)(x->aip_socklen))
+		#define aip_socket(x)	((ulong)(x->aip_sockst))
+		#define aip_sockname(x) ((char const *)socket_name(x->aip_sockst))
 	
 	#endif
 
 
 
-	#ifndef aip_arc
+	#ifndef ark
 		#ifndef arc_s
 			/**
 			 * each step is a specific `ARC` call
 			 * and yes, the step indicates the
 			 * size in bytes
 			**/
-			enum __arc_sizes {
-				__step_point=8,
-				__step_addr=16,
-				__step_sok=128,
-				__step_start=256,
-				__step_mor=512
+			enum __arc_types {
+				arc_pointer=8,
+				arc_address=16,
+				arc_socket=128,
+				arc_point=256,
+				arc_node=512
 			};
-		typedef enum __arc_sizes arc_sizes;
+		typedef enum __arc_types arc_type;
 
 		#endif
 
@@ -922,15 +923,15 @@ dPRG(__LBB__)
 				aip_sock __sok;
 				ulong __pid;
 				int __fork;
-				ulong __next;
 				d_point **__points;
+				struct __arc_st *__next;
 			};
-	typedef struct __arc_st aip_arc;
+	typedef struct __arc_st arc_st;
 			// returns true for child process
 			#define arc_process (!__arc.__fork) 
 			#define arc_pid(x)	((ulong)(x->__pid))
 			#define arc_fork(x) ((int)(x->__fork))
-			#define arc_next(x) ((ulong)(x->__next))
+			#define arc_next(x) ((struct __arc_st *)(x->__next))
 			#define arc_points(x) ((dpoint_t **)(x->__points))
 
 		#endif
@@ -1012,7 +1013,7 @@ dPRG(
 
 
 
-	#define __ATP_TYPES { aip_sterm, aip_stat, aip_sock, aip_arc, aip_act }
+	#define __ATP_TYPES { aip_sterm, aip_stat, aip_sock, arc_st, aip_act }
 #endif
 
 
