@@ -21,9 +21,12 @@ Ark enables distributed storage address initialization through the `dPRG(__LBB__
 - **MODs (short for modifications)** are extensions or libraries that can be easily integrated into Ark projects.       
 
 - **ATP (Ark Terminal Protocol)** is a versatile feature that takes a single argument, an execution string, and evaluates it based on the  input. ATP can serve multiple purposes based on its identifiers:
-  - @-Protocol, it interprets the first character as a command.
-  - Aether Transfer Protocol, it enables the transfer of data across different blockchain networks.
-  - Ark Terminal Protocol Kmorphimisim when called shapes into any request processing by a valid protocol name, such as @LBB or @IXR, ATP can also poly into a corresponding pre-defined standard protocol (e.g., HTTP(s) or Ethereum).
+  - @-Protocol, it interprets the first character as a command.       
+
+  - Aether Transfer Protocol, it enables the transfer of data across different blockchain networks.         
+
+  - Ark Terminal Protocol Kmorphimisim when called shapes into any request processing by a valid protocol name, such as @LBB or @IXR, ATP can also poly into a corresponding pre-defined standard protocol (e.g., HTTP(s) or Ethereum).        
+  
 
 These three components are critical to Ark's system architecture, providing flexibility and adaptability when building projects.
 
@@ -34,5 +37,5 @@ Ark's error handling mechanism uses exit hashes to ensure the reliability of exe
 
 To learn Ark, refer to the available documentation, which covers essential topics such as language syntax, data types, control structures, functions, modules, and error handling. Detailed examples, tutorials, and an API reference are provided to help you become proficient in using Ark.
 
-As Ark's ecosystem grows, developers are encouraged to create and share their own mods, contribute to the language's development, and participate in the community.
+[Start here](./.@/)
 
