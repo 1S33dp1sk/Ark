@@ -1,7 +1,8 @@
 ## Usage 
 Running `make` **once** will setup the base for @source.      
 
-Running `make` **again** will create a runtime virtual enviroment.     
+Running `make` **again** will create a runtime virtual enviroment.       
+
  & the corresponding IXR (Image Execution Runner) dubbed `@` can be used as an executable, compilier, interpreter and header former.
  	-> grants `@` privilages to load, execute and run processes that access files through **@charms/** directory.
 
@@ -34,6 +35,7 @@ The script can be accessed inside a **`dPRG`** using the following snippet:
 
 	```ark
 		program(HelloArk, IXR&->HelloArk/start.py)
+		dprg_run(HelloArk)
 	```      
 The symbol `&->` implies the lexical equivalent of its counterpart *And Then*. 
 	Now *`HelloArk`* variable can be accessed to know the author, size, content, hash, and if allowed grants the ability to execute it.       
