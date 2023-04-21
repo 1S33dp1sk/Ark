@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/sh
 
 # define colors for a cool ux
 NC='\033[0m'
@@ -6,6 +6,7 @@ VIOLET='\033[1;94m'
 GREY='\033[1;37m'
 RED='\033[0;31m'
 GREEN='\033[1;32m'
+
 
 # execute the script with 
 # generality and output the exit

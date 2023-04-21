@@ -1,4 +1,4 @@
-/// ATP \\\
+/// ATP- \\\
 @-protocol
 
 #ifndef __ATP__H
@@ -6,79 +6,502 @@
 #endif
 
 
-#ifndef __atp_name
-	#define __atp_name "@-Protocol"
 
-	char const *__http_names(http_req_t __http_r_type) {
-		switch(__http_r_type) {
-		case __http_rget: return "GET";
-		case __http_rpost: return "POST";
-		default: return NULL;
+#ifndef __aip__
+	#define __aip__ {};
+
+
+	void __aip_send(aip_sock *sock, char *msg_to_send){
+		ulong msglen=str_rwings(msg_to_send);
+		#ifdef DEBUG
+			printf("message sent :: %s\n", msg_to_send);
+		#endif
+		if(send(sock_fd(sock),msg_to_send,msglen,0)==-1){
+			#ifdef LOG_ERR
+				printf("send : failed :: payload { %s }\n", msg_to_send);
+			#endif
 		};
 	};
 
-	char const *atp_name(int __type) {
-		char __name[__I_LEN];
-		memset(__name, 0, sizeof(__name));
-		sprintf(__name, __atp_names(__type), __type);
-		return strdup((char *)__name);
+
+	char *__aip_sock_raw(){
+
+		return (char *)&__sok.aip_sockst;
 	};
 
-	int __check_allowed(char const *__){ 
-		int __nallowed[]={'\\', '/', '.'};
-		while(*__++){
-			for(int i=0;i<arr_size(__nallowed); i++){
-				int __cmp=*(__);
-				if (__cmp==__nallowed[i]){
-					return 0;
-				};
-			};
+
+
+	void *__aip_sock__(aip_sock *sok) {
+
+		return memset(sok, 0, sizeof(aip_sock));
+	};
+
+
+	struct sockaddr *aip2sockaddr(){
+
+		return __aip2sockaddr(&__sok);
+	};
+
+	int aip_recv(aip_sock *sock, uchar *buf) {
+		int numbytes=0;
+		memset(buf,0,512);
+		if ((numbytes = recv(sock_fd(sock), buf, 512, 0))==-1) {
+			#ifdef LOG_ERR
+				printf("aip : recv :: failed\n");
+			#endif
+			return -1;
 		};
-		return 1;
+		return numbytes;
 	};
 
-	int check_addr(const char *_addr) {
-		
-		return __check_allowed(_addr)==0;
-	};
-
-	int check_command(d_into into) {
-		if(__read_hash__(in_argument(into))) {
-			__TEXT(Read : );
-			// printf("will read the hash\n");
-			return 0;   
-		}
-		else if (__write_hash__(in_argument(into))){
-			__TEXT(Write : );
-			// printf("will write a message to hash\n");
-			return 0;       
-		}
-		else if(__execute_hash__(in_argument(into))) {
-			__TEXT(Execute : );
-			// printf("should execute the command \n");
-			return 0;
-		}
-		else if (__send_hash__(in_argument(into))) {
-			__TEXT(Send : );
-			// printf("will send msg to hash\n");
-			return 0;
-		}
-		else if (__connect_hash__(in_argument(into))) {
-			__TEXT(Connect : );
-			// printf("will try to connect to address\n");
-			return 0;
-		}
-		else if (__listen_hash__(in_argument(into))) {
-			__TEXT(Listen : );
-			// printf("will try to listen on the address\n");
-			return 0;
+	void *aip_send(aip_sock *sock, void *msg_to_send){
+		// char const *__msg=__combine_str("@KaramJ:",msg_to_send);
+		char const *__msg=(char const *)msg_to_send;
+		ulong msglen=str_rwings(__msg);
+		long __res=send(sock_fd(sock),__msg,msglen,0);
+		if(__res==-1){
+			#ifdef LOG_ERR
+				printf("send : failed :: payload { %s }\n", __msg);
+			#endif
+			return NULL;
 		}
 		else {
-			__TEXT(No Match);
-			// printf("none of them matched\n");
-			return 1;
+			#ifdef DEBUG
+				printf("sent message : %s\n", __msg);
+			#endif
+			memset(msg_to_send, 0, 512);
+			return (void *)hashof(1, __msg, msglen);
 		};
+	};
+
+	char *aip_rcv_msg(int rlen, void *__rmsg) {
+		int res=0, i;
+		uchar *ur_msg=(uchar *)__rmsg;
+		uchar pld_mask[4];
+		for(i=0;i<4;i++){pld_mask[i]=0;};
+		#ifdef DEBUG
+			printf("decoding msg of %d bytes\n", rlen);
+		#endif
+		if(ur_msg==NULL) {
+			#ifdef LOG_ERR
+				printf("aip : recv :: msg ::: NULL\n");
+			#endif
+			return NULL;
+		};
+
+		uchar _fro=ur_msg[0];
+		res+=1;
+		uchar _pyl=ur_msg[1];
+		res+=1;
+
+		int pld_masked=PLD_MASKED(_pyl);
+		int pld_size=PLD_SIZE(_pyl);
+
+		if(pld_size==126){
+			pld_size=0;
+			for(i=0; i<2; i++) {
+				pld_size+=ur_msg[res+i];
+			};
+			res+=2;
+		}
+		else if(pld_size==127) {
+			pld_size=0;
+			for(i=0; i<8; i++) {
+				pld_size+=ur_msg[res+i];
+			};
+			res+=8;
+		};
+		if(pld_masked) {
+			for(i=0; i<4; i++) {
+				pld_mask[i]=ur_msg[res+i];
+				#ifdef DEBUG
+					printf("MASK[%d]=%u\n", i, pld_mask[i]);
+				#endif
+			};
+			res+=4;
+		};
+
+		uchar a_msg[pld_size+1];
+		for(i=0; i<pld_size; i++) {
+			a_msg[i]=((ur_msg[res+i])^(pld_mask[i%4]));
+		};
+		a_msg[pld_size]='\0';
+
+		#ifdef DEBUG
+			printf("FIN     : %u\n", FRAME_FIN(_fro));
+			printf("RSV 1   : %u\n", FRAME_RSV1(_fro));
+			printf("RSV 2   : %u\n", FRAME_RSV2(_fro));
+			printf("RSV 3   : %u\n", FRAME_RSV3(_fro));
+			printf("OPCODE  : %u\n", FRAME_OPCODE(_fro));
+			printf("MASKED  : %u\n", pld_masked);
+			printf("PLD LEN : %u\n", pld_size);
+			printf("Payload { %s }\n", a_msg);
+		#endif
+
+		return strdup((char *)a_msg);
+	};
+
+
+	struct sockaddr *__aip2sockaddr(aip_sock *sock){
+		struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_sockst)));
+		return (struct sockaddr *)saddrst;
+	};
+
+	int __aip_listen(ulong aipsfd){
+		int res=listen(aipsfd,ATP_BACKLOG)==-1?1:0;
+		if(res==-1){
+			printf("err number:\n");
+			printf("%d\n",errno);
+			return 1;   
+		}
+		return 0;
+	};
+
+	void *__aip_recieve(aip_sock *sock) {
+		int numbytes;
+		char buf[512];
+		memset(&buf,0,sizeof(buf));
+		if ((numbytes = recv(sock_fd(sock), buf, 512, 0))==-1) {
+			#ifdef LOG_ERR
+				printf("aip : recv :: failed\n");
+			#endif
+			exit(1);
+		};
+		return (void *)strdup(buf);
+	};
+
+	void *__aip_activate(aip_sock *sock, char *msg_to_send, char const *msg_hash){
+		char const *_hmsg=__combine_str(wss_acc_h, msg_hash);
+		char const *__msg=__combine_str(msg_to_send, _hmsg);
+		#ifdef DEBUG
+			printf("activation MESSAGE :: \n%s\n", __msg);
+		#endif
+		ulong msglen=str_rwings(__msg);
+		if(send(sock_fd(sock),__msg,msglen,0)==-1){
+			#ifdef LOG_ERR
+				printf("send : failed :: payload { %s }\n", __msg);
+			#endif
+			return NULL;
+		};
+		return (void *)strdup(__msg);
+	};
+
+	void *__atp_pointer() {
+		atp_pointer *atp_p=malloc(sizeof(atp_pointer));
+		memset(atp_p, 0, sizeof(atp_pointer));
+		__arcpid();
+		#ifdef PROCESS
+			printf("ATP<arcpid> = %lu\n", __arc.__pid);
+		#endif
+		atp_p->ptr = atp_p;
+		sprintf(atp_p->addr, "%lu", __arc.__pid);
+		atp_p->chkref = hash_follow(0, atp_p->addr);
+		#ifdef DEBUG
+			printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->addr, atp_p->chkref);
+		#endif
+		return atp_p->ptr;
+	};
+
+	void _socket_address_free(d_portal *aip_st){
+
+		free(aip_st->s_address);
+	};
+
+	void _socket_free_fd(aip_sock *sok_t) {
+
+		close(sok_t->aip_sockfd);
+	};
+
+#endif
+
+
+#ifndef __http__
+	content_st *crt_http_content(char const *__, content_pm __type) {
+		ulong __size=str_rwings(__);
+		void *__content_string=malloc(__size*sizeof(char));
+		memmove(__content_string, __, __size);
+		content_st *content=(content_st *)malloc(sizeof(content_st));
+		if(content==NULL){
+			#ifdef LOG_ERR
+				printf("cannot allocate enough memory for content\n");
+			#endif
+			return NULL;
+		};
+		content->c_size=__size;
+		content->content=__content_string;
+		content->__type=__STRING(http_content_type(__type));
+		return content;
+	};
+
+	content_pm proto_from_status(ulong __status) {
+		switch(__status) {
+		case 200:
+			return __http_request;
+		case 101:
+			return __http_switch;
+		default:
+			return __http_request;
+		}
+		return __http_request;
+	};
+
+	char const *form_http_request(http_req req_type, char const *__path) {
+		if(__path==NULL){
+			#ifdef LOG_ERR
+				printf("unable to create request : path is null\n");
+			#endif
+			return NULL;
+		};
+		char const *request_name=__http_names(req_type);
+		if(request_name==NULL){
+			#ifdef LOG_ERR
+				printf("unable to create request : request type is unknown\n");
+			#endif
+			return NULL;
+		};
+		char const *temp=expand_atoffset(__http_request_base, request_name, 0);
+		ulong p_offset=sep_offset(temp, "P");
+		temp=expand_atoffset(temp, __path, p_offset);
+		ulong v_offset=sep_offset(temp, "V");
+		temp=expand_atoffset(temp, __http_protocol_version, v_offset);
+		return strdup(temp);
+	};
+
+	char const *form_http_response(ulong res_type, char const *req_result) {
+			ulong b_offset=sep_offset(__http_response_base, "B");
+		char const *temp=expand_atoffset(__http_response_base, __http_protocol_version, b_offset);
+			ulong s_offset=sep_offset(temp, "S");
+			temp=expand_atoffset(temp, num2char(res_type), s_offset);
+			ulong r_offset=sep_offset(temp, "R");
+			temp=expand_atoffset(temp, req_result, r_offset);
+			return strdup(temp);
+	};
+
+	char const *http_response(ulong http_status, char const *http_result) {
+		
+		return form_http_response(http_status, http_result);
+	};
+
+	char const *http_config(char const *c_key, char const *c_val) {
+
+		return __config_prop(c_key, c_val);
+	};
+#endif
+
+
+
+#ifndef __atp__
+	#define __atp_name "@-Protocol"
+	// void *__aip_start__(aip_sock *sock) {
+	// 	#ifdef OUTPUT
+	// 		printf("atp : %s : start\n", __atp__);
+	// 	#endif
+	// 	void *varc=__arc_address(hashof(1, sock, sizeof(aip_sock)));
+	// 	__handle_convo(sock);
+	// 	return varc;
+	// };
+	#define __atp__(x) aip_sock * {\
+		printf("atp : @-Porotocol :: strt");\
+		void *varc = __arc_address(hashof(1, #x, sizeof(aip_sock)));\
+		__handle_convo(x);\
+		return varc;\
 	}
+		
+	
+
+
+	void *__sok_addr(struct sockaddr *sa) {
+		if (sa->sa_family == AF_INET) {
+			return &(((struct sockaddr_in*)sa)->sin_addr);
+		}
+		else {
+			return &(((struct sockaddr_in6*)sa)->sin6_addr);
+		};
+		return NULL;
+	};
+
+	ulong __sok_fd() {
+
+		return __arc.__sok.aip_sockfd;
+	};
+
+	ulong __sok_len(){
+
+		return __arc.__sok.aip_socklen;
+	};
+
+	void __err_socket(char const *__, int __errno) {
+		printf("%s ::: %d", __, __errno);
+		switch(__errno) {
+		     case EBADF         : printf( "socket is not a valid file descriptor."); break;
+		     case ECONNABORTED  : printf( "The connection to socket has been aborted."); break;
+		     case EFAULT        : printf( "The address parameter is not in a writable part of the user address space."); break;
+		     case EINTR         : printf( "The accept() system call was terminated by a signal."); break;
+		     case EINVAL        : printf( "socket is unwilling to accept connections."); break;
+		     case EMFILE        : printf( "The per-process descriptor table is full."); break;
+		     case ENFILE        : printf( "The system file table is full."); break;
+		     case ENOMEM        : printf( "Insufficient memory was available to complete the operation."); break;
+		     case ENOTSOCK      : printf( "socket references a file type other than a socket."); break;
+		     case EOPNOTSUPP    : printf( "socket is not of type SOCK_STREAM and thus does not accept connections."); break;
+		     case EWOULDBLOCK   : printf( "socket is marked as non-blocking and no connections are present to be accepted."); break;
+		}
+		printf("\n");
+	};
+	
+	aip_sock __address() {
+		aip_sock __sok; 
+		memset(&__sok,0,sizeof(aip_sock));
+
+		struct addrinfo hints;
+		memset(&hints, 0,sizeof(hints));
+		hints.ai_flags=AI_PASSIVE;
+		hints.ai_socktype=SOCK_STREAM;
+		hints.ai_family=PF_UNSPEC;
+
+		struct addrinfo *srvinfo, *aip;
+		struct sockaddr_storage ss_addr;
+		int __sfd, __res=1, __yes=1;
+
+		if ((__res=getaddrinfo(__loc_i4,ATP_PORT,&hints,&srvinfo))){
+			#ifdef DEBUG
+				printf("getaddrinfo error : %s\n", gai_strerror(__res));
+			#endif
+			memset(&__sok,0,sizeof(aip_sock));
+			return __sok;
+		};
+
+		for(aip=srvinfo;aip!=NULL;aip=aip->ai_next){
+			if((__sfd=socket(aip->ai_family,aip->ai_socktype,aip->ai_protocol))==-1){
+				#ifdef DEBUG
+					printf("server :: socket\n");
+				#endif
+				continue;
+			}
+			if(setsockopt(__sfd,SOL_SOCKET,SO_REUSEADDR,&__yes,2)==-1){ // 2 = sizeof(unsigned)
+				#ifdef DEBUG
+					printf("setsockopt\n");
+				#endif
+				#ifdef LOGOUT_ERR
+					exit(1);
+				#endif
+				continue;
+			}
+			if(bind(__sfd,aip->ai_addr,aip->ai_addrlen)==-1){
+				close(__sfd);
+				#ifdef DEBUG
+					printf("server: bind\n");
+				#endif
+				continue;
+			}
+			#ifdef DEBUG
+				printf("aip->next\n");
+			#endif
+			break;
+		};
+		freeaddrinfo(srvinfo);
+
+		if(aip==NULL){
+			#ifdef DEBUG
+				printf("cannot connect to any socket\n");
+			#endif
+			_exit(1);
+		};
+
+		__sok.aip_sockfd=__sfd;
+		__sok.aip_socklen=(ulong)(aip->ai_addrlen);
+		struct sockaddr_storage *sasp=(struct sockaddr_storage*)aip->ai_addr;
+		memmove(&(__sok.aip_sockst), sasp, sizeof(struct sockaddr_storage));
+
+		return __sok;
+	};
+
+	void __handle_convo(aip_sock *sock) {
+		int rbytes=aip_recv(sock, dbuf);
+		char *smsg=aip_send(sock, (char *)dbuf);
+		while(smsg){
+			rbytes=aip_recv(sock, dbuf);
+			printf("aip_recv : %d\n", rbytes);
+			if((rbytes==-1)||(!rbytes)){
+				printf("breaking\n");
+				break;
+			}
+			smsg=aip_rcv_msg(rbytes, dbuf);
+			smsg=decode_and_reply(sock, smsg, rbytes);
+		};
+		#ifdef OUTPUT
+			printf("closing socket\n");
+		#endif
+		_socket_free_fd(sock);
+		_exit(0);
+	};
+
+	void *__atp_cell(void *c_stp) {
+		aip_sock *__socket =__arc_socket(c_stp);
+		log_socket(__socket);
+		d_portal saddr_st=__sock_addr(__aip2sockaddr(__socket));
+
+		ulong socket_fd=socket_fd(__socket);
+		ulong socket_len=socket_len(__socket);
+
+		#ifdef DEBUG
+			printf("starting ell, <%p>\n", c_stp);
+			printf("fd=%lu",socket_fd);
+			log_socket(&__socket);
+		#endif
+
+		if(__aip_listen(socket_fd)) {
+			#ifdef DEBUG
+				printf("error : listen\n");
+				printf("err number:\n");
+				printf("%d\n",errno);
+			#endif
+			_exit(1);
+		};
+
+		__ellrun(socket_fd);
+
+		return c_stp;
+	};
+
+	d_portal __sock_addr(struct sockaddr *sa) {
+		// get sockaddr, IPv4 or IPv6:
+		d_portal __sa; memset(&__sa,0,sizeof(d_portal));
+
+		if (sa->sa_family==AF_INET) {
+			__sa.s_protocol=__at_4;
+			__sa.s_address=&(((struct sockaddr_in*)sa)->sin_addr);
+		}
+		else {
+			__sa.s_protocol=__at_6;
+			__sa.s_address=&(((struct sockaddr_in6*)sa)->sin6_addr);
+		};
+		char s[INET6_ADDRSTRLEN];
+		ulong __s_size=str_rwings(__sa.s_ascii);
+		memset(__sa.s_ascii,0,__s_size);
+		memset(&s,0,sizeof(s));
+		char const *sockname=inet_ntop((int)__sa.s_protocol, __sa.s_address, s, sizeof(s));
+		memmove(__sa.s_ascii, sockname, __s_size);
+		#ifdef DEBUG
+			printf("socket @%s\n",sockname);
+		#endif
+		return __sa;
+	};
+	
+	char *__pia_http(d_pia *pst) {
+		#ifdef OUTPUT
+			printf("starting http parser (pia) :: \n");
+		#endif
+		char __[__API_LEN], *__ptr=memset(&__,0,sizeof(__));
+		char *__interpt=pst->interpreter;
+		ulong __ilen=str_rwings(__interpt);
+		memmove(__ptr, __interpt, __ilen);
+		#ifdef OUTPUT
+			printf("GET /%s", pst->pointer);
+			printf("\nInterpreter:%s", pst->interpreter);
+			printf("\nArgs:%s\n", pst->args);
+		#endif
+		return (char *)strdup(__);
+	};
 
 	int __read_ft(char *dbuffer, ulong dbuf_len) {
 	// read from till
@@ -244,60 +667,186 @@
 	    return 0;
 	};
 
-	char const *form_http_request(http_req_t req_type, char const *__path) {
-		if(__path==NULL){
-			#ifdef LOG_ERR
-				printf("unable to create request : path is null\n");
-			#endif
-			return NULL;
+	char const *__http_names(http_req __http_r_type) {
+		switch(__http_r_type) {
+		case __http_rget: return "GET";
+		case __http_rpost: return "POST";
+		default: return NULL;
 		};
-		char const *request_name=__http_names(req_type);
-		if(request_name==NULL){
-			#ifdef LOG_ERR
-				printf("unable to create request : request type is unknown\n");
-			#endif
-			return NULL;
-		};
-		char const *temp=expand_atoffset(__http_request_base, request_name, 0);
-		ulong p_offset=sep_offset(temp, "P");
-		temp=expand_atoffset(temp, __path, p_offset);
-		ulong v_offset=sep_offset(temp, "V");
-		temp=expand_atoffset(temp, __http_protocol_version, v_offset);
-		return strdup(temp);
 	};
 
-	char const *form_http_response(ulong res_type, char const *req_result) {
-			ulong b_offset=sep_offset(__http_response_base, "B");
-		char const *temp=expand_atoffset(__http_response_base, __http_protocol_version, b_offset);
-			ulong s_offset=sep_offset(temp, "S");
-			temp=expand_atoffset(temp, num2char(res_type), s_offset);
-			ulong r_offset=sep_offset(temp, "R");
-			temp=expand_atoffset(temp, req_result, r_offset);
-			return strdup(temp);
+	void __free_content(content_st *__) {
+		free(__);
 	};
 
-	char const *http_response(ulong http_status, char const *http_result) {
-		
-		return form_http_response(http_status, http_result);
-	};
-
-	char const *__pia_http(d_pia *pst) {
-		#ifdef OUTPUT
-			printf("starting http parser (pia) :: \n");
-		#endif
-		char __[__API_LEN], *__ptr=memset(&__,0,sizeof(__));
-		char *__interpt=pst->interpreter;
-		ulong __ilen=str_rwings(__interpt);
-		memmove(__ptr, __interpt, __ilen);
-		#ifdef OUTPUT
-			printf("GET /%s", pst->pointer);
-			printf("\nInterpreter:%s", pst->interpreter);
-			printf("\nArgs:%s\n", pst->args);
-		#endif
+	char const *__config_prop(char const *str1, char const *str2) {
+		ulong _lstr1=str_rwings(str1),_lstr2=str_rwings(str2);
+		ulong __len=_lstr1+_lstr2+3;
+		char __[__len];memset(&__, 0, sizeof(__));
+		__[__len-1]='\r';
+		__[__len]='\n';
+		memmove(__, str1, _lstr1);
+		memmove((__+_lstr1), str2, _lstr2);
 		return strdup(__);
 	};
 
-	char const *decode_pointer(d_into into) {
+	char const *__check_wss_key(char const *__msg) {
+		ulong __len=str_rwings(__msg);
+		ulong __offset=sep_offset(__msg, "Sec-WebSocket-Key: ");
+		if(!__offset){
+			#ifdef LOG_ERR
+				printf("no wss key found\n");
+			#endif
+			return NULL;
+		}
+		char const *temp=str_a4offset(__msg, __offset+str_rwings(wss_key_h));
+		__offset=sep_offset(temp, "\n");
+		temp=str_b4offset(temp, __offset);
+		#ifdef DEBUG
+			printf("WSS KEY : %s\n", temp);
+		#endif
+		return strdup(temp);
+	};
+
+	char const *__get_hash(char const *__key) {
+		int x=fork();
+		#ifdef DEBUG
+			printf("fork res : %d\n", x);
+		#endif
+		if(!x){
+			char **_s=malloc(sizeof(char *)*3);
+			char const *__sname= __charm_call(NULL, "hash1.py");
+			#ifdef DEBUG
+				printf("charm call : %s\n", __sname);
+			#endif
+			char *__sarg=(char *)__key;
+			char *__send=NULL;
+			_s[0] = (char *)__sname;
+			_s[1] = __sarg;
+			_s[2] = __send;
+			#ifdef OUTPUT
+				printf("getting hash\n");
+				printf("0 : %s\n", _s[0]);
+				printf("1 : %s\n", _s[1]);
+				printf("2 : %s\n", _s[2]);
+			#endif
+			int __eres=execve(_s[0], _s, environ);
+			return "@\0";
+			// _exit(0);
+		}
+		else {
+			int __zen=0;
+			waitpid(x, &__zen, 0);
+			char __[30];memset(&__,0, sizeof(__));
+			int fd=__dgetfd("temp.sha1");
+			#ifdef OUTPUT
+				printf("access to file : %d\n", access("temp.sha1", F_OK));
+			#endif
+			long b_read=read(fd, __, sizeof(__));
+			#ifdef DEBUG
+				printf("bread : %ld\n", b_read);
+			#endif
+			close(fd);
+			if(b_read<=2){
+				#ifdef LOG_ERR
+					printf("read less than 2 bytes\n");
+				#endif
+				return NULL;
+			};
+			__[b_read]='\r';
+			__[b_read+1]='\n';
+			return strdup(__);
+		};
+	};
+
+	int check_addr(const char *_addr) {
+		
+		return __check_allowed(_addr)==0;
+	};
+
+	int check_command(d_into into) {
+		if(__read_hash__(in_argument(into))) {
+			__TEXT(Read : );
+			// printf("will read the hash\n");
+			return 0;   
+		}
+		else if (__write_hash__(in_argument(into))){
+			__TEXT(Write : );
+			// printf("will write a message to hash\n");
+			return 0;       
+		}
+		else if(__execute_hash__(in_argument(into))) {
+			__TEXT(Execute : );
+			// printf("should execute the command \n");
+			return 0;
+		}
+		else if (__send_hash__(in_argument(into))) {
+			__TEXT(Send : );
+			// printf("will send msg to hash\n");
+			return 0;
+		}
+		else if (__connect_hash__(in_argument(into))) {
+			__TEXT(Connect : );
+			// printf("will try to connect to address\n");
+			return 0;
+		}
+		else if (__listen_hash__(in_argument(into))) {
+			__TEXT(Listen : );
+			// printf("will try to listen on the address\n");
+			return 0;
+		}
+		else {
+			__TEXT(No Match);
+			// printf("none of them matched\n");
+			return 1;
+		};
+	};
+
+	int decode_lbb_addr(char const *__arg) {
+		ulong _addr_len=str_rwings(__arg);
+		if(check_addr(__arg)==-1){
+			#ifdef LOG_ERR
+				printf("address is not correctly formatted\n");
+			#endif
+			return 1;
+		};
+		ulong _addr_max=LBB_BASE+_addr_len;
+		char __address[_addr_max];
+		memset(&__address, 0, sizeof(__address));
+		memmove(__address, d_lbb, LBB_BASE);
+		memmove((__address+LBB_BASE), __arg, _addr_len);
+		__address[_addr_max]='\0';
+		#ifdef DEBUG
+			printf("decoding lbb address :: \n");
+		#endif
+		if(!__stres(__address)){
+			#ifdef LOG_ERR
+				printf("address doesn't exist ( %s ) \n", __address);
+			#endif
+			return 2;
+		};
+		m_stat cm_st; memset(&cm_st, 0, sizeof(m_stat));
+		#ifdef DEBUG
+			printf("getting mstat :: \n");
+		#endif
+		// get_mstat(__address, &cm_st);
+		#ifdef DEBUG
+			log_mstat(&cm_st);
+		#endif
+		return 0;
+	};
+
+	char *decode_and_reply(aip_sock *sock, char *smsg, int rbytes) {
+		printf("decoding msg : %d :: %s\n", rbytes , smsg);
+		if(*smsg=='@'){
+			printf("should initiate ATP for : ");
+			log_socket(sock);
+		};
+
+		return "@\0";
+	};
+
+	char *decode_pointer(d_into into) {
 		#ifdef DEBUG
 			printf("decoding pointer :: \n");
 		#endif
@@ -386,671 +935,19 @@
 
 	char *decode_point(d_into into) {
 		#ifdef DEBUG
-			printf("decoding aetherpoint :: \n");
+			printf("decoding point :: \n");
 		#endif
 		ulong pnt_offset=sep_offset(in_argument(into), charms_d);
 		char const *point_name=str_a4offset(in_argument(into), pnt_offset);
 		return strdup(point_name);
 	};
 
-	content_st *crt_http_content(char const *__, content_pm __type) {
-		ulong __size=str_rwings(__);
-		void *__content_string=malloc(__size*sizeof(char));
-		memmove(__content_string, __, __size);
-		content_st *content=(content_st *)malloc(sizeof(content_st));
-		if(content==NULL){
-			#ifdef LOG_ERR
-				printf("cannot allocate enough memory for content\n");
-			#endif
-			return NULL;
-		};
-		content->c_size=__size;
-		content->content=__content_string;
-		content->__type=__STRING(http_content_type(__type));
-		return content;
+	char const *atp_name(int __type) {
+		char __name[__I_LEN];
+		memset(__name, 0, sizeof(__name));
+		sprintf(__name, __atp_names(__type), __type);
+		return strdup((char *)__name);
 	};
-
-	void __free_content(content_st *__) {
-		free(__);
-	};
-
-	content_pm proto_from_status(ulong __status) {
-		switch(__status) {
-		case 200:
-			return __http_request;
-		case 101:
-			return __http_switch;
-		default:
-			return __http_request;
-		}
-		return __http_request;
-	};
-
-	char const *__config_prop(char const *str1, char const *str2) {
-		ulong _lstr1=str_rwings(str1),_lstr2=str_rwings(str2);
-		ulong __len=_lstr1+_lstr2+3;
-		char __[__len];memset(&__, 0, sizeof(__));
-		__[__len-1]='\r';
-		__[__len]='\n';
-		memmove(__, str1, _lstr1);
-		memmove((__+_lstr1), str2, _lstr2);
-		return strdup(__);
-	};
-
-	char const *http_config(char const *c_key, char const *c_val) {
-
-		return __config_prop(c_key, c_val);
-	};
-
-	void *__arc__(arc_st *st) {
-
-		return memset(st, 0, sizeof(arc_st));
-	};
-
-	aip_sock __address() {
-		aip_sock __sok; 
-		memset(&__sok,0,sizeof(aip_sock));
-
-		struct addrinfo hints;
-		memset(&hints, 0,sizeof(hints));
-		hints.ai_flags=AI_PASSIVE;
-		hints.ai_socktype=SOCK_STREAM;
-		hints.ai_family=PF_UNSPEC;
-
-		struct addrinfo *srvinfo, *aip;
-		struct sockaddr_storage ss_addr;
-		int __sfd, __res=1, __yes=1;
-
-		if ((__res=getaddrinfo("0.0.0.0",ATP_PORT,&hints,&srvinfo))){
-			#ifdef DEBUG
-				printf("getaddrinfo error : %s\n", gai_strerror(__res));
-			#endif
-			memset(&__sok,0,sizeof(aip_sock));
-			return __sok;
-		};
-
-		for(aip=srvinfo;aip!=NULL;aip=aip->ai_next){
-			if((__sfd=socket(aip->ai_family,aip->ai_socktype,aip->ai_protocol))==-1){
-				#ifdef DEBUG
-					printf("server :: socket\n");
-				#endif
-				continue;
-			}
-			if(setsockopt(__sfd,SOL_SOCKET,SO_REUSEADDR,&__yes,2)==-1){ // 2 = sizeof(unsigned)
-				#ifdef DEBUG
-					printf("setsockopt\n");
-				#endif
-				#ifdef LOGOUT_ERR
-					exit(1);
-				#endif
-				continue;
-			}
-			if(bind(__sfd,aip->ai_addr,aip->ai_addrlen)==-1){
-				close(__sfd);
-				#ifdef DEBUG
-					printf("server: bind\n");
-				#endif
-				continue;
-			}
-			#ifdef DEBUG
-				printf("aip->next\n");
-			#endif
-			break;
-		};
-		freeaddrinfo(srvinfo);
-
-		if(aip==NULL){
-			#ifdef DEBUG
-				printf("cannot connect to any socket\n");
-			#endif
-			_exit(1);
-		};
-
-		__sok.aip_sockfd=__sfd;
-		__sok.aip_socklen=(ulong)(aip->ai_addrlen);
-		struct sockaddr_storage *sasp=(struct sockaddr_storage*)aip->ai_addr;
-		memmove(&(__sok.aip_sockst), sasp, sizeof(struct sockaddr_storage));
-
-		return __sok;
-	};
-	
-
-	ulong __aipfd() {
-
-		return __arc.__sok.aip_sockfd;
-	};
-
-	ulong __aiplen(){
-
-		return __arc.__sok.aip_socklen;
-	};
-
-	void __arcpid(){
-
-		__arc.__pid=(ulong)getpid();
-	};
-
-	// void *__atp_pointer() {
-
-	// 	atp_pointer *atp_p=malloc(sizeof(atp_pointer));
-	// 	memset(atp_p, 0, sizeof(atp_pointer));
-	// 	__arcpid();
-	// 	#ifdef PROCESS
-	// 		printf("ATP<arcpid> = %lu\n", __arc.__pid);
-	// 	#endif
-	// 	atp_p->ptr = atp_p;
-	// 	sprintf(atp_p->addr, "%lu", __arc.__pid);
-	// 	atp_p->chkref = hash_follow(0, atp_p->addr);
-	// 	#ifdef DEBUG
-	// 		printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->addr, atp_p->chkref);
-	// 	#endif
-	// 	return atp_p->ptr;
-	// };
-
-	void *__atp_address() {
-
-		return NULL;
-	};
-
-	void *__atp_field() {
-
-		return NULL;
-	};
-
-	// // get sockaddr, IPv4 or IPv6:
-	d_portal __sock_addr(struct sockaddr *sa) {
-		d_portal __sa; memset(&__sa,0,sizeof(d_portal));
-
-		if (sa->sa_family==AF_INET) {
-			__sa.s_protocol=__at_4;
-			__sa.s_address=&(((struct sockaddr_in*)sa)->sin_addr);
-		}
-		else {
-			__sa.s_protocol=__at_6;
-			__sa.s_address=&(((struct sockaddr_in6*)sa)->sin6_addr);
-		};
-		char s[INET6_ADDRSTRLEN];
-		ulong __s_size=str_rwings(__sa.s_ascii);
-		memset(__sa.s_ascii,0,__s_size);
-		memset(&s,0,sizeof(s));
-		char const *sockname=inet_ntop((int)__sa.s_protocol, __sa.s_address, s, sizeof(s));
-		memmove(__sa.s_ascii, sockname, __s_size);
-		#ifdef DEBUG
-			printf("socket @%s\n",sockname);
-		#endif
-		return __sa;
-	};
-
-	struct sockaddr *sock_aip_to_sa(aip_sock *sock){
-		struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_sockst)));
-		return (struct sockaddr *)saddrst;
-	};
-
-	int __aip_listen(ulong aipsfd){
-		int res=listen(aipsfd,ATP_BACKLOG)==-1?1:0;
-		if(res==-1){
-			printf("err number:\n");
-			printf("%d\n",errno);
-			return 1;   
-		}
-		return 0;
-	};
-
-	void *__aip_recieve(aip_sock *sock) {
-		int numbytes;
-		char buf[512];
-		memset(&buf,0,sizeof(buf));
-		if ((numbytes = recv(sock_fd(sock), buf, 512, 0))==-1) {
-			#ifdef LOG_ERR
-				printf("aip : recv :: failed\n");
-			#endif
-			exit(1);
-		};
-		return (void *)strdup(buf);
-	};
-
-	void *__aip_activate(aip_sock *sock, char *msg_to_send, char const *msg_hash){
-		char const *_hmsg=__combine_str(wss_acc_h, msg_hash);
-		char const *__msg=__combine_str(msg_to_send, _hmsg);
-		#ifdef DEBUG
-			printf("activation MESSAGE :: \n%s\n", __msg);
-		#endif
-		ulong msglen=str_rwings(__msg);
-		if(send(sock_fd(sock),__msg,msglen,0)==-1){
-			#ifdef LOG_ERR
-				printf("send : failed :: payload { %s }\n", __msg);
-			#endif
-			return NULL;
-		};
-		return (void *)strdup(__msg);
-	};
-
-	void _socket_free_fd(aip_sock *sok_t) {
-
-		close(sok_t->aip_sockfd);
-	};
-
-	int aip_recv(aip_sock *sock, uchar *buf) {
-		int numbytes=0;
-		memset(buf,0,512);
-		if ((numbytes = recv(sock_fd(sock), buf, 512, 0))==-1) {
-			#ifdef LOG_ERR
-				printf("aip : recv :: failed\n");
-			#endif
-			return -1;
-		};
-		return numbytes;
-	};
-
-	void *aip_send(aip_sock *sock, void *msg_to_send){
-		// char const *__msg=__combine_str("@KaramJ:",msg_to_send);
-		char const *__msg=(char const *)msg_to_send;
-		ulong msglen=str_rwings(__msg);
-		long __res=send(sock_fd(sock),__msg,msglen,0);
-		if(__res==-1){
-			#ifdef LOG_ERR
-				printf("send : failed :: payload { %s }\n", __msg);
-			#endif
-			return NULL;
-		}
-		else {
-			#ifdef DEBUG
-				printf("sent message : %s\n", __msg);
-			#endif
-			memset(msg_to_send, 0, 512);
-			return (void *)hashof(1, __msg, msglen);
-		};
-	};
-
-	void __aip_send(aip_sock *sock, char *msg_to_send){
-		ulong msglen=str_rwings(msg_to_send);
-		#ifdef DEBUG
-			printf("message sent :: %s\n", msg_to_send);
-		#endif
-		if(send(sock_fd(sock),msg_to_send,msglen,0)==-1){
-			#ifdef LOG_ERR
-				printf("send : failed :: payload { %s }\n", msg_to_send);
-			#endif
-		};
-	};
-
-	char *aip_rcv_msg(int rlen, void *__rmsg) {
-		int res=0, i;
-		uchar *ur_msg=(uchar *)__rmsg;
-		uchar pld_mask[4];
-		for(i=0;i<4;i++){pld_mask[i]=0;};
-		#ifdef DEBUG
-			printf("decoding msg of %d bytes\n", rlen);
-		#endif
-		if(ur_msg==NULL) {
-			#ifdef LOG_ERR
-				printf("aip : recv :: msg ::: NULL\n");
-			#endif
-			return NULL;
-		};
-
-		uchar _fro=ur_msg[0];
-		res+=1;
-		uchar _pyl=ur_msg[1];
-		res+=1;
-
-		int pld_masked=PLD_MASKED(_pyl);
-		int pld_size=PLD_SIZE(_pyl);
-
-		if(pld_size==126){
-			pld_size=0;
-			for(i=0; i<2; i++) {
-				pld_size+=ur_msg[res+i];
-			};
-			res+=2;
-		}
-		else if(pld_size==127) {
-			pld_size=0;
-			for(i=0; i<8; i++) {
-				pld_size+=ur_msg[res+i];
-			};
-			res+=8;
-		};
-		if(pld_masked) {
-			for(i=0; i<4; i++) {
-				pld_mask[i]=ur_msg[res+i];
-				#ifdef DEBUG
-					printf("MASK[%d]=%u\n", i, pld_mask[i]);
-				#endif
-			};
-			res+=4;
-		};
-
-		uchar a_msg[pld_size+1];
-		for(i=0; i<pld_size; i++) {
-			a_msg[i]=((ur_msg[res+i])^(pld_mask[i%4]));
-		};
-		a_msg[pld_size]='\0';
-
-		#ifdef DEBUG
-			printf("FIN     : %u\n", FRAME_FIN(_fro));
-			printf("RSV 1   : %u\n", FRAME_RSV1(_fro));
-			printf("RSV 2   : %u\n", FRAME_RSV2(_fro));
-			printf("RSV 3   : %u\n", FRAME_RSV3(_fro));
-			printf("OPCODE  : %u\n", FRAME_OPCODE(_fro));
-			printf("MASKED  : %u\n", pld_masked);
-			printf("PLD LEN : %u\n", pld_size);
-			printf("Payload { %s }\n", a_msg);
-		#endif
-
-		return strdup((char *)a_msg);
-	};
-
-	char *decode_and_reply(aip_sock *sock, char *smsg, int rbytes) {
-		printf("decoding msg : %d :: %s\n", rbytes , smsg);
-		if(*smsg=='@'){
-			printf("should initiate ATP for : ");
-			log_socket(sock);
-		};
-
-		return "@\0";
-	};
-
-	void __aip_start__(aip_sock *sock) {
-		int __d=0;
-		uchar __[512]; memset(&__, 0, sizeof(__));
-		#ifdef OUTPUT
-			printf("\n\n%s\n\n", __atp_name);
-		#endif
-		int rbytes=aip_recv(sock, __);
-		char *smsg=aip_send(sock, (char *)__);
-		while(smsg){
-			rbytes=aip_recv(sock, __);
-			printf("aip_recv : %d\n", rbytes);
-			if((rbytes==-1)||(!rbytes)){
-				printf("breaking\n");
-				break;
-			}
-			smsg=aip_rcv_msg(rbytes, __);
-			smsg=decode_and_reply(sock, smsg, rbytes);
-		};
-		#ifdef OUTPUT
-			printf("closing socket\n");
-		#endif
-		_socket_free_fd(sock);
-		_exit(0);
-	};
-
-	char const *__check_wss_key(char const *__msg) {
-		ulong __len=str_rwings(__msg);
-		ulong __offset=sep_offset(__msg, "Sec-WebSocket-Key: ");
-		if(!__offset){
-			#ifdef LOG_ERR
-				printf("no wss key found\n");
-			#endif
-			return NULL;
-		}
-		char const *temp=str_a4offset(__msg, __offset+str_rwings(wss_key_h));
-		__offset=sep_offset(temp, "\n");
-		temp=str_b4offset(temp, __offset);
-		#ifdef DEBUG
-			printf("WSS KEY : %s\n", temp);
-		#endif
-		return strdup(temp);
-	};
-
-	char const *__get_hash(char const *__key) {
-		int x=fork();
-		#ifdef DEBUG
-			printf("fork res : %d\n", x);
-		#endif
-		if(!x){
-			char **_s=malloc(sizeof(char *)*3);
-			char const *__sname= __charm_call(NULL, "hash1.py");
-			#ifdef DEBUG
-				printf("charm call : %s\n", __sname);
-			#endif
-			char *__sarg=(char *)__key;
-			char *__send=NULL;
-			_s[0] = (char *)__sname;
-			_s[1] = __sarg;
-			_s[2] = __send;
-			#ifdef OUTPUT
-				printf("getting hash\n");
-				printf("0 : %s\n", _s[0]);
-				printf("1 : %s\n", _s[1]);
-				printf("2 : %s\n", _s[2]);
-			#endif
-			int __eres=execve(_s[0], _s, environ);
-			return "@\0";
-			// _exit(0);
-		}
-		else {
-			int __zen=0;
-			waitpid(x, &__zen, 0);
-			char __[30];memset(&__,0, sizeof(__));
-			int fd=__dgetfd("temp.sha1");
-			#ifdef OUTPUT
-				printf("access to file : %d\n", access("temp.sha1", F_OK));
-			#endif
-			long b_read=read(fd, __, sizeof(__));
-			#ifdef DEBUG
-				printf("bread : %ld\n", b_read);
-			#endif
-			close(fd);
-			if(b_read<=2){
-				#ifdef LOG_ERR
-					printf("read less than 2 bytes\n");
-				#endif
-				return NULL;
-			};
-			__[b_read]='\r';
-			__[b_read+1]='\n';
-			return strdup(__);
-		};
-	};
-
-	void err_socket(int __s_errno) {
-		printf("%d ::: ",__s_errno);
-		switch(__s_errno) {
-		     case EBADF         : printf( "socket is not a valid file descriptor."); break;
-		     case ECONNABORTED  : printf( "The connection to socket has been aborted."); break;
-		     case EFAULT        : printf( "The address parameter is not in a writable part of the user address space."); break;
-		     case EINTR         : printf( "The accept() system call was terminated by a signal."); break;
-		     case EINVAL        : printf( "socket is unwilling to accept connections."); break;
-		     case EMFILE        : printf( "The per-process descriptor table is full."); break;
-		     case ENFILE        : printf( "The system file table is full."); break;
-		     case ENOMEM        : printf( "Insufficient memory was available to complete the operation."); break;
-		     case ENOTSOCK      : printf( "socket references a file type other than a socket."); break;
-		     case EOPNOTSUPP    : printf( "socket is not of type SOCK_STREAM and thus does not accept connections."); break;
-		     case EWOULDBLOCK   : printf( "socket is marked as non-blocking and no connections are present to be accepted."); break;
-		}
-		printf("\n");
-	}
-
-	void __ellrun(ulong __fd) {
-		char const *__wsskey, *__wsshash;
-		aip_sock temp_sok; memset(&temp_sok,0,sizeof(aip_sock));
-		#ifdef OUTPUT
-			printf("running ell <%lu> \n", __fd);
-		#endif
-
-		while(1) {
-			socklen_t *__len=((socklen_t *)&(temp_sok.aip_socklen));
-			ulong *temp_sockefd=((ulong *)&(temp_sok.aip_sockfd));
-			struct sockaddr *temp_sockeaddr=((struct sockaddr *)&(temp_sok.aip_sockst));
-			*__len=sizeof(temp_sockeaddr);
-			int __tempfd=accept(__fd, temp_sockeaddr, __len);
-			#ifdef DEBUG
-				printf("accepted connection :: %d\n", __tempfd);
-			#endif
-			if(__tempfd==-1) {
-				#ifdef LOG_ERR
-					printf("error : accept :: ");
-					err_socket(errno);
-				#endif
-				break;
-			};
-			temp_sok.aip_sockfd=tonum(__tempfd);
-			#ifdef DEBUG
-				log_socket(temp_sok);
-			#endif
-			if(!fork()){
-				close(__fd);
-				char *msg_recvd=__aip_recieve(&temp_sok);
-				#ifdef DEBUG
-					printf("recieved => \n%s\n", msg_recvd);
-				#endif
-				__wsskey=__check_wss_key(msg_recvd);
-				if(__wsskey!=NULL) {
-					__wsskey=__combine_str(__wsskey, __cwss);
-					__wsshash=__get_hash(__wsskey);
-				};
-				void *temp=__aip_activate(&temp_sok, __upgrade, __wsshash);
-				__aip_start__(&temp_sok);
-			}
-			_socket_free_fd(&temp_sok);
-		};
-	};
-
-	void *__arcell(void *c_stp) {
-		aip_sock *__socket =__arc_socket(c_stp);
-		log_socket(__socket);
-		d_portal saddr_st=__sock_addr(sock_aip_to_sa(__socket));
-
-		ulong socket_fd=socket_fd(__socket);
-		ulong socket_len=socket_len(__socket);
-		struct sockaddr *socket_addr=socket_staddr(__socket);
-
-		#ifdef DEBUG
-			printf("starting ell, <%p>\n", c_stp);
-			printf("fd=%lu",socket_fd);
-			log_socket(&__socket);
-		#endif
-
-		if(__aip_listen(socket_fd)) {
-			#ifdef DEBUG
-				printf("error : listen\n");
-				printf("err number:\n");
-				printf("%d\n",errno);
-			#endif
-			_exit(1);
-		};
-
-
-		__ellrun(socket_fd);
-
-		return c_stp;
-	};
-	
-	void *__sok_addr(struct sockaddr *sa) {
-		if (sa->sa_family == AF_INET) {
-			return &(((struct sockaddr_in*)sa)->sin_addr);
-		}
-		else {
-			return &(((struct sockaddr_in6*)sa)->sin6_addr);
-		};
-		return NULL;
-	};
-
-	void __ellcall(ulong __sockfd, char *reusable, ulong r_size) {
-		#ifdef OUTPUT
-			printf("reading input\n");
-		#endif
-		int __tempres=0;
-		memset(reusable, 0, r_size);
-		while(__tempres!=-1) {
-			__tempres=read(0, reusable, r_size);
-			#ifdef OUTPUT 
-				printf("ATP : ell :: read&send ::: %s\n", reusable);
-			#endif
-			__tempres=send(__sockfd, reusable, r_size, 0);
-		};
-		close(__sockfd);
-	};
-
-	#define __ARC_PROCESS arc_process
-
-	#define atp_step(__,...) {\
-	if (\
-		if __ARC_PROCESS {\
-			void const *__data=__arc__();\
-		} && \
-		switch(__) {\
-			case arc_pointer:\
-				__TEXT(ARC => fork);\
-				return __atp_pointer(__data);\
-			case arc_address:\
-				__TEXT(ARC => address);\
-				return __arc_address(__data);\
-			case arc_point:\
-				__TEXT(ARC => point);\
-				return __arc_socket((char const *)__data);\
-			case arc_socket:\
-				__TEXT(ARC => point);\
-				return __arc_point(__VA_ARGS__);\
-			default :\
-				__TEXT(ARC => node);\
-				return __arc_node(#__VA_ARGS__[0], &__VA_ARGS__[1]);\
-	}){ __TEXT(exit); };\
-}
-
-	// void *__atp_step(arc_type __){
-	// 	// we generate a kept reference for a certain
-	// 	// size defined by `arc_sizes` which can be 
-	// 	// accessed via the lbb
-	// 	void *__data;
-	// 	if arc_process {
-	// 		__data=__atp_pointer();
-	// 		};
-	// 		if (__==arc_pointer) {
-	// 			#ifdef DEBUG
-	// 				printf("ARC => fork : \n");
-	// 			#endif
-	// 			__arc_address(__data);
-	// 		}
-	// 		else if (__==arc_address) {
-	// 			#ifdef DEBUG
-	// 				printf("ARC => address : \n");
-	// 			#endif
-	// 			__arc_address(__data);
-	// 		}
-	// 		else if (__==arc_point) {
-	// 			#ifdef DEBUG
-	// 				printf("ARC => point : \n");
-	// 			#endif
-	// 			__arc_socket(__data);
-	// 		}
-	// 		else if (__==arc_node) {
-	// 			#ifdef DEBUG
-	// 				printf("ARC => send : \n");
-	// 			#endif
-	// 				__data=__atp_pointer();
-	// 			__arc_point(__data);
-	// 		};
-	// 		return strdup(__data->addr);
-	// };
-
-	// void *__point_run() {
-	// 	void *__=atp_step(512);
-	// };
-
-	int atp_set(void *args) {
-		printf("%s : \n", (char const *)args);
-
-		return 1;
-	};
-	int atp_get(void *args) {
-		printf("GET : %s\n", (char const *)args);
-
-		return 2;
-	};
-	int atp_rdo(void *args) {
-		printf("do {%s} r;", (char const *)args);
-
-		return 3;
-	};
-	int atp_next(void *args) {
-		printf("NXT : %s\n", (char const *)args);
-
-		return 4;
-	};
-	
 
 	void log_proto(int retval, char const *bufin) {
 		if(!retval) {
@@ -1064,22 +961,6 @@
 			default: printf("::: exit(%d)", retval); break;
 			}
 		}
-	}
-
-	void *__atp_pointer() {
-		atp_pointer *atp_p=malloc(sizeof(atp_pointer));
-		memset(atp_p, 0, sizeof(atp_pointer));
-		__arcpid();
-		#ifdef PROCESS
-			printf("ATP<arcpid> = %lu\n", __arc.__pid);
-		#endif
-		atp_p->ptr = atp_p;
-		sprintf(atp_p->addr, "%lu", __arc.__pid);
-		atp_p->chkref = hash_follow(0, atp_p->addr);
-		#ifdef DEBUG
-			printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->addr, atp_p->chkref);
-		#endif
-		return atp_p->ptr;
 	}
 
 	int get_atp_type(char const *bufin) {
@@ -1127,107 +1008,12 @@
 		};
 	};
 
-	int decode_lbb_addr(char const *__arg) {
-		ulong _addr_len=str_rwings(__arg);
-		if(check_addr(__arg)==-1){
-			#ifdef LOG_ERR
-				printf("address is not correctly formatted\n");
-			#endif
-			return 1;
-		};
-		ulong _addr_max=LBB_BASE+_addr_len;
-		char __address[_addr_max];
-		memset(&__address, 0, sizeof(__address));
-		memmove(__address, d_lbb, LBB_BASE);
-		memmove((__address+LBB_BASE), __arg, _addr_len);
-		__address[_addr_max]='\0';
-		#ifdef DEBUG
-			printf("decoding lbb address :: \n");
-		#endif
-		if(!__stres(__address)){
-			#ifdef LOG_ERR
-				printf("address doesn't exist ( %s ) \n", __address);
-			#endif
-			return 2;
-		};
-		m_stat cm_st; memset(&cm_st, 0, sizeof(m_stat));
-		#ifdef DEBUG
-			printf("getting mstat :: \n");
-		#endif
-		// get_mstat(__address, &cm_st);
-		#ifdef DEBUG
-			log_mstat(&cm_st);
-		#endif
-		return 0;
-	};
-
-	void *__aip_sock__(aip_sock *sok) {
-
-		return memset(sok, 0, sizeof(aip_sock));
-	};
-
 	atp_t stype_to_atype(sAF_t __stype) {
 		switch(__stype) {
 			case __sAF_INET: return __at_4;
 			case __sAF_INET6: return __at_6;
 			default: return __at_4;
 		}
-	};
-
-	void _socket_address_free(d_portal *aip_st){
-
-		free(aip_st->s_address);
-	};
-
-	char *__aip_sock_raw(){
-
-		return (char *)&__sok.aip_sockst;
-	};
-
-	struct sockaddr *aip2sockaddr(){
-
-		return sock_aip_to_sa(&__sok);
-	};
-
-	// d_socket __aip_sock_addr(){
-
-	// 	return __sock_addr(__aip_sock_addr_sa());
-	// };
-
-	void sock_errs(){
-		printf("value of EBADF = %d\n", EBADF);
-		printf("value of ENOTSOCK = %d\n", ENOTSOCK);
-	};
-
-	void __ellget(ulong __sockfd, char *reusable, ulong reu_size) {
-		memset(reusable, 0, reu_size);
-		int __recvd_num=recv(__sockfd, reusable, reu_size, 0);
-		if(__recvd_num==-1) {
-			#ifdef OUTPUT
-				printf("ATP : ell :: err<recv>(%d)\n", errno);
-			#endif
-			_exit(1);
-		};
-		reusable[__recvd_num] = '\0';
-	};
-
-	void __ellsend(ulong __sockfd, char *reusable, ulong r_size) {
-		#ifdef OUTPUT
-			printf("reading input\n");
-		#endif
-		int __tempres=0;
-		while(__tempres!=-1) {
-			#ifdef OUTPUT
-				printf("ATP : ell :: sending ::: %s\n", reusable);
-			#endif
-			__tempres=send(__sockfd, reusable, r_size, 0);
-			__ellget(__sockfd, reusable, ATP_BUFFER_SIZE);
-			break;
-		};
-		#if OUTPUT
-			printf("ATP : ell :: recieving ::: %s\n", reusable);
-		#endif
-		close(__sockfd);
 	};
 
 	void free_arc() {
@@ -1248,21 +1034,83 @@
 		free_sok();
 	};
 
-	void *__arc_pointer(void const *aipd){
+	int atp_set(void *args) {
+		printf("%s : \n", (char const *)args);
 
-		__arc.__fork=fork();
+		return 1;
+	};
+	
+	int atp_get(void *args) {
+		printf("GET : %s\n", (char const *)args);
+
+		return 2;
+	};
+	
+	int atp_rdo(void *args) {
+		printf("do {%s} r;", (char const *)args);
+
+		return 3;
+	};
+	
+	int atp_next(void *args) {
+		printf("NXT : %s\n", (char const *)args);
+
+		return 4;
+	};
+
+#endif
+
+
+#ifndef __arc__
+	#define __arc__ {\
+		static const *__arc_p = \
+		memset(__arc, __CHAR_NULL, sizeof(arc_st));\
+	};
+
+
+	void __arcpid(){
+
+		__arc.__pid=(ulong)getpid();
+	};
+
+	int __check_allowed(char const *__){ 
+		int __nallowed[]={'\\', '/', '.'};
+		while(*__++){
+			for(int i=0;i<arr_size(__nallowed); i++){
+				int __cmp=*(__);
+				if (__cmp==__nallowed[i]){
+					return 0;
+				};
+			};
+		};
+		return 1;
+	};
+
+	void *__arc_pointer(void const *aipd){
+		atp_pointer *atp_p=malloc(sizeof(atp_pointer));
+		memset(atp_p, 0, sizeof(atp_pointer));
+		__arcpid();
+		#ifdef PROCESS
+			printf("ATP<arcpid> = %lu\n", __arc.__pid);
+		#endif
+		atp_p->ptr = atp_p;
+		sprintf(atp_p->addr, "%lu", __arc.__pid);
+		atp_p->chkref = hash_follow(0, atp_p->addr);
+		#ifdef DEBUG
+			printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->addr, atp_p->chkref);
+		#endif
+		__arc.__next = atp_p -> ptr;
 
 		return __arc.__next;
 	};
 
 	void *__arc_address(void const *cert){
-
-		__arc.__sok=__address();
-
+		__arc.__fork=fork();
 		return __arc.__next;
 	};
 
 	void *__arc_socket(char const *pname) {
+		__arc.__sok=__address();
 		printf("d-cloud : atp {les}\n");
 
 		int sockfd, temp_fd, __yes=1, __rv;
@@ -1381,21 +1229,108 @@
 		return __arc.__next;
 	};
 
-
-aip_st *h2act(ixr_h *h_request) {
-
-	return NULL;
-};
+#endif
 
 
-ixr_h *act2h(aip_st *action) {
+#ifndef __ell__
+	#define __ell__ {\
+		static const *__arc_b = \
+		__dbuf__();\
+	};
 
+	void __ellget(ulong __sockfd, char *reusable, ulong reu_size) {
+		memset(reusable, 0, reu_size);
+		int __recvd_num=recv(__sockfd, reusable, reu_size, 0);
+		if(__recvd_num==-1) {
+			#ifdef OUTPUT
+				printf("ATP : ell :: err<recv>(%d)\n", errno);
+			#endif
+			_exit(1);
+		};
+		reusable[__recvd_num] = '\0';
+	};
 
-	return NULL;
-};
+	void __ellsend(ulong __sockfd, char *reusable, ulong r_size) {
+		#ifdef OUTPUT
+			printf("reading input\n");
+		#endif
+		int __tempres=0;
+		while(__tempres!=-1) {
+			#ifdef OUTPUT
+				printf("ATP : ell :: sending ::: %s\n", reusable);
+			#endif
+			__tempres=send(__sockfd, reusable, r_size, 0);
+			__ellget(__sockfd, reusable, ATP_BUFFER_SIZE);
+			break;
+		};
+		#if OUTPUT
+			printf("ATP : ell :: recieving ::: %s\n", reusable);
+		#endif
+		close(__sockfd);
+	};
 
+	void __ellrun(ulong __fd) {
+		char const *__wsskey, *__wsshash;
+		aip_sock temp_sok; memset(&temp_sok,0,sizeof(aip_sock));
+		#ifdef OUTPUT
+			printf("running ell <%lu> \n", __fd);
+		#endif
 
+		while(1) {
+			socklen_t *__len=((socklen_t *)&(temp_sok.aip_socklen));
+			ulong *temp_sockefd=((ulong *)&(temp_sok.aip_sockfd));
+			struct sockaddr *temp_sockeaddr=((struct sockaddr *)&(temp_sok.aip_sockst));
+			*__len=sizeof(temp_sockeaddr);
+			int __tempfd=accept(__fd, temp_sockeaddr, __len);
+			#ifdef DEBUG
+				printf("accepted connection :: %d\n", __tempfd);
+			#endif
+			if(__tempfd==-1) {
+				#ifdef LOG_ERR
+					__err_socket("ellrun : accept :: ", errno);
+				#endif
+				break;
+			};
+			temp_sok.aip_sockfd=tonum(__tempfd);
+			#ifdef DEBUG
+				log_socket(temp_sok);
+			#endif
+			if(!fork()){
+				close(__fd);
+				char *msg_recvd=__aip_recieve(&temp_sok);
+				#ifdef DEBUG
+					printf("recieved => \n%s\n", msg_recvd);
+				#endif
+				__wsskey=__check_wss_key(msg_recvd);
+				if(__wsskey!=NULL) {
+					__wsskey=__combine_str(__wsskey, __cwss);
+					__wsshash=__get_hash(__wsskey);
+				};
+				void *temp=__aip_activate(&temp_sok, __upgrade, __wsshash);
+				__handle_convo(&temp_sok);
+			}
+			_socket_free_fd(&temp_sok);
+		};
+	};
 
-
+	void __ellcall(ulong __sockfd, char *reusable, ulong r_size) {
+		#ifdef OUTPUT
+			printf("reading input\n");
+		#endif
+		int __tempres=0;
+		memset(reusable, 0, r_size);
+		while(__tempres!=-1) {
+			__tempres=read(0, reusable, r_size);
+			#ifdef OUTPUT 
+				printf("ATP : ell :: read&send ::: %s\n", reusable);
+			#endif
+			__tempres=send(__sockfd, reusable, r_size, 0);
+		};
+		close(__sockfd);
+	};
 
 #endif
+
+
+
+

@@ -73,7 +73,29 @@ def _getStaticProps( _mirrors : dict , _abis : dict ) -> dict :
 
 
 
-
-
 if __name__ == '__main__':
+	print("Hello")
 	getJsons( argv[-1] )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

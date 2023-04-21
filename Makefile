@@ -293,6 +293,7 @@ mods_intro:
 _mods:
 	cp -r ${__mods}//* ${@charms}/d.run
 	chmod u+x ${run@charms}//*
+	chmod u+x ${run@charms}/*
 # $(__mods__)
 mods_init: mods_intro _mods
 #################################

@@ -543,17 +543,22 @@ dPRG(
  * D => HTTP 1.1/ 
 **/
 	#ifndef d_http
-		#ifndef http_req_t
+		#ifndef http_req
 			enum __http_request_types {
-				__http_rget,
-				__http_rpost,
+				__http_rget='g',
+				__http_rpost='p',
+				__http_dist='d',
 			};
-		typedef enum __http_request_types http_req_t;
-			#define http_request(x) char const *y; request_types x;\
-			switch(x) {\
-			case __http_rget:	y=__http_get;\
-			case __http_rpost:	y=__http_post;\
+		typedef enum __http_request_types http_req;
+			#define request(x, ...) d_http x; {\
+			char _c = #__VA_ARGS__[0];\
+			printf("char : c :: %d\n", _c);\
+			switch(_c) {\
+			case __http_rget:	x.h_request=__http_rget;\
+			case __http_rpost:	x.h_request=__http_rpost;\
+			case __http_dist:	x.h_request=__http_dist;\
 			}\
+		};\
 
 		#endif
 
@@ -606,7 +611,7 @@ dPRG(
 
 		#endif
 		struct __http_d {
-			http_req_t h_request;
+			http_req h_request;
 			content_st h_content;
 		};
 

@@ -1,10 +1,12 @@
 /// ARK \\\
 @Protocol(global, "github.com/1S33dp1sk/Ark") =>  __ATP__(args, __ARK__(
-	
-dPRG(
-	aip_shell()
-)
 
+
+dPRG(
+	request(get_req, g_http)
+	request(post_req, p_http)
+	request(dist_req, d_http)
+)
 
 
 

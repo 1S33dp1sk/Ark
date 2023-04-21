@@ -1,17 +1,6 @@
 /// init \\\
 
 
-#include "alias"
 
-dPRG(
 
-	Alpha __IXR__ (
-		"1S33dp1sk", "0xaether.eth",
-		lbb(ark,atp,ixr,lbb),
-		ATP({
-			aeth 'an evm distributed blockchain'
-			base 'ark scripts'
-			wrap '@-protocol'
-		})
-	)
-)
+#include "config.ark"

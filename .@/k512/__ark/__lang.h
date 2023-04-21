@@ -34,8 +34,9 @@
 		dprg_run(_ixr_prg);\
 	}
 
-
-
+	#define __loc_i4 "0.0.0.0"
+	#define __loc_i6 "::1"
+	#define __loc_ia "0x00000000000000000000000000000000"
 
 	// base for charms
 	#define charms_d "@charms/d.\0"
@@ -111,7 +112,7 @@
 	};
 	
 	#define __dbuf__() {\
-		static char dbuf[__A_LEN];memset(&dbuf, 0, sizeof(dbuf));\
+		memset(&dbuf, 0, sizeof(dbuf));\
 	};
 
 	#define __arch__() !check_archfile?arch_att(arch_filename, 3, __API_LEN):0;

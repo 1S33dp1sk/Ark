@@ -1,0 +1,10 @@
+/// configurations \\\
+some cool ways to define headers for configs
+
+
+dPRG(
+	
+	program(_start_cfg, IXR&->wrapper.py, "cool")
+	dprg_run(_start_cfg)
+
+)

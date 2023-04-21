@@ -337,6 +337,7 @@
 		static aip_sock __sok;
 		static arc_st __arc;
 	    static sha3_context __sha3;
+	    static uchar dbuf[__A_LEN];
 		/********** books *********/
 		static ulong ___lbb_offset=0;
 		static c_shard lbb_shard;
@@ -364,6 +365,7 @@
 		static const char *__dprg_fmt="_Q:s>s<s$s_\n";
 		static const char *__fld_fmt="_Q:s@s=s+h_\n";
 		/********* constants *********/
+		static int __dlvl=0;
 		static ulong __cindex=0;
 		static const ulong __ne__ =(ulong)00000000U;
 		static const char ne__='\0';

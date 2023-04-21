@@ -18,15 +18,18 @@ contract AetherToken is AetherCtx , IAetherToken {
     mapping( address => mapping( address => uint256 ) ) private _allowances;
     mapping( address => uint256 ) _collateral;
 
-
     uint256 private _totalSupply;
     uint256 private constant _maxSupply = 250000000 ether;
     uint8 private constant _decimals = 18;
+    uint8 private constant _conv[2] = [25,100]; 
     string private constant _name = "0xAetherToken";
     string private constant _symbol = "0xA";
 
 
+    function convert() public pure returns ( uint8 percentage ) {
 
+        return _conv[1]/_conv[0];
+    }
 
     function name() public pure override returns ( string memory ) {
 
