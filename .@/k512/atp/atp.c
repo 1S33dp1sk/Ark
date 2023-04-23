@@ -6,10 +6,9 @@
 #endif
 
 
-
+// interactive protocol
 #ifndef __aip__
 	#define __aip__ {};
-
 
 	void __aip_send(aip_sock *sock, char *msg_to_send){
 		ulong msglen=str_rwings(msg_to_send);
@@ -23,19 +22,15 @@
 		};
 	};
 
-
 	char *__aip_sock_raw(){
 
 		return (char *)&__sok.aip_sockst;
 	};
 
-
-
 	void *__aip_sock__(aip_sock *sok) {
 
 		return memset(sok, 0, sizeof(aip_sock));
 	};
-
 
 	struct sockaddr *aip2sockaddr(){
 
@@ -141,7 +136,6 @@
 		return strdup((char *)a_msg);
 	};
 
-
 	struct sockaddr *__aip2sockaddr(aip_sock *sock){
 		struct sockaddr_storage *saddrst=((struct sockaddr_storage *)(&(sock->aip_sockst)));
 		return (struct sockaddr *)saddrst;
@@ -211,10 +205,9 @@
 
 		close(sok_t->aip_sockfd);
 	};
-
 #endif
 
-
+// standard hypertext transfer
 #ifndef __http__
 	content_st *crt_http_content(char const *__, content_pm __type) {
 		ulong __size=str_rwings(__);
@@ -289,17 +282,9 @@
 #endif
 
 
-
+// aether transfer protocol
 #ifndef __atp__
 	#define __atp_name "@-Protocol"
-	// void *__aip_start__(aip_sock *sock) {
-	// 	#ifdef OUTPUT
-	// 		printf("atp : %s : start\n", __atp__);
-	// 	#endif
-	// 	void *varc=__arc_address(hashof(1, sock, sizeof(aip_sock)));
-	// 	__handle_convo(sock);
-	// 	return varc;
-	// };
 	#define __atp__(x) aip_sock * {\
 		printf("atp : @-Porotocol :: strt");\
 		void *varc = __arc_address(hashof(1, #x, sizeof(aip_sock)));\
@@ -307,9 +292,6 @@
 		return varc;\
 	}
 		
-	
-
-
 	void *__sok_addr(struct sockaddr *sa) {
 		if (sa->sa_family == AF_INET) {
 			return &(((struct sockaddr_in*)sa)->sin_addr);
@@ -348,7 +330,7 @@
 		printf("\n");
 	};
 	
-	aip_sock __address() {
+	aip_sock __aip_address() {
 		aip_sock __sok; 
 		memset(&__sok,0,sizeof(aip_sock));
 
@@ -937,7 +919,7 @@
 		#ifdef DEBUG
 			printf("decoding point :: \n");
 		#endif
-		ulong pnt_offset=sep_offset(in_argument(into), charms_d);
+		ulong pnt_offset=sep_offset(in_argument(into), "@charms");
 		char const *point_name=str_a4offset(in_argument(into), pnt_offset);
 		return strdup(point_name);
 	};
@@ -1057,16 +1039,14 @@
 
 		return 4;
 	};
-
 #endif
 
-
+// records
 #ifndef __arc__
 	#define __arc__ {\
 		static const *__arc_p = \
 		memset(__arc, __CHAR_NULL, sizeof(arc_st));\
 	};
-
 
 	void __arcpid(){
 
@@ -1110,7 +1090,7 @@
 	};
 
 	void *__arc_socket(char const *pname) {
-		__arc.__sok=__address();
+		__arc.__sok=__aip_address();
 		printf("d-cloud : atp {les}\n");
 
 		int sockfd, temp_fd, __yes=1, __rv;
@@ -1228,7 +1208,6 @@
 
 		return __arc.__next;
 	};
-
 #endif
 
 
@@ -1328,7 +1307,6 @@
 		};
 		close(__sockfd);
 	};
-
 #endif
 
 

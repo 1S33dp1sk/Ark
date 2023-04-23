@@ -132,9 +132,8 @@
 		}
 		return 0;
 	};
-
 	int __dgetfd(char const *__fpath) {
-		return open(__fpath, __lock_reader);
+		return open(__fpath, lbb_reader);
 	};
 
 #endif

@@ -3,11 +3,6 @@
 
 #ifndef _D_LANG
 	#define _D_LANG 1
-	#define __PASS_ATP_D 0x1000
-	#define __PASS_MAX_D 0x200
-	#define __PASS_MID_D 0x40
-	#define __PASS_MIN_D 0x8
-	#define __PASS_MIN_C 3
 	#define __D_CHARMS 4
 	#define Alpha ixr_h *IXR = 
 	#define __dPRG ixr_h *main(int argc, char const*argv[])
@@ -16,15 +11,15 @@
 	#define __ARGV__ argv
 	#define __lock_reader (O_RDONLY)
 	#define __lock_writer (O_WRONLY)
-	#define __base_address ((char const *)base_address(0))
-	#define ARK_BASE __base_address
+	#define __base_address mac_address
 	#define M_ARG(...) (__VA_ARGS__)[0]
 	#define F_ARG(...) (__VA_ARGS__)[1]
 	#define __IXR "IXR\0"
 	#define dPRG(...) __cPRG {__VA_ARGS__;}
-	#define base_address(l) ((char const *)__address_base(l, __FILE__))
-	#define __address_base(l,x) ((char const *)hashof(l, x, str_rwings(x)))
-
+	#define charm_mod __mod_call(charms_d)
+	#define run_mod __combine_str(charm_mod, "run/")
+	#define temp_name "temp\0"
+	#define d_src "src/\0"
 	#define README __readme
 	#define mod(...) mod_##__VA_ARGS__
 	#define readme(x) #x##"/README.md"
@@ -34,29 +29,12 @@
 		dprg_run(_ixr_prg);\
 	}
 
-	#define __loc_i4 "0.0.0.0"
-	#define __loc_i6 "::1"
-	#define __loc_ia "0x00000000000000000000000000000000"
-
 	// base for charms
 	#define charms_d "@charms/d.\0"
-	#define d_charms "charms"
+	
 	#define CHARMS_BASE (ulong)str_rwings(charms_d)
 
-	// LBB
-	#define d_lbb "lbb\0"
-	#define LBB_BASE (ulong)str_rwings(d_lbb)
-
-	// ATP
-	#define d_atp "run/\0"
-	#define ATP_BASE (ulong)str_rwings(d_atp)
-
-	// IXR
-	#define d_ixr "out\0"
-	#define IXR_BASE (ulong)str_rwings(d_ixr)
-
 	// SRC
-	#define d_src "src\0"
 	#define SRC_BASE (ulong)str_rwings(d_src)
 
 
@@ -65,7 +43,7 @@
 	#define arch_callport "9999"
 	#define checkef_file(x,y) ((ulong)__stres(x)&&(ulong)__stres(y))
 	#define checkef_dir(x) ((ulong)__stres(x))
-	#define check_caller(x) ((ulong)__exact_match(__address(x), base_address(3)))
+	#define check_caller(x) ((ulong)__exact_match(__address(x), uni_address))
 	#define checkef_lo ((ulong)__sokres(arch_callport))
 	#define checkef (ulong)__stres(arch_filename)
 	#define check_archfile (get_mstat(arch_filename, lbb_mstat)!=1)
@@ -106,7 +84,7 @@
 	};
 
 	#define __shard__() {\
-		printf("lbb<%s> getting shard .::. \n",__base_address);\
+		printf("lbb<%s> getting shard .::. \n",mac_address);\
 		memset(lbb_mstat, 0, sizeof(m_stat));\
 		memset(l_shard,0,sizeof(c_shard));\
 	};
@@ -120,6 +98,11 @@
 	#define __LBB__ {\
 		__shard__();__dbuf__();__arch__();\
 	};
+
+	#define ATP __ATP__
+
+	#define __ARK__ __LBB__ ATP
+
 
 	#define __VARS__(...) {\
 		__ARGC__; __ARGV__;\
@@ -142,30 +125,15 @@
 
 	#define Scratch(...) printf("%s\n", modbase_call(#__VA_ARGS__))
 
-
-	#define Ark(x, ...) {\
-		__ASCII(#x);\
-		__ASCII(_Generic((__VA_ARGS__[0]), \
-			int: "run &->",\
-			char const *: "@-Protocol",\
-			char const **: "C-Program",\
-			d_into const *: "D-Program",\
-			d_ark const *: dark(int),\
-			IXR: "Indexer => ",\
-		default:"default"));\
-	};
-
 	#define s_into(x) (char const *)(x)[0]
     #define info() __ASCII(__os_name);__ASCII(__FILE__)
 	#define zero(x)  ((char const *)(&(zero_address)));
 	#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
 	#define sz8(x)		((ulong)__8sz(x))
-	#define fsze(x)		((ulong)__fsize(x))
 	#define iosze(x)	((ulong)__iosize(x))
 	#define dmde(x)		((ulong)__dmode(x))
 	#define inn(x)		(ulong)__inodenum(x)
 	#define status(x) __statusof(x)
-	#define stres(x) __stres(x)
     #define len_ustrze(x) (((ulong)x)*(sizeof(uchar)))
     #define ixr_shared_size ((ulong)___header.shared_size)
     #define ixr_mods_count	((ulong)___header.mods_count)
@@ -178,11 +146,22 @@
 	#define gprg_handler(...) ((char const *)__handler_str(#__VA_ARGS__))
 
 
-	
-	#define ATP(a) __ASCII(cool);
-
 
 	#define __TERMINAL_PAGE_CLEAR "\n\n\n\n\n\n\n"
+
+	#define Ark(x, ...) {\
+		__ASCII(#x);\
+		__ASCII(_Generic((__VA_ARGS__[0]), \
+			int: "run &->",\
+			char const *: "@-Protocol",\
+			char const **: "C-Program",\
+			d_into const *: "D-Program",\
+			d_ark const *: dark(int),\
+			IXR: "Indexer => ",\
+		default:"default"));\
+	};
+	
+	
 
 
 

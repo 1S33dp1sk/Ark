@@ -243,7 +243,7 @@ The indexer
 			#endif
 			return -1;
 		};
-		unpack(__head, ixr_format(ixr_point), ixr_h_size(___header));
+		unpack(__head, ixr_format(ixr_point), ___header.shared_size);
 		___header.shared_size=u[0];
 		___header.mods_count=u[1];
 		___header.pub_key=tostr(u[2]);

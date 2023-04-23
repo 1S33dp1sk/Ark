@@ -5,7 +5,8 @@ little black book
 	#define BOOK_INDEX(x) return __set_next(x);
 	#define lbb(x) comb(__lbb_,x)
 	#define LBB(...) __LBB__ {__VA_ARGS__;} 
-	
+	#define d_charms "charms/"
+
 	int __ap_file(char const *__path);
 	int __ap_fifo(char const *__path);
 	ulong __ap_writer();

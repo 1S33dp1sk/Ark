@@ -4,8 +4,11 @@
 
 #ifndef _D_ARCH
 	#define _D_ARCH 1
-	#define charm_mod __mod_call(charms_d)
-	#define run_mod __combine_str(charm_mod, "run/")
+
+	char const *__address(int __level, char const *__filename) {
+
+		return hashof(__level, __filename, str_rwings(__filename));
+	}
 
 	char const *uname(const char *__filename) {
 
@@ -14,7 +17,7 @@
 
 	char const *__get_atname(char const *__naming) {
 		if(!__atchar(*__naming)){
-			return "temp";
+			return temp_name;
 		}
 		return __naming++;
 	};
@@ -22,6 +25,18 @@
 	char const *__getcaller(){
 		// get the calling file
 		return (char const *)__FILE__;
+	};
+
+	char const *__caller_hash(int __level) {
+		if((__level>4)||(__level<0)){
+			#ifdef DEBUG
+				printf("caller hash levels can only be postive");
+			#endif
+			return NULL;
+		}
+		char const *__caller=__getcaller();
+		char const *__hash=hashof(__level, __caller, str_rwings(__caller));
+		return strdup(__hash);
 	};
 
 	char const *caller() {
@@ -103,16 +118,16 @@
 		return 1;
 	};
 
-
 	/********* mods *********/
-
 
 	char const *__charm_call(char const *entryhash, char const *__cname) {
 		ulong cname_len=str_rwings(__cname), eff_len=str_rwings(run_mod);
 		char __[CHARMS_BASE+cname_len+2]; memset(&__, 0, sizeof(__));
 		memmove(__, run_mod, eff_len);
 		memmove((__+eff_len), __cname, cname_len);
-		printf("charmcall :: %s\n", __);
+		#ifdef DEBUG
+			printf("charmcall :: %s\n", __);
+		#endif
 		return strdup(__);
 	};
 
@@ -150,7 +165,6 @@
 
 		return __combine_str(__dirname, __os_delim);
 	};
-
 
 	char const *__ecall(char const *__mod, char const *__name) {
 		char const *__callbase=__dcall(__charm_call(NULL,__mod));
@@ -365,15 +379,15 @@
 	};
 
 
-	// _Generic((&__str[sep_idx]), 
+// _Generic((&__str[sep_idx]), 
 // 				char *: base[c]=(char const *)__str,
 // 				char const *: base[c]=(char const *)__str,
 // 				default: base[c]=(void const *)__str
 // 			);
-	void const **variable_args(ulong d_count, char const *__str, char const *__delim) {
+void const **variable_args(ulong d_count, char const *__str, char const *__delim) {
 		ulong d_comp = d_count + 2;
 		void const **base=malloc((sizeof(void *)*d_comp));
-		base[0] = (void const *) base_address(0);
+		base[0] = (void const *) mac_address;
 		ulong _c=0,_sep=0;
 		void *temp;
 		do {
@@ -391,40 +405,8 @@
 			printf("string : %lu :: %s\n", _c, __str);
 			base[_c]=(char const *)temp;
 		} while (_c<d_count-1);
-
-		// ulong _sep=sep_offset(__str, __delim);
-		// void *temp =malloc(_sep);
-		// memmove(temp, __str, _sep);
-		// __str+=_sep;
-		// printf("string : %s\n", ++__str);
-		// base[1] = (char const *) temp;
-
-		// _sep=sep_offset(__str, __delim);
-		// printf("seperator @%lu\n", _sep);
-		// temp =malloc(_sep);
-		// memmove(temp, __str, _sep);
-		// __str+=_sep+1;
-		// printf("string : %s\n", __str);
-		// base[2] = (char const *) temp;
-
-		// _sep=sep_offset(__str, __delim);
-		// printf("seperator @%lu\n", _sep);
-		// temp =malloc(_sep);
-		// memmove(temp, __str, _sep);
-		// __str+=_sep+1;
-		// printf("string : %s\n", __str);
-		// base[3] = (char const *) temp;
-
-		// printf("seperator @%lu\n", _sep);
-		// temp =malloc(_sep);
-		// memmove(temp, __str, _sep);
-		// __str+=_sep+1;
-		// printf("string : %s\n", __str);
-		// base[4] = (char const *) temp;
-
 		return base;
 	};
-
 
 
 

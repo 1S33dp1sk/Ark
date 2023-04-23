@@ -17,3 +17,6 @@
 #define mod_wrap		IXR.py&->wrapper.sh
 #define mod_utils		IXR.py&->utils.py
 
+dPRG(
+	info()
+)

@@ -1,14 +1,12 @@
-#ifndef ARK
-	#define ARK
-#else
-#define __KARCH_D512__ 512
-
+#ifndef Karch512
+	#ifndef ARK
+		#define ARK __ARK__
+	#else
+	#include "standard.h" 
+	#include "utypes.h"
 	/************************ Defintions ************************/
 
 	#ifndef __H512__D
-		#include "standard.h"
-		#include "utypes.h"
-		#include "ark/__lang.h"
 		#define LONG_MAX_COMPUTED_N_DIGITS 21 //logb(x) = loga(x) / loga(b)
 		#define __MA__S 0x000000000000000000000008
 		#define __GS__S __MA__S<<3
@@ -537,6 +535,7 @@
 		#ifndef _D_ARCH_H
 			#define _D_ARCH_H 1
 			// arch
+			char const *__address(int __level, char const *__filename);
 			char const *uname(const char *__filename);
 			char const *__get_atnmae(char const *__naming);
 			char const *__getcaller();
@@ -571,6 +570,7 @@
 		#endif
 		#define __H512__N 1
 	#endif
+	#endif
 
-		#define KarchD512 "K-arch512d"
+	#define Karch512 "K-arch512d"
 #endif

@@ -1,0 +1,20 @@
+/// init \\\
+
+#define __lbb_shared_bytes 1200
+#define caller __FILE__
+
+
+dPRG(
+	__IXR__ call(@aeth(txn,
+			Aether.Transaction(
+				[1,2,4], 
+				"0xcc4a82b2d5acb2abeaaddfbe6d3cf1ce34ad9d74", 
+				"0xe23d0c9ab5f38e9e21ed9cbbbfabed23c573f6eb", 
+				"0xb70102ae", 
+				"0x", 
+				1, 
+				3
+			)
+		)
+	)	
+)

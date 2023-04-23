@@ -10,8 +10,21 @@
 		#endif
 		#define AT_DEFINED __AT_DEFINED
 	#endif	
-	
+	#define __loc_i4 "0.0.0.0"
+	#define __loc_i6 "::1"
+	#define __loc_ia "0x00000000000000000000000000000000"
 
+	#define d_atp "out/\0"
+	// LBB
+	#define LBB_BASE (ulong)str_rwings(d_lbb)
+	#define d_lbb "lbb/\0"
+	// ATP
+	#define ATP_BASE (ulong)str_rwings(d_atp)
+#define __PASS_ATP_D 0x1000
+	#define __PASS_MAX_D 0x200
+	#define __PASS_MID_D 0x40
+	#define __PASS_MIN_D 0x8
+	#define __PASS_MIN_C 3
 	#define ATP_FLAG_START 0x1
 	#define ATP_FLAG_FS 0x2
 	#define ATP_FLAG_IEPS 0x3
@@ -53,15 +66,15 @@
 		d_portal: __generic_hash__(__PASS_MID_D, x, y),\
 		d_point: __generic_hash__(__PASS_MAX_D, x, y),\
 		d_pyld: __generic_hash__(__PASS_ATP_D, x, y),\
-		default: __generic_hash__(__KARCH__, x, y);\
-	)
-	#define __generic_hash__(l,x,y) (__exact_match(hashof(1, #x, __PASS_MID_D), hashof(1, #y, __PASS_MID_D)))
-	#define __read_hash__(x) (__exact_match(x, (char const *)hashof(0, "read\0", __PASS_MIN_D)))
-	#define __write_hash__(x) (__exact_match(x, (char const *)hashof(0, "write\0", __PASS_MIN_D)))
-	#define __execute_hash__(x) (__exact_match(x, (char const *)hashof(0, "execute\0", __PASS_MIN_D)))
-	#define __connect_hash__(x) (__exact_match(x, (char const *)hashof(0, "connect\0", __PASS_MIN_D)))
-	#define __send_hash__(x) (__exact_match(x, (char const *)hashof(0, "send\0", __PASS_MIN_D)))
-	#define __listen_hash__(x) (__exact_match(x, (char const *)hashof(0, "listen\0", __PASS_MIN_D)))
+		default: __generic_hash__(__KARCH__, x, y););
+	#define __generic_hash__(l,x,y) \
+		(__exact_match(hashof(l, #x, __PASS_MID_D), hashof(l, #y, __PASS_MID_D)))
+	#define __read_hash__(x)	__generic_hash__(0,x,"read\0")
+	#define __write_hash__(x)	__generic_hash__(0,x,"write\0")
+	#define __execute_hash__(x)	__generic_hash__(0,x,"execute\0")
+	#define __connect_hash__(x)	__generic_hash__(0,x,"connect\0")
+	#define __send_hash__(x)	__generic_hash__(0,x,"send\0")
+	#define __listen_hash__(x)	__generic_hash__(0,x,"listen\0")
 
 
 	#define srwings(x) str_rwings(x)
@@ -192,7 +205,6 @@
 
 	void *__atp_pointer();
 
-		#define __ARC_PROCESS arc_process
 
 	#define atp_step(__,...) {\
 	if (\

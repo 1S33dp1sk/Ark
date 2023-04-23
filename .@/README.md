@@ -32,9 +32,11 @@ Entry point is the script : `start.py` which includes the sample `if __name__ ==
 
 The script can be accessed inside a **`dPRG`** using the following snippet:      
 
-	```ark
-		program(HelloArk, IXR&->HelloArk/start.py)
-	```      
+```ark
+	module(HelloArk, IXR&->HelloArk)
+	program(HelloArk, start.py)
+```    
+
 The symbol `&->` implies the lexical equivalent of its counterpart *And Then*. 
 	Now *`HelloArk`* variable can be accessed to know the author, size, content, hash, and if allowed grants the ability to execute it.       
 

@@ -84,7 +84,7 @@ ark@src:=${src@charms}/ark
 headers@src:=${src@charms}/headers
 k512_utypes:=${src@charms}/utypes.h
 k512_standard:=${src@charms}/standard.h
-k512_header:=${src@charms}/k_arch512.h
+k512_header:=${src@charms}/karch512.h
 @arch:=@${__host}
 karch_build:=${@1c}/k512${@arch}
 cloud_d_build:=${@1c}/d-cloud${@arch}
@@ -135,7 +135,7 @@ bin_install:
 
 #source
 _ark_in:
-	echo "#include \"k_arch512.h"\" > ${c_lbb}
+	echo "#include \"karch512.h"\" > ${c_lbb}
 	cc ${src@charms}/ark.c -o ${out@charms}/ark.o ${aetherlib}
 
 _ark_out:
@@ -186,7 +186,7 @@ clean_lbb:
 	@printf "\n"
 __lbb__:
 	@printf "d.out@ 'Linked Binary Book' {lbb}\n"
-	echo "#include \"k_arch512.h"\" > ${c_lbb}
+	echo "#include \"karch512.h"\" > ${c_lbb}
 	cat ${lbb_c} >> ${c_lbb}
 	${ac} ${c_lbb} -o ${o_lbb}
 
@@ -207,7 +207,7 @@ clean_ixr:
 	@printf "\n"
 __ixr__: 
 	@printf "d.out@ 'The Indexer' {ixr}\n"
-	echo "#include \"k_arch512.h"\" > ${c_ixr}
+	echo "#include \"karch512.h"\" > ${c_ixr}
 	cat ${ixr_c} >> ${c_ixr}
 	${ac} ${c_ixr} -o ${o_ixr}
 
@@ -231,7 +231,7 @@ clean_atp:
 	@printf "\n"
 __atp__:
 	@printf "d.out@ 'Aether Transfer (@-Protocol)' {atp}\n"
-	echo "#include \"k_arch512.h"\" > ${c_atp}
+	echo "#include \"karch512.h"\" > ${c_atp}
 	cat ${atp_c} >> ${c_atp}
 	${ac} ${c_atp} -o ${o_atp}
 
@@ -334,15 +334,15 @@ __k512_objects:
 
 
 __ld_out:
-	echo "#include \"k_arch512.h"\" > ${_lbb_ld_h}
+	echo "#include \"karch512.h"\" > ${_lbb_ld_h}
 	cat ${_lbb} >> ${_lbb_ld_h}
 	cc ${_lbb_ld_h} -o ${lbb_ld}
 	rm ${_lbb_ld_h}
-	echo "#include \"k_arch512.h"\" > ${_ixr_ld_h}
+	echo "#include \"karch512.h"\" > ${_ixr_ld_h}
 	cat ${_ixr} >> ${_ixr_ld_h}
 	cc ${_ixr_ld_h} -o ${ixr_ld}
 	rm ${_ixr_ld_h}
-	echo "#include \"k_arch512.h"\" > ${_atp_ld_h}
+	echo "#include \"karch512.h"\" > ${_atp_ld_h}
 	cat ${_atp} >> ${_atp_ld_h}
 	cc ${_atp_ld_h} -o ${atp_ld}
 	rm ${_atp_ld_h}
@@ -376,7 +376,7 @@ build_3c: __ccc_dirs__
 	cat ${atp_h} > ${_atp}
 	if [ ! -d ${ark@src} ]; then mkdir ${ark@src}; fi
 	cp ${__d__arc} ${ark@src}
-	cp ${@k512}/__karch__  ${src@charms}/k_arch512.h
+	cp ${@k512}/__karch__  ${src@charms}/karch512.h
 
 
 package:
@@ -402,7 +402,7 @@ package:
 # 	@printf "\n"
 # __hbar__:
 # 	@printf "d.out@ 'Hash bar' {hbar}\n"
-# 	echo "#include \"k_arch512.h"\" > ${c_hbar}
+# 	echo "#include \"karch512.h"\" > ${c_hbar}
 # 	cat ${_hbar} >> ${c_hbar}
 # 	cat ${hbar_c} >> ${c_hbar}
 # 	${ac} ${c_hbar} -o ${o_hbar} 
@@ -426,7 +426,7 @@ package:
 # 	@printf "\n"
 # __enk__:
 # 	@printf "d.out@ 'Encoder' {enk}\n"
-# 	echo "#include \"k_arch512.h"\" > ${c_enk}
+# 	echo "#include \"karch512.h"\" > ${c_enk}
 # 	cat ${_enk} >> ${c_enk}
 # 	cat ${enk_c} >> ${c_enk}
 # 	${ac} ${c_enk} -o ${o_enk}

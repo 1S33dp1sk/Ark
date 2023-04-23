@@ -430,10 +430,12 @@ dPRG(
 				struct __script_d* __next;
 			};
 	typedef struct __script_d d_script;
-			#define script_hash(x) (char const *)(x.__hash)
-			#define script_path(x) (char const *)(x.__path)
-			#define script_tofd(x) (ulong)(x.__to)
-			#define script(x, a) d_script x; \
+			#define stres(x) 		__stres(x)
+			#define fsze(x)			((ulong)__fsize(x))
+			#define script_hash(x) 	(char const *)(x.__hash)
+			#define script_path(x) 	(char const *)(x.__path)
+			#define script_tofd(x) 	(ulong)(x.__to)
+			#define script(x, a) 	d_script x; \
 				x.__=read_book(#x);\
 				x.__hash=hash8(a, x.__, fsze(x.__));\
 				x.__path=(#x);\
@@ -676,7 +678,7 @@ dPRG(
 			char const *path;
 		};
 	typedef struct __lock_d d_lock;
-		#define __d_lock arch_filename
+		#define __d_lock "@charms/d.lbb/.lbb\0"
 		#define d_lock(...) _d_lock x; x.path=#__VA_ARGS__;
 
 	#endif
@@ -920,6 +922,12 @@ dPRG(__LBB__)
 				arc_node=512
 			};
 		typedef enum __arc_types arc_type;
+				#define base_address(l) __address(l,__FILE__)
+				#define mac_address		__address(0, __FILE__)
+				#define loc_address		__address(1, __FILE__)
+				#define glo_address		__address(2, __FILE__)
+				#define uni_address		__address(3, __FILE__)
+
 
 		#endif
 
@@ -933,7 +941,7 @@ dPRG(__LBB__)
 			};
 	typedef struct __arc_st arc_st;
 			// returns true for child process
-			#define arc_process (!__arc.__fork) 
+			#define __ARC_PROCESS (!__arc.__fork) 
 			#define arc_pid(x)	((ulong)(x->__pid))
 			#define arc_fork(x) ((int)(x->__fork))
 			#define arc_next(x) ((struct __arc_st *)(x->__next))

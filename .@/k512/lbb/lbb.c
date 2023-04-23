@@ -372,7 +372,7 @@ char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 		printf("fld file  : %lu\n", __fd);
 		printf("fld count : %lu\n", __fld_count);
 	#endif
-	char const *fld_name=__combine_str(d_lbb, __fn);
+	char const *fld_name=__charm_call("lbb", __fn);
 	ulong c=0,_res=0,__offset=0;
 
 	// create entry in lbb
@@ -664,31 +664,35 @@ void *__into__(d_into *st) {
 	};
 
 	int __pointer__(void *proto_call) {
-		char const *ptr_name = base_address(0);
+		char const *ptr_name = mac_address;
 		#ifdef PROCESS
-			printf("@pointer:%s\n", ptr_name);
+			printf("@pointer.reference:%s\n", ptr_name);
 		#endif
 		return ne__;
 	};
 
 	int __field__(void *proto_call) {
-		char const *fld_name = base_address(1);
+		char const *fld_name = loc_address;
 		#ifdef PROCESS
-			printf("@field: %s\n", fld_name);
+			printf("@field.hash: %s\n", fld_name);
 		#endif
 		debug("Field",fld_name,"temp",ne__)
 		return ne__;
 	};
 
-	int __w3__(void *proto_call) {
-
-		return ne__;
-	}
-
 	int __point__(void *proto_call) {
-		char const *point_name = base_address(2);
+		char const *point_name = glo_address;
 		#ifdef PROCESS
-			printf("@point: %s\n", point_name);
+			printf("@point.name: %s\n", point_name);
+		#endif
+		return ne__;
+	};
+
+	int __w3__(void *proto_call) {
+		char const *__call = (char const *)proto_call;
+		#ifdef PROCESS
+			printf("@w3.uni_address: %s\n", uni_address);
+			printf("@w3(%s)\n", __call);
 		#endif
 		return ne__;
 	};
@@ -696,7 +700,7 @@ void *__into__(d_into *st) {
 	d_into *dcloud(void *proto_call) {
 		char const *dc_address=base_address(3);
 		#ifdef PROCESS
-			printf("d-%s\n", dc_address);
+			printf("(d-%s)\n", dc_address);
 		#endif
 		return NULL;
 	};
@@ -729,6 +733,7 @@ void *__into__(d_into *st) {
 			int __flag=0, i=0;
 			point_buffer = &point_buffer[1];
 			for(; i<3; i++) {
+				const char *d_lbb = "lbb\0";
 				if (point_buffer[i]==d_lbb[i]){
 					// lbb
 					__flag+=1;
@@ -778,6 +783,22 @@ void *__into__(d_into *st) {
 
 		return (int)__decode_arg(__arg);
 	};
+
+
+
+
+
+
+int __lbb_kv(char const *key, char const *value) {
+	
+
+
+	return 0;
+}
+
+
+
+
 
 
 #endif

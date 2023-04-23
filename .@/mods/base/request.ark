@@ -1,5 +1,5 @@
 
 
 dPRG(
-	aip_request("0.0.0.0")
+	aip_request("localhost", __VARGS__ )
 )

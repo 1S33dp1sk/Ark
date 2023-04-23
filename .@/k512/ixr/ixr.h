@@ -4,7 +4,10 @@ The indexer
 #ifndef __IXR__H
 	#define INDEXER(x) char const *x!=NULL?__indexer__(x):__ixr_strt(x)
 	#define indexer_check() if (!checkef_file){INDEXER(NULL);};
-	
+	#define d_mod "run/\0"
+	// IXR
+	#define IXR_BASE (ulong)str_rwings(d_ixr)
+
 	int ixr_export(void *_intro);
 	int ixr_run(void *_intro);
 	int ixr_save(void *_intro);

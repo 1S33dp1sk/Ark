@@ -9,10 +9,21 @@
 * PROCESS	#used to display the names of the sub-processes being executed.
 * LOG_ERR	#used to display the errors.
 **/
+//	#define DEBUG 1
 	#define OUTPUT 1
 	#define PROCESS 1
-//	#define DEBUG 1
 	#define LOG_ERR 1
+/**
+* for security ARK can match any specific sequence of characters including ascii, unicode, full structures, etc..
+to utilize the feature change the `1` in the line `#define ARK 1` to a @sentry@ in the following line with the required security_measure.
+On build the `_512` will do a check against the sentry key in the following fashion
+
+#if ARK==@sentry@
+#else 
+#error don't compile
+#endif
+
+**/
 	#define ARK 1
 	#include "_512.h"
 #endif
