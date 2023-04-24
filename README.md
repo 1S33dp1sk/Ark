@@ -1,6 +1,6 @@
 # Ark Programming Language
 
-Discover Ark, a programming language promoting a universal programming language & the resulting integrations.
+Discover Ark, a programming language promoting a universal programming paradigm & the resulting integrations.
 
 #### [Active Main](./.@/mods/base/main)
 
