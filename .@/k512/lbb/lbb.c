@@ -641,20 +641,6 @@ void *__into__(d_into *st) {
 		return ne__;
 	}
 
-	#define debug(...) do {\
-		ulong __len=str_rwings(#__VA_ARGS__);\
-		ulong __delims=arr_cdelims(#__VA_ARGS__);\
-		if(__delims>1) {\
-			void const **__vargs = variable_args(__delims, #__VA_ARGS__, ARR_DELIM);\
-			ulong c=0; do {\
-				printf("vargs[%lu] : %s\n", c, (char const *)__vargs[c]);\
-				c+=1;\
-			}while(c<=__delims);\
-			char const *__var=evaluate(__vargs[1]);\
-			printf("%s",__var);\
-		};\
-	} __dPER;
-
 	int __info__(void *proto_call) {
 		#ifdef PROCESS
 			printf("@info\n");
@@ -705,8 +691,6 @@ void *__into__(d_into *st) {
 		return NULL;
 	};
 
-	#define p_switcher(x) (x->switcher)
-
 	int act2args(aip_st *proto_call) {
 		switch(p_switcher(proto_call)) {
 		case -1 : return __no_entry__(proto_call);
@@ -717,74 +701,85 @@ void *__into__(d_into *st) {
 		default: return ne__;
 		};
 	};
+	
 
-	lbb_entry __decode_arg(char const *argument) {
-		char const *point_buffer=argument;
-		printf("lbb: decode :: %s\n", point_buffer);
-		// __info__
-		if(point_buffer==NULL) {
+
+
+lbb_entry __decode_arg(char const *argument) {
+	char const *point_buffer=argument;
+	printf("lbb<%s> decode(%s)\n", mac_address, point_buffer);
+	// __info__
+	if (point_buffer==NULL) {
+		#ifdef PROCESS
+			printf("Info (%s)\n", mac_address);
+		#endif
+		return __lbb_info__;
+	}
+	else if(*point_buffer=='@') { 
+		// Ark terminal protocol 
+		int __flag=0, i=0;
+		point_buffer = &point_buffer[1];
+		/** two choices + base (and-then) 
+		 * a -> @charms
+		 * b -> @lbb
+		 * &-> redirect to ATP
+		**/
+		for(; i<3; i++) {
+			const char *d_lbb = "lbb\0";
+			if (point_buffer[i]==d_lbb[i]){
+				// cmp to `lbb`
+				__flag+=1;
+			}
+			else if(point_buffer[i]==d_charms[i]) {		
+				// cmp to `cha`
+				__flag+=4;
+			};
+		};
+		if(__flag==3) {
+			// @ 'linked binary book'
 			#ifdef PROCESS
-				printf("Info (%s)\n", base_address(0));
+				printf("Book (%s)\n", loc_address);
 			#endif
-			return __lbb_info__;
+			return __lbb_variable__;
 		}
-		else if(*point_buffer=='@') { // AT_DEFINED '@' => __@__
-			// @
-			int __flag=0, i=0;
-			point_buffer = &point_buffer[1];
-			for(; i<3; i++) {
-				const char *d_lbb = "lbb\0";
-				if (point_buffer[i]==d_lbb[i]){
-					// lbb
-					__flag+=1;
-				}
-				else if(point_buffer[i]==d_charms[i]) {		
-					// charms
-					__flag+=4;
+		else if (__flag==12) {
+			// continue the check for 
+			// the entire string `charms`
+			for(i=0; i<6; i++) {
+				if(point_buffer[i]==d_charms[i]) {
+					__flag+=8;
 				};
 			};
-			if(__flag==3) {
+			if(__flag==60) {
+				// @ 'charms'
 				#ifdef PROCESS
-					printf("Book (%s)\n", base_address(1));
-					printf("@Query\n");
+					printf("@charms : %s\n", &point_buffer[i]);
 				#endif
-				return __lbb_variable__;
-			}
-			else if (__flag==12) {
-				for(i=0; i<6; i++) {
-					if(point_buffer[i]==d_charms[i]) {
-						__flag+=8;
-					};
-				};
-				if(__flag==60) {
-					#ifdef PROCESS
-						printf("@charms-pointer : %s\n", &point_buffer[i]);
-					#endif
-					return __lbb_charms__;
-				};
-				#ifdef PROCESS
-					printf("unknown point : %s\n", &point_buffer[i]);
-				#endif
-				return 0;
-			}
-			else {
-				#ifdef PROCESS
-					printf("ATP ::: %s\n", argument);
-				#endif
-				return __lbb_atp__;
+				return __lbb_charms__;
 			};
+			// @ unknown
+			#ifdef PROCESS
+				printf("unknown point : %s\n", &point_buffer[i]);
+			#endif
+			// force exit
+			return __lbb_none__;
 		}
 		else {
-			return __lbb_yeild__;
+			// @-Protocol
+			#ifdef PROCESS
+				printf("ATP ::: %s\n", argument);
+			#endif
+			return __lbb_atp__;
 		};
+	}
+	else {
+		// function call
+		#ifdef PROCESS
+			printf("Call (%s)\n", argument);
+		#endif
+		return __lbb_yeild__;
 	};
-
-	int lbb_argument(char const *__arg) {
-
-		return (int)__decode_arg(__arg);
-	};
-
-
+};
 
 
 
@@ -795,6 +790,12 @@ int __lbb_kv(char const *key, char const *value) {
 
 	return 0;
 }
+
+
+int lbb_argument(char const *__arg) {
+
+	return (int)__decode_arg(__arg);
+};
 
 
 

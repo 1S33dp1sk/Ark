@@ -6,6 +6,23 @@ little black book
 	#define lbb(x) comb(__lbb_,x)
 	#define LBB(...) __LBB__ {__VA_ARGS__;} 
 	#define d_charms "charms/"
+	#define p_switcher(x) (x->switcher)
+	#define debug(...) do {\
+		ulong __len=str_rwings(#__VA_ARGS__);\
+		ulong __delims=arr_cdelims(#__VA_ARGS__);\
+		if(__delims>1) {\
+			void const **__vargs = variable_args(__delims, #__VA_ARGS__, ARR_DELIM);\
+			ulong c=0; do {\
+				printf("vargs[%lu] : %s\n", c, (char const *)__vargs[c]);\
+				c+=1;\
+			}while(c<=__delims);\
+			char const *__var=evaluate(__vargs[1]);\
+			printf("%s",__var);\
+		};\
+	} __dPER;
+	// ark terminal protocol
+	#define _t_protocol __decode_arg
+	#define ark_terminal_protocol _t_protocol
 
 	int __ap_file(char const *__path);
 	int __ap_fifo(char const *__path);

@@ -389,6 +389,9 @@
 			printf("string : %s\n", string);
 			printf("seperator : %s\n", seperator);
 		#endif
+		ulong __str_len = str_rwings(string), __sep_len = str_rwings(seperator);
+		
+
 		int tempres=__sep_atoff(string, seperator);
 		if(tempres==-1){
 			#ifdef LOG_ERR

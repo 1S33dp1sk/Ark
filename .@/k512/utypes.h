@@ -718,6 +718,11 @@ dPRG(__LBB__)
 **/
 #ifndef __LBB_TYPES
 
+	#ifndef lbb_size
+		#define lbb_size(x) (ulong)((1<<(x*3)))
+	#endif
+
+
 	#ifndef lbb_t
 		// lbb file mount structure types
 		enum __lbb_types {
@@ -743,10 +748,6 @@ dPRG(__LBB__)
 		};
 	typedef enum __lbb_types lbb_t;
 
-	#endif
-
-	#ifndef lbb_size
-		#define lbb_size(x) (ulong)((1<<(x*3)))
 	#endif
 
 	#ifndef lbb_entry
@@ -855,6 +856,7 @@ dPRG(__LBB__)
 		#define ixr_address(x) ((char const *)(x->pub_key))
 		#define __IXR__(a,b,...) \
 			&___header;\
+			__LBB__;\
 			___header.alias = __ixr_strt(#a);\
 			TRAVERSE(3,3,#a);\
 			IXR -> alias=(char const *)&a;\

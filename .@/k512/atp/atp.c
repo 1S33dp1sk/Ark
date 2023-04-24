@@ -261,13 +261,13 @@
 	};
 
 	char const *form_http_response(ulong res_type, char const *req_result) {
-			ulong b_offset=sep_offset(__http_response_base, "B");
+		ulong b_offset=sep_offset(__http_response_base, "B");
 		char const *temp=expand_atoffset(__http_response_base, __http_protocol_version, b_offset);
-			ulong s_offset=sep_offset(temp, "S");
-			temp=expand_atoffset(temp, num2char(res_type), s_offset);
-			ulong r_offset=sep_offset(temp, "R");
-			temp=expand_atoffset(temp, req_result, r_offset);
-			return strdup(temp);
+		ulong s_offset=sep_offset(temp, "S");
+		temp=expand_atoffset(temp, num2char(res_type), s_offset);
+		ulong r_offset=sep_offset(temp, "R");
+		temp=expand_atoffset(temp, req_result, r_offset);
+		return strdup(temp);
 	};
 
 	char const *http_response(ulong http_status, char const *http_result) {
@@ -747,32 +747,33 @@
 	};
 
 	int check_command(d_into into) {
-		if(__read_hash__(in_argument(into))) {
+		char const *d_arg = in_argument(into);
+		if(__read_hash__(d_arg)) {
 			__TEXT(Read : );
 			// printf("will read the hash\n");
 			return 0;   
 		}
-		else if (__write_hash__(in_argument(into))){
+		else if (__write_hash__(d_arg)){
 			__TEXT(Write : );
 			// printf("will write a message to hash\n");
 			return 0;       
 		}
-		else if(__execute_hash__(in_argument(into))) {
+		else if(__execute_hash__(d_arg)) {
 			__TEXT(Execute : );
 			// printf("should execute the command \n");
 			return 0;
 		}
-		else if (__send_hash__(in_argument(into))) {
+		else if (__send_hash__(d_arg)) {
 			__TEXT(Send : );
 			// printf("will send msg to hash\n");
 			return 0;
 		}
-		else if (__connect_hash__(in_argument(into))) {
+		else if (__connect_hash__(d_arg)) {
 			__TEXT(Connect : );
 			// printf("will try to connect to address\n");
 			return 0;
 		}
-		else if (__listen_hash__(in_argument(into))) {
+		else if (__listen_hash__(d_arg)) {
 			__TEXT(Listen : );
 			// printf("will try to listen on the address\n");
 			return 0;
@@ -1090,7 +1091,6 @@
 	};
 
 	void *__arc_socket(char const *pname) {
-		__arc.__sok=__aip_address();
 		printf("d-cloud : atp {les}\n");
 
 		int sockfd, temp_fd, __yes=1, __rv;
