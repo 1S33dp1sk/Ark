@@ -1,9 +1,18 @@
 # K-arch512
 
-## \_\_ark
+Whilst Ark redefines programming with a unique approach, designed to tackle common challenges. Coupling the it with community developed libraries brings a new smooth experience to it's implemented features such as:
+
+1. Distributed storage
+2. Decentralized networks
+3. Customizable executions
+4. Default typings/types
+
+
+##  [**\_\_ark**](./__ark)
 	
 	Defines the language parameters of Ark itself.        
 	
+
 
 ## atp
 	
