@@ -1,6 +1,6 @@
 # Ark Programming Language
 
-Discover Ark, a programming language boasting innovative syntax and powerful features.
+Discover Ark, a programming language promoting a universal programming language & the resulting integrations.
 
 #### [Active Main](./.@/mods/base/main)
 
@@ -9,11 +9,11 @@ Discover Ark, a programming language boasting innovative syntax and powerful fea
 
 At the core of Ark there are modules which are included in a build-defined charms, there are 4 different charms in ark:
 
-## *`lbb` charm* '**saved   data**'
+## *`lbb` charm* '**Storage**'
 
 - [**LBBs (Linked Binary Books)**](./.@/k512/lbb) enables distributed storage initialization through the `dPRG(LBB)` function, which creates a default 1200-byte shared memory and the coressponding addresses associated with the initator and the process. 
 
-## *`out` charm* '**binary  data**'
+## *`out` charm* '**Executable**'
 
 - [**ATP (Ark Terminal Protocol)**](./.@/k512/atp) is a versatile feature that takes a single argument, an execution string, and evaluates it based on the  input. ATP can serve multiple purposes based on its identifiers:
   - @-Protocol, it interprets the first character command.   
@@ -24,14 +24,13 @@ At the core of Ark there are modules which are included in a build-defined charm
   -  ATP is a poly action into a corresponding pre-defined standard protocol (e.g., HTTP(s) or Ethereum).        
 
 
-## *`run` charm* '**alpha   data**'
+## *`run` charm* '**Alpha**'
 
 - [**MODs (short for modifications)**](./.@/mods) mods are a pseudo-variable object, in which it can be an executable, immutable, compilable or an oridinary extensions file type that combined together with objects and libraries can be easily integrated into Ark projects. Distributed storage and allows access to variables via direct API calls from inside the program, as well as through terminal interfaces. 
 
-## *`src` charm* '**compile data**'
+## *`src` charm* '**Compile**'
 
 - [**IXRs (Image Execution Runners)**](./.@/k512/ixr) provides binary images for different architectures, enabling seamless integration of executables from other languages, such as Python or TypeScript.     
-
 
 
 
