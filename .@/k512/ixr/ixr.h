@@ -8,6 +8,8 @@ The indexer
 	// IXR
 	#define IXR_BASE (ulong)str_rwings(d_ixr)
 
+	#define __ixr_reject 0x228
+
 	int ixr_export(void *_intro);
 	int ixr_run(void *_intro);
 	int ixr_save(void *_intro);

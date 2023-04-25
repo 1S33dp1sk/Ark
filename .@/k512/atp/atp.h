@@ -213,19 +213,19 @@
 		} && \
 		switch(__) {\
 			case arc_pointer:\
-				__TEXT(ARC => fork);\
+				__TEXT(0, ARC => fork);\
 				return __atp_pointer(__data);\
 			case arc_address:\
-				__TEXT(ARC => address);\
+				__TEXT(0, ARC => address);\
 				return __arc_address(__data);\
 			case arc_point:\
-				__TEXT(ARC => point);\
+				__TEXT(0, ARC => point);\
 				return __arc_socket((char const *)__data);\
 			case arc_socket:\
-				__TEXT(ARC => point);\
+				__TEXT(0, ARC => point);\
 				return __arc_point(__VA_ARGS__);\
 			default :\
-				__TEXT(ARC => node);\
+				__TEXT(0, ARC => node);\
 				return __arc_node(#__VA_ARGS__[0], &__VA_ARGS__[1]);\
 		}){ __TEXT(exit); };\
 	}

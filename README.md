@@ -16,23 +16,14 @@ At the core of Ark there are modules which are included in a build-defined charm
 ## *`out` charm* '**Executable**'
 
 - [**ATP (Ark Terminal Protocol)**](./.@/k512/atp) is a versatile feature that takes a single argument, an execution string, and evaluates it based on the  input. ATP can serve multiple purposes based on its identifiers:
-  - @-Protocol, it interprets the first character command.   
-
-  - Aether Transfer Protocol, it enables the transfer of data across different networks' interfaces including peer-to-peer and dynamic DHCP networks.         
-
-  - Ark Terminal Protocol establishes morphism when calls are shaped by **`calls`** thus, *morphed*, into any request by processing a valid protocol name, such as `@LBB` or `@IXR`.     
-  -  ATP is a poly action into a corresponding pre-defined standard protocol (e.g., HTTP(s) or Ethereum).        
-
-
-## *`run` charm* '**Alpha**'
-
-- [**MODs (short for modifications)**](./.@/mods) mods are a pseudo-variable object, in which it can be an executable, immutable, compilable or an oridinary extensions file type that combined together with objects and libraries can be easily integrated into Ark projects. Distributed storage and allows access to variables via direct API calls from inside the program, as well as through terminal interfaces. 
 
 ## *`src` charm* '**Compile**'
 
-- [**IXRs (Image Execution Runners)**](./.@/k512/ixr) provides binary images for different architectures, enabling seamless integration of executables from other languages, such as Python or TypeScript.     
+- [**IXRs (Image Execution Runners)**](./.@/k512/ixr) provides the runtime source code needed for compiling binary images for different architectures, enabling seamless integration of executables from other hosts and other languages such as Python or JavaScript.     
 
+## *`run` charm* '**Alpha**'
 
+- [**MODs (short for modifications)**](./.@/mods) Pseudo-variable objects, in which they can a combination of different types such as executables, immutables, compilables or oridinary extensions files.     
 
 
 #### Notables :)

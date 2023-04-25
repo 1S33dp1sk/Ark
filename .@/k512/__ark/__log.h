@@ -10,6 +10,175 @@
 		write(0,"\n",1);
 	};
 
+
+	void arange_var(char const v[4]) {
+		// printf("%s", v);
+		printf("\n");
+	};
+
+	char const *__arange_vars(char *__v, ulong __vlen) {
+		char __[20]; memset(&__, 0, sizeof(__));
+		for(int i=0; i<__vlen;i+=4) {
+			if(i%4==0) {
+				sprintf(__, "%s", &__v[i]);
+				printf("char : %d : %s\n", i, __);
+			}
+		};
+		printf("str : %s\n", (char *)&__);
+		return strdup((char const *)__);
+	};
+
+	char const *csv_int(int *ptr, ulong ptr_count) {
+		ulong c=0, _magic=ptr_count*21;
+		char __[_magic];memset(&__, 0, _magic);
+		for (int i=0; i<ptr_count; i++) {
+			char const *__num = num2char(ptr[i]);
+			ulong __len = str_rwings(__num);
+			memmove(&__[c], __num, __len);
+			c+=__len;
+			__[c]=',';
+			c+=1;
+			#ifdef DEBUG
+				printf("%d : %s\n", i, __[i]);
+			#endif
+		};
+		__[c-1]='\0';
+		return strdup((char const *)__);
+	};
+
+
+	char const *csv_str(char const **ptr, ulong ptr_count) {
+		ulong c=0, clen=0;
+		while(c<ptr_count) {
+			if(ptr[c]){
+				clen+=str_rwings(ptr[c]);
+			};
+			c+=1;
+		};
+		ulong _magic = clen+ptr_count; // foreach => ptr_count+1 -> `,` 
+		#ifdef DEBUG
+			printf("combined string arr size :: %s\n", num2char(clen));
+		#endif
+		char __[_magic]; memset(&__, 0, _magic);
+		c=0;
+		for (int i=0; i<ptr_count; i+=1) {
+			ulong __len = str_rwings(ptr[i]);
+			memmove(&__[c], ptr[i], __len);
+			c+=__len;
+			__[c]=',';
+			c+=1;
+			#ifdef DEBUG
+				printf("%d : %s\n", i, &__[i]);
+			#endif
+		};
+		__[c-1]='\0';
+
+		return strdup((char const *)__);
+	};
+
+	#define _U_CODE(x) x[0]!=0||x[1]!=0||x[2]!=0||x[3]!=0?1:0
+
+	char const *csv_uni(char const _ucode[][4], ulong uc_count) {
+		ulong c=0, clen=0;
+		while(c<uc_count) {
+			if(_U_CODE(_ucode[c])){
+				clen+=4;
+			};
+			c+=1;
+		};
+		ulong _magic = clen+uc_count; // foreach => uc_count+1 -> `,` 
+		#ifdef DEBUG
+			printf("combined string arr size :: %s\n", num2char(clen));
+		#endif
+		char __[_magic], *p=(char *)&__; memset(&__, 0, _magic);
+		c=0;
+		char **temp;
+		for (int i=0; i<uc_count; i+=1) {
+			snprintf(p, 4, "%s", &_ucode[i][0]);
+			temp[i]=p;
+			p+=4;
+		};
+		for(int j=0; j<3; j++) {
+			printf("p : %s\n", temp[j]);
+		}
+		return strdup((char const *)__);
+	};
+
+
+	char const * unicode_str(char const __address[][4], ulong __len) {
+		printf("unicode chars : %lu\n", __len);
+		ulong c=0, _magic = (4*__len)+__len; // consider 4 bytes for char + foreach `,`
+		char __[_magic]; memset(&__, 0, _magic);
+		for (int i=0; i<__len; i+=1) {
+			memmove(&__[c], &__address[i], 4); c+=4;
+			arange_var(__);
+		};
+		__[_magic]='\0';
+		return __arange_vars(__, _magic);
+	};
+
+
+/**
+ * dPRG(
+	ulong num=6, len=3;
+	int temp[3] = {11,22,33};
+	storage_log(num, temp, len)
+)
+**/
+	void storage_log(ulong __idx, int *__vu_args, ulong __len) {
+		char const *__name_idx = num2char(__idx);
+		char const *__count = num2char(__len);
+		char const *__csv = csv_int(__vu_args, __len);
+		#ifdef DEBUG
+			printf("index @%s\n", __name_idx);
+			printf("$VA_ARGS %s\n", __count);
+			printf("VU_ARGS '%s'", __csv);
+		#endif
+		#ifdef OUTPUT
+			printf("%s:%s\t'%s'", __name_idx, __count, __csv);
+		#endif
+	};
+
+/**
+ * 
+dPRG(
+	char const *temp[] = {"address", "balance", "ccc"};
+	misc_log("9", temp, 3);
+)
+**/
+	void misc_log(char const *__iden, char const **__vs_args, ulong __len) {
+		char const *__count = num2char(__len);
+		char const *__csv = csv_str(__vs_args, __len);
+		#ifdef DEBUG
+			printf("index @%s\n", __iden);
+			printf("count=%s\n", __count);
+			printf("VS_ARGS \"%s\"", __csv);
+		#endif
+		#ifdef OUTPUT
+			printf("%s:%s\t\"%s\"", __iden, __count, __csv);
+		#endif
+	};
+
+// temporary
+/**
+ * dPRG(
+	char const temp[][4] = {"\U000021AF", "\U000031CF", "\U000091EF"};
+	unicode_log("1S33dp1sk", temp, 3);
+)
+**/
+	void unicode_log(char const *__name, char const __address[][4], ulong __len) {
+		char const *__count = num2char(__len);
+		char const *__csv = unicode_str(__address, __len);
+		#ifdef DEBUG
+			printf("index @%s\n", __name);
+			printf("count=%s\n", __count);
+			printf("unicode args  `%s`", __csv);
+		#endif
+		#ifdef OUTPUT
+			printf("%s:%s\t`%s`", __name, __count, __csv);
+		#endif
+	}
+
 	void log_ixr(ixr_h ixr) {
 		return log_ixrh(&ixr);
 	};
@@ -140,12 +309,12 @@
 	
 	// log the key value as strings
 	void log_keyvalue(char *key, char *value) {
-		__ASCII(key);
-		__ASCII(value);
+		__ASCII(0,key);
+		__ASCII(0,value);
 	};
 	// print the corrent way of using the `d-lbb` command
 	void lbb_usage(){
-		__TEXT(Use lbb as :: `d-lbb /path/to/file`);
+		__TEXT(0, Use lbb as :: `d-lbb /path/to/file`);
 	};
 
 	// void log_ixr_point(void *__) {

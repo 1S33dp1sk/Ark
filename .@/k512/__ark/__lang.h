@@ -4,23 +4,37 @@
 #ifndef _D_LANG
 	#define _D_LANG 1
 	#define __D_CHARMS 4
-	#define Alpha ixr_h *IXR = 
-	#define __dPRG ixr_h *main(int argc, char const*argv[])
-	#define __cPRG int main(int argc, char const*argv[]) 
+	#define README __readme
 	#define __ARGC__ argc
 	#define __ARGV__ argv
 	#define __lock_reader (O_RDONLY)
 	#define __lock_writer (O_WRONLY)
 	#define __base_address mac_address
-	#define M_ARG(...) (__VA_ARGS__)[0]
-	#define F_ARG(...) (__VA_ARGS__)[1]
-	#define __IXR "IXR\0"
-	#define dPRG(...) __cPRG {__VA_ARGS__;}
-	#define charm_mod __mod_call(charms_d)
-	#define run_mod __combine_str(charm_mod, "run/")
 	#define temp_name "temp\0"
 	#define d_src "src/\0"
-	#define README __readme
+	#define __IXR "IXR\0"
+	#define d_sep ":\0"
+	#define arch_filename "@charms/d.lbb/.lbb\0"
+	#define arch_callport "9999"
+	#define charms_d "@charms/d.\0"
+	#define Alpha ixr_h *IXR = 
+	#define __dPRG ixr_h *main(int argc, char const*argv[])
+	#define __cPRG int main(int argc, char const*argv[]) 
+	#define charm_mod __mod_call(charms_d)
+	#define run_mod __combine_str(charm_mod, "run/")
+	#define CHARMS_BASE (ulong)str_rwings(charms_d)
+	#define SRC_BASE (ulong)str_rwings(d_src)
+	#define checkef_lo ((ulong)__sokres(arch_callport))
+	#define checkef (ulong)__stres(arch_filename)
+	#define check_archfile (get_mstat(arch_filename, lbb_mstat)!=1)
+	#define __ECHO__ __TEXT(0, Ark)
+	#define handler *(*_fname)(void *x) {\
+		m_stat ms = (m_stat *)(aptr);\
+		log_mstat(ms);\
+	};
+	#define M_ARG(...) (__VA_ARGS__)[0]
+	#define F_ARG(...) (__VA_ARGS__)[1]
+	#define dPRG(...) __cPRG {__VA_ARGS__;}
 	#define mod(...) mod_##__VA_ARGS__
 	#define readme(x) #x##"/README.md"
 	#define __readme(x){\
@@ -28,32 +42,12 @@
 		program(_ixr_prg, IXR&->x/README.md);\
 		dprg_run(_ixr_prg);\
 	}
-
-	// base for charms
-	#define charms_d "@charms/d.\0"
-	
-	#define CHARMS_BASE (ulong)str_rwings(charms_d)
-
-	// SRC
-	#define SRC_BASE (ulong)str_rwings(d_src)
-
-
-	#define d_sep ":\0"
-	#define arch_filename "@charms/d.lbb/.lbb\0"
-	#define arch_callport "9999"
 	#define checkef_file(x,y) ((ulong)__stres(x)&&(ulong)__stres(y))
 	#define checkef_dir(x) ((ulong)__stres(x))
 	#define check_caller(x) ((ulong)__exact_match(__address(x), uni_address))
-	#define checkef_lo ((ulong)__sokres(arch_callport))
-	#define checkef (ulong)__stres(arch_filename)
-	#define check_archfile (get_mstat(arch_filename, lbb_mstat)!=1)
-	#define __ECHO__ __TEXT(Ark)
-	#define handler *(*_fname)(void *x) {\
-		m_stat ms = (m_stat *)(aptr);\
-		log_mstat(ms);\
-	};
+	// base for charms
 	#define __ATP__(...) const void **temp; {\
-		__TEXT(@-Protocol);\
+		__TEXT(0, @-Protocol);\
 		int x=lbb_argument(#__VA_ARGS__);\
 		temp=(const void**)&#__VA_ARGS__;\
 		switch(x) {\
@@ -93,10 +87,11 @@
 		memset(&dbuf, 0, sizeof(dbuf));\
 	};
 
-	#define __arch__() !check_archfile?arch_att(arch_filename, 3, __API_LEN):0;
+	#define __arch__() !check_archfile?arch_att(arch_filename, 3, __API_LEN):0
 
 	#define __LBB__ {\
-		__shard__();__dbuf__();__arch__();\
+		__shard__();__dbuf__();\
+		printf("lbb init : %d\n",__arch__());\
 	};
 
 	#define ATP __ATP__
@@ -106,7 +101,7 @@
 
 	#define __VARS__(...) {\
 		__ARGC__; __ARGV__;\
-		__TEXT(__ARGV__);\
+		__TEXT(0, __ARGV__);\
 		char const *__ARGS__=#__VA_ARGS__;\
 		void const **__VARGS__=vcontent(__VA_ARGS__);\
 		ulong __VA_SIZE__=__rwings(__VARGS__);\
@@ -145,13 +140,19 @@
 
 	#define gprg_handler(...) ((char const *)__handler_str(#__VA_ARGS__))
 
+	#define __IXR__(a,b,...) \
+		&___header;\
+		___header.alias = __ixr_strt(#a);\
+		TRAVERSE(3,3,#a);\
+		IXR -> alias=(char const *)&a;\
+		indexer_pause();\
 
 
 	#define __TERMINAL_PAGE_CLEAR "\n\n\n\n\n\n\n"
 
 	#define Ark(x, ...) {\
-		__ASCII(#x);\
-		__ASCII(_Generic((__VA_ARGS__[0]), \
+		__ASCII(3, #x);\
+		__ASCII(0, _Generic((__VA_ARGS__[0]), \
 			int: "run &->",\
 			char const *: "@-Protocol",\
 			char const **: "C-Program",\

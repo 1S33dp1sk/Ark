@@ -352,9 +352,9 @@ char const *__ixr_strt(char const *__ixr_alias) {
 		// printf("IXR : strt :: %s\n", __ixr_alias);
 		// if the indexer has not been instantiated but has
 		// a different value than the original constant
-		if(__ixr_fd!=0x228){
+		if(__ixr_fd!=__ixr_reject){
 			#ifdef LOG_ERR
-				printf("trying to instantiate indexer that is not on %d", 0x228);
+				printf("trying to instantiate indexer that is not on %d", __ixr_reject);
 			#endif
 			_exit(0x228);
 		};
@@ -497,7 +497,7 @@ ixr_h *ixr_prun(d_into ist) {
 
 	char const *p_name=(char const *)in_arg_n(ist, 1);
 	#ifdef PROCESS
-		__TEXT(Run :: );
+		__TEXT(3, Run :: );
 	#endif
 	return header;
 };
@@ -506,7 +506,7 @@ ixr_h *ixr_psave(d_into ist) {
 	ixr_h *header=header_init();
 	char  const *d_name=(char const *)in_arg_n(ist, 1);
 	#ifdef PROCESS
-		__TEXT(Save :: );
+		__TEXT(3, Save :: );
 	#endif
 	return header;
 };
@@ -515,7 +515,7 @@ ixr_h *ixr_pcollect(d_into ist) {
 	ixr_h *header=header_init();
 	char  const *f_att=(char const *)in_arg_n(ist, 1);
 	#ifdef PROCESS
-		__TEXT(Collect :: );
+		__TEXT(3, Collect :: );
 	#endif
 	return header;
 };

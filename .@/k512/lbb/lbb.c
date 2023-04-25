@@ -457,7 +457,7 @@ char *flds(char const *__fldname) {
 	// the fields
 	if(__fldname==NULL){
 		#ifdef LOG_ERR
-			__TEXT(API : flds :: fld is null);
+			__TEXT(0, API : flds :: fld is null);
 		#endif
 		return NULL;
 	};
@@ -471,7 +471,7 @@ char *flds(char const *__fldname) {
 	int res=get_mstat(__fldname,&cm_st);
 	if(res==-1){
 		#ifdef LOG_ERR
-			__TEXT(Field not found);
+			__TEXT(0, Field not found);
 		#endif
 		return NULL;
 	};

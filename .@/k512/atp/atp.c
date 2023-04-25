@@ -749,37 +749,37 @@
 	int check_command(d_into into) {
 		char const *d_arg = in_argument(into);
 		if(__read_hash__(d_arg)) {
-			__TEXT(Read : );
+			__TEXT(3, Read : );
 			// printf("will read the hash\n");
 			return 0;   
 		}
 		else if (__write_hash__(d_arg)){
-			__TEXT(Write : );
+			__TEXT(3, Write : );
 			// printf("will write a message to hash\n");
 			return 0;       
 		}
 		else if(__execute_hash__(d_arg)) {
-			__TEXT(Execute : );
+			__TEXT(3, Execute : );
 			// printf("should execute the command \n");
 			return 0;
 		}
 		else if (__send_hash__(d_arg)) {
-			__TEXT(Send : );
+			__TEXT(3, Send : );
 			// printf("will send msg to hash\n");
 			return 0;
 		}
 		else if (__connect_hash__(d_arg)) {
-			__TEXT(Connect : );
+			__TEXT(3, Connect : );
 			// printf("will try to connect to address\n");
 			return 0;
 		}
 		else if (__listen_hash__(d_arg)) {
-			__TEXT(Listen : );
+			__TEXT(3, Listen : );
 			// printf("will try to listen on the address\n");
 			return 0;
 		}
 		else {
-			__TEXT(No Match);
+			__TEXT(3, No Match);
 			// printf("none of them matched\n");
 			return 1;
 		};
@@ -1113,14 +1113,14 @@
 		for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
 			if((sockfd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
 				#ifdef DEBUG
-					__TEXT(Err : Server :: Socket);
+					__TEXT(0, Err : Server :: Socket);
 					// perror("server :: socket\n");
 				#endif
 				continue;
 			};
 			if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&__yes,sizeof(int))==-1){
 				#ifdef DEBUG
-					__TEXT(Err : Server :: Setsockopt);
+					__TEXT(0, Err : Server :: Setsockopt);
 					// perror("setsockopt\n");
 				#endif
 				exit(1);
@@ -1128,7 +1128,7 @@
 			if(bind(sockfd,temp->ai_addr,temp->ai_addrlen)==-1){
 				close(sockfd);
 				#ifdef DEBUG
-					__TEXT(Err : Server :: bind);
+					__TEXT(0, Err : Server :: bind);
 					// perror("server :: bind");
 				#endif
 				continue;
@@ -1174,14 +1174,14 @@
 		for(temp=__servinfo;temp!=NULL;temp=temp->ai_next){
 			if((sockfd=socket(temp->ai_family,temp->ai_socktype,temp->ai_protocol))==-1){
 				#ifdef DEBUG
-					__TEXT(Err : Mor :: Socket);
+					__TEXT(0, Err : Mor :: Socket);
 				#endif
 				continue;
 			};
 			if(connect(sockfd,temp->ai_addr,temp->ai_addrlen)==-1){
 				close(sockfd);
 				#ifdef DEBUG
-					__TEXT(Err : Mor :: connect);
+					__TEXT(0, Err : Mor :: connect);
 				#endif
 				continue;
 			};
@@ -1189,7 +1189,7 @@
 		};
 		if(temp==NULL) {
 			#ifdef LOG_ERR
-				__TEXT(Err : Mor :: Cannot establish connection);
+				__TEXT(0, Err : Mor :: Cannot establish connection);
 			#endif
 			return NULL;
 		}		

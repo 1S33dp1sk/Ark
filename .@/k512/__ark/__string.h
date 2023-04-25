@@ -395,8 +395,8 @@
 		int tempres=__sep_atoff(string, seperator);
 		if(tempres==-1){
 			#ifdef LOG_ERR
-				__TEXT(Err : Call Unsigned)
-				__ASCII(string)
+				__TEXT(0,Err : Call Unsigned)
+				__ASCII(0,string)
 				printf("unsigned call\n");
 				printf("%s <%s?>", string, seperator);
 				_exit(1);

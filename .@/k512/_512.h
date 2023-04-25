@@ -77,6 +77,7 @@
 			long: "%ld",\
 			unsigned long: "%lu",\
 			char *: "%s",\
+			char [4]: "%s",\
 			unsigned char *: "%s",\
 			long long: "%lld",\
 			unsigned long long: "%llu",\
@@ -200,6 +201,7 @@
 
 		#define out(x) out_fmt(x);
 
+
 	    #define OUT_ENK_H(fd,x) do { \
 	        char _[ATP_SPEC_SIZE];uchar __[ATP_BUFFER_SIZE];\
 	        memset(&_,0,sizeof _);memset(&__,0,sizeof __);\
@@ -243,8 +245,10 @@
 		#define _ENK_A(x,y) x##y
 		#define __ENK(x,y) __STRING(x##y)
 		#define __ERR(x) OUT_ENK_A(0,__ENK(Err, x));
-		#define __TEXT(x) OUT_ENK_A(0,#x);
-		#define __ASCII(x) OUT_ENK_A(0,x)
+		#define __TEXT(n,x) OUT_ENK_A(n,#x);
+		// #define TEXT(x) OUT_ENK_A(0,#x);
+		#define __ASCII(n,x) OUT_ENK_A(n,x);
+		// #define ASCII(x) OUT_ENK_A(0,x)
 		#define __ARK(...) #__VA_ARGS__
 		#define __HASH(x) write(0, hashof(3, x, str_rwings(x)), 32);
 		/**

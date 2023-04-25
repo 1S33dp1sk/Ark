@@ -833,6 +833,9 @@ dPRG(__LBB__)
 	#endif
 
 
+	
+
+
 
 #define TRAVERSE(a,b,...) int x=a;do {\
 	OUT_ENK_A(x, __VA_ARGS__);x+=1;\
@@ -854,13 +857,6 @@ dPRG(__LBB__)
 			};
 	typedef struct __ixr_h ixr_h;
 		#define ixr_address(x) ((char const *)(x->pub_key))
-		#define __IXR__(a,b,...) \
-			&___header;\
-			__LBB__;\
-			___header.alias = __ixr_strt(#a);\
-			TRAVERSE(3,3,#a);\
-			IXR -> alias=(char const *)&a;\
-			indexer_pause();\
 
 	#endif
 
@@ -1011,7 +1007,7 @@ dPRG(
 		#define comb(x,y) x##y
 		#define aip__(x) comb(aip_,x)
 		#define log(...) {\
-			__ASCII(__VA_ARGS__);\
+			__ASCII(0, __VA_ARGS__);\
 		}
 	#endif
 
