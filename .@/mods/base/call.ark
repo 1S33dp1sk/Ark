@@ -2,6 +2,6 @@
 start or run a program in `ARK`
 
 dPRG(
-	program(_start_cfg, IXR&->wrapper.py, __ARGS__)
+	program(_start_cfg, IXR&->wrapper.sh, __ARGS__)
 	dprg_run(_start_cfg)
 )

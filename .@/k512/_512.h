@@ -285,6 +285,8 @@
 		#define ARC_GENERIC(x) (ulong)((1<<(x*3)))
 		#define __tempok "some args"
 		#define arg_content(...) ((const char *[]){#__VA_ARGS__,ne})
+		#define __NE ",\0"
+		#define __argc(...) ((char * const *){#__VA_ARGS__,NULL})
 
 		/**
 	     * Thanks for the all the contributions and good work from 
@@ -314,10 +316,6 @@
 	        #endif
 	    #endif
 
-	    #ifndef __sha3_rot_l_64
-	        #define __sha3_rot_l_64(x, y) (((x)<<(y))|((x)>>((__size_u64*8)-(y))))
-	    #endif
-
 	    #undef get16bits
 	        #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
 	        || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
@@ -338,7 +336,6 @@
 		static __ul u;
 		static aip_sock __sok;
 		static arc_st __arc;
-	    static sha3_context __sha3;
 	    static uchar dbuf[__A_LEN];
 		/********** books *********/
 		static ulong ___lbb_offset=0;
@@ -367,6 +364,7 @@
 		static const char *__dprg_fmt="_Q:s>s<s$s_\n";
 		static const char *__fld_fmt="_Q:s@s=s+h_\n";
 		/********* constants *********/
+		static ulong __uptr[64];
 		static int __dlvl=0;
 		static ulong __cindex=0;
 		static const ulong __ne__ =(ulong)00000000U;
@@ -378,7 +376,7 @@
 		static ulong ___offset=0;
 		static ixr_h ___header;
 		static ulong env_hash_0;
-	  	static const ulong keccakf_rndc[24] = {
+	  	static const uint64_t keccakf_rndc[24] = {
 	            __sha3_const( 0x0000000000000001UL ), __sha3_const( 0x0000000000008082UL ),
 	            __sha3_const( 0x800000000000808aUL ), __sha3_const( 0x8000000080008000UL ),
 	            __sha3_const( 0x000000000000808bUL ), __sha3_const( 0x0000000080000001UL ),
@@ -392,11 +390,11 @@
 	            __sha3_const( 0x8000000080008081UL ), __sha3_const( 0x8000000000008080UL ),
 	            __sha3_const( 0x0000000080000001UL ), __sha3_const( 0x8000000080008008UL )
 	        };
-	    static const uns keccakf_rotc[24] = {
+	    static const unsigned keccakf_rotc[24] = {
 	            1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62,
 	            18, 39, 61, 20, 44
 	        };
-	    static const uns keccakf_piln[24] = {
+	    static const unsigned keccakf_piln[24] = {
 	            10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20,
 	            14, 22, 9, 6, 1
 	        };
@@ -408,12 +406,10 @@
 	    #ifndef _D_HASH_H
 			#define _D_HASH_H 1
 			// sha3
-	 		void __hex_bytes(uchar __c, uc __s);
-		    void __sha3_str(char *__, uchar *__hash, ulong __len);
-		    void __htostr(char *__str, uchar *hash);
+		    void htostr(char *__str, uchar *hash);
 		    char *__s_hash(char *__key, char *__hashkey);
 		    ulong blaz_hash(char const *__data);
-		    static void keccakf(ulong s[25]);
+		    static void keccakf(uint64_t s[25]);
 		    sha3_r sha3_init(void *p,ulong bit_size);
 		    sha3_f sha3_set_flags(void *p,sha3_f flags);
 		    void sha3_update(void *p,void const *buf_in,ulong len);
@@ -540,6 +536,7 @@
 			#define _D_ARCH_H 1
 			// arch
 			char const *__address(int __level, char const *__filename);
+			ulong *__indices(char const *__temp);
 			char const *uname(const char *__filename);
 			char const *__get_atnmae(char const *__naming);
 			char const *__getcaller();

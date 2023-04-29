@@ -187,13 +187,13 @@
 		#ifdef PROCESS
 			printf("ATP<arcpid> = %lu\n", __arc.__pid);
 		#endif
-		atp_p->ptr = atp_p;
+		atp_p->mem = atp_p;
 		sprintf(atp_p->addr, "%lu", __arc.__pid);
 		atp_p->chkref = hash_follow(0, atp_p->addr);
 		#ifdef DEBUG
-			printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->addr, atp_p->chkref);
+			printf("%p<%s>(%s)\n", atp_p->mem, atp_p->addr, atp_p->chkref);
 		#endif
-		return atp_p->ptr;
+		return atp_p->mem;
 	};
 
 	void _socket_address_free(d_portal *aip_st){
@@ -359,7 +359,7 @@
 				#endif
 				continue;
 			}
-			if(setsockopt(__sfd,SOL_SOCKET,SO_REUSEADDR,&__yes,2)==-1){ // 2 = sizeof(unsigned)
+			if(setsockopt(__sfd,SOL_SOCKET,SO_REUSEADDR,&__yes,2)==-1){ // 2 = sizeof(int)
 				#ifdef DEBUG
 					printf("setsockopt\n");
 				#endif
@@ -1074,13 +1074,13 @@
 		#ifdef PROCESS
 			printf("ATP<arcpid> = %lu\n", __arc.__pid);
 		#endif
-		atp_p->ptr = atp_p;
+		atp_p->mem = atp_p;
 		sprintf(atp_p->addr, "%lu", __arc.__pid);
 		atp_p->chkref = hash_follow(0, atp_p->addr);
 		#ifdef DEBUG
-			printf("%p<%s>(%s)\n", atp_p->ptr, atp_p->addr, atp_p->chkref);
+			printf("%p<%s>(%s)\n", atp_p->mem, atp_p->addr, atp_p->chkref);
 		#endif
-		__arc.__next = atp_p -> ptr;
+		__arc.__next = atp_p -> mem;
 
 		return __arc.__next;
 	};
@@ -1261,7 +1261,7 @@
 			struct sockaddr *temp_sockeaddr=((struct sockaddr *)&(temp_sok.aip_sockst));
 			*__len=sizeof(temp_sockeaddr);
 			int __tempfd=accept(__fd, temp_sockeaddr, __len);
-			#ifdef DEBUG
+			#ifdef OUTPUT
 				printf("accepted connection :: %d\n", __tempfd);
 			#endif
 			if(__tempfd==-1) {
@@ -1271,8 +1271,8 @@
 				break;
 			};
 			temp_sok.aip_sockfd=tonum(__tempfd);
-			#ifdef DEBUG
-				log_socket(temp_sok);
+			#ifdef OUTPUT
+				log_socket(&temp_sok);
 			#endif
 			if(!fork()){
 				close(__fd);

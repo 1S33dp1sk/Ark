@@ -7,6 +7,7 @@ The indexer
 	#define d_mod "run/\0"
 	// IXR
 	#define IXR_BASE (ulong)str_rwings(d_ixr)
+	#define IXR_FILE __d_lock
 
 	#define __ixr_reject 0x228
 
@@ -81,7 +82,7 @@ The indexer
 	ixr_h *indexer_header();
 	int refer_index(void *__ptr, void *__ref, char *__prname);
     ulong __ixr_argument(char const *__format, void const *__);
-
+    int __store(ulong __idx, char const *__format, char const *data);
 
 	ixr_h *ixr_get(d_into ist);
 	ixr_h *ixr_set(d_into ist);

@@ -36,17 +36,21 @@
 	#define ATP_FLAG_C 0x100
 	#define ATP_FLAG_HANDLER 0x105
 	#define ATP_FLAG_PAYLD 0x111
-	#define ATP_SPEC_SIZE (__PASS_MIN_D<<0x3)
-	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
-	#define ATP_BACKLOG 10 // instances of the same id
-	#define __ATP_A4_ALIAS __loc_i4
-	#define __ATP_A6_ALIAS __loc_i6
 	#define ATP_PORT "9999" // The common ATP port
 	#define __ATP_ENV "="
 	#define __ATP_KEY ":"
 	#define __ATP_AT "@"
 	#define __ATP_STR "*"
 	#define __ATP_AETH "Aether(cid)"
+	#define les __arc_socket
+	#define mor __arc_point
+	#define ptr __arc_pointer
+	#define adr __arc_address
+	#define ATP_SPEC_SIZE (__PASS_MIN_D<<0x3)
+	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)
+	#define ATP_BACKLOG 10 // instances of the same id
+	#define __ATP_A4_ALIAS __loc_i4
+	#define __ATP_A6_ALIAS __loc_i6
 	#define HTTP_GET(...)		http_request("GET",__VA_ARGS__)
 	#define HTTP_POST(...)		http_request("POST",__VA_ARGS__)
 	#define HTTP_ACCEPT(...) 	http_response(200, "OK",__VA_ARGS__)
@@ -173,7 +177,6 @@
 	void *__sok_addr(struct sockaddr *sa);
 	void __ellcall(ulong __sockfd, char *reuse, ulong rsize);
 
-	int mor(void *crequest);
 	// void *__point_run();
 	int get_atp_type(char const *__call);
 	int decode_lbb_addr(char const *__addr);
@@ -197,8 +200,6 @@
 	void free_arc();
 	void free_sok();
 	void free_args();
-
-	int les(void *__args);
 
 	aip_st *h2act(ixr_h *h_request);
 	ixr_h *act2h(aip_st *action);

@@ -19,7 +19,6 @@ The indexer
 		return __temp;
 	};
 
-	#define IXR_FILE __d_lock
 
 	/********* d-types *********/
 
@@ -284,7 +283,7 @@ The indexer
 		#endif
 		uchar *__head=(uchar *)&(___header.__);
 		memset(__head, 0, __A_LEN);
-		unsigned __temp=pack(__head, ixr_format(__header__), ixr_h_args);
+		uns __temp=pack(__head, ixr_format(__header__), ixr_h_args);
 		__head[__I_LEN+1]='\0';
 		__header_out(__head, __temp);
 		#ifdef DEBUG
@@ -326,8 +325,6 @@ The indexer
 		return 0;
 	};
 
-	
-
 	void log_header() {
 		printf("%s = {\n", IXR_FILE);
 		printf("\tshared size : %lu,\n", ___header.shared_size);
@@ -348,51 +345,36 @@ The indexer
 	};
 
 	// start the indexer 
-char const *__ixr_strt(char const *__ixr_alias) {
-		// printf("IXR : strt :: %s\n", __ixr_alias);
-		// if the indexer has not been instantiated but has
-		// a different value than the original constant
-		if(__ixr_fd!=__ixr_reject){
-			#ifdef LOG_ERR
-				printf("trying to instantiate indexer that is not on %d", __ixr_reject);
-			#endif
-			_exit(0x228);
-		};
-		if(__stres(IXR_FILE)) {
+	char const *__ixr_strt(char const *__ixr_alias) {
+			// if the indexer has not been instantiated but has
+			// a different value than the original constant
+			if(__ixr_fd!=__ixr_reject){
+				#ifdef LOG_ERR
+					printf("trying to instantiate indexer that is not on %d", __ixr_reject);
+				#endif
+				_exit(__ixr_reject);
+			};
+			if(__stres(IXR_FILE)) {
+				#ifdef DEBUG
+					__TEXT(Indexer loaded);
+				#endif
+				return ne;
+			};
+			header_init();
+			int ixr_fd=open(IXR_FILE, __ixr_start_flags, __ixr_pmode);
+			if(ixr_fd==-1){
+				#ifdef LOG_ERR
+					printf("err : ixr :: failed to create index file ::: %s\n", IXR_FILE);
+				#endif
+				return ne;
+			};
+			__ixr_fd=(ulong)ixr_fd;
+			
 			#ifdef DEBUG
-				__TEXT(Indexer loaded);
-				printf("indexer already exists\n");
+				printf("Indexer started ::: %lu\n",__ixr_fd);
 			#endif
-			return ne;
-		};
-		header_init();
-		int ixr_fd=open(IXR_FILE, __ixr_start_flags, __ixr_pmode);
-		if(ixr_fd==-1){
-			#ifdef LOG_ERR
-				printf("err : ixr :: failed to create index file ::: %s\n", IXR_FILE);
-			#endif
-			return ne;
-		};
-		__ixr_fd=(ulong)ixr_fd;
-		
-		#ifdef DEBUG
-			printf("Indexer started ::: %lu\n",__ixr_fd);
-		#endif
-		return hashof(3, __ixr_alias, 8);
-};
 
-	int indexer_start() {
-		// __refresh_header();
-		// if(__write_header()) {
-		// 	#ifdef LOG_ERR
-		// 		printf("cannot write indexer header\n");
-		// 	#endif
-		// 	return -1;
-		// };
-		// #ifdef DEBUG
-		// 	printf("@offset %lu\n",___offset);
-		// #endif
-		return 0;
+			return hashof(3, __ixr_alias, 8);
 	};
 
 	// index any incoming idrs
@@ -403,7 +385,7 @@ char const *__ixr_strt(char const *__ixr_alias) {
 			#endif
 			return -1;
 		};
-		if(__ixr_fd==0x228) {
+		if(__ixr_fd==__ixr_reject) {
 			int ixr_fd=-1;
 			ixr_fd=open(IXR_FILE, __ixr_access_flags, __ixr_pmode);
 			if(ixr_fd==-1){
@@ -430,6 +412,7 @@ char const *__ixr_strt(char const *__ixr_alias) {
 		#endif
 		return 0;
 	};
+
 	ixr_h *indexer_header() {
 		ulong header_size=sizeof(___header);
 		ixr_h *temp = malloc(header_size);
@@ -443,7 +426,6 @@ char const *__ixr_strt(char const *__ixr_alias) {
 		if(__exact_match(rname, __prname)) {
 			printf("exact match\n");
 		};
-
 		printf("ptr  : %p\n", __ptr);
 		printf("lbbr : %p\n", __ref);
 		printf("ref  : %s\n", rname);
@@ -472,97 +454,119 @@ char const *__ixr_strt(char const *__ixr_alias) {
     };
 
 
-ixr_h *ixr_get(d_into ist) {
-	ixr_h *header=header_init();
-	char const *var_name=(char const *)in_arg_n(ist, 1);
-	#ifdef PROCESS
-		printf("@ATP<get>(%s)\n", var_name);
-	#endif
-	return header;
-};
-
-
-ixr_h *ixr_set(d_into ist) {
-	ixr_h *header=header_init();
-	char const *var_name=(char const *)in_arg_n(ist, 1);
-	char const *var_val=(char const *)in_arg_n(ist, 2);
-	#ifdef PROCESS
-		printf("@ATP<set>(%s){%s}\n", var_name, var_val);
-	#endif
-	return header;
-};
-
-ixr_h *ixr_prun(d_into ist) {
-	ixr_h *header=header_init();
-
-	char const *p_name=(char const *)in_arg_n(ist, 1);
-	#ifdef PROCESS
-		__TEXT(3, Run :: );
-	#endif
-	return header;
-};
-
-ixr_h *ixr_psave(d_into ist) {
-	ixr_h *header=header_init();
-	char  const *d_name=(char const *)in_arg_n(ist, 1);
-	#ifdef PROCESS
-		__TEXT(3, Save :: );
-	#endif
-	return header;
-};
-
-ixr_h *ixr_pcollect(d_into ist) {
-	ixr_h *header=header_init();
-	char  const *f_att=(char const *)in_arg_n(ist, 1);
-	#ifdef PROCESS
-		__TEXT(3, Collect :: );
-	#endif
-	return header;
-};
-
-
-int ixr_export(void *__aip_into) {
-	printf("IXR->export :\n");
-	return 0;
-};
-
-int ixr_run(void *__aip_into) {
-	printf("IXR&->run ::\n");
-	return 1;
-
-};
-
-int ixr_save(void *__aip_into) {
-	printf("IXR&save :::\n");
-	return 2;
-
-};
-
-int ixr_collect(void *__aip_into) {
-	printf("IXR:collect::\n");
-	return 3;
-};
-
-
-ixr_h *args3head(d_into ist) {
-	switch(in_switch(ist)) {
-		case 2:
-			return ixr_get(ist);
-		case 3:
-			return ixr_set(ist);
-		case 4:
-			return ixr_prun(ist);
-		case 5:
-			return ixr_pcollect(ist);
-		case 6:
-			return ixr_psave(ist);
-		default:
-			return header_init();
+	ixr_h *ixr_get(d_into ist) {
+		ixr_h *header=header_init();
+		char const *var_name=(char const *)in_arg_n(ist, 1);
+		#ifdef PROCESS
+			printf("@ATP<get>(%s)\n", var_name);
+		#endif
+		return header;
 	};
-};
+
+
+	ixr_h *ixr_set(d_into ist) {
+		ixr_h *header=header_init();
+		char const *var_name=(char const *)in_arg_n(ist, 1);
+		char const *var_val=(char const *)in_arg_n(ist, 2);
+		#ifdef PROCESS
+			printf("@ATP<set>(%s){%s}\n", var_name, var_val);
+		#endif
+		return header;
+	};
+
+	ixr_h *ixr_prun(d_into ist) {
+		ixr_h *header=header_init();
+
+		char const *p_name=(char const *)in_arg_n(ist, 1);
+		#ifdef PROCESS
+			__TEXT(3, Run :: );
+		#endif
+		return header;
+	};
+
+	ixr_h *ixr_psave(d_into ist) {
+		ixr_h *header=header_init();
+		char  const *d_name=(char const *)in_arg_n(ist, 1);
+		#ifdef PROCESS
+			__TEXT(3, Save :: );
+		#endif
+		return header;
+	};
+
+	ixr_h *ixr_pcollect(d_into ist) {
+		ixr_h *header=header_init();
+		char  const *f_att=(char const *)in_arg_n(ist, 1);
+		#ifdef PROCESS
+			__TEXT(3, Collect :: );
+		#endif
+		return header;
+	};
+
+
+	int ixr_export(void *__aip_into) {
+		printf("IXR->export :\n");
+		return 0;
+	};
+
+	int ixr_run(void *__aip_into) {
+		printf("IXR&->run ::\n");
+		return 1;
+
+	};
+
+	int ixr_save(void *__aip_into) {
+		printf("IXR&save :::\n");
+		return 2;
+
+	};
+
+	int ixr_collect(void *__aip_into) {
+		printf("IXR:collect::\n");
+		return 3;
+	};
+
+
+	ixr_h *args3head(d_into ist) {
+		switch(in_switch(ist)) {
+			case 2:
+				return ixr_get(ist);
+			case 3:
+				return ixr_set(ist);
+			case 4:
+				return ixr_prun(ist);
+			case 5:
+				return ixr_pcollect(ist);
+			case 6:
+				return ixr_psave(ist);
+			default:
+				return header_init();
+		};
+	};
+
+
+	int __store(ulong __idx, char const *__type, char const *data) {
+
+		char const *_idx = num2char(__idx);
+		uchar const *_data = (uchar *)data;
+		dprintf(__ixr_fd, "%s\t%s\t%s\n", _idx, __type, _data);
+		return 0;
+	};
 
 
 
 
-	#define __ixr_name "indexer"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif

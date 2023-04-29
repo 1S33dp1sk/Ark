@@ -5,11 +5,11 @@
 
 #ifndef _D_LOG
 	#define _D_LOG 1
+
 	void log_str(char const *__) {
 		write(0,__,str_rwings(__));
 		write(0,"\n",1);
 	};
-
 
 	void arange_var(char const v[4]) {
 		// printf("%s", v);
@@ -45,7 +45,6 @@
 		__[c-1]='\0';
 		return strdup((char const *)__);
 	};
-
 
 	char const *csv_str(char const **ptr, ulong ptr_count) {
 		ulong c=0, clen=0;
@@ -104,8 +103,7 @@
 		return strdup((char const *)__);
 	};
 
-
-	char const * unicode_str(char const __address[][4], ulong __len) {
+	char const *unicode_str(char const __address[][4], ulong __len) {
 		printf("unicode chars : %lu\n", __len);
 		ulong c=0, _magic = (4*__len)+__len; // consider 4 bytes for char + foreach `,`
 		char __[_magic]; memset(&__, 0, _magic);
@@ -177,7 +175,9 @@ dPRG(
 		#ifdef OUTPUT
 			printf("%s:%s\t`%s`", __name, __count, __csv);
 		#endif
-	}
+	};
+
+
 
 	void log_ixr(ixr_h ixr) {
 		return log_ixrh(&ixr);
@@ -331,6 +331,28 @@ dPRG(
 		}
 		//printf("!%s\n", prg->prg_handler);
 	};
+
+	void log_read_err(int __errno) {
+    	switch(__errno) {
+         case EAGAIN:    printf("The file was marked for non-blocking I/O, and no data were ready to be read.");
+         case EBADF:     printf("fildes is not a valid file or socket descriptor open for reading.");
+         case EFAULT:    printf("Buf points outside the allocated address space.");
+         case EINTR:     printf("A read from a slow device was interrupted before any data arrived by the delivery of a signal.");
+         case EINVAL:    printf("The pointer associated with fildes was negative.");
+         case EIO:       printf("An I/O error occurred while reading from the file system.");
+         case EISDIR:    printf("An attempt is made to read a directory.");
+         case ENOBUFS:   printf("An attempt to allocate a memory buffer fails.");
+         case ENOMEM:    printf("Insufficient memory is available.");
+         case ENXIO:  	 printf("An action is requested of a device that does not exist.");
+         case ESTALE:    printf("An attempt to read a remote file through NFS that has already been deleted in the server.");
+         case ETIMEDOUT: printf("The connection timed out while reading a remote file from a soft mounted NFS volume.");
+         case EDEADLK:   printf("The file is a “dataless” file that requires materialization and the I/O policy of the current");
+         case ESPIPE:    printf("The file descriptor is associated with a pipe, socket, or FIFO.");
+         case ECONNRESET:printf("The connection is closed by the peer during a read attempt on a socket");
+         case ENOTCONN:  printf("A read is attempted on an unconnected socket.");
+         default:        printf("read err : unknown\n");
+    }
+	}
 
 
 	#define __H512__L 1

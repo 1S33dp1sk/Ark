@@ -5,6 +5,18 @@
 #ifndef _D_ARCH
 	#define _D_ARCH 1
 
+
+	ulong *__indices(char const *__temp) {
+		__uptr[0] = (ulong)1204912;
+		ulong x[10] = {1204912,120491,12049,1204,5910,385,120,1295410,215019250,19325912510};
+		for(int i=0;i<arr_size(x); i+=1) {
+			__uptr[i] = x[i];
+		};
+		printf("indecies : %s\n", __temp);
+		return __uptr;
+	};
+
+
 	char const *__address(int __level, char const *__filename) {
 
 		return hashof(__level, __filename, str_rwings(__filename));

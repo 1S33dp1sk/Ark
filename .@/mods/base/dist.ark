@@ -1,5 +1,11 @@
 /// distributed storage \\\
 
 dPRG(
-	__LBB__
+	Alpha __IXR__(
+		"1S33dp1sk",
+		0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6,
+		program(w3, IXR&->aeth/__init__.py)
+		dprg_run(w3, @charms)
+		printf("pvt_key : %s\n", IXR -> pvt_key)
+	)
 )

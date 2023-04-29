@@ -116,6 +116,7 @@
     #endif
 #endif
 
+#include <stdint.h>
 
 
 #endif

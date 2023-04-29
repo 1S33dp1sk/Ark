@@ -86,18 +86,21 @@ loaded via a .o or .so
 #endif
 
 #ifndef __ADDR_TYPES
+	#define __addr_start "@lbb"
 	#define evaluate(...) __VA_ARGS__
 	#define stringify(...) #__VA_ARGS__
+	#define addrify(__) __addr_start
+
 
 	#ifndef atp_pointer
 		struct __ptr_addr {
-			void *ptr;//memory access
+			void *mem;//memory access
 			char addr[__P_LEN];
 			char const *chkref;
 		};
 	typedef struct __ptr_addr atp_pointer;
 		#define __ptr__(...)
-		#define ptr_main(x) ((ptr_st *)(x->ptr))
+		#define ptr_main(x) ((ptr_st *)(x->mem))
 		#define ptr_addr(x) cis_address(x)
 		#define ptr_chkref(x) cis_chkref(x)
 		#define ptr_addrlen(x) cis_address(x)
@@ -134,15 +137,15 @@ loaded via a .o or .so
 
 	#ifndef atp_data
 		struct __cis_addr {
-			void *ptr;
+			void *pointer;
 			char *addr;
 			char const *chkref;
 		};
 	typedef struct __cis_addr atp_data;
 		#define _ATP_(x, ...) atp_data d##__VA_ARGS__;
-		#define c3atp(x)	x->ptr, x->addr, x->chkref
-		#define __cis__(x) ((cis_st *)x->ptr)
-		#define cis_ptr(x) ((void const *)x->ptr)
+		#define c3atp(x)	x->pointer, x->addr, x->chkref
+		#define __cis__(x) ((cis_st *)x->pointer)
+		#define cis_ptr(x) ((void const *)x->pointer)
 		#define cis_address(x) ((char const *)x->addr)
 		#define cis_chkref(x) ((char const *)x->chkref)
 		#define cis_addrsz(x) ((ulong)sizeof(x->addr))
@@ -156,24 +159,7 @@ loaded via a .o or .so
 
 #ifndef __SHA3_TYPES
 	#ifndef sha3_context
-		#define __size_u64 ((ulong)sizeof(ulong))
-        #define __sha3_k_sponge_w (((1600)/__P_LEN)/__size_u64) //bits to byte
-	    struct __sha3_context {
-	        ulong saved;             
-	                // remainder of input string that we didn't consume yet
-	        union {                     
-	            ulong s[__sha3_k_sponge_w];
-	            uchar sb[__sha3_k_sponge_w*8];
-	        } u;                        
-	                // keccak's state 
-	        uns byte_idx;         
-	                // 0..7--the next byte after the set one (starts from 0; 0--none are buffered) 
-	        uns word_idx;         
-	                // 0..24--the next word to integrate input (starts from 0)
-	        uns cap_words;
-	                // the double size of the hash output in words (e.g. 16 for Keccak 512)
-	    };
-    typedef struct __sha3_context sha3_context;
+
     #endif		
 	#ifndef sha3_return
 		enum __sha3_return {
@@ -376,7 +362,7 @@ dPRG(
 				char const *c_name;
 				uchar const *c_ref;
 				char const *prg_path;
-				char *const *prg_args;
+				char * const * prg_args;
 				char const *prg_handler;
 				struct __program_d* __next;
 			};
@@ -385,12 +371,15 @@ dPRG(
 		#define dprg_in(x) ((char const *)x->prg_in)
 		#define dprg_out(x) ((char const *)x->prg_out)
 		#define dprg_handler(x) ((char const *)x->prg_handler)
-		#define dprg_run(x) execve(x.prg_path, x.prg_args, ne)
+		#define dprg_run(x,...) {\
+			printf("running : %s|%s\n",#x, x.prg_path);\
+			char * const t[3] = {x.prg_path, #__VA_ARGS__ ,NULL};\
+			execve(x.prg_path, t, ne);\
+		}
 		#define program(x,i,...) d_prg x;{\
 			x.prg_path=modbase_call(#i);\
-			x.prg_args=(char *const *)arg_content(__VA_ARGS__);\
+			x.prg_args=__argc(#__VA_ARGS__);\
 			x.prg_handler=gprg_handler(i);\
-			dprg_run(x);\
 		};\
 	
 
@@ -833,14 +822,6 @@ dPRG(__LBB__)
 	#endif
 
 
-	
-
-
-
-#define TRAVERSE(a,b,...) int x=a;do {\
-	OUT_ENK_A(x, __VA_ARGS__);x+=1;\
-}while(x<b);
-
 
 /** IXR **/
 
@@ -848,9 +829,10 @@ dPRG(__LBB__)
 			struct __ixr_h {
 				ulong shared_size; // __size;
 				ulong mods_count; // d_count;
-				char const *pub_key; // checksum;
+				char const *pub_key; 
+				char const *pvt_key;
 				char const *alias;
-				void *session;
+				void *session; // checksum;
 				int c_res;
 				uchar __[__A_LEN]; //head[__I_LEN]
 				struct __ixr_h* __next;

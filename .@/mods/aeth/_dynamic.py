@@ -1,5 +1,5 @@
 from _configs		import Colors
-
+from os.path import isdir
 
 '''
 	0xAether {a.k.a Dynamic Aether Configuration }
@@ -142,7 +142,7 @@ class Logger:
 			'performance':'performance.log',
 			'transactions':'transactions.log'
 		}.get( log_name , 'performance.log' )
-		return self._log( '%s/%s'%( self._logPath , _logName ) , data )
+		return self._log( '%s/%s'%( log_name , _logName ) , data )
 
 
 class Configuration:
