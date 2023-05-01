@@ -1,5 +1,6 @@
-from _configs		import Colors
 from os.path import isdir
+import _configs
+import _utils
 
 '''
 	0xAether {a.k.a Dynamic Aether Configuration }
@@ -22,9 +23,9 @@ the "next" stage, another structure rebuilds to be any of the other 2 stages.
 
 
 def log(str_output):
-	print(Colors.EVIOLET)
+	print(_config.Colors.EVIOLET)
 	print("%s"%(str_output))
-	print(Colors.NC)
+	print(_config.Colors.NC)
 
 
 class Logger:
@@ -32,7 +33,7 @@ class Logger:
 		pass
 
 	def _getErrorStr( self , errorNo:int ) -> str :
-		_switch = {
+		return {
 			0:'NodeID cannot be empty',
 			1:'Not a valid Aether path',
 			2:'Unable to find a correct configuration file',
@@ -56,80 +57,61 @@ class Logger:
 			20:'Unable to encode block',
 			21:'Unable to encode status',
 			22:'Unable to encode cache'
-		}
-		return _switch.get( errorNo , None )
+		}.get( errorNo , 'Unknown err' )
 
 	def _getWarningStr( self , warningNo:int ) -> str :
-		_switch = {
+		return {
 			1:'No dynamic cache and no BLOCK-cache file not found',
 			2:'Cannot append logs to file',
 			3:'Ambigous transaction',
 			4:'Masterhash not constant across blockchains, resolving',
 			5:'Waiting for aetherer to submit the current block before resolving'
-		}
-		return _switch.get( warningNo , None )
+		}.get( warningNo , 'Unknown warning' )
 
-	def _fileLog( self , append_file , data ):
-		_log_data = '\n\t0xANode : %s -> '%self.node_name
-		_log_data = '\n\t\t %s'%data
-		print( _log_data , file=append_file )
-
-	def _consoleLog( self , data ):
-		if not data:
-			return
-		_log_data = '\n\t%s0xANode%s: %s -> %s'%( self.COLORS.VIOLET , self.COLORS.NC , self.node_name , stack()[1][3] )
-		_log_data += '\n\t\t%s %s %s'%( self.COLORS.GREY , data , self.COLORS.NC )
-		print( _log_data )
-
-	def _chainLog( self , chainId , data ):
-		if not data:
-			return
-		_log_data = '\n\t%s0xANode%s: %s -> '%( self.COLORS.VIOLET , self.COLORS.NC , self.node_name )
-		_log_data += '\n\t\t%s<CID, ACTION> : <%s, %s> -> '%( self.COLORS.GREY , chainId , stack()[1][3] )
-		_log_data += '\n\t\t\t %s %s'%( data , self.COLORS.NC ) if data else 'ROUTINE'
-		print( _log_data )
+	def _getFormatStr(self, fmt_type):
+		return {
+			'file':'\n\t0xANode : %s -> \n\t\t %s', #(self.node_name, data)
+			'console':'\n\t%s0xANode%s: %s -> %s\n\t\t%s %s %s', #(self._config.Colors.VIOLET , self._config.Colors.NC , self.node_name , stack()[1][3], self._config.Colors.GREY , data , self._config.Colors.NC)
+			'chain':'\n\t%s0xANode%s: %s -> \n\t\t%s<CID, ACTION> : <%s, %s> -> \n\t\t\t %s %s', #(self._config.Colors.VIOLET , self._config.Colors.NC , self.node_name, self._config.Colors.GREY , chainId , stack()[1][3], data , self._config.Colors.NC)
+			'block':'\u0F3A\tAether Block #%s %s %s is Binding\t\u0F3B\t\n\t\tBlock MASTERHASH \u227D %s\n\t\tBlock Aetherer : %s', #( self._config.Colors.GREEN , str( block_num ) , self._config.Colors.GREY, str( block_masterhash ), str( block_aetherer ) )
+			'txn':'\n\t\t\U0001D4DAchec\U0001D4DA : %s\n\n\t\tCHAIN_IDS \u21F6 < %s >\n\n\t\t\u20BFitcoin est %s\n\n\t\t0xAether DATA : %s \n', #(str( txn_hash ), ', '.join( [str( cid ) for cid in txn_cids] ), ''.join( [unicode_number( i ) if i.isdigit() else str( i ) for i in str( txn_native )] ), str( txn_0xA ))
+			'status':'\t\t0xAether Node ID#%s', #(self.node_name , ''.join( ['\n\t\t%s\t: %s'%( i.upper() , kwargs.get( i ) ) for i in kwargs] ))
+			'req': 'Aether Request : %s \u2714', #(txn_hash)
+		}.get(fmt_type, "file")
 
 	def _log( self , file_path , data ):
 		try:
-			_logFile = open( file_path , 'a' )
-			self._fileLog( _logFile , data )
+			if not data:
+				self._logFile = open( file_path , 'a' )
 			self._consoleLog( data )
 		except:
 			self.log_warn( 2 )
 
 	def block_log( self , chainId=0 , block_num=0 , block_masterhash='0x' , block_aetherer='0x' , **kwargs ):
-		_block = '\u0F3A\tAether Block #%s %s %s is Binding\t\u0F3B\t'%( self.COLORS.GREEN , str( block_num ) , self.COLORS.GREY )
-		_block += '\n\t\tBlock MASTERHASH \u227D %s'%str( block_masterhash )
-		_block += '\n\t\tBlock Aetherer : %s'%str( block_aetherer )
+		_block='_block'
 		self._chainLog( chainId , _block )
 		self.log_data( 'BLOCK : %s :: Binding'%str( block_num ) )
 
 	def transaction_log( self , chainId=0 , txn_hash='0x' , txn_cids=[] , txn_native=0 , txn_0xA='0x' , **kwargs ):
-		_txn = '\n\t\t\U0001D4DAchec\U0001D4DA : %s\n'%str( txn_hash )
-		_txn += '\n\t\tCHAIN_IDS \u21F6 < %s >\n'%', '.join( [str( cid ) for cid in txn_cids] )
-		_txn += '\n\t\t\u20BFitcoin est %s\n'%''.join( [unicode_number( i ) if i.isdigit() else str( i ) for i in str( txn_native )] )
-		_txn += '\n\t\t0xAether DATA : %s \n'%str( txn_0xA )
+		_txn ='_txn'
 		self._chainLog( chainId , _txn )
 		self.log_data( 'TRANSACTION : %s '%txn_hash )
 
 	def status_log( self , chainId=0 , **kwargs ):
-		_status = '\t\t0xAether Node ID#%s'%str( self.node_name )
-		_status = ''.join( ['\n\t\t%s\t: %s'%( i.upper() , kwargs.get( i ) ) for i in kwargs] )
+		_status='_status'
 		self._chainLog( chainId , _status )
 
 	def fulfilled_log( self , chainId=0 , txn_has='0x' , **kwargs ):
-		_fulfilment = 'Aether Request : %s \u2714'%str( txn_hash )
+		_fulfilment = '_fulfilment'
 		self._consoleLog( chainId , _fulfilment )
 
 	def log_error( self , error_id=0 , *args ):
-		_errStr = self._getErrorStr( error_id )
-		self.log_data( data='ERROR : %s.'%_errStr ) 
-		raise _0xANodeErr( error_id , _errStr , args )
-		quit()
+		raise _configs._0xANodeErr( error_id , self._getErrorStr( error_id ) , args ) and quit()
 
 	def log_warn( self , warning_id=0 ):
-		_warnStr = self._getWarningStr( warning_id )
-		return self.log_data( data='WARNING : %s.'%_warnStr )
+		return True
+		#_warnStr = self._getWarningStr( warning_id )
+		#return self.log_data( data='WARNING : %s.'%_warnStr )
 
 	def log_status( self , status ):
 		_statusStr = 'STATUS : '
@@ -137,12 +119,11 @@ class Logger:
 		return self.log_data( log_name='online' , data=_statusStr )
 
 	def log_data( self , log_name='performance' , data='' , **kwargs ):
-		_logName = {
+		return self._log( '%s/%s'%( log_name , {
 			'online':'online.log',
 			'performance':'performance.log',
 			'transactions':'transactions.log'
-		}.get( log_name , 'performance.log' )
-		return self._log( '%s/%s'%( log_name , _logName ) , data )
+		}.get( log_name , 'performance.log' )) , data )
 
 
 class Configuration:
@@ -214,7 +195,7 @@ class Configuration:
 
 class Aether:
 	def __init__( self ):
-		self.COLORS = COLORING()
+		self._config.Colors = COLORING()
 		self.CN = CONTRACTS()
 
 	def __mkdict( self , _dictName , _dict ) : 
@@ -745,14 +726,14 @@ class Dynamic( Aether , Configuration ):
 
 
 class Node( Dynamic , Logger , Configuration ):
-	def __init__( self , aether_path : str , node_name : str ):
-		self._pathify( aether_path , node_name )
+	def __init__( self , caller, aether_path : str):
+		self.node_name = self._pathify( aether_path )
 		Configuration.__init__( self )
 		Aether.__init__( self )
 		Dynamic.__init__( self )
 
+	# should return the node_name
 	def _pathify( self , aether_path : str , node_name : str ):
-		self.node_name = node_name
 		if not self.node_name:
 			self.log_error( 0 )
 
@@ -777,6 +758,8 @@ class Node( Dynamic , Logger , Configuration ):
 			self.log_error( 2 )
 
 		self._cachePath = '%s/.A-block.json'%self.node_path
+
+		return "Node"
 
 	async def _loop( self ):
 		loop_interrupt = 1

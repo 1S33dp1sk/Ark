@@ -1,7 +1,8 @@
+import _utils
 
 class _0xANodeErr( Exception ):
 	def __init__( self , errorNo:int , errorStr:str , *args:tuple ):
-		self._message = 'ConfigurationError :: Errorno %s -> %s : %s'%( str( errorNo ) , errorStr , _formatArgs( args ) )
+		self._message = 'ConfigurationError :: Errorno %s -> %s : %s'%( str( errorNo ) , errorStr , _utils._formatArgs( args ) )
 		super().__init__( self._message )
 
 class Colors:

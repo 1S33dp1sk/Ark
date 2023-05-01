@@ -17,9 +17,15 @@
 	#define arch_filename "@charms/d.lbb/.lbb\0"
 	#define arch_callport "9999"
 	#define charms_d "@charms/d.\0"
+	#define __cPRG int main(int argc, char const*argv[]) 
+	#define _Call Alpha IXR 
+	#define Call -> 
+	#define Call_1 =1>
+	#define Call_2 =2>
+	#define Call_3 =3>
+	#define _ARK =ARK
 	#define Alpha ixr_h *IXR = 
 	#define __dPRG ixr_h *main(int argc, char const*argv[])
-	#define __cPRG int main(int argc, char const*argv[]) 
 	#define charm_mod __mod_call(charms_d)
 	#define run_mod __combine_str(charm_mod, "run/")
 	#define CHARMS_BASE (ulong)str_rwings(charms_d)
@@ -47,7 +53,7 @@
 	};
 	#define M_ARG(...) (__VA_ARGS__)[0]
 	#define F_ARG(...) (__VA_ARGS__)[1]
-	#define dPRG(...) __cPRG {__VA_ARGS__;}
+	#define dPRG(...)  __cPRG {__VA_ARGS__;}
 	#define mod(...) mod_##__VA_ARGS__
 	#define readme(x) #x##"/README.md"
 	#define __readme(x){\

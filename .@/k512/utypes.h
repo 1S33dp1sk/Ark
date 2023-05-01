@@ -362,7 +362,7 @@ dPRG(
 				char const *c_name;
 				uchar const *c_ref;
 				char const *prg_path;
-				char * const * prg_args;
+				const char **prg_args;
 				char const *prg_handler;
 				struct __program_d* __next;
 			};
@@ -372,7 +372,7 @@ dPRG(
 		#define dprg_out(x) ((char const *)x->prg_out)
 		#define dprg_handler(x) ((char const *)x->prg_handler)
 		#define dprg_run(x,...) {\
-			printf("running : %s|%s\n",#x, x.prg_path);\
+			printf("\n Ark @%s\n:: %s ::: %s\n", #x, x.prg_path, #__VA_ARGS__);\
 			char * const t[3] = {x.prg_path, #__VA_ARGS__ ,NULL};\
 			execve(x.prg_path, t, ne);\
 		}

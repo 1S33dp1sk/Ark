@@ -1,7 +1,7 @@
-/// configurations \\\
-start or run a program in `ARK`
+/// call \\\
+load or run a program in `ARK`
 
 dPRG(
-	program(_start_cfg, IXR&->wrapper.sh, __ARGS__)
-	dprg_run(_start_cfg)
+	program(_start_cfg, IXR&->wrapper.sh)
+	dprg_run(_start_cfg, @charms/d.run/hub/hello_world.py Hello From Ark)
 )

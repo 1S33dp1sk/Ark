@@ -1,5 +1,0 @@
-
-
-dPRG(
-	aip_request("localhost", __VARGS__ )
-)

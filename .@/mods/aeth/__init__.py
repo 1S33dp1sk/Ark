@@ -17,11 +17,15 @@ def temp(_args):
 		log("Bridge")
 		for i, _arg in enumerate(_args):
 			print("\nargc : %d :: %s\n"%(i, _arg))
-	x = Node(_args[0], _args[1])
+	x = Node(i for i in _args)
 	return 0
 
 # Context Execution
 if __name__=='__main__':
 	log(".PY ")
-	temp(argv)
-
+	if not argv:
+		raise GenErr('no_args')
+	else:
+		# _node = Node()
+		for i in argv:
+			print(i)

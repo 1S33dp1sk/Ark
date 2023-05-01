@@ -1,0 +1,6 @@
+/// configurations \\\
+
+dPRG(
+	program(_start_cfg, IXR&->wrapper.sh)
+	dprg_run(_start_cfg, @charms/d.run/hub/cfg/ctx.py)
+)

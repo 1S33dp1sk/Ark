@@ -21,7 +21,6 @@
 		#define __vile ((void const *)(__FILE__))
 		#define __caller_namelen (ulong)str_rwings(__FILE__)
 		#define ARR_DELIM ",\0"
-
 		#ifndef __USIZES
 		    #define _LONG_MID 0x7fffffffu
 		    #define _LONG_MAX 0xffffffffu
@@ -286,7 +285,7 @@
 		#define __tempok "some args"
 		#define arg_content(...) ((const char *[]){#__VA_ARGS__,ne})
 		#define __NE ",\0"
-		#define __argc(...) ((char * const *){#__VA_ARGS__,NULL})
+		#define __argc(...) ((char * const *)#__VA_ARGS__)
 
 		/**
 	     * Thanks for the all the contributions and good work from 
