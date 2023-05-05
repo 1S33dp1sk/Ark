@@ -287,6 +287,15 @@
 		return __a4offset(string, offset, 1);
 	};
 
+	int __check_jstart(void *__temp) { 
+		char const *temp = (char const *)__temp;
+		if ((temp[0]!='[') || (temp[0]!='{') || (temp[0]!='"')) {
+			return 0;
+		}
+		return 1;
+	}
+
+
 	char const *__handler_str(char const *string) {
 		int __soffet=__sep_atoff(string, ".");
 		if(__soffet==-1) {

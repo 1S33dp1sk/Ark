@@ -6,9 +6,8 @@
 #ifndef _D_LOG
 	#define _D_LOG 1
 
-	void log_str(char const *__) {
-		write(0,__,str_rwings(__));
-		write(0,"\n",1);
+	void log_str(int __fd,char const *__) {
+		write(__fd,__,str_rwings(__));
 	};
 
 	void arange_var(char const v[4]) {
@@ -324,11 +323,14 @@ dPRG(
 	// };
 
 	void log_program(d_prg *prg) {
-		printf("call : %s", prg->prg_path);
+		printf("call : %s", prg->__);
+		const char *arg = prg->prg_args;
 		ulong c=0;
-		while(prg->prg_args[c]) {
-			printf(" :: %s", prg->prg_args[c]);c+=1;
-		}
+		do {
+			printf(" :: %s\n", arg);
+			c+=1; arg = prg->prg_args;
+			arg=prg->prg_args+=1;
+		}while(arg!=NULL);
 		//printf("!%s\n", prg->prg_handler);
 	};
 

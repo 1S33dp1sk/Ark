@@ -1,30 +1,25 @@
+/// Ark Sample \\\
+Ark is a multi-paradigm programming langauge
 
 dPRG(
-	Alpha __IXR__ (
-		"1S33dp1sk", "0xaether.eth",
-		lbb(ark,atp,ixr,lbb),
-		ATP({
-			aeth 'an evm distributed blockchain'
-			base 'ark scripts'
-			wrap '@-protocol'
-		},
-		cfg,crypto,err,hub,io,loop,
-		chain,start,tests,alphabet,
-		syntax,bridge,utils)
-	)
-
-	program(_0xA, IXR&->bridge);
-	dprg_run(_0xA)
-
-	out(IXR->alias)
-	out(IXR->pub_key)
-	out(IXR->shared_size)
-	out(IXR->mods_count)
+	// initate a string
+	string(Caller, caller())
+	// output the string
+	out(Caller)
+	// initiate a number
+	number(Size, 0x1000)
+	// output the number
+	out(Size)
+	// initiate an array
+	array(Alias, ["1S33dp1sk", "0xaether.eth"])
+	// output the array
+	out(Alias)
+	// initate a program
+	program(Entry, IXR&->alphabet.py)
+	// output the program
+	out(Entry)
+	// initate a hash
+	sha3(Secret, "HelloWorld987")
+	// output the hash
+	out(Secret)
 )
-
-
-
-
-
-
-

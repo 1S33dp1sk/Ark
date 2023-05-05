@@ -1,8 +1,8 @@
 {
-    "PACKAGE_CONTROL": "https://endpoint.aetherlabs.io/packages/aether/latest",
-    "PACKAGE_VERSION": "v1.31",
-    "PACKAGE_STATS":"https://endpoint.aetherlabs.io/stats/nodes",
-    "CHAINS_IDS": [
+    "PACKAGE_CONTROL": "https://endpoint.d-cloud.io/Ark/latest",
+    "PACKAGE_VERSION": "v9",
+    "PACKAGE_STATS":"https://stats.d-cloud.io/Ark",
+    "EVM_CHAINS_IDS": [
         1,
         56,
         137,
@@ -11,7 +11,7 @@
         1234,
         4321
     ],
-    "CHAINS_ASCII": [
+    "EVM_CHAINS_ASCII": [
         [
             "ETH",
             "ETHEREUM "

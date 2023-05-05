@@ -44,7 +44,7 @@
 	#define __ATP_AETH "Aether(cid)"
 	#define les __arc_socket
 	#define mor __arc_point
-	#define ptr __arc_pointer
+	#define pnt __arc_pointer
 	#define adr __arc_address
 	#define ATP_SPEC_SIZE (__PASS_MIN_D<<0x3)
 	#define ATP_BUFFER_SIZE (ATP_SPEC_SIZE<<0x3)

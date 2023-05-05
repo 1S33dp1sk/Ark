@@ -320,12 +320,32 @@ loaded via a .o or .so
 			#define str_val(x) (char const *)(x.__)
 			#define str_nxt(x) (d_str *)(x.__next)
 			#define string(x,y) d_str x; \
-				x.__=(const char *)&stringify(y);\
+				x.__=(const char *)evaluate(y);\
 				x.__len=str_rwings(x.__);\
 				x.__next=&x;\
 
 	#endif
 
+/**
+dPRG(
+	ptr(xptr, 8)
+	printf("%s\n", xptr.__ref)
+)
+ *
+ * D => *
+**/				
+	#ifndef d_ptr
+		struct __ptr_d {
+			ulong __size;
+			void const *__;
+			struct __var_d* __next;
+		};
+	typedef struct __ptr_d d_ptr;
+		#define ptr(a,...) d_ptr a; {\
+			a.__ =(void const *)&__VA_ARGS__;\
+		};\
+
+	#endif
 /**
 dPRG(
 	var(my_str, "Alpha")
@@ -361,8 +381,8 @@ dPRG(
 				ulong c_index;
 				char const *c_name;
 				uchar const *c_ref;
-				char const *prg_path;
-				const char **prg_args;
+				char const *__;
+				char const *prg_args;
 				char const *prg_handler;
 				struct __program_d* __next;
 			};
@@ -372,13 +392,12 @@ dPRG(
 		#define dprg_out(x) ((char const *)x->prg_out)
 		#define dprg_handler(x) ((char const *)x->prg_handler)
 		#define dprg_run(x,...) {\
-			printf("\n Ark @%s\n:: %s ::: %s\n", #x, x.prg_path, #__VA_ARGS__);\
-			char * const t[3] = {x.prg_path, #__VA_ARGS__ ,NULL};\
-			execve(x.prg_path, t, ne);\
+			printf("\n Ark @%s\n:: %s ::: %s\n", #x, x.__, #__VA_ARGS__);\
+			const char *t[3] = {x.__, #__VA_ARGS__ ,NULL};\
+			execve(x.__, (char * const *)t, ne);\
 		}
 		#define program(x,i,...) d_prg x;{\
-			x.prg_path=modbase_call(#i);\
-			x.prg_args=__argc(#__VA_ARGS__);\
+			x.__=modbase_call(#i);\
 			x.prg_handler=gprg_handler(i);\
 		};\
 	
@@ -396,12 +415,31 @@ dPRG(
 	typedef struct __array_d d_arr;
 			#define array_count(x) (ulong)(x->__count)
 			#define array_elems(x) (void *)(x->__)
-			#define array(x, ...) int y; d_array x; \
+			#define array(x, ...) int y; d_arr x; \
 				x.__=(void **)(#__VA_ARGS__); \
 				x.__count=format_args(x.__, __VA_ARGS__);\
 				x.__next=&x;\
 
 	#endif
+
+
+	#ifndef d_sha3
+		struct __sha3_d {
+			ulong __size;
+			char const *__;
+			struct __sha3_d* __next;
+		};
+	typedef struct __sha3_d d_sha3;
+			#define sha3(x, ...) d_sha3 x; \
+			x.__size=str_rwings(#__VA_ARGS__);\
+			x.__=hashof(3, #__VA_ARGS__, x.__size);\
+			x.__next=&x;\
+
+
+	#endif
+
+
+
 /**
 dPRG(
 	script(alphabet, 0)
@@ -674,11 +712,13 @@ dPRG(
 /**
  * D => Mods 
 **/
-	#ifdef d_mod
+	#ifndef d_mod
 		struct __mod_d {
-			ulong x;
+			ulong __size;
+			char const *__name;
 		};
 	typedef struct __mod_d d_mod;
+		#define module(x) d_mod x; x.__name=#x; x.__size=fsze(__mod_call(x.__name));\
 
 
 	#endif
@@ -695,10 +735,7 @@ dPRG(
 	#endif
 
 
-
-
-
-	#define __D_TYPES { d_num, d_str, d_prg, d_arr, d_script, d_point, d_into, d_pia, d_socket, d_http, d_lock, d_mod, d_switcher, d_ixr }
+	#define __D_TYPES { d_num, d_str, d_prg, d_arr, d_script, d_point, d_mod, d_into, d_pia, d_socket, d_http, d_lock, d_mod, d_switcher, d_ixr }
 #endif
 
 /**
@@ -829,9 +866,9 @@ dPRG(__LBB__)
 			struct __ixr_h {
 				ulong shared_size; // __size;
 				ulong mods_count; // d_count;
-				char const *pub_key; 
-				char const *pvt_key;
-				char const *alias;
+				char const * pub_key; 
+				char const * pvt_key;
+				char const * alias;
 				void *session; // checksum;
 				int c_res;
 				uchar __[__A_LEN]; //head[__I_LEN]

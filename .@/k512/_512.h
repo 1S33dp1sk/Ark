@@ -185,20 +185,44 @@
 				atp_data * : char[4096],\
 				default:"unknown")
 
-		#define fmt_out(x) log_str(_Generic((x), \
+		#define fmt_out(x) log_str(0,_Generic((x), \
 			d_num:(char const *)(x.__),\
 			d_str:(char const *)(x.__),\
 			d_arr:(char const *)(x.__),\
+			d_prg:(char const *)(x.__),\
 			default:__NADA__\
 		));
 
-		#define out_fmt(x) log_str(_Generic((x), \
-			d_num:"@number",\
-			d_str:"@string",\
-			d_arr:"@array",\
-			default:"@dPRG"));
+		/**
+		 * while out formatting, display any of the 
+		 * structure elements by defining them here.
+		**/
+		#define out_fmt(x) _Generic((x), \
+			d_num:x.__,\
+			d_str:x.__,\
+			d_sha3:(char const *)x.__,\
+			d_arr:(char const *)x.__,\
+			d_prg:(char const *)x.__,\
+			default:"@dPRG");
 
-		#define out(x) out_fmt(x);
+		#define __entry_sep "\n"
+		#define __line_endings log_str(0, __entry_sep);
+		#define __page_endings log_str(0, __entry_sep);
+		#define __arr_sep ", "
+		#define __key_sep " : "
+		#define keyis(x,y) {log_str(0,x); log_str(0,__key_sep); out_fmt(y); __line_endings; }
+		#define str_keyis(x,y) { log_str(0,#x); log_str(0,__key_sep); out_fmt(y); __line_endings; }
+		#define arr_keyis(x,y) { log_str(0,#x); log_str(0,__key_sep); log_str(0,y.__); log_str(0,__arr_sep); __line_endings; }
+
+		/** 
+		 * The keyword is `is` here so a 
+		 * key => keyis
+		 * word => wordis
+		 * page => pageis
+		 * ... => ...is
+		**/
+		#define out_kv(x,y) arr_keyis(x,y)
+		#define out(x) out_kv(#x,x);
 
 
 	    #define OUT_ENK_H(fd,x) do { \
@@ -265,6 +289,7 @@
 		#define arr_size(x) ((ulong)(sizeof(x)/sizeof(x[0])))
 		#define elem_hash(x) hash8(0,x,strlen(x))
 		#define wsize(x,y) (sizeof(x)*y)
+		#define wulong(x) (ulong *) ulong x[x];
 		#define ulong_wsize(x) wsize(ulong, x)
 		#define str_wsize(x) wsize(char, x)
 		#define ustr_wsize(x) wsize(uchar, x)
@@ -342,6 +367,7 @@
 		static c_shard *l_shard=&lbb_shard;
 		static m_stat *lbb_mstat=&(lbb_shard.c_stat);
 		static d_into ixr_view;
+		static const d_mod required_mods[2] = {{.__name="constants"},{.__name="tests"}};
 		/********* unistd *********/
 		extern char **environ;
 		/********* http *********/
@@ -513,7 +539,7 @@
 		#ifndef _D_LOG_H
 			#define _D_LOG_H 1
 			// log
-			void log_str(char const *string);
+			void log_str(int file_descriptor, char const *string);
 			void log_dpoint(d_point *dst_point);
 			void log_sstat(s_stat *sfile);
 			void log_mstat(m_stat *mfile);

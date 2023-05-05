@@ -5,7 +5,6 @@
 #ifndef _D_ARCH
 	#define _D_ARCH 1
 
-
 	ulong *__indices(char const *__temp) {
 		__uptr[0] = (ulong)1204912;
 		ulong x[10] = {1204912,120491,12049,1204,5910,385,120,1295410,215019250,19325912510};
@@ -96,7 +95,9 @@
 
 	ulong lexical_args(void **__vars) { 
 		char const *temp = (char const *)__vars;
-		printf("vars : %s\n", temp);
+		#ifdef DEBUG
+			printf("vars : %s\n", temp);
+		#endif
 		ulong arg_count=arr_cdelims(temp);
 		return arg_count;
 	};

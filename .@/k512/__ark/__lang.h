@@ -18,11 +18,10 @@
 	#define arch_callport "9999"
 	#define charms_d "@charms/d.\0"
 	#define __cPRG int main(int argc, char const*argv[]) 
-	#define _Call Alpha IXR 
-	#define Call -> 
-	#define Call_1 =1>
-	#define Call_2 =2>
-	#define Call_3 =3>
+	#define _Call -> 
+	#define _Call_1 =1>
+	#define _Call_2 =2>
+	#define _Call_3 =3>
 	#define _ARK =ARK
 	#define Alpha ixr_h *IXR = 
 	#define __dPRG ixr_h *main(int argc, char const*argv[])
@@ -43,6 +42,43 @@
 	#define __TERMINAL_PAGE_CLEAR "\n\n\n\n\n\n\n"
 	#define ATP __ATP__
 	#define __ARK__ __LBB__ ATP
+/**
+ * The coefficient KOV
+ * a KOV number determines the base sizes of a system
+ * instead of arbitrary choosing lengths and values to save
+ * to memory which might include complex and semmingly random
+ * padding functions and memory allocation techniques. Perhaps,
+ * it will be much simplier if we determine a segmentation formula
+ * in which we can let systems adapt based on variables and not-preset
+ * hardware instructions. 
+ * 
+ * 
+ * a simple KOV=1
+ * 
+ * where the resulting memory spaces can range 
+ * 	K<<n where n=3*i and i iters from 1-4
+ * 
+ * organizing the memory spaces requires a strict 
+ * format in which any interpreter or loader can 
+ * decode, thus we can define for a `kov=1`
+ * 
+ * [i = 1] Key : Value (8-bytes)
+ * [i = 2] Key : Reference (64-bytes)
+ * [i = 3] Key : Certificate (512-bytes)
+ * [i = 4] Key : Linked-Binary-Book (4096-bytes)
+ * 
+ * However, implementing a decoder functions which accepts different
+ * sizes with the same formats, in-practice, leads to security issues, 
+ * thus forward variable formats are much more suitable and they
+ * provide a more roboust, effective communication adaptive protocol.
+ * 
+ **/
+
+	#define lbb_putAddr(a,b) __TRAV(\n, lbb##a=:#b)
+	#define lbb_putPath(a,b) __TRAV(\n,#a:=b)
+	#define lbb_putJson(a,b) __TRAV(,#a:b)
+	#define lbb_putVar(a,b) __TRAV(,#a=#b)
+	#define lbb_putTag(a,b) __TRAV(\n<a>b,</a>)
 	#define handler *(*_fname)(void *x) {\
 		m_stat ms = (m_stat *)(aptr);\
 		log_mstat(ms);\
@@ -122,6 +158,10 @@
 	#define __DPRG__(...) __LBB__(__VA_ARGS__) __dPER
 	#define __init_method__(x, ...) x==0?&info:&zero;
 	#define __INFO__(x,...) { info(); }
+	#define dFUN(x,y,...) static y (x)() __VA_ARGS__;
+
+
+
 	#define Ark(x, ...) {\
 		__ASCII(3, #x);\
 		__ASCII(0, _Generic((__VA_ARGS__[0]), \
@@ -131,7 +171,7 @@
 			d_into const *: "D-Program",\
 			d_ark const *: dark(int),\
 			IXR: "Indexer => ",\
-		default:"default"));\
+			default:"default"));\
 	};
 	#define gprg_handler(...) ((char const *)__handler_str(#__VA_ARGS__))
 	#define ARGS(...) __store(__VA_ARGS__) 

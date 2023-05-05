@@ -4,7 +4,7 @@
 #ifndef _D_HASH
 	#define _D_HASH 1
 
-		#define __size_u64 sizeof(uint64_t)
+		#define __size_u64 sizeof(ulong)
         #define __sha3_k_sponge_w (((1600)/8)/__size_u64) //bits to byte
 	    struct __sha3_context {
 	        uint64_t saved;             
@@ -43,8 +43,10 @@
 		}
 	};
 
+
 	void __sha3_str(char *buffer, uint8_t *__hash, unsigned __len) {
 		char __[3];
+		buffer[0]='0';buffer[1]='x';buffer=&buffer[2];
 		for (int i=0;i<__len;i+=1) {
 			__hex_bytes(__hash[i], __);
 			strncat(buffer, (char *)__, 3);
