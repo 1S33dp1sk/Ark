@@ -1,29 +1,47 @@
+/**
+let's talk Ark.
 
+Spaces AND Tabs are here to make the formatting prettier
+but are not required whatsoever.
 
-dFUN(myfunc, char const *, {
+Any program always starts with `dPRG` 
+ a simple sequential leveled interepreter based execution point/er.
+**/
 
-	return "mrkj";
-})
-
-dFUN(func2, int, {
-
-	return 23;
-})
-
+/**
 
 dPRG(
-	__LBB__
-		lbb_putAddr(0x9130249204, 0x918392482)
-		lbb_putVar(var, "hello")
-		lbb_putVar(anothr, 1241241)
-		lbb_putJson(cool, "nice")
-		lbb_putJson(caller, caller())
-		lbb_putPath(temp, __FILE__)
-		lbb_putTag(html, "MyHtmlDoc")
-	printf("caller : %s\n", caller);
-	printf("Hello\n");
-	printf("Myfunction : %s\n", myfunc());
-	printf("Second Function : %d\n", func2());
-) 
+	char const *x = "temp2", *y="temp";
+	char const *__[] = {y,x, NULL};
+	__LBB__ 
+		Modules(aeth, alias)
+		__terop(0,2,__)
+)
+
+**/
+
+dPRG(
+	char const *x = "temp2", *y="temp";
+	char const *__[] = {y,x, NULL};
+	__LBB__ 
+		Modules(aeth, alias)
+		__terop(0,2,__)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

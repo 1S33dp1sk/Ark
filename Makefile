@@ -37,22 +37,8 @@ lbb@charms:=${@charms}/d.lbb
 out@charms:=${@charms}/d.out
 #source_att
 src@charms:=${@charms}/d.src
-#objects_att
-# obj@charms:=${@charms}/d.obj
-#libraries_att
-# lib@charms:=${@charms}/d.lib
-#executables_att
+#runnables_att
 run@charms:=${@charms}/d.run
-#contracts_att
-# sol@charms:=${@charms}/d.sol
-#variables_att
-var@charms:=${@charms}/d.var
-#misc_att
-exs@charms:=${@charms}/executables
-#header files : .h
-# headers@d:=${src@charms}/headers
-#compile files : .c
-compile@d:=${src@charms}/compile
 #####################################
 #			Shortcuts				#
 #####################################
@@ -73,6 +59,7 @@ clean: __clean_charms__
 #####################################
 #			Executables@			#
 #####################################
+@arch:=@${__host}
 ark_o:=${out@charms}/ARK.o
 ark@k512:=${@k512}/ARK
 src_ark:=${src@charms}/ark.c
@@ -85,7 +72,6 @@ headers@src:=${src@charms}/headers
 k512_utypes:=${src@charms}/utypes.h
 k512_standard:=${src@charms}/standard.h
 k512_header:=${src@charms}/karch512.h
-@arch:=@${__host}
 karch_build:=${@1c}/k512${@arch}
 cloud_d_build:=${@1c}/d-cloud${@arch}
 fields_build:=${@1c}/flds${@arch}
@@ -146,6 +132,8 @@ ark_intro:
 
 __ark__:  
 	cc -c -fpic ${src@charms}/ark.c -o ${out@charms}/ark.o
+
+
 
 ARK: ark_intro _ark_in _ark_out
 # 	./ARK ${ark@src}/points
@@ -287,7 +275,7 @@ mod_aeth:
 	mkdir ${aeth__}; cp -r ${__aeth}/* ${aeth__};
 	chmod u+rwx ${aeth__}//*;
 
-mods_intro:
+into_mods:
 	@printf "\n{MODS}\n"
 
 _mods:
@@ -295,8 +283,17 @@ _mods:
 	chmod u+x ${run@charms}//*
 	chmod u+x ${run@charms}/*
 	chmod u+x ${run@charms}/EchoRPC/*
+
+mods_:
+	${@Ark}/@
+	if [ -f ${@Ark}/modules ]; then cat ${@Ark}/modules; fi
+
+outro_mods:
+	@printf "\nWelcome to (d-☁️.io)\n"
+
+mods_outro: mods_ #Welcome to (d-☁️.io)
 # $(__mods__)
-mods_init: mods_intro _mods
+mods_intro: into_mods _mods
 #################################
 #		  Packaging(3C)		    #
 #################################
@@ -359,13 +356,11 @@ _3c_check:
 
 _check_charms_: \
 	build_3c\
-	mods_init\
+	mods_intro\
 	libaether\
 	ARK\
-	outro
+	mods_outro
 
-outro:
-	@printf "\nWelcome to (d-☁️.io)\n"
 
 
 build_3c: __ccc_dirs__
@@ -379,7 +374,6 @@ build_3c: __ccc_dirs__
 	cp ${__d__arc} ${ark@src}
 	cp ${@k512}/__karch__  ${src@charms}/karch512.h
 
-
 package:
 	if [ -d ${__cdir}/package ]; then rm -rf ${__cdir}/package; fi
 	if [ -f ${__cdir}/package.zip ]; then rm -rf ${__cdir}/package.zip; fi
@@ -387,7 +381,8 @@ package:
 	cp -r ${__@}/* ${__cdir}/package/@source
 	cp ${__cdir}/Makefile ${__cdir}/package
 	zip -r package.zip package/*
-	rm -rf package 
+	rm -rf package
+
 # #################################
 # #			Hash Bar			#
 # #################################

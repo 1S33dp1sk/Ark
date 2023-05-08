@@ -15,6 +15,15 @@
 		return __uptr;
 	};
 
+	char const *__terop(int ladder_s, int ladder_e, char const **__ter) {
+		ulong __tlen=0;
+		while(ladder_e-->ladder_s) {
+			__tlen+=str_rwings(__ter[ladder_e]);
+			printf("%s\n", __ter[ladder_e]);
+		};
+		printf("total length : %lu\n", __tlen);
+		return __ter[0];	
+	}
 
 	char const *__address(int __level, char const *__filename) {
 
@@ -418,7 +427,7 @@ void const **variable_args(ulong d_count, char const *__str, char const *__delim
 			printf("string : %lu :: %s\n", _c, __str);
 			base[_c]=(char const *)temp;
 		} while (_c<d_count-1);
-		return base;
+		return &base[0];
 	};
 
 

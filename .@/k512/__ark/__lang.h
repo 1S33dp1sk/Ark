@@ -34,14 +34,16 @@
     #define ixr_pub_address	((char const *)___header.pub_key)
 	#define checkef_lo ((ulong)__sokres(arch_callport))
 	#define checkef (ulong)__stres(arch_filename)
-	#define check_archfile (get_mstat(arch_filename, lbb_mstat)!=1)
+	#define check_archfile(x) (get_mstat(x, lbb_mstat)!=1)
 	#define __r_operation &
 	#define __into_call "&->"
 	#define __t_operation 3
 	#define __ECHO__ __TEXT(0, Ark)
-	#define __TERMINAL_PAGE_CLEAR "\n\n\n\n\n\n\n"
+	#define __PAGE_CLEAR "\n\n\n\n\n\n\n"
 	#define ATP __ATP__
 	#define __ARK__ __LBB__ ATP
+	#define dFUN(x,y,...) static y (x)() __VA_ARGS__;
+	#define lang(intrpt, ...) int intrpt;
 /**
  * The coefficient KOV
  * a KOV number determines the base sizes of a system
@@ -73,12 +75,13 @@
  * provide a more roboust, effective communication adaptive protocol.
  * 
  **/
-
-	#define lbb_putAddr(a,b) __TRAV(\n, lbb##a=:#b)
-	#define lbb_putPath(a,b) __TRAV(\n,#a:=b)
-	#define lbb_putJson(a,b) __TRAV(,#a:b)
-	#define lbb_putVar(a,b) __TRAV(,#a=#b)
-	#define lbb_putTag(a,b) __TRAV(\n<a>b,</a>)
+	#define fld_out(x, fmt, ...) 
+	#define lbb_out(fmt, ...) __TRAV(3, \n, json_handler(__VA_ARGS__))
+	#define lbb_putAddr(a,b) __TRAV(3, \n, lbb##a=:#b)
+	#define lbb_putPath(a,b) __TRAV(3, \n,#a:=b)
+	#define lbb_putJson(a,b) __TRAV(3, \n,#a:b)
+	#define lbb_putVar(a,b) __TRAV(3, \n,#a=#b)
+	#define lbb_putTag(a,b) __TRAV(3, \n<a>b,</a>)
 	#define handler *(*_fname)(void *x) {\
 		m_stat ms = (m_stat *)(aptr);\
 		log_mstat(ms);\
@@ -132,20 +135,23 @@
 		return ne__;\
 	};
 	#define __shard__() {\
-		printf("lbb<%s> getting shard .::. \n",mac_address);\
+		printf("lbb=1>getting shard\t.:%s:.\n",uni_address);\
+		printf("lbb=2>getting alias\t(%s)\n", loc_address);\
+		printf("lbb=3>getting domain\t//%s\n", glo_address);\
+		printf("lbb=4>getting network\t:%s\n", mac_address );\
 		memset(lbb_mstat, 0, sizeof(m_stat));\
 		memset(l_shard,0,sizeof(c_shard));\
 	};
 	#define __dbuf__() {\
 		memset(&dbuf, 0, sizeof(dbuf));\
 	};
-	#define __arch__() !check_archfile?arch_att(arch_filename, 3, __API_LEN):0
+	#define __arch__() !check_archfile(arch_filename)?arch_att(arch_filename, 3, __API_LEN):0
 	#define __call__(a,l) str_a4offset(a, sep_offset(#a, l))+str_rwings(l)-1
 	#define __call_base(...) __call__(__VA_ARGS__, __into_call)
 	#define modbase_call(x) __combine_str(run_mod, __call_base(x))
 	#define Scratch(...) printf("%s\n", modbase_call(#__VA_ARGS__))
 	#define s_into(x) (char const *)(x)[0]
-    #define info() __ASCII(__os_name);__ASCII(__FILE__)
+    #define info() __ASCII(1,__os_name);__ASCII(1,__FILE__)
 	#define zero(x)  ((char const *)(&(zero_address)));
 	#define d512_read(d,o) (char const *)__readb(512,fd,fo*512)
 	#define sz8(x)		((ulong)__8sz(x))
@@ -158,9 +164,8 @@
 	#define __DPRG__(...) __LBB__(__VA_ARGS__) __dPER
 	#define __init_method__(x, ...) x==0?&info:&zero;
 	#define __INFO__(x,...) { info(); }
-	#define dFUN(x,y,...) static y (x)() __VA_ARGS__;
 
-
+	#define Modules(...) arch_att("modules", 1, 512);
 
 	#define Ark(x, ...) {\
 		__ASCII(3, #x);\
@@ -180,15 +185,15 @@
 	#define TRAVERSE(a,b,...) int x=a;do {\
 		OUT_ENK_A(x, __VA_ARGS__);x+=1;\
 	}while(x<b);
-	#define __TRAV(a,b) do {\
-		OUT_ENK_A(3, #a);\
-		OUT_ENK_A(3, #b);\
+	#define __TRAV(x,a,b) do {\
+		OUT_ENK_A(x, #a);\
+		OUT_ENK_A(x, #b);\
 	} __dPER;
 	#define __IXR__(a,b,...) \
 		&___header;\
 		___header.alias = __ixr_strt(#a);\
 		___header.pvt_key = #b;\
-		__TRAV(@charms:a, lbb<b>);\
+		__TRAV(3, @charms:a, lbb<b>);\
 		__VA_ARGS__;\
 		indexer_pause();\
 

@@ -1,6 +1,34 @@
 /// call \\\
 load or run a program in `ARK`
 
+
+/**
+Functions can be defined in Ark scripts, to be called at a later EXP (execution point)
+The definitive context in which a function can be defined consists of the `dFUN` keyword
+followed by the name of the function, function params, and function logic.
+**/
+
+dFUN(myfunc, char const *, {
+
+	return "mrkj";
+})
+
+/** 
+One of the beauty points of Ark is the `lang` operator
+The initial Ark script is C89-friendly but any other interpreter
+can be called from within.
+**/
+
+lang(py_print,
+	return "ok";
+)
+
+dFUN(json_handler, char const *, {
+	
+	return "ok";
+})
+
+
 dPRG(
 	program(_start_cfg, IXR&->wrapper.sh)
 	dprg_run(_start_cfg, @charms/d.run/hub/hello_world.py From Ark)

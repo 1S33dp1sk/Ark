@@ -1,8 +1,63 @@
 /// lbb & distributed storage \\\
+Linked Binary Books & CDNs
 
 
 dPRG(
+	/**
+	An entry loader defined by Ark, such as the *lbb* dictate the principle. 
+	Ofwhich execution processes will be ran according to the entry. An entry
+	is composed of either an init, or a usage:
+		1. __LBB__
+		2.	 LBB
+	**/
 	__LBB__;
-)
+		/**
+		Internal modules are also available to be developed, 
+		which allows for other principles to be included and defined as seen fit.
+		Other loaders exist such as :
+			(ATP, __ATP__)
+			(IXR, __IXR__) which is loaded by default.
+		loaders can be "concatenated".
+		**/
+		lbb_out(JSON,
+			var : caller(),
+			another_var : 192501259,
+			keyval : "Awesome!",
+			_file : __FILE__,
+			_render :
+				<html>
+					<h1> 
+						Hello From Ark 
+					</h1> 
+				</html>
+		)
+		/**
+		The lbb can output many formats, and can run programs to format outputs
+		JSON format in the above example.
+		**/
+) 
 
+
+
+
+
+
+
+
+
+
+
+
+
+/**	lbbs define accounts, account information, and account contibution, 
+	consider the following lbb account :
+ 		* lbb3x391015-139r1391-f193j19
+ 		* this account address contains just enough 
+		* information to be 
+		* lbb0x --encoded or decoded into 
+		* lbb1x --bridge/pipe to and from
+		* lbb2x --connected user and host
+		* lbb3x --referenced ...
+		*
+**/
 

@@ -244,7 +244,10 @@
 
 	    #define dout(fn, x) {\
 	    ulong temp=str_rwings(#x);\
-	    write(!__exact_match(fn, "mach")?!__exact_match(fn, "local")?3:2:1,#x,temp);\
+	    write(!__exact_match(fn, "host")\
+	    	?!__exact_match(fn, "local")\
+	    	?!__exact_match(fn, "domain")\
+	    	?!__exact_match(fn, "network")?4:3:2:0:1,#x,temp);\
 		}
 
 		#define __ark_next(x) (x->__next)
@@ -435,7 +438,7 @@
 		    char *__s_hash(char *__key, char *__hashkey);
 		    ulong blaz_hash(char const *__data);
 		    static void keccakf(uint64_t s[25]);
-		    sha3_r sha3_init(void *p,ulong bit_size);
+		    sha3_r sha3_init(void *p,unsigned bit_size);
 		    sha3_f sha3_set_flags(void *p,sha3_f flags);
 		    void sha3_update(void *p,void const *buf_in,ulong len);
 		    void const *sha3_finalize(void *ctx_p);

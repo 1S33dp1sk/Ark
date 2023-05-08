@@ -939,14 +939,36 @@ dPRG(__LBB__)
 				arc_node=512
 			};
 		typedef enum __arc_types arc_type;
+				#define __alias__ "1S33dp1sk"
+				#define __network__ "v1_ark"
+				#define __domain__ "dcloud.io"
 				#define base_address(l) __address(l,__FILE__)
-				#define mac_address		__address(0, __FILE__)
-				#define loc_address		__address(1, __FILE__)
-				#define glo_address		__address(2, __FILE__)
+				#define mac_address		__address(0, __alias__)
+				#define loc_address		__address(1, __network__)
+				#define glo_address		__address(2, __domain__)
 				#define uni_address		__address(3, __FILE__)
 
 
 		#endif
+
+		#ifndef arc_terl
+			struct __arc_terl {
+				int _s;
+				int _e;
+				void const **__ter;
+				struct __arc_terl* __next;
+			};
+		typedef struct __arc_terl arctel;
+			#define s_ladder(x) x._s
+			#define e_ladder(x) x._e
+			#define laddr(x,e,...) arctel x; {\
+				x._s=0;x._e=e;\
+				x.__ter={#__VA_ARGS__};\
+				x.__next=&x;\
+	}
+
+		#endif
+
 
 		#ifndef arc_st
 			struct __arc_st {

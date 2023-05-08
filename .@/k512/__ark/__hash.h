@@ -3,27 +3,27 @@
 
 #ifndef _D_HASH
 	#define _D_HASH 1
-
-		#define __size_u64 sizeof(ulong)
-        #define __sha3_k_sponge_w (((1600)/8)/__size_u64) //bits to byte
-	    struct __sha3_context {
-	        uint64_t saved;             
-	                // remainder of input string that we didn't consume yet
-	        union {                     
-	            uint64_t s[__sha3_k_sponge_w];
-	            uint8_t sb[__sha3_k_sponge_w*8];
-	        } u;                        
-	                // keccak's state 
-	        unsigned byte_idx;         
-	                // 0..7--the next byte after the set one (starts from 0; 0--none are buffered) 
-	        unsigned word_idx;         
-	                // 0..24--the next word to integrate input (starts from 0)
-	        unsigned cap_words;
-	                // the double size of the hash output in words (e.g. 16 for Keccak 512)
-	    };
+	#ifndef __sha3_rot_l_64
+		#define __sha3_rot_l_64(x, y) (((x) << (y)) | ((x) >> ((sizeof(uint64_t)*8) - (y))))
+    #endif
+	#define __size_u64 sizeof(uint64_t)
+    #define __sha3_k_sponge_w (((1600)/8)/sizeof(uint64_t)) //bits to byte
+    struct __sha3_context {
+		uint64_t saved;             /* the portion of the input message that we didn't consume yet */
+		union {                     /* Keccak's state */
+			uint64_t s[__sha3_k_sponge_w];
+			uint8_t sb[__sha3_k_sponge_w * 8];
+		} u;
+		unsigned byteIndex;         /* 0..7--the next byte after the set one
+		                         * (starts from 0; 0--none are buffered) */
+		unsigned wordIndex;         /* 0..24--the next word to integrate input
+		                         * (starts from 0) */
+		unsigned capacityWords;     /* the double size of the hash output in
+		                         * words (e.g. 16 for Keccak 512) */
+    };
     typedef struct __sha3_context sha3_context;
-	        #define __sha3_rot_l_64(x, y) (((x)<<(y))|((x)>>((__size_u64*8)-(y))))
-	    static sha3_context __sha3;
+
+    static sha3_context __sha3;
     
 
 	void __hex_bytes(uint8_t __c, char __s[3]) {
@@ -50,7 +50,6 @@
 		for (int i=0;i<__len;i+=1) {
 			__hex_bytes(__hash[i], __);
 			strncat(buffer, (char *)__, 3);
-			// memmove(buffer+i, (char *)__, 3);
 		};
 	};
 
@@ -130,18 +129,14 @@
 	/**
 	[initiate | reset] the sha3 context
 	**/
-	sha3_r sha3_init(void *priv, ulong bit_size) {
-		sha3_context *ctx = (sha3_context *) priv;
-		if( bit_size != 256 && bit_size != 384 && bit_size != 512 ) {
-			return __sha3_u_n;
-		};
-		memset(ctx ,0 , __size_sha3_context);
-		#ifdef H_DEBUG
-			printf("ctx -> cap_words : %lu\n", (2*bit_size/(8*__size_u64)));
-		#endif
-		ctx->cap_words=(2*bit_size/(8*__size_u64));
-		return __sha3_u_ok;
-	};
+    sha3_r sha3_init(void *priv, unsigned bitSize) {
+        sha3_context *ctx = (sha3_context *) priv;
+        if( bitSize != 256 && bitSize != 384 && bitSize != 512 )
+            return __sha3_u_n;
+        memset(ctx, 0, sizeof(*ctx));
+        ctx->capacityWords = 2 * bitSize / (8 * sizeof(uint64_t));
+        return __sha3_u_ok;
+    }
 	/**
 	[set | unset] keccak flag
 	 *
@@ -149,7 +144,7 @@
 	sha3_f sha3_set_flags(void *priv, sha3_f flags) {
 		sha3_context *ctx=(sha3_context *)priv;
 		flags&=__sha3_flag_keccak__;
-		ctx->cap_words|=(flags==__sha3_flag_none__?__sha3_flag_keccak__:0);
+		ctx->capacityWords|=(flags==__sha3_flag_none__?__sha3_flag_keccak__:0);
 		return flags;
 	};
 	/**
@@ -157,158 +152,193 @@
 	 * generally called after `__sha3_k_sponge_w - ctx` -> cap_words words 
 	 * are `XOR()` into the state `s` 
 	**/
-	static void keccakf(uint64_t s[25]) {
-		int i, j, round;
-		uint64_t t, bc[5];
-	#define __sha3_keccak_rounds 24
-		for(round=0; round<__sha3_keccak_rounds; round++) {
-			/* Theta */
-			for(i=0; i<5; i++)
-				bc[i]=s[i]^s[i+5]^s[i+10]^s[i+15]^s[i+20];
+   static void keccakf( uint64_t s[25] ) {
+        int i, j, round;
+        uint64_t t, bc[5];
+    #define KECCAK_ROUNDS 24
 
-			for(i=0; i<5; i++) {
-				t = bc[(i+4)%5]^__sha3_rot_l_64(bc[(i+1)%5], 1);
-				for(j=0; j<25; j+=5)
-					s[j+i]^=t;
-			};
-			/* Rho Pi */
-			t = s[1];
-			for(i=0; i<24; i++) {
-				j=keccakf_piln[i];
-				bc[0]=s[j];
-				s[j]=__sha3_rot_l_64(t, keccakf_rotc[i]);
-				t=bc[0];
-			};
-			/* Chi */
-			for(j=0; j<25; j+=5) {
-				for(i=0; i<5; i++)
-					bc[i]=s[j+i];
-				for(i=0; i<5; i++)
-					s[j+i]^=(~bc[(i+1)%5])&bc[(i+2)%5];
-			};
-			/* Iota */
-			s[0] ^= keccakf_rndc[round];
-		}
-	};
+        for( round = 0; round < KECCAK_ROUNDS; round++ ) {
+
+            /* Theta */
+            for( i = 0; i < 5; i++ )
+                bc[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
+
+            for( i = 0; i < 5; i++ ) {
+                t = bc[( i + 4 ) % 5] ^ __sha3_rot_l_64( bc[( i + 1 ) % 5], 1 );
+                for( j = 0; j < 25; j += 5 )
+                    s[j + i] ^= t;
+            }
+
+            /* Rho Pi */
+            t = s[1];
+            for( i = 0; i < 24; i++ ) {
+                j = keccakf_piln[i];
+                bc[0] = s[j];
+                s[j] = __sha3_rot_l_64( t, keccakf_rotc[i] );
+                t = bc[0];
+            }
+
+            /* Chi */
+            for( j = 0; j < 25; j += 5 ) {
+                for( i = 0; i < 5; i++ )
+                    bc[i] = s[j + i];
+                for( i = 0; i < 5; i++ )
+                    s[j + i] ^= ( ~bc[( i + 1 ) % 5] ) & bc[( i + 2 ) % 5];
+            }
+
+            /* Iota */
+            s[0] ^= keccakf_rndc[round];
+        }
+    };
 	/**
 	hash the buffer in ctx
 	 *
 	**/
-	void sha3_update(void *priv, void const *buf_inp, ulong len) {
-		sha3_context *ctx=(sha3_context *)priv;
-				// cast to context from voidptr
-		unsigned tail, old_tail=(8-ctx->byte_idx)&7; // reminder for word 0...7 
-		size_t words, i;
-		const uint8_t *buf=buf_inp;
-		__sha3_trace_buf("called to update with:", buf, len);
-		__sha3_assert(ctx->byte_idx<8);
-		__sha3_assert(ctx->word_idx<sizeof(ctx-> u.s)/sizeof(ctx->u.s[0]));
-		if(len<old_tail) {        
-			// have no complete word or haven't started the word yet 
-			__sha3_trace("because %d<%d, store it and return", (unsigned)len, (unsigned)old_tail);
-			// endian-independent
-			while (len--)
-				ctx->saved|=(uint64_t)(*(buf++))<<((ctx->byte_idx++)*8);
-			__sha3_assert(ctx->byte_idx<8);
-			return;
-		};
-		if(old_tail) {
-			// process a single word
-			__sha3_trace("completing one word with %d bytes", (uns)old_tail);
-			// endian-independent
-			len-=old_tail;
-			while(old_tail--)
-				ctx->saved|=(uint64_t)(*(buf++))<<((ctx->byte_idx++)*8);
-			/* now ready to add saved to the sponge */
-			ctx->u.s[ctx->word_idx]^=ctx->saved;
-			__sha3_assert(ctx->byte_idx==8);
-			ctx->byte_idx=0;
-			ctx->saved=0;
-			if(++ctx->word_idx==(__sha3_k_sponge_w-__sha3_cw(ctx->cap_words))) {
-				keccakf(ctx->u.s);
-				ctx->word_idx = 0;
-			};
-		};
-		/* now work in full words directly from input */
-		__sha3_assert(ctx->byte_idx==0);
-		words=len/__size_u64;
-		tail=len-words*__size_u64;
-		__sha3_trace("have %d full words to process", (uns)words );
-		for(i=0; i<words; i++, buf+=__size_u64) {
-			const uint64_t t = (uint64_t) (buf[0]) |
-					((uint64_t) (buf[1]) << 8 * 1) |
-					((uint64_t) (buf[2]) << 8 * 2) |
-					((uint64_t) (buf[3]) << 8 * 3) |
-					((uint64_t) (buf[4]) << 8 * 4) |
-					((uint64_t) (buf[5]) << 8 * 5) |
-					((uint64_t) (buf[6]) << 8 * 6) |
-					((uint64_t) (buf[7]) << 8 * 7);
-	#if defined(__x86_64__) || defined(__i386__)
-			__sha3_assert(memcmp(&t,buf,8)==0);
-	#endif
-			ctx->u.s[ctx->word_idx]^=t;
-			if(++ctx->word_idx==(__sha3_k_sponge_w-__sha3_cw(ctx->cap_words))){
-				keccakf(ctx->u.s);
-				ctx->word_idx=0;
-			};
-		};
-		__sha3_trace("have %d bytes left to process, save them", (unsigned)tail );
-		/* finally, save the partial word */
-		__sha3_assert(ctx->byte_idx==0&&tail<8);
-		while (tail--) {
-			__sha3_trace("Store byte %02x '%c'", *buf, *buf);
-			ctx->saved|=(uint64_t)(*(buf++))<<((ctx->byte_idx++)*8);
-		}
-		__sha3_assert(ctx->byte_idx<8);
-		__sha3_trace( "Have saved=0x%016" PRIx64 " at the end", ctx->saved );
-	};
+    void sha3_update( void *priv, void const *bufIn, size_t len ) {
+        sha3_context *ctx = (sha3_context *) priv;
+
+        /* 0...7 -- how much is needed to have a word */
+        unsigned old_tail = (8 - ctx->byteIndex) & 7;
+
+        size_t words;
+        unsigned tail;
+        size_t i;
+
+        const uint8_t *buf = bufIn;
+
+        __sha3_trace_buf("called to update with:", buf, len);
+
+        __sha3_assert(ctx->byteIndex < 8);
+        __sha3_assert(ctx->wordIndex < sizeof(ctx->u.s) / sizeof(ctx->u.s[0]));
+
+        if(len < old_tail) {        /* have no complete word or haven't started 
+                                     * the word yet */
+            __sha3_trace("because %d<%d, store it and return", (unsigned)len,
+                    (unsigned)old_tail);
+            /* endian-independent code follows: */
+            while (len--)
+                ctx->saved |= (uint64_t) (*(buf++)) << ((ctx->byteIndex++) * 8);
+            __sha3_assert(ctx->byteIndex < 8);
+            return;
+        }
+
+        if(old_tail) {              /* will have one word to process */
+            __sha3_trace("completing one word with %d bytes", (unsigned)old_tail);
+            /* endian-independent code follows: */
+            len -= old_tail;
+            while (old_tail--)
+                ctx->saved |= (uint64_t) (*(buf++)) << ((ctx->byteIndex++) * 8);
+
+            /* now ready to add saved to the sponge */
+            ctx->u.s[ctx->wordIndex] ^= ctx->saved;
+            __sha3_assert(ctx->byteIndex == 8);
+            ctx->byteIndex = 0;
+            ctx->saved = 0;
+            if(++ctx->wordIndex ==
+                    (__sha3_k_sponge_w - __sha3_cw(ctx->capacityWords))) {
+                keccakf(ctx->u.s);
+                ctx->wordIndex = 0;
+            }
+        }
+
+        /* now work in full words directly from input */
+
+        __sha3_assert(ctx->byteIndex == 0);
+
+        words = len / sizeof(uint64_t);
+        tail = len - words * sizeof(uint64_t);
+
+        __sha3_trace("have %d full words to process", (unsigned)words);
+
+        for(i = 0; i < words; i++, buf += sizeof(uint64_t)) {
+            const uint64_t t = (uint64_t) (buf[0]) |
+                    ((uint64_t) (buf[1]) << 8 * 1) |
+                    ((uint64_t) (buf[2]) << 8 * 2) |
+                    ((uint64_t) (buf[3]) << 8 * 3) |
+                    ((uint64_t) (buf[4]) << 8 * 4) |
+                    ((uint64_t) (buf[5]) << 8 * 5) |
+                    ((uint64_t) (buf[6]) << 8 * 6) |
+                    ((uint64_t) (buf[7]) << 8 * 7);
+    
+    #if defined(__x86_64__ ) || defined(__i386__)
+            __sha3_assert(memcmp(&t, buf, 8) == 0);
+    #endif
+            ctx->u.s[ctx->wordIndex] ^= t;
+            if(++ctx->wordIndex ==
+                    (__sha3_k_sponge_w - __sha3_cw(ctx->capacityWords))) {
+                keccakf(ctx->u.s);
+                ctx->wordIndex = 0;
+            }
+        }
+
+        __sha3_trace("have %d bytes left to process, save them", (unsigned)tail);
+
+        /* finally, save the partial word */
+        __sha3_assert(ctx->byteIndex == 0 && tail < 8);
+        while (tail--) {
+            __sha3_trace("Store byte %02x '%c'", *buf, *buf);
+            ctx->saved |= (uint64_t) (*(buf++)) << ((ctx->byteIndex++) * 8);
+        }
+        __sha3_assert(ctx->byteIndex < 8);
+        __sha3_trace("Have saved=0x%016" PRIx64 " at the end", ctx->saved);
+    };
 	/**
 	simply the `update()` with the padding.
 	 * The padding block is 0x01 || 0x00* || 0x80. First 0x01 and last 0x80 
 	 * bytes are always present, but they can be the same byte.
 	**/
-	void const *sha3_finalize(void *priv) {
-		sha3_context *ctx=(sha3_context*)priv;
-		__sha3_trace("called with %d bytes in the buffer", ctx->byte_idx);
-		/* Append 2-bit suffix 01, per SHA-3 spec. Instead of 1 for padding we
-		 * use 1<<2 below. The 0x02 below corresponds to the suffix 01.
-		 * Overall, we feed 0, then 1, and finally 1 to start padding. Without
-		 * M || 01, we would simply use 1 to start padding. */
-		uint64_t t;
-		if( ctx->cap_words & __sha3_k_use_flag ) {
-			/* Keccak version */
-			t = (uint64_t)(((uint64_t)1)<<(ctx->byte_idx*8));
-		}
-		else {
-			/* SHA3 version */
-			t = (uint64_t)(((uint64_t)(0x02|(1<<2)))<<((ctx->byte_idx)*8));
-		};
-		ctx->u.s[ctx->word_idx]^=ctx->saved^t;
-		ctx->u.s[__sha3_k_sponge_w-__sha3_cw(ctx->cap_words)-1]^=__sha3_const(0x8000000000000000UL);
-		keccakf(ctx->u.s);
-		/* Return first bytes of the ctx->s. This conversion is not needed for
-		 * little-endian platforms e.g. wrap with #if !defined(__BYTE_ORDER__)
-		 * || !defined(__ORDER_LITTLE_ENDIAN__) || __BYTE_ORDER__!=__ORDER_LITTLE_ENDIAN__ 
-		 *    ... the conversion below ...
-		 * #endif */
-		{
-			unsigned __i;
-			for(__i=0; __i<__sha3_k_sponge_w; __i++) {
-				const unsigned t1 = (uint32_t) ctx->u.s[__i];
-				const unsigned t2 = (uint32_t) ((ctx->u.s[__i]>>16)>>16);
-				ctx->u.sb[__i*8+0]=(uint8_t)(t1); 
-				ctx->u.sb[__i*8+1]=(uint8_t)(t1>>8);
-				ctx->u.sb[__i*8+2]=(uint8_t)(t1>>16);
-				ctx->u.sb[__i*8+3]=(uint8_t)(t1>>24);
-				ctx->u.sb[__i*8+4]=(uint8_t)(t2); 
-				ctx->u.sb[__i*8+5]=(uint8_t)(t2>>8);
-				ctx->u.sb[__i*8+6]=(uint8_t)(t2>>16);
-				ctx->u.sb[__i*8+7]=(uint8_t)(t2>>24);
-			}
-		}
-		__sha3_trace_buf("hash: (first 32 bytes)", ctx->u.sb, 256/8);
-		return (ctx->u.sb);
-	};
+    void const *sha3_finalize(void *priv) {
+        sha3_context *ctx = (sha3_context *) priv;
+
+        __sha3_trace("called with %d bytes in the buffer", ctx->byteIndex);
+
+        /* Append 2-bit suffix 01, per SHA-3 spec. Instead of 1 for padding we
+         * use 1<<2 below. The 0x02 below corresponds to the suffix 01.
+         * Overall, we feed 0, then 1, and finally 1 to start padding. Without
+         * M || 01, we would simply use 1 to start padding. */
+
+        uint64_t t;
+
+        if( ctx->capacityWords & __sha3_flag_keccak__ ) {
+            /* Keccak version */
+            t = (uint64_t)(((uint64_t) 1) << (ctx->byteIndex * 8));
+        }
+        else {
+            /* SHA3 version */
+            t = (uint64_t)(((uint64_t)(0x02 | (1 << 2))) << ((ctx->byteIndex) * 8));
+        }
+
+        ctx->u.s[ctx->wordIndex] ^= ctx->saved ^ t;
+
+        ctx->u.s[__sha3_k_sponge_w - __sha3_cw(ctx->capacityWords) - 1] ^=
+                __sha3_const(0x8000000000000000UL);
+        keccakf(ctx->u.s);
+
+        /* Return first bytes of the ctx->s. This conversion is not needed for
+         * little-endian platforms e.g. wrap with #if !defined(__BYTE_ORDER__)
+         * || !defined(__ORDER_LITTLE_ENDIAN__) || __BYTE_ORDER__!=__ORDER_LITTLE_ENDIAN__ 
+         *    ... the conversion below ...
+         * #endif */
+        {
+            unsigned i;
+            for(i = 0; i < __sha3_k_sponge_w; i++) {
+                const unsigned t1 = (uint32_t) ctx->u.s[i];
+                const unsigned t2 = (uint32_t) ((ctx->u.s[i] >> 16) >> 16);
+                ctx->u.sb[i * 8 + 0] = (uint8_t) (t1);
+                ctx->u.sb[i * 8 + 1] = (uint8_t) (t1 >> 8);
+                ctx->u.sb[i * 8 + 2] = (uint8_t) (t1 >> 16);
+                ctx->u.sb[i * 8 + 3] = (uint8_t) (t1 >> 24);
+                ctx->u.sb[i * 8 + 4] = (uint8_t) (t2);
+                ctx->u.sb[i * 8 + 5] = (uint8_t) (t2 >> 8);
+                ctx->u.sb[i * 8 + 6] = (uint8_t) (t2 >> 16);
+                ctx->u.sb[i * 8 + 7] = (uint8_t) (t2 >> 24);
+            }
+        }
+
+        __sha3_trace_buf("Hash: (first 32 bytes)", ctx->u.sb, 256 / 8);
+
+        return (ctx->u.sb);
+    };
 	/**
 	atomic hashing 
 	 *
@@ -355,6 +385,17 @@
 		default: return "0";
 		}
 	};
+
+void hash2str(char *buffer, uint8_t *__hash, unsigned __len) {
+	char __[3];
+	buffer[0]='0';buffer[1]='x';buffer=&buffer[2];
+	for (int i=0;i<__len;i+=1) {
+		__hex_bytes(__hash[i], __);
+		strncat(buffer, (char *)__, 3);
+	};
+};
+
+
 	/**
 	hashof str based on level
 	 * extreme care for the values must be taken when using this function
