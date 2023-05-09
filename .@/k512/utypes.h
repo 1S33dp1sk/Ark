@@ -952,23 +952,23 @@ dPRG(__LBB__)
 
 		#endif
 
-	#ifndef laddr
-		struct __laddr {
-			ulong __len;
-			ulong __strt;
-			char * const*__ter;
-		};
-	typedef struct __laddr laddr;
-		#define largs(x) x.__strt,x.__len,(char const **)x.__ter
-		#define ladder_walk(x) __walk(largs(x))
-		#define ladder(a,l,...) laddr a; {\
-			a.__strt=0;a.__len=l;\
-			char const *__[] = __VA_ARGS__;\
-			a.__ter=(char * const *)&__;\
-		};
 
-	#endif
+		#ifndef laddr
+			struct __laddr {
+				ulong __len;
+				ulong __strt;
+				char * const*__ter;
+			};
+		typedef struct __laddr laddr;
+			#define largs(x) x.__strt,x.__len,(char const **)x.__ter
+			#define ladder_walk(x) __walk(largs(x))
+			#define ladder(a,l,...) laddr a; {\
+				a.__strt=0;a.__len=l;\
+				char const *__[] = __VA_ARGS__;\
+				a.__ter=(char * const *)&__;\
+			};
 
+		#endif
 
 
 		#ifndef arc_st
@@ -979,7 +979,7 @@ dPRG(__LBB__)
 				d_point **__points;
 				struct __arc_st *__next;
 			};
-	typedef struct __arc_st arc_st;
+		typedef struct __arc_st arc_st;
 			// returns true for child process
 			#define __ARC_PROCESS (!__arc.__fork) 
 			#define arc_pid(x)	((ulong)(x->__pid))
@@ -988,6 +988,19 @@ dPRG(__LBB__)
 			#define arc_points(x) ((dpoint_t **)(x->__points))
 
 		#endif
+
+		#ifndef arc_shard
+			struct __ar_shard {
+				int perm;
+				char const *name;
+				char const *addr[3];
+			};
+		typedef struct __ar_shard ar_shard;
+			#define shard(a,b,...) ar_shard a; {\
+			};\
+
+		#endif
+
 	
 	#endif
 

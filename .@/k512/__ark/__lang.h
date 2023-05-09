@@ -79,7 +79,7 @@
  * provide a more roboust, effective communication adaptive protocol.
  * 
  **/
-	#define fld_out(x, fmt, ...) 
+	#define fld_out(x, fmt, ...) __TRAV(x, \n, __VA_ARGS__)
 	#define lbb_out(fmt, ...) __TRAV(3, \n, json_handler(__VA_ARGS__))
 	#define lbb_putAddr(a,b) __TRAV(3, \n, lbb##a=:#b)
 	#define lbb_putPath(a,b) __TRAV(3, \n,#a:=b)
