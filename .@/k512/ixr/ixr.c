@@ -292,6 +292,12 @@ The indexer
 		return 0;
 	};
 
+	int indexer_end() {
+
+		close(__ixr_fd);
+		return 0;
+	}
+
 	int indexer_pause() {
 		if(__refresh_header()==-1) {
 			#ifdef LOG_ERR
@@ -348,6 +354,8 @@ The indexer
 	char const *__ixr_strt(char const *__ixr_alias) {
 			// if the indexer has not been instantiated but has
 			// a different value than the original constant
+			printf("indexer alias : %s\n", __mod_call(__ixr_alias));
+
 			if(__ixr_fd!=__ixr_reject){
 				#ifdef LOG_ERR
 					printf("trying to instantiate indexer that is not on %d", __ixr_reject);

@@ -21,11 +21,13 @@ dPRG(
 **/
 
 dPRG(
-	char const *x = "temp2", *y="temp";
-	char const *__[] = {y,x, NULL};
-	__LBB__ 
-		Modules(aeth, alias)
-		__terop(0,2,__)
+	ladder(mods, 7, {"errors","tests","aeth", "base", "constants", "hub", "looping"})
+	__IXR__ __LBB__(
+		mrkj,
+		0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6
+	)
+
+	printf("Image alias(%s)\n", arch_fld(IXR->alias))
 )
 
 

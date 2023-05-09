@@ -27,6 +27,9 @@
 	#define __dPRG ixr_h *main(int argc, char const*argv[])
 	#define charm_mod __mod_call(charms_d)
 	#define run_mod __combine_str(charm_mod, "run/")
+	#define lbb_mod __combine_str(charm_mod, "lbb/")
+	#define out_mod __combine_str(charm_mod, "out/")
+	#define src_mod __combine_str(charm_mod, "src/")
 	#define CHARMS_BASE (ulong)str_rwings(charms_d)
 	#define SRC_BASE (ulong)str_rwings(d_src)
     #define ixr_shared_size ((ulong)___header.shared_size)
@@ -44,6 +47,7 @@
 	#define __ARK__ __LBB__ ATP
 	#define dFUN(x,y,...) static y (x)() __VA_ARGS__;
 	#define lang(intrpt, ...) int intrpt;
+	#define arch_fld(x) __combine_str(lbb_mod, x)
 /**
  * The coefficient KOV
  * a KOV number determines the base sizes of a system
@@ -86,9 +90,16 @@
 		m_stat ms = (m_stat *)(aptr);\
 		log_mstat(ms);\
 	};
-	#define __LBB__ {\
+	#define __LBB__(a,b,...) Alpha &___header;\
+		___header.alias = __ixr_strt(#a);\
+		___header.pvt_key = #b;\
+		printf("IXR: %s ::%d\n",#a,__arch__(___header.alias));\
+		__TRAV(3,@charms:a,lbb<#b>);\
+		__VA_ARGS__;\
+		indexer_end();\
+
+	#define __IXR__ {\
 		__shard__();__dbuf__();\
-		printf("lbb init : %d\n",__arch__());\
 	};
 	#define M_ARG(...) (__VA_ARGS__)[0]
 	#define F_ARG(...) (__VA_ARGS__)[1]
@@ -135,17 +146,17 @@
 		return ne__;\
 	};
 	#define __shard__() {\
-		printf("lbb=1>getting shard\t.:%s:.\n",uni_address);\
-		printf("lbb=2>getting alias\t(%s)\n", loc_address);\
-		printf("lbb=3>getting domain\t//%s\n", glo_address);\
-		printf("lbb=4>getting network\t:%s\n", mac_address );\
+		printf("ixr=1>getting shard\t.:%s:.\n",uni_address);\
+		printf("ixr=2>getting alias\t(%s)\n", loc_address);\
+		printf("ixr=3>getting domain\t//%s\n", glo_address);\
+		printf("ixr=4>getting network\t:%s\n", mac_address );\
 		memset(lbb_mstat, 0, sizeof(m_stat));\
 		memset(l_shard,0,sizeof(c_shard));\
 	};
 	#define __dbuf__() {\
 		memset(&dbuf, 0, sizeof(dbuf));\
 	};
-	#define __arch__() !check_archfile(arch_filename)?arch_att(arch_filename, 3, __API_LEN):0
+	#define __arch__(x) !check_archfile(arch_fld(x))?arch_att(arch_fld(x), 3, __API_LEN):0
 	#define __call__(a,l) str_a4offset(a, sep_offset(#a, l))+str_rwings(l)-1
 	#define __call_base(...) __call__(__VA_ARGS__, __into_call)
 	#define modbase_call(x) __combine_str(run_mod, __call_base(x))
@@ -165,7 +176,13 @@
 	#define __init_method__(x, ...) x==0?&info:&zero;
 	#define __INFO__(x,...) { info(); }
 
-	#define Modules(...) arch_att("modules", 1, 512);
+	#define Modules(x) {\
+		dout("network",_Generic((x), \
+			laddr: "@modules",\
+			default: "#err"));\
+		ladder_walk(x);\
+		arch_att(#x, 1, 512);\
+	};\
 
 	#define Ark(x, ...) {\
 		__ASCII(3, #x);\
@@ -185,19 +202,12 @@
 	#define TRAVERSE(a,b,...) int x=a;do {\
 		OUT_ENK_A(x, __VA_ARGS__);x+=1;\
 	}while(x<b);
-	#define __TRAV(x,a,b) do {\
+	#define __TRAV(x, a,b) do {\
 		OUT_ENK_A(x, #a);\
 		OUT_ENK_A(x, #b);\
 	} __dPER;
-	#define __IXR__(a,b,...) \
-		&___header;\
-		___header.alias = __ixr_strt(#a);\
-		___header.pvt_key = #b;\
-		__TRAV(3, @charms:a, lbb<b>);\
-		__VA_ARGS__;\
-		indexer_pause();\
-
 	
+
 	
 
 

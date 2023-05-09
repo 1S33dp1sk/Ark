@@ -925,7 +925,7 @@ dPRG(__LBB__)
 
 
 	#ifndef ark
-		#ifndef arc_s
+		#ifndef arc_type
 			/**
 			 * each step is a specific `ARC` call
 			 * and yes, the step indicates the
@@ -935,8 +935,10 @@ dPRG(__LBB__)
 				arc_pointer=8,
 				arc_address=16,
 				arc_socket=128,
-				arc_point=256,
-				arc_node=512
+				arc_shard=256,
+				arc_alias=512,
+				arc_domain=4096,
+				arc_network=32768
 			};
 		typedef enum __arc_types arc_type;
 				#define __alias__ "1S33dp1sk"
@@ -948,26 +950,25 @@ dPRG(__LBB__)
 				#define glo_address		__address(2, __domain__)
 				#define uni_address		__address(3, __FILE__)
 
-
 		#endif
 
-		#ifndef arc_terl
-			struct __arc_terl {
-				int _s;
-				int _e;
-				void const **__ter;
-				struct __arc_terl* __next;
-			};
-		typedef struct __arc_terl arctel;
-			#define s_ladder(x) x._s
-			#define e_ladder(x) x._e
-			#define laddr(x,e,...) arctel x; {\
-				x._s=0;x._e=e;\
-				x.__ter={#__VA_ARGS__};\
-				x.__next=&x;\
-	}
+	#ifndef laddr
+		struct __laddr {
+			ulong __len;
+			ulong __strt;
+			char * const*__ter;
+		};
+	typedef struct __laddr laddr;
+		#define largs(x) x.__strt,x.__len,(char const **)x.__ter
+		#define ladder_walk(x) __walk(largs(x))
+		#define ladder(a,l,...) laddr a; {\
+			a.__strt=0;a.__len=l;\
+			char const *__[] = __VA_ARGS__;\
+			a.__ter=(char * const *)&__;\
+		};
 
-		#endif
+	#endif
+
 
 
 		#ifndef arc_st

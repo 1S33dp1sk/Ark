@@ -15,10 +15,9 @@ The indexer
 	int ixr_run(void *_intro);
 	int ixr_save(void *_intro);
 	int ixr_collect(void *_intro);
+	int indexer_end();
 	int indexer_pause();
 	void log_header();
-
-	char const * __ixr_strt(char const *x);
 	
 	#define ixr_mem 	((void *)&___header.__)
 	#define ixr_ubuf	((uchar *)&___header.__)
@@ -52,6 +51,7 @@ The indexer
     #define KV_FORMAT(...) __generic_fmt(__key_value, ##__VA_ARGS__) 
 
 
+	char const * __ixr_strt(char const *alias);
 	d_point ref_point(void const *__key, char const *__value, char const *__format);
 	char const *ixr_format(ixr_t idx_type);
 	int get_ixr_type(void const *__args);

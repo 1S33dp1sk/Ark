@@ -286,7 +286,7 @@ _mods:
 
 mods_:
 	${@Ark}/@
-	if [ -f ${@Ark}/modules ]; then cat ${@Ark}/modules; fi
+	@if [ -f ${@Ark}/modules ]; then echo "Modules init"; fi
 
 outro_mods:
 	@printf "\nWelcome to (d-☁️.io)\n"

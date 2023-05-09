@@ -2,6 +2,7 @@
 
 /************************ d-architicture ************************/
 
+
 #ifndef _D_ARCH
 	#define _D_ARCH 1
 
@@ -15,20 +16,24 @@
 		return __uptr;
 	};
 
-	char const *__terop(int ladder_s, int ladder_e, char const **__ter) {
+	char const *__walk(int ladder_s, int ladder_e, char const **__ter) {
 		ulong __tlen=0;
 		while(ladder_e-->ladder_s) {
 			__tlen+=str_rwings(__ter[ladder_e]);
-			printf("%s\n", __ter[ladder_e]);
+			#ifndef DEBUG
+				printf("%s\n", __ter[ladder_e]);
+			#endif
 		};
-		printf("total length : %lu\n", __tlen);
-		return __ter[0];	
-	}
+		#ifndef DEBUG
+			printf("total length : %lu\n", __tlen);
+		#endif
+		return __ter[ladder_s];	
+	};
 
 	char const *__address(int __level, char const *__filename) {
 
 		return hashof(__level, __filename, str_rwings(__filename));
-	}
+	};
 
 	char const *uname(const char *__filename) {
 

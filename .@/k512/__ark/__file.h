@@ -11,13 +11,13 @@
 		if(res!=0){
 			return NULL;
 		}
-		return __readb(__size, __dgetfd(__cpath), 0);
+		return __readb(__size<cm_st.m_size?__size:cm_st.m_size, __dgetfd(__cpath), 0);
 	};
 
 	uchar const *__readb(ulong f_size, ulong f_d, ulong r_o){
 		ulong __res=r_o,__fsz=f_size,__fd=f_d;
-		uchar lbb_content[__fsz+1];
-		int __tempres=read(__fd,lbb_content,__fsz);
+		uchar lbb_content[__fsz+1];memset(&lbb_content, 0, sizeof(lbb_content));
+		int __tempres=read(f_d,lbb_content,f_size);
 		if(__tempres==-1){
 			printf("cannot read lbb\n");
 			return NULL;
