@@ -169,3 +169,8 @@ class Reflection:
 		_writeFile( '%s/%s'%( self._defaultPath , 'config.json' ) , self.default , True , True )
 
 
+
+
+if __name__ == '__main__':
+	_ = Reflection(".")
+

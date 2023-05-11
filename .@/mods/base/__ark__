@@ -1,3 +1,84 @@
-/// ARK \\\
+/**
+let's talk Ark.
+**/
+
+
+/**
+SHARD,
+Define a custom shard,
+	shards are the networks' iota and they carry metadata
+		* permissions
+		* name
+		** address
+		: info 
+			: references for info
+**/
+dFUN(Shard, char const *, {
+	__IXR__(
+		Public, 
+			Aether:		IXR&->aeth,
+			BaseArk:	IXR&->base,
+			Constants:	IXR&->constants,
+			Dcloud:		IXR&->hub,
+			Errors:		IXR&->errors,
+			Loops:		IXR&->looping,
+			Inits:		IXR&->strt,
+			Tests:		IXR&->tests
+	)
+	return IXR->img_name;
+})
+
+
+/**
+ALIAS,
+Define a d-cloud alias,
+	aliases are requests which contribute to the networks' traffic
+		* size
+		* content
+		* address
+		* fields
+		: alias
+			: wordkeys
+**/
+dFUN(Alias, char const *, {
+	__LBB__(
+		testacc, "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6"
+	)
+
+	return LBB->author;
+})
+
+
+/**
+DOMAIN,
+Define a domain principle,
+	principles enforce rules & sequences to requests received
+		* name + tld
+		* sub-domain
+		* 	ipaddr
+**/
+dFUN(Domain, char const *, {
+	__ATP__(
+		local, "d-cloud.io"
+	)
+	return ATP->address;
+})
+
+
+/**
+SERVICE,
+Define a process service,
+	any ark process that get's handeled.
+**/
+dFUN(Service, void const *, {
+
+	return ne;
+})
+
+
+
+
+
+
 
 #include "init.ark"

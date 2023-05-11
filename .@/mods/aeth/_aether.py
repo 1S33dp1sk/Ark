@@ -195,7 +195,6 @@ class Configuration:
 
 class Aether:
 	def __init__( self ):
-		self._config.Colors = COLORING()
 		self.CN = CONTRACTS()
 
 	def __mkdict( self , _dictName , _dict ) : 

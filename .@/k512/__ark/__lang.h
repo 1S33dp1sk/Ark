@@ -22,8 +22,13 @@
 	#define _Call_1 =1>
 	#define _Call_2 =2>
 	#define _Call_3 =3>
+	#define __r_operation &
+	#define __into_call "&->"
+	#define __t_operation 3
 	#define _ARK =ARK
-	#define Alpha ixr_h *IXR = 
+	#define Alpha_atp atp_h *ATP = 
+	#define Alpha_ixr ixr_h *IXR = 
+	#define Alpha_lbb lbb_h *LBB = 
 	#define __dPRG ixr_h *main(int argc, char const*argv[])
 	#define charm_mod __mod_call(charms_d)
 	#define run_mod __combine_str(charm_mod, "run/")
@@ -31,20 +36,15 @@
 	#define out_mod __combine_str(charm_mod, "out/")
 	#define src_mod __combine_str(charm_mod, "src/")
 	#define CHARMS_BASE (ulong)str_rwings(charms_d)
-	#define SRC_BASE (ulong)str_rwings(d_src)
-    #define ixr_shared_size ((ulong)___header.shared_size)
-    #define ixr_mods_count	((ulong)___header.mods_count)
-    #define ixr_pub_address	((char const *)___header.pub_key)
-	#define checkef_lo ((ulong)__sokres(arch_callport))
-	#define checkef (ulong)__stres(arch_filename)
-	#define check_archfile(x) (get_mstat(x, lbb_mstat)!=1)
-	#define __r_operation &
-	#define __into_call "&->"
-	#define __t_operation 3
+	#define SRC_BASE 	(ulong)str_rwings(d_src)
+	#define checkef_lo 		((ulong)__sokres(arch_callport))
+	#define checkef 		(ulong)__stres(arch_filename)
 	#define __ECHO__ __TEXT(0, Ark)
 	#define __PAGE_CLEAR "\n\n\n\n\n\n\n"
-	#define ATP __ATP__
-	#define __ARK__ __LBB__ ATP
+	#define check_archfile(x) (get_mstat(x, lbb_mstat)!=1)
+	#define __ARK__() {\
+	};\
+
 	#define dFUN(x,y,...) static y (x)() __VA_ARGS__;
 	#define lang(intrpt, ...) int intrpt;
 	#define arch_fld(x) __combine_str(lbb_mod, x)
@@ -90,17 +90,6 @@
 		m_stat ms = (m_stat *)(aptr);\
 		log_mstat(ms);\
 	};
-	#define __LBB__(a,b,...) Alpha &___header;\
-		___header.alias = __ixr_strt(#a);\
-		___header.pvt_key = #b;\
-		printf("IXR: %s ::%d\n",#a,__arch__(___header.alias));\
-		__TRAV(3,@charms:a,lbb<#b>);\
-		__VA_ARGS__;\
-		indexer_end();\
-
-	#define __IXR__ {\
-		__shard__();__dbuf__();\
-	};
 	#define M_ARG(...) (__VA_ARGS__)[0]
 	#define F_ARG(...) (__VA_ARGS__)[1]
 	#define dPRG(...)  __cPRG {__VA_ARGS__;}
@@ -115,27 +104,60 @@
 	#define checkef_dir(x) ((ulong)__stres(x))
 	#define check_caller(x) ((ulong)__exact_match(__address(x), uni_address))
 	// base for charms
-	#define __ATP__(...) const void **temp; {\
+	#define __LBB__(a,b,...) lbb_load(a,b)
+
+
+	#define arg_offset(a, ...) {\
+		int i=0,c=0,temp,__temp;\
+		char *__args=(char *)&#__VA_ARGS__, *__base, *__name;\
+		do {\
+			printf("args : %s\n", &__args[c]);\
+			__temp = __sep_atoff(&__args[c], ",");\
+			if(__temp==-1) {break;};\
+			printf("Do loop : %d :: %d\n", i,__temp);i+=1;\
+			__name=(char *)b4offset(__args+c, __temp);\
+			__base=(char *)a4offset(__args+c, __temp);\
+			c+=++__temp;\
+			temp = __sep_atoff(__name, #a);\
+			printf("name :: %s\n", b4offset(__name, temp));\
+			temp = __sep_atoff(__name, __into_call);\
+			printf("path :: %s\n", a4offset(__name, temp));\
+		} while(__temp!=-1);\
+		return run_bcall(#__VA_ARGS__);\
+	};
+
+	#define __IXR__(p,...) Alpha_ixr &___header;\
+		__shard__();\
+		img_argc(#__VA_ARGS__);\
+		printf("IXR: %s :: %lu\n",#p, ixr_img_argc);\
+		arg_offset(:, __VA_ARGS__, Next:NULL);\
+
+	
+	#define __ATP__(a,d,...) Alpha_atp &___buffer; {\
+		__dbuf__();\
+		memmove(_atp_domain, #d, str_rwings(#d));\
 		__TEXT(0, @-Protocol);\
+		const void **ARGS=(const void**)&#__VA_ARGS__;\
 		int x=lbb_argument(#__VA_ARGS__);\
-		temp=(const void**)&#__VA_ARGS__;\
 		switch(x) {\
-			case __lbb_none__: 		return __no_entry__(#__VA_ARGS__);\
-			case __lbb_charms__: 	return __field__(#__VA_ARGS__);\
-			case __lbb_variable__:	return __point__(#__VA_ARGS__);\
-			case __lbb_info__:		return __info__(#__VA_ARGS__);\
-			case __lbb_yeild__:		return __w3__(#__VA_ARGS__);\
+			case __lbb_none__: 		x = __no_entry__(#__VA_ARGS__);\
+			case __lbb_charms__: 	x = __field__(#__VA_ARGS__);\
+			case __lbb_variable__:	x = __point__(#__VA_ARGS__);\
+			case __lbb_info__:		x = __info__(#__VA_ARGS__);\
+			case __lbb_yeild__:		x = __w3__(#__VA_ARGS__);\
 			case __lbb_atp__:		x = get_atp_type(#__VA_ARGS__);\
 			default: break;\
 		};\
+		void *_ptr;\
+		into(temp, x, __FILE__, ARGS);\
 		switch(x) {\
-			case aip_base:		return ixr_export(#__VA_ARGS__);\
-			case aip_return:	return ixr_run(#__VA_ARGS__);\
-			case aip_retreive:	return ixr_collect(#__VA_ARGS__);\
-			case aip_retain:	return ixr_save(#__VA_ARGS__);\
-			case aip_set:		return atp_set(#__VA_ARGS__);\
-			case aip_get:		return atp_get(#__VA_ARGS__);\
-			case aip_next:		x = get_ixr_type(#__VA_ARGS__);\
+			case aip_base:		_ptr = ixr_export(#__VA_ARGS__);\
+			case aip_return:	_ptr = ixr_prun(temp);\
+			case aip_retreive:	_ptr = ixr_pcollect(temp);\
+			case aip_retain:	_ptr = ixr_psave(temp);\
+			case aip_set:		_ptr = atp_set(#__VA_ARGS__);\
+			case aip_get:		_ptr = atp_get(#__VA_ARGS__);\
+			case aip_next:		_ptr = get_ixr_type(#__VA_ARGS__);\
 			default: break;\
 		};\
 		switch(x) {\
@@ -143,24 +165,36 @@
 			case 2: printf("2 args"); break;\
 			default: printf("2+ args"); break;\
 		};\
-		return ne__;\
-	};
-	#define __shard__() {\
+	};\
+
+	#define ixr_info() {\
 		printf("ixr=1>getting shard\t.:%s:.\n",uni_address);\
 		printf("ixr=2>getting alias\t(%s)\n", loc_address);\
 		printf("ixr=3>getting domain\t//%s\n", glo_address);\
 		printf("ixr=4>getting network\t:%s\n", mac_address );\
+	};
+	#define __book__() {\
+		memset(_lbb_author, 0, __author);\
+		memset(_lbb_public_key, 0, __pubkey);\
+		memset(_lbb_publisher, 0, __publisher);\
+	};
+	#define __shard__() {\
 		memset(lbb_mstat, 0, sizeof(m_stat));\
 		memset(l_shard,0,sizeof(c_shard));\
 	};
 	#define __dbuf__() {\
-		memset(&dbuf, 0, sizeof(dbuf));\
+		memset(_atp_data, 0, sizeof(__atp_data));\
 	};
-	#define __arch__(x) !check_archfile(arch_fld(x))?arch_att(arch_fld(x), 3, __API_LEN):0
+	#define __arch__(x) !check_archfile(arch_fld(#x))?arch_att(arch_fld(#x), 3, __API_LEN):0
 	#define __call__(a,l) str_a4offset(a, sep_offset(#a, l))+str_rwings(l)-1
-	#define __call_base(...) __call__(__VA_ARGS__, __into_call)
-	#define modbase_call(x) __combine_str(run_mod, __call_base(x))
-	#define Scratch(...) printf("%s\n", modbase_call(#__VA_ARGS__))
+	#define run_bcall(x)		__combine_str(run_mod, __call_base(x))
+	#define lbb_bcall(i,x)		__combine_str(lbb_mod, __call_base(__address(i,x)))
+	/**
+	 * out should be i,x,y ? interpreter, runnable filename, args
+	 * src
+	 */
+	#define __call_base(...) __call__(__VA_ARGS__,__into_call)
+	#define Scratch(...) printf("%s\n", __call_base(#__VA_ARGS__))
 	#define s_into(x) (char const *)(x)[0]
     #define info() __ASCII(1,__os_name);__ASCII(1,__FILE__)
 	#define zero(x)  ((char const *)(&(zero_address)));

@@ -1,5 +1,5 @@
 /// ixr \\\
-The indexer
+Image Execution Runner
 
 
 #ifndef __IXR__H
@@ -7,23 +7,22 @@ The indexer
 #endif
 
 #ifndef __ixr_name 
-	#define __ixr_name "indexer"
+	#define __ixr_name "img_runner"
 
-	int get_ixr_type(void const *__args) {
+	void *get_ixr_type(void const *__args) {
 		char const **args = (char const **)__args;
 		ulong arg_count=arr_cdelims((char const *)args);
 		#ifdef DEBUG
 			printf("arg count : %lu\n", arg_count);
 		#endif
 		int __temp=(int)arg_count;
-		return __temp;
+		return args;
 	};
-
 
 	/********* d-types *********/
 
 	d_point ref_point(void const *__arg, char const *__key, char const *__format) {
-		if(__key[0]=='&') {
+		if(__is_ref(__key)){
 			++__key;
 		};
 		ulong keylen=str_rwings(__key);
@@ -86,7 +85,8 @@ The indexer
 		return NULL;
 	};
 
-	uchar const *__urv(uchar const *__key, char const *__value) {
+	// urv
+	uchar const *__unique_ref_value(char const *__key, char const *__value) {
 		char const *__rv=__generic_fmt(__keyval__, __key, __value);
 		ulong urv_len=__rwings((void *)__rv)+ULONG_MAX_DIGITS;
 		char urv[urv_len];memset(&urv, 0, sizeof(urv));
@@ -94,21 +94,27 @@ The indexer
 		return (uchar const *)strdup(urv);
 	};
 
+	#define __urv __unique_ref_value
+
 	// irv
-	char const *__irv(char const *__key, char const *__value) {
+	char const *__index_ref_value(char const *__key, char const *__value) {
 		char const *__rv=__generic_fmt(__keyval__, __key, __value);
 		ulong irv_len=str_rwings(__rv)+ULONG_MAX_DIGITS;
 		char irv[irv_len];memset(&irv, 0, sizeof(irv));
 		sprintf(irv, "%lu:%s", __cindex, __rv);
 		return (char const *)strdup(irv);
 	};
+
+	#define __irv __index_ref_value
+
+
 	
 	// start the indexer
 	ulong __idx_start(){
 		if(__cindex!=0){
 			return 0;
 		};
-		return __index_increment();
+		return __control_inc();
 	};
 	
 
@@ -164,16 +170,16 @@ The indexer
 			printf("result :: %ld\n", _res);
 			printf("offset ::: %lu\n", ___offset);
 		#endif
-		return __index_increment();
+		return __control_inc();
 	};
 
-	int __index_urn(uchar const *_key, char const *_val) {
-
-		return __set_unext(__urv(_key, _val));
+	ulong __index_urn(uchar const *_key, char const *_val) {
+		char const *key = (char const *)_key;
+		return __set_unext(__urv(key, _val));
 	};
 
 	// irv -> __setnext -> (reference, name)
-	int __index_point(d_point *dst) {
+	ulong __index_point(d_point *dst) {
 
 		return __index_urn(dst->c_ref, dst->c_name);
 	};
@@ -181,26 +187,31 @@ The indexer
 	/********* indexer IO *********/
 
 	// initiate and set memory to zero for the header struct
-	ixr_h *header_init() {
+	ixr_h *img_init() {
 
 		return (ixr_h *) memset(&___header, 0, sizeof(ixr_h));
 	};
 
-	// read the indexer header \\
-	OFFSET ALWAYS 0
+	// read the indexer header 
+	// OFFSET ALWAYS 0
 	int __header_in() {
 
 		return 0;
 	};
 
-	#define tostr(x) #x
+	void *header_init() {
 
-	int __load_header() {
+		return (ixr_h *)memset(&___header, 0, sizeof(___header));
+	};
+
+
+	int __load_img() {
 		header_init();
 		#ifdef PROCESS
 			printf("read :::");
 		#endif
-		uchar *__head=ixr_ubuf;
+
+		uchar *__head=(uchar *)&dbuf;
 		int __rbytes=pread(__ixr_fd, (void *)__head, __I_LEN, 0);
 		if (__rbytes==-1) {
 			#ifdef LOG_ERR
@@ -213,20 +224,18 @@ The indexer
 		#endif
 		__head[__I_LEN-1]='\0';
 		unpack(__head, ixr_format(ixr_point), __rbytes);
-
-		___header.shared_size=u[0];
-		___header.mods_count=u[1];
-		___header.pub_key=tostr(u[2]);
+		img_size(u[0]);
+		img_mods_count(u[1]);
+		img_name(stringify(u[2]));
 		___offset=(ulong)__rbytes;
 		#ifdef DEBUG
 			printf("attempting %d @indexfile: %lu\n", __rbytes, u[0]);
-			log_ixrh(&___header);
 		#endif	
 		return __header_in();
 		return 0;		
 	};
 
-	int __rd_ixrh() {
+	int __rd_img() {
 		#ifdef DEBUG
 			printf("reading :::\n");
 		#endif
@@ -242,20 +251,19 @@ The indexer
 			#endif
 			return -1;
 		};
-		unpack(__head, ixr_format(ixr_point), ___header.shared_size);
-		___header.shared_size=u[0];
-		___header.mods_count=u[1];
-		___header.pub_key=tostr(u[2]);
+		unpack(__head, ixr_format(ixr_point), ixr_img_size);
+		img_size(u[0]);
+		img_mods_count(u[1]);
+		img_name(stringify(u[2]));
 		___offset=(ulong)__tempres;
 		#ifdef DEBUG
 			printf("attempting %d @indexfile: %lu\n", __tempres, __hfsize);
-			log_ixrh(&___header);
 		#endif
 		return 0;
 	};
 
-	// write the indexer header \\
-	OFFSET ALWAYS 0
+	// write the indexer header
+	// OFFSET ALWAYS 0
 	int __header_out(uchar *__header_content, ulong __header_size) {
 		if(__header_size>__I_LEN){
 			#ifdef LOG_ERR
@@ -279,9 +287,9 @@ The indexer
 
 	int __write_header() {
 		#ifdef DEBUG
-			printf("@IXR<%s>(%s)\n", ___header.alias, ___header.pub_key);
+			printf("@IXR<%s>(%lu)\n", ixr_img_name, ixr_img_size);
 		#endif
-		uchar *__head=(uchar *)&(___header.__);
+		uchar *__head=(uchar *)&(dbuf);
 		memset(__head, 0, __A_LEN);
 		uns __temp=pack(__head, ixr_format(__header__), ixr_h_args);
 		__head[__I_LEN+1]='\0';
@@ -296,7 +304,7 @@ The indexer
 
 		close(__ixr_fd);
 		return 0;
-	}
+	};
 
 	int indexer_pause() {
 		if(__refresh_header()==-1) {
@@ -309,33 +317,33 @@ The indexer
 	};
 
 	void __header_dump(ixr_h *__dump) {
-		if(!__dump->alias) {
+		if((__dump->img_name[0])!='@') {
 			printf("\n");
 		}
 		else {
-			printf("%s {\n", __dump->alias);
-			printf("\tshared size : %lu,\n", __dump->shared_size);
-			printf("\tmods count : %lu,\n", __dump->mods_count);
-			printf("\tpublic key : lbb(%s)\n", __dump->pub_key);
+			printf("%s {\n", __dump->img_name);
+			printf("\tshared size : %lu,\n", __dump->img_size);
+			printf("\tmods count : %lu,\n", __dump->img_mcount);
+			printf("\tpublic key : lbb(%s)\n", __dump->img_name);
 			printf("}\n");
 		};
 	};
 
 	// obtain header properties { ENVIROMENT }
 	int __refresh_header() {
-		___header.shared_size=__fsize(IXR_FILE);
-		___header.mods_count=__cindex;
-		uchar const *__=__dbook(IXR_FILE, sizeof(___header.__));
-		___header.pub_key=fhashof(2, IXR_FILE);
+		img_size(__fsize(IXR_FILE));
+		img_mods_count(__cindex);
+		img_name(fhashof(2, IXR_FILE));
+		uchar const *__=__dbook(IXR_FILE, sizeof(dbuf));
 		__header_dump(&___header);
 		return 0;
 	};
 
 	void log_header() {
 		printf("%s = {\n", IXR_FILE);
-		printf("\tshared size : %lu,\n", ___header.shared_size);
-		printf("\tmods count : %lu,\n", ___header.mods_count);
-		printf("\tpublic key : lbb(%s)\n", ___header.pub_key);
+		printf("\tshared size : %lu,\n", ixr_img_size);
+		printf("\tmods count : %lu,\n", ixr_img_mods);
+		printf("\tpublic key : lbb(%s)\n", ixr_img_name);
 		printf("}\n");
 	}
 	// check if header exsits then retain 
@@ -355,7 +363,6 @@ The indexer
 			// if the indexer has not been instantiated but has
 			// a different value than the original constant
 			printf("indexer alias : %s\n", __mod_call(__ixr_alias));
-
 			if(__ixr_fd!=__ixr_reject){
 				#ifdef LOG_ERR
 					printf("trying to instantiate indexer that is not on %d", __ixr_reject);
@@ -409,7 +416,7 @@ The indexer
 			#endif
 		};
 		header_init();
-		if(__rd_ixrh()) {
+		if(__rd_img()) {
 			#ifdef LOG_ERR
 				printf("cannot read indexer header\n");
 			#endif
@@ -462,7 +469,7 @@ The indexer
     };
 
 
-	ixr_h *ixr_get(d_into ist) {
+	void *ixr_get(d_into ist) {
 		ixr_h *header=header_init();
 		char const *var_name=(char const *)in_arg_n(ist, 1);
 		#ifdef PROCESS
@@ -472,7 +479,7 @@ The indexer
 	};
 
 
-	ixr_h *ixr_set(d_into ist) {
+	void *ixr_set(d_into ist) {
 		ixr_h *header=header_init();
 		char const *var_name=(char const *)in_arg_n(ist, 1);
 		char const *var_val=(char const *)in_arg_n(ist, 2);
@@ -482,7 +489,7 @@ The indexer
 		return header;
 	};
 
-	ixr_h *ixr_prun(d_into ist) {
+	void *ixr_prun(d_into ist) {
 		ixr_h *header=header_init();
 
 		char const *p_name=(char const *)in_arg_n(ist, 1);
@@ -492,7 +499,7 @@ The indexer
 		return header;
 	};
 
-	ixr_h *ixr_psave(d_into ist) {
+	void *ixr_psave(d_into ist) {
 		ixr_h *header=header_init();
 		char  const *d_name=(char const *)in_arg_n(ist, 1);
 		#ifdef PROCESS
@@ -501,7 +508,7 @@ The indexer
 		return header;
 	};
 
-	ixr_h *ixr_pcollect(d_into ist) {
+	void *ixr_pcollect(d_into ist) {
 		ixr_h *header=header_init();
 		char  const *f_att=(char const *)in_arg_n(ist, 1);
 		#ifdef PROCESS
@@ -511,30 +518,30 @@ The indexer
 	};
 
 
-	int ixr_export(void *__aip_into) {
+	void *ixr_export(void *__aip_into) {
 		printf("IXR->export :\n");
-		return 0;
+		return __ne;
 	};
 
-	int ixr_run(void *__aip_into) {
+	void *ixr_run(void *__aip_into) {
 		printf("IXR&->run ::\n");
-		return 1;
+		return __ne;
 
 	};
 
-	int ixr_save(void *__aip_into) {
+	void *ixr_save(void *__aip_into) {
 		printf("IXR&save :::\n");
-		return 2;
+		return __ne;
 
 	};
 
-	int ixr_collect(void *__aip_into) {
+	void *ixr_collect(void *__aip_into) {
 		printf("IXR:collect::\n");
-		return 3;
+		return __ne;
 	};
 
 
-	ixr_h *args3head(d_into ist) {
+	void *img_run(d_into ist) {
 		switch(in_switch(ist)) {
 			case 2:
 				return ixr_get(ist);
@@ -563,7 +570,10 @@ The indexer
 
 
 
+	int __ixr_log(char const *__mod, char const *__path) {
 
+		return 0;
+	}
 
 
 

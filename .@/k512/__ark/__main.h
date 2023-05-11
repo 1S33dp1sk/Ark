@@ -6,6 +6,35 @@
 #ifndef _D_ARCH
 	#define _D_ARCH 1
 
+	int __is_module(char const *__in) {
+		if(__in[0]=='&'){
+			if (__in[1]=='=') {
+				if (__in[2]=='>') {
+					return 1;
+				};
+			};
+		};
+		return 0;
+	};
+
+	int __is_file(char const *__in){
+		if(__in[0]=='&'){
+			if (__in[1]=='-') {
+				if (__in[2]=='>') {
+					return 1;
+				};
+			};
+		};
+		return 0;
+	};
+
+	int __is_ref(char const *__in) {
+		if(__in[0]=='&'){
+			return 1;
+		};
+		return 0;
+	};
+
 	ulong *__indices(char const *__temp) {
 		__uptr[0] = (ulong)1204912;
 		ulong x[10] = {1204912,120491,12049,1204,5910,385,120,1295410,215019250,19325912510};
@@ -35,15 +64,16 @@
 		return hashof(__level, __filename, str_rwings(__filename));
 	};
 
-	char const *uname(const char *__filename) {
+	char const *__uname(const char *__u) {
 
-		return hashof(2,__filename,str_rwings(__filename));
+		return hashof(2,__u,str_rwings(__u));
 	};
 
 	char const *__get_atname(char const *__naming) {
 		if(!__atchar(*__naming)){
+
 			return temp_name;
-		}
+		};
 		return __naming++;
 	};
 
@@ -58,7 +88,7 @@
 				printf("caller hash levels can only be postive");
 			#endif
 			return NULL;
-		}
+		};
 		char const *__caller=__getcaller();
 		char const *__hash=hashof(__level, __caller, str_rwings(__caller));
 		return strdup(__hash);
@@ -70,8 +100,15 @@
 		return expand("lbb", __hash);
 	};
 
+	int __check_alias(char const *__alias) { 
+		ulong temp = str_rwings(__alias);
+		if((temp==0)||(temp>8)) 	{
+			return 0;
+		};
+		return __entry_valid(__alias);
+	};
 
-	int __entry_valid(char const *__) {
+	int at_entry(char const *__) {
 		char c=*__;
 		if(!__atchar(c)){
 			#ifdef DEBUG
@@ -79,12 +116,38 @@
 			#endif
 			return 0;
 		};
+		return __entry_nvalid(__);
+	};
+
+	int __entry_valid(char const *__) {
+		#ifdef DEBUG
+			printf("entry is '%s'\n", __);
+		#endif
+		char c=*__;
+		do {
+			if (((!__numchar(c))&&(!__smchar(c))&&(!__capchar(c)))) {
+				#ifdef DEBUG
+					printf("alias is nvalid : %d\n\n", c);
+				#endif
+				return 0;
+			};
+			c=*__++;
+		}while(c);
+		#ifdef DEBUG
+			printf("alias is valid\n");
+		#endif
+		return 1;
+	};
+
+	int __entry_nvalid(char const *__) {
+		char c=*__;
 		do {
 			c=*__++;
 			if ((__nullchar(c))||((!__numchar(c))&&(!__smchar(c))&&(!__capchar(c)))) {
 				return 0;
 			};
 		}while(c);
+		printf("alias is valid\n");
 		return 1;
 	};
 
@@ -127,7 +190,7 @@
 				_--;
 			}while(_>0);
 			return __;
-		}
+		};
 	};
 
 	ulong lbb_type2size(lbb_t lbb_type){

@@ -15,6 +15,21 @@
 		printf("\n");
 	};
 
+	
+	void log_proto(int retval, char const *bufin) {
+		if(!retval) {
+		}else {
+			switch(retval) {
+			case 0: printf("::: @-call is not correctly formatted"); break;
+			case aip_set: printf("::: Storage Number (%s)", bufin); break;
+			case aip_get: printf("::: Subprotocol -> %s", bufin); break;
+			case aip_retain: printf("::: @<%s>", bufin); break;
+			case aip_next: printf("::: &->%s\n", bufin); break;
+			default: printf("::: exit(%d)", retval); break;
+			}
+		}
+	}
+
 	char const *__arange_vars(char *__v, ulong __vlen) {
 		char __[20]; memset(&__, 0, sizeof(__));
 		for(int i=0; i<__vlen;i+=4) {
@@ -231,11 +246,11 @@ dPRG(
 
 	void log_at_protoname(atp_t __atpname) {
 		switch(__atpname) {
-		case __at_p: 		printf("ATP : @				::\b"); break;
-		case __at_4: 		printf("ATP : @Ipv4			::\b"); break;
-		case __at_6: 		printf("ATP : @Ipv6			::\b"); break;
-		case __at_e:		printf("ATP : @ETHEREUM		::\b"); break;
-		case __at__:		printf("ATP : @-Protocol	::\b"); break;
+		case PROTO: 		printf("ATP : @				::\b"); break;
+		case HTTP_4: 		printf("ATP : @Ipv4			::\b"); break;
+		case HTTP_6: 		printf("ATP : @Ipv6			::\b"); break;
+		case ETH_CID:		printf("ATP : @ETHEREUM		::\b"); break;
+		case AT_PRO:		printf("ATP : @-Protocol	::\b"); break;
 		default:			printf("ATP <dcloud> 		:::\n"); break;
 		};
 	};
@@ -251,7 +266,6 @@ dPRG(
 
 	void log_socket(aip_sock *sock) {
 
-		printf("socket @%s\n",aip_sockname(sock));
 	};
 
 	// misc

@@ -69,6 +69,7 @@
 		}while(*__p++);
 		return __c;
 	};
+	
 
 	ulong str_rwings(char const *__str) {
 		ulong temp=0;
@@ -232,17 +233,25 @@
 		return offset_at;
 	};
 
+	char *b4offset(char const *string, ulong offset) {
+		char temp[offset];
+		memset(&temp,0,sizeof temp);
+		memmove(temp, string, offset);
+		return strdup(temp);
+	}
+
 	char *str_b4eoffset(char const *string, ulong offset) {
 		char temp[offset];
 		memset(&temp,0,sizeof temp);
-		memmove(temp, ++string, offset-2);
+		memmove(temp, ++string, --offset);
 		return strdup(temp);
 	};
 
 	char *str_b4offset(char const *string, ulong offset) {
 		char temp[offset];
 		memset(&temp,0,sizeof temp);
-		snprintf(temp,offset,"%s",string);
+		memmove(temp, ++string, offset-2);
+		// snprintf(temp,offset,"%s",string);
 		return strdup(temp);
 	};
 
@@ -260,6 +269,8 @@
 		snprintf(temp,slen,"%s",(string+offset));
 		return strdup(temp);
 	};
+
+	#define a4offset(x,y) __a4offset(x,y,0)
 
 	char const *__a4offset(char const *__string, ulong __offset, int __flag) {
 		//to offset the offset
@@ -399,13 +410,11 @@
 			printf("seperator : %s\n", seperator);
 		#endif
 		ulong __str_len = str_rwings(string), __sep_len = str_rwings(seperator);
-		
-
 		int tempres=__sep_atoff(string, seperator);
 		if(tempres==-1){
 			#ifdef LOG_ERR
-				__TEXT(0,Err : Call Unsigned)
-				__ASCII(0,string)
+				__TEXT(0, Err : Call Unsigned)
+				__ASCII(0, string)
 				printf("unsigned call\n");
 				printf("%s <%s?>", string, seperator);
 				_exit(1);

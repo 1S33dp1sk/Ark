@@ -280,9 +280,7 @@ into_mods:
 
 _mods:
 	cp -r ${__mods}//* ${@charms}/d.run
-	chmod u+x ${run@charms}//*
-	chmod u+x ${run@charms}/*
-	chmod u+x ${run@charms}/EchoRPC/*
+
 
 mods_:
 	${@Ark}/@

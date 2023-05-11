@@ -8,11 +8,18 @@ little black book
 #ifndef __lbb_name
 	#define __lbb_name "linked binary book"
 
-	#define LBB_FILE __d_lock
-// increment the cindex
-ulong __index_increment() {
-	__cindex+=1;
+
+
+
+ulong __control_inc() {
+	__cindex += 1;
 	return __cindex;
+};
+
+
+int lbb_lookup(char const *__lbb_addr) {
+
+	return 0;
 };
 
 // set the next header at a new entry
@@ -33,30 +40,7 @@ ulong __set_next(char const *__head){
 		printf("result :: %ld\n", _res);
 		printf("offset ::: %lu\n", ___offset);
 	#endif
-	return __index_increment();
-};
-
-
-
-// try to create a { SHARED } file
-// get the mounted status of said file
-// load into `lbb_shard`
-int __ap_file(char const *__path){
-	int __fd=open(__path,__lbb_shard_flags);
-	if(__fd==-1){
-		#ifdef LOG_ERR
-			printf("cannot create share file, %s\n", __path);
-		#endif
-		return __fd;
-	}
-	lbb_shard.c_fd=__fd;
-	if(get_mstat(__path, lbb_mstat)) {
-		#ifdef LOG_ERR
-			printf("cannot get the mounted status of file %s\n", __path);
-		#endif
-		return -1;
-	};
-	return __fd;
+	return __control_inc();
 };
 
 // try to create an FIFO engine 
@@ -67,12 +51,49 @@ int __ap_fifo(char const *__path){
 	return -1;
 };
 
+int __ap_alias(char const *__name) {
+
+	return 0;
+};
+
+int __ap_host(char const *__netid) {
+
+	return 0;
+};
+
+int __ap_pubd(char const *__paddr) {
+
+	return 0;
+};
+
+// try to create a { SHARED } file
+// get the mounted status of said file
+// load into `___shard`
+int __ap_file(char const *__path){
+	int __fd=open(__path,__lbb_shard_flags);
+	if(__fd==-1){
+		#ifdef LOG_ERR
+			printf("cannot create share file, %s\n", __path);
+		#endif
+		return __fd;
+	}
+	___shard.c_fd=__fd;
+	if(get_mstat(__path, lbb_mstat)) {
+		#ifdef LOG_ERR
+			printf("cannot get the mounted status of file %s\n", __path);
+		#endif
+		return -1;
+	};
+	return __fd;
+};
+
+
 // try to open a previously created
 // engine as a writer, this can be any
 // socket connections or commands , etc..
-ulong __ap_writer() {
+ulong __shard_writer() {
 	ulong retres;
-	int __fd=open(__d_lock,__lbb_lock_writer);
+	int __fd=open(LBB_FILE,__lbb_lock_writer);
 	if(__fd==-1){
 		#ifdef LOG_ERR
 			printf("cannot open writer\n");
@@ -84,8 +105,8 @@ ulong __ap_writer() {
 	#ifdef DEBUG
 		printf("Writer : fifo opened :: %lu\n",_fd);
 	#endif
-	lbb_shard.c_fd=_fd;
-	if(get_mstat(__d_lock, lbb_mstat)) {
+	___shard.c_fd=_fd;
+	if(get_mstat(LBB_FILE, lbb_mstat)) {
 		#ifdef LOG_ERR
 			printf("cannot obtain mounted status for Writer on FIFO\n");
 		#endif
@@ -94,11 +115,11 @@ ulong __ap_writer() {
 	return _fd;	
 };
 
-// try to open a recently created engine \
-MUST NOT HAVE ANY LOCKING BITS
-ulong __ap_reader() {
+// try to open a recently created engine
+// MUST NOT HAVE ANY LOCKING BITS
+ulong __shard_reader() {
 	ulong retres=0;
-	int __fd=open(__d_lock,__lbb_lock_reader);
+	int __fd=open(LBB_FILE,__lbb_lock_reader);
 	if(__fd==-1){
 		printf("cannot open reader\n");
 		_exit(1);
@@ -107,8 +128,8 @@ ulong __ap_reader() {
 	#ifdef DEBUG
 		printf("Reader : fifo opened :: %lu\n",_fd);
 	#endif
-	lbb_shard.c_fd=_fd;
-	if(get_mstat(__d_lock, lbb_mstat)) {
+	___shard.c_fd=_fd;
+	if(get_mstat(LBB_FILE, lbb_mstat)) {
 		#ifdef LOG_ERR
 			printf("cannot obtain mounted status for READER on FIFO\n");
 		#endif
@@ -116,6 +137,7 @@ ulong __ap_reader() {
 	};
 	return _fd;
 };
+
 
 ulong __lbb_file_r(char const *__fpath) {
 	ulong retres=0;
@@ -183,12 +205,12 @@ ulong __lbb_file_n(char const *__fpath) {
 
 
 // close the lbb filedescriptor currently
-// opened under the lbb_shard structure
+// opened under the ___shard structure
 void purge_shard() {
 	#ifdef DEBUG
 		printf("Purging lbb shard\n");
 	#endif
-	close(lbb_shard.c_fd);
+	close(___shard.c_fd);
 };
 
 
@@ -197,7 +219,7 @@ ulong __run_ap(ulong __size){
 		ulong r_bytes=0,__FLAG=0;
 		char __buffer[512];
 		while(!__FLAG) {
-			r_bytes=read(lbb_shard.c_fd,__buffer,512);
+			r_bytes=read(___shard.c_fd,__buffer,512);
 			if(r_bytes<=2){
 				printf("read less than 3 bytes :: %s\n",__buffer);
 				__FLAG=1;
@@ -212,7 +234,7 @@ ulong __run_ap(ulong __size){
 		char *__buffer="hello world";
 		memset(&__buffer,0,sizeof(__buffer));
 		while(!__FLAG) {
-			w_bytes=write(lbb_shard.c_fd,__buffer,64);
+			w_bytes=write(___shard.c_fd,__buffer,64);
 			if(w_bytes<=2){
 				printf("write less than 3 bytes :: %s\n",__buffer);
 				__FLAG=1;
@@ -240,7 +262,7 @@ void __readin(char *buffer, ulong size, ulong stfd) {
 
 void lbb_close(){
 	close(lbb_fd);
-	memset(&lbb_shard,0,sizeof(c_shard));
+	memset(&___shard,0,sizeof(c_shard));
 };
 
 
@@ -250,14 +272,10 @@ ulong __fillb(){ // create &-> fill the book
 	return __res;
 };
 
-
-
 ulong write_book(char *content, ulong csize) {
 
 	return __writeb((uchar*)content,csize, __dgetfd(LBB_FILE));
 };
-
-
 
 char const *read_book(char const *__cpath, ulong __size){ 
 	
@@ -285,10 +303,6 @@ int lock_lbb(char const *__cpath,ulong __lock){
 	lbb_close();
 	return res;
 };
-
-
-
-
 
 /*******************************************************************/
 
@@ -327,9 +341,6 @@ int get_sstat(char const *__path, s_stat *sfile) {
 	return 0;
 };
 
-
-
-
 ulong __get_long_digits(ulong num) {
 	ulong cnum=((ulong)(num/10));
 	ulong res=0;
@@ -339,6 +350,7 @@ ulong __get_long_digits(ulong num) {
 	};
 	return res+=1;
 };
+
 char *__get_cfname(char const *__fname, ulong __iter) {
 	#ifdef DEBUG
 		printf("cfname : %s :: %lu", __fname, __iter);
@@ -363,7 +375,6 @@ void free_fields(c_fld **flds){
 		c+=1;
 	};
 };
-
 
 char const *__conv_fields(char const *__fn, ulong __fd, ulong __fld_count) {
 	#ifdef DEBUG
@@ -508,7 +519,7 @@ int get_freader(m_stat *mst) {
 		return -1;
 	};
 	ulong __fd=(ulong)_fd;
-	lbb_shard.c_fd=__fd;
+	___shard.c_fd=__fd;
 	#ifdef DEBUG
 		printf("Reader : file opened :: %lu\n",lbb_fd);
 	#endif
@@ -562,7 +573,6 @@ char const *__lbb_filepath(char const *__fpath, aip_sterm __term) {
 	#endif
 	ulong count=__flds_count(lbb_sze);
 	char const *convres=__conv_fields(lbb_key,lbb_fd,count);
-
 	lbb_close();
 	if(convres==NULL) {
 		#ifdef LOG_ERR
@@ -627,82 +637,79 @@ int __init_field(char const *arg) {
 	return 0;
 };
 
-
 void *__into__(d_into *st) {
 	
 	return memset(st, 0, sizeof(d_into));
 };
 
-	int __no_entry__(void *proto_call) {
-		#ifdef PROCESS
-			printf("No Entry.\n");
-		#endif
-		_exit(1);
-		return ne__;
-	}
+int __no_entry__(void *proto_call) {
+	#ifdef PROCESS
+		printf("No Entry.\n");
+	#endif
+	_exit(1);
+	return ne__;
+}
 
-	int __info__(void *proto_call) {
-		#ifdef PROCESS
-			printf("@info\n");
-		#endif
+int __info__(void *proto_call) {
+	#ifdef PROCESS
+		printf("@info\n");
+	#endif
 
-		return ne__;
+	return ne__;
+};
+
+int __pointer__(void *proto_call) {
+	char const *ptr_name = mac_address;
+	#ifdef PROCESS
+		printf("@pointer.reference:%s\n", ptr_name);
+	#endif
+	return ne__;
+};
+
+int __field__(void *proto_call) {
+	char const *fld_name = loc_address;
+	#ifdef PROCESS
+		printf("@field.hash: %s\n", fld_name);
+	#endif
+	debug("Field",fld_name,"temp",ne__)
+	return ne__;
+};
+
+int __point__(void *proto_call) {
+	char const *point_name = glo_address;
+	#ifdef PROCESS
+		printf("@point.name: %s\n", point_name);
+	#endif
+	return ne__;
+};
+
+int __w3__(void *proto_call) {
+	char const *__call = (char const *)proto_call;
+	#ifdef PROCESS
+		printf("@w3.uni_address: %s\n", uni_address);
+		printf("@w3(%s)\n", __call);
+	#endif
+	return ne__;
+};
+
+d_into *dcloud(void *proto_call) {
+	char const *dc_address=base_address(3);
+	#ifdef PROCESS
+		printf("(d-%s)\n", dc_address);
+	#endif
+	return NULL;
+};
+
+int act2args(aip_st *proto_call) {
+	switch(p_switcher(proto_call)) {
+	case -1 : return __no_entry__(proto_call);
+	case 0  : return __info__(proto_call);
+	case 1  : return __pointer__(proto_call);
+	case 2  : return __field__(proto_call);
+	case 3  : return __pointer__(proto_call);
+	default: return ne__;
 	};
-
-	int __pointer__(void *proto_call) {
-		char const *ptr_name = mac_address;
-		#ifdef PROCESS
-			printf("@pointer.reference:%s\n", ptr_name);
-		#endif
-		return ne__;
-	};
-
-	int __field__(void *proto_call) {
-		char const *fld_name = loc_address;
-		#ifdef PROCESS
-			printf("@field.hash: %s\n", fld_name);
-		#endif
-		debug("Field",fld_name,"temp",ne__)
-		return ne__;
-	};
-
-	int __point__(void *proto_call) {
-		char const *point_name = glo_address;
-		#ifdef PROCESS
-			printf("@point.name: %s\n", point_name);
-		#endif
-		return ne__;
-	};
-
-	int __w3__(void *proto_call) {
-		char const *__call = (char const *)proto_call;
-		#ifdef PROCESS
-			printf("@w3.uni_address: %s\n", uni_address);
-			printf("@w3(%s)\n", __call);
-		#endif
-		return ne__;
-	};
-
-	d_into *dcloud(void *proto_call) {
-		char const *dc_address=base_address(3);
-		#ifdef PROCESS
-			printf("(d-%s)\n", dc_address);
-		#endif
-		return NULL;
-	};
-
-	int act2args(aip_st *proto_call) {
-		switch(p_switcher(proto_call)) {
-		case -1 : return __no_entry__(proto_call);
-		case 0  : return __info__(proto_call);
-		case 1  : return __pointer__(proto_call);
-		case 2  : return __field__(proto_call);
-		case 3  : return __pointer__(proto_call);
-		default: return ne__;
-		};
-	};
-	
-
+};
 
 
 lbb_entry __decode_arg(char const *argument) {
@@ -781,13 +788,8 @@ lbb_entry __decode_arg(char const *argument) {
 	};
 };
 
-
-
-
 int __lbb_kv(char const *key, char const *value) {
 	
-
-
 	return 0;
 }
 

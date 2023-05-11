@@ -158,7 +158,7 @@
 				atp_pointer:"lbb command",\
 				atp_charm: "lbb interpreter",\
 				atp_pyfld: "lbb payload field",\
-				atp_data: "lbb data",\
+				atp_h: "lbb data",\
 			default:"lbb call")
 
 		#define __lbb_resp_generic(__) \
@@ -166,7 +166,7 @@
 				atp_pointer*:"command response",\
 				atp_charm*: "interpreter reply",\
 				atp_pyfld*: "payload retrieve",\
-				atp_data*: "field return",\
+				atp_h*: "field return",\
 			default:"unknown args")
 
 		#define __lbb_generic(__) \
@@ -174,7 +174,7 @@
 				char[8]:(atp_pointer *) &__,\
 				char[64]:(atp_charm *) &__,\
 				char[512]:(atp_pyfld *) &__,\
-				char[4096]:(atp_data *) &__,\
+				char[4096]:(atp_h *) &__,\
 				default:"unknown")
 
 		#define __lbb_typd(__) \
@@ -182,7 +182,7 @@
 				atp_pointer * : char[8],\
 				atp_charm * : char[64],\
 				atp_pyfld * : char[512],\
-				atp_data * : char[4096],\
+				atp_h * : char[4096],\
 				default:"unknown")
 
 		#define fmt_out(x) log_str(0,_Generic((x), \
@@ -361,19 +361,22 @@
 	#ifndef __H512__C
 		/********* types *********/
 		static __ul u;
+		static ell_st __ell;
 		static aip_sock __sok;
 		static arc_st __arc;
-	    static uchar dbuf[__A_LEN];
 		/********** books *********/
 		static ulong ___lbb_offset=0;
-		static c_shard lbb_shard;
-		static c_shard *l_shard=&lbb_shard;
-		static m_stat *lbb_mstat=&(lbb_shard.c_stat);
+		static c_shard ___shard;
+		static c_shard *l_shard=&___shard;
+		static m_stat *lbb_mstat=&(___shard.c_stat);
+		static lbb_h ___book;
 		static d_into ixr_view;
 		static const d_mod required_mods[2] = {{.__name="constants"},{.__name="tests"}};
 		/********* unistd *********/
 		extern char **environ;
 		/********* http *********/
+		static atp_h ___buffer;
+		static uchar *dbuf = (uchar *)&___buffer.data;
 		static char *__http_get="GET";
 		static char *__http_post="POST";
 		static char *wss_key_h="Sec-WebSocket-Key: ";
@@ -563,14 +566,18 @@
 		#ifndef _D_ARCH_H
 			#define _D_ARCH_H 1
 			// arch
+			int __is_module(char const *__);
+			int __is_file(char const *__);		
+			int __is_ref(char const *__);
 			char const *__address(int __level, char const *__filename);
 			ulong *__indices(char const *__temp);
-			char const *uname(const char *__filename);
+			char const *__uname(const char *__filename);
 			char const *__get_atnmae(char const *__naming);
 			char const *__getcaller();
 			char const *caller();
 			char const *charm_call(char const *entry, char const *name);
 			int __entry_valid(char const *__);
+			int __entry_nvalid(char const *__);
 			ulong vcontent_count(void const **__vc);
 			ulong content_count(char const **__content);
 			ulong lexical_args(void **__vars);

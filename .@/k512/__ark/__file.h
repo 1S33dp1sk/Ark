@@ -5,6 +5,12 @@
 #ifndef _D_FILE
 	#define _D_FILE 1
 
+
+	int init_shard(d_shard *_shard) {
+
+		return 0;
+	};
+
 	uchar const *__dbook(char const *__cpath, ulong __size) {
 		m_stat cm_st;
 		int res=get_mstat(__cpath, &cm_st);

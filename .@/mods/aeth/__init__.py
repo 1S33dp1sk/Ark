@@ -6,7 +6,7 @@
 
 from sys import argv
 from _configs	import Contracts, DaoVars
-from _dynamic	import log,Node
+from _aether	import log,Node
 from _utils		import GenErr, Settings
 
 
@@ -22,10 +22,4 @@ def temp(_args):
 
 # Context Execution
 if __name__=='__main__':
-	log(".PY ")
-	if not argv:
-		raise GenErr('no_args')
-	else:
-		# _node = Node()
-		for i in argv:
-			print(i)
+	log("Init Aether")

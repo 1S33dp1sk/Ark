@@ -135,14 +135,13 @@ loaded via a .o or .so
 
 	#endif
 
-	#ifndef atp_data
+	#ifndef atp_d
 		struct __cis_addr {
 			void *pointer;
 			char *addr;
 			char const *chkref;
 		};
-	typedef struct __cis_addr atp_data;
-		#define _ATP_(x, ...) atp_data d##__VA_ARGS__;
+	typedef struct __cis_addr c_addr;
 		#define c3atp(x)	x->pointer, x->addr, x->chkref
 		#define __cis__(x) ((cis_st *)x->pointer)
 		#define cis_ptr(x) ((void const *)x->pointer)
@@ -153,8 +152,8 @@ loaded via a .o or .so
 
 	#endif
 
-	#define __ADDR_TYPES { atp_pointer, atp_charm, atp_pyfld, atp_data }
-	#define atp_init(x) atp_data x;
+	#define __ADDR_TYPES { atp_pointer, atp_charm, atp_pyfld, atp_d }
+	#define atp_init(x) atp_d x;
 #endif
 
 #ifndef __SHA3_TYPES
@@ -271,11 +270,14 @@ loaded via a .o or .so
 	
 	#endif
 
+
 	#ifndef c_shard
 		// Shard
 		struct __c_shard {
 			m_stat c_stat;
 			ulong	c_fd;
+			int arg_count;
+
 		};
 	typedef struct __c_shard c_shard;
 		#define sh_stat(x) ((m_stat *)(x->c_stat))
@@ -397,7 +399,7 @@ dPRG(
 			execve(x.__, (char * const *)t, ne);\
 		}
 		#define program(x,i,...) d_prg x;{\
-			x.__=modbase_call(#i);\
+			x.__=run_bcall(#i);\
 			x.prg_handler=gprg_handler(i);\
 		};\
 	
@@ -525,6 +527,7 @@ dPRG(
 			int i_switch;
 			char const *i_caller;
 			char const **i_args;
+			void *i_ptr;
 			struct __into_d* __next;
 		};
 	typedef struct __into_d d_into;
@@ -654,39 +657,34 @@ dPRG(
 	#ifndef d_socket
 			#ifndef atp_t
 			// atp :: {a.k.a @-Protocol} : types
-				enum __atypes_p {
-					__at_p='0',
-					__at_4=4,
-					__at_6=6,
-					__at_e='e',
-					__at__='@'
+				enum __proto_t {
+					PROTO='0',
+					HTTP_4=4,
+					HTTP_6=6,
+					ETH_CID='e',
+					AT_PRO='@'
 				};
-			typedef enum __atypes_p atp_t;
+			typedef enum __proto_t atp_t;
+				#define atp2inet(x) x!=HTTP_4?x!=HTTP_6?0:INET_6:INET_4;
 			
 			#endif
 
-			#ifndef sAF_t
+			#ifndef inet_t
 			// needed for inet resolutions
-				enum __sAF_types {
-					__sAF_INET=2,
-					__sAF_INET6=30
+				enum __inet_t {
+					INET_4=2,
+					INET_6=30
 				};
-			typedef enum __sAF_types sAF_t;
-				#define s2a_type(x) int x; 
-				#define a2s_type(x) atp_t x;\
-					switch(x) {\
-					case __at_4: return __sAF_INET;\
-					case __at_6: return __sAF_INET6;\
-					default: return __sAF_INET;\
-				}\
+			typedef enum __inet_t inet_t;
+				#define inet2atp(x) x!=INET_4?x!=INET_6?0:HTTP_6:HTTP_4;
 			
 			#endif
 			// socket address
 			struct __portal_d {
-				atp_t s_protocol;
-				void *s_address;
-				char s_socket[128];
-				char s_ascii[__I_LEN];
+				atp_t p_protocol;
+				void *p_address;
+				char p_socket[128];
+				char p_ascii[__I_LEN];
 			};
 		typedef struct __portal_d d_portal;
 			#define portal(a,...) atp_step(a,__VA_ARGS__)
@@ -716,12 +714,31 @@ dPRG(
 		struct __mod_d {
 			ulong __size;
 			char const *__name;
+			char const *__cpath;
 		};
 	typedef struct __mod_d d_mod;
 		#define module(x) d_mod x; x.__name=#x; x.__size=fsze(__mod_call(x.__name));\
 
 
 	#endif
+
+
+	#ifndef d_shard
+		// Shard
+		struct __d_shard {
+			m_stat  info;
+			ulong 	fld;
+			int argc;
+			char const **keys;
+			char const **paths;
+		};
+	typedef struct __d_shard d_shard;
+		#define dsh_stat(x) ((m_stat *)(x->info))
+		#define dsh_fd(x) ((ulong)x->fld)
+
+
+	#endif
+
 
 /**
  * D => Switcher
@@ -858,24 +875,102 @@ dPRG(__LBB__)
 		#define ZERO_FORMAT(x)	x==nfmt?1:0
 	#endif
 
+/**
+ * Heads * 
+ 		**/
+
+ /** ATP **/
+	#ifndef atp_h
+		#define __atp_data 4096
+		struct __atp_h {
+			char const *address;
+			char const *domain;
+	    	uchar const data[__API_LEN];
+
+		};
+	typedef struct __atp_h atp_h;
+		#define ATP_ADDRESS(x) memmove(_atp_address, #x, str_rwings(#x))
+		#define _atp_domain	((void *)&___buffer.domain)
+		#define atp_domain 	((char const *)&___buffer.doi)
+		#define atp_address ((char const *)&___buffer.address)
+		#define _atp_address ((void *)&___buffer.address)
+		#define atp_data	((uchar *)&___buffer.data)
+		#define _atp_data	((void *)&___buffer.data)
+		#define atp_start(_network, _dname) Alpha_atp &___buffer; {\
+			;\
+		};\
+
+	#endif
+
+
+
+
+ /** LBB **/
+	#ifndef lbb_h
+		#define __author __MA__S
+		#define __pubkey __GS__S
+		#define __publisher __LO__F
+		struct __lbb_h {
+			int __valid;
+			ulong shared_size;
+			ulong timestamp;
+			char const author[8];
+			char const public_key[64];
+			char const publisher[512];
+		};
+	typedef struct __lbb_h lbb_h;
+		#define __lbb_valid		___book.__valid
+		#define lbb_validity	!__lbb_valid?"VALID":"N-VALID"
+		#define lbb_shared_size ___book.shared_size
+		#define lbb_timestamp	___book.timestamp
+		#define _lbb_author		((void *)(&___book.author))
+		#define lbb_author		((char *)(&___book.author))
+		#define _lbb_public_key	((void *)(&___book.public_key))
+		#define lbb_pubkey
+		#define	_lbb_publisher	((void *)(&___book.publisher))
+		#define lbb_load(_alias, _pvtkey, ...) Alpha_lbb &___book; {\
+			___book.__valid = __check_alias(#_alias);\
+			if(!__lbb_valid) { return ne; } else { \
+				__book__();\
+				memmove(_lbb_author, #_alias, __author);\
+				program(aevm_keygen, IXR&->aeth/__init__.py);\
+				dprg_run(aevm_keygen);\
+				printf("private_key	:	%s\n", _pvtkey);\
+				printf("lbb author	:	%s\n", lbb_author);\
+				printf("lbb size	::	%d\n",__arch__(lbb_pubkey));\
+				__TRAV(3,@charms:lbb_author,lbb<lbb_pubkey>);\
+				__VA_ARGS__;\
+				indexer_end();\
+			};\
+		};\
+
+	#endif
+
+
 
 
 /** IXR **/
 
 	#ifndef ixr_h
 			struct __ixr_h {
-				ulong shared_size; // __size;
-				ulong mods_count; // d_count;
-				char const * pub_key; 
-				char const * pvt_key;
-				char const * alias;
-				void *session; // checksum;
-				int c_res;
-				uchar __[__A_LEN]; //head[__I_LEN]
+				ulong img_mcount; // modules count;
+				ulong img_size;
+				char const img_name[20];
+				d_shard img_shard;
 				struct __ixr_h* __next;
 			};
 	typedef struct __ixr_h ixr_h;
-		#define ixr_address(x) ((char const *)(x->pub_key))
+		#define ixr_img_size	___header.img_size
+		#define ixr_img_mods	___header.img_mcount
+		#define ixr_img_name	___header.img_name
+		#define ixr_img_argc	((ulong)___header.img_shard.argc)
+		#define _ixr_img_name	((void *)___header.img_name)
+		#define img_size(x)			___header.img_size = x;
+		#define img_argc(x)			___header.img_shard.argc = arr_cdelims(#x);
+		#define img_arg(i,k,v)		___header.img_shard.
+		#define img_mods_count(x)	___header.img_mcount = x;
+		#define img_name(x)			memmove(_ixr_img_name, x, str_rwings(x));
+		#define ixr_address(x)		__address(3, x->img_name)
 
 	#endif
 
@@ -909,17 +1004,44 @@ dPRG(__LBB__)
 	#endif
 
 	#ifndef aip_sock
-		struct __sok_st {
-		    ulong aip_sockfd;
-		    ulong aip_socklen;
-		    d_portal aip_sockst;
+		struct __aip_sockst {
+			char *actv_str;
+			ulong sock_fd;
+			ulong sock_len;
+			atp_t sock_proto;
+			struct sockaddr *sock_raw;
+			uchar sock_data[__A_LEN];
 		};
-	typedef struct __sok_st aip_sock;
-		#define aip_sockfd(x)	((ulong)(x->aip_sockfd))
-		#define aip_socklen(x)	((ulong)(x->aip_socklen))
-		#define aip_socket(x)	((ulong)(x->aip_sockst))
-		#define aip_sockname(x) ((char const *)socket_name(x->aip_sockst))
+	typedef struct __aip_sockst aip_sock;
+		#define aip_fd(x) ((ulong)((aip_sock *)&x)->sock_fd)
+
+	#endif
+
+
+	#ifndef _socket
+		struct __sok_st {
+		    aip_sock _sock;
+		    d_portal _portal;
+		};
+	typedef struct __sok_st _socket;
+		#define socket_aip(x) (((aip_sock *)((_socket *)&x))._sock)
+
+
 	
+	#endif
+
+
+
+	#ifndef ell_st
+		struct __ell_st {
+			ulong sockfd;
+			char reusable[4096];
+			ulong _used;
+		};
+	typedef struct __ell_st ell_st;
+		#define zero_buffer(a,b) memset(a, 0, b);
+		
+
 	#endif
 
 
@@ -989,18 +1111,35 @@ dPRG(__LBB__)
 
 		#endif
 
-		#ifndef arc_shard
+
+
+		#ifdef arc_shard
 			struct __ar_shard {
 				int perm;
 				char const *name;
-				char const *addr[3];
+				void const *addrs[3];
 			};
 		typedef struct __ar_shard ar_shard;
 			#define shard(a,b,...) ar_shard a; {\
+
 			};\
 
 		#endif
 
+		
+
+		#ifdef arc_alias
+			struct __ar_alias {
+				ulong size;
+				char const *content;
+
+			};
+		typedef struct __ar_alias ar_alias;
+			#define alias(x,y) {\
+				lbb_lookup(alias_address(x,y));\
+			};\
+			
+		#endif
 	
 	#endif
 

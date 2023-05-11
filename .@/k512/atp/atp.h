@@ -2,6 +2,9 @@
 @-protocol
 
 #ifndef __ATP__H
+	#define ATP_FILE "@charms/d.out/index"
+
+
 	#ifndef AT_DEFINED
 		#define __AT_DEFINED '@'
 		#if __AT_DEFINED!=64
@@ -9,10 +12,18 @@
 			#define __AT_DEFINED 64
 		#endif
 		#define AT_DEFINED __AT_DEFINED
-	#endif	
+	#endif
+	#ifndef __ATP__C
+		static ulong step_c=0;
+		static ulong points_c=0;
+		static ulong p_pid;
+		static ulong c_pid;
+		#define __ATP__C 1
+	#endif
 	#define __loc_i4 "0.0.0.0"
 	#define __loc_i6 "::1"
 	#define __loc_ia "0x00000000000000000000000000000000"
+
 
 	#define d_atp "out/\0"
 	// LBB
@@ -20,7 +31,7 @@
 	#define d_lbb "lbb/\0"
 	// ATP
 	#define ATP_BASE (ulong)str_rwings(d_atp)
-#define __PASS_ATP_D 0x1000
+	#define __PASS_ATP_D 0x1000
 	#define __PASS_MAX_D 0x200
 	#define __PASS_MID_D 0x40
 	#define __PASS_MIN_D 0x8
@@ -80,9 +91,6 @@
 	#define __send_hash__(x)	__generic_hash__(0,x,"send\0")
 	#define __listen_hash__(x)	__generic_hash__(0,x,"listen\0")
 
-
-	#define srwings(x) str_rwings(x)
-
 	#define __p_args(p) ((void *)(&(p.args)))
 	#define p_args(p) ((char const *)(p.args))
 	#define _p_args_len(p) ((ulong)(str_rwings(p_args(p))))
@@ -97,12 +105,6 @@
 	#define p_interpreter(p) ((char const *)(p.interpreter))
 	#define _p_interpreter_len(p) ((ulong)(str_rwings(p_interpreter(p))))
 
-	#define socket_fd(x) (ulong)(x->aip_sockfd)
-	#define sock_fd(x) (ulong)(x->aip_sockfd)
-	#define socket_len(x) (ulong)(x->aip_socklen)
-	#define sock_len(x) (ulong)(x->aip_socklen)
-	#define socket_staddr(x) (struct sockaddr *) aip2sockaddr(x)
-
 	#define addr_args(x) ((x->ptr),(x->addr), #x)
     #define len_strze(x) (((ulong)x)*(sizeof(char)))
 
@@ -112,14 +114,9 @@
 	}
 	#define hash_follow(l,...) ((char const *)hashof(l, #__VA_ARGS__, str_rwings(#__VA_ARGS__)))
 	#define __protocol__(x) get_atp_type(x);
-	
-	#ifndef __ATP__C
-		static ulong step_c=0;
-		static ulong points_c=0;
-		static ulong p_pid;
-		static ulong c_pid;
-		#define __ATP__C 1
-	#endif
+		
+	int atp_activate(char const *_actv_str);
+
 
 	char const *__http_names(http_req __http_r_type);
 	char const *atp_name(int __type);
@@ -129,8 +126,9 @@
 	int __read_ft(char *__buffer, ulong __len);
 	struct sockaddr *__aip2sockaddr(aip_sock *sock);
 	struct sockaddr *aip2sockaddr();
-
+	char const *__domain_ip(char const *__d_name);
 	char const *form_http_request(http_req req_type, char const *__path);
+	char const *alias_address(void **a_name, char const *a_pvtkey);
 	char const *form_http_response(ulong res_type, char const *req_result);
 	char const *http_response(ulong __http_status, char const *http_result);
 	char *__pia_http(d_pia *pia_st);
@@ -174,7 +172,7 @@
 	void __ellrun(ulong __fd);
 	void *__arcell(void *c_arc);
 	void *__arcstart(void *c_arc);
-	void *__sok_addr(struct sockaddr *sa);
+	void *_sockaddr(struct sockaddr *sa);
 	void __ellcall(ulong __sockfd, char *reuse, ulong rsize);
 
 	// void *__point_run();
@@ -183,16 +181,15 @@
 
 	int __sokres(char const *__port);
 
-	int atp_set(void *args);
-	int atp_get(void *args);
-	int atp_rdo(void *args);
-	int atp_next(void *args);
+	void *atp_set(void *args);
+	void *atp_get(void *args);
+	void *atp_rdo(void *args);
+	void *atp_next(void *args);
 
 	void *__aip_sock__(aip_sock *sock);
 
 	// atp_t stype_to_atype(sAF_t __stype);
 	void _socket_address_free(d_portal *__aip_portal);
-	char *__aip_sock_raw();
 	void sock_errs();
 	void __ellget(ulong __sockfd, char *reuse, ulong rsize);
 	void __ellsend(ulong __sockfd, char *reuse, ulong rsize);
