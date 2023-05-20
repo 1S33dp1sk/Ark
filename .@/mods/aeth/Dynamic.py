@@ -219,3 +219,10 @@ class Dynamic(Aether):
 
 		return self.cache_block()['AETHERER']
 
+
+
+
+
+
+if __name__ == '__main__':
+	d = Dynamic()

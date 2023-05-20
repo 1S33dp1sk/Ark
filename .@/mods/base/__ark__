@@ -16,14 +16,14 @@ Define a custom shard,
 dFUN(Shard, char const *, {
 	__IXR__(
 		Public, 
-			Aether:		IXR&->aeth,
-			BaseArk:	IXR&->base,
-			Constants:	IXR&->constants,
-			Dcloud:		IXR&->hub,
-			Errors:		IXR&->errors,
-			Loops:		IXR&->looping,
-			Inits:		IXR&->strt,
-			Tests:		IXR&->tests
+			mod(Aether, 	IXR&->aeth),
+			mod(BaseArk, 	IXR&->base),
+			mod(Constants, 	IXR&->constants),
+			mod(Dcloud, 	IXR&->hub),
+			mod(Errors,		IXR&->errors),
+			mod(Loops, 		IXR&->looping),
+			mod(Inits, 		IXR&->strt),
+			mod(Tests, 		IXR&->tests)
 	)
 	return IXR->img_name;
 })
@@ -42,7 +42,7 @@ Define a d-cloud alias,
 **/
 dFUN(Alias, char const *, {
 	__LBB__(
-		testacc, "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6"
+		testacc, 0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6
 	)
 
 	return LBB->author;

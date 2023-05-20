@@ -84,6 +84,7 @@ k512arch_o:=${out@charms}/karc_512h.o
 #####################################
 #			 Charms 				#
 #####################################
+runnable:=ark
 __base_at:=k512 mods
 base_at:=$(addprefix ${__base_at}, ${__cdir})
 mv_basis:=$(foreach __, ${__base_at}, mv ${__} ${__@})
@@ -125,7 +126,7 @@ _ark_in:
 	cc ${src@charms}/ark.c -o ${out@charms}/ark.o ${aetherlib}
 
 _ark_out:
-	cc ${src@charms}/ark.c -o @ ${aetherlib}
+	cc ${src@charms}/ark.c -o ${runnable} ${aetherlib}
 
 ark_intro:
 	@printf "\n{{{{{{{{{⚡}}}}}}}}}\n"
@@ -283,7 +284,7 @@ _mods:
 
 
 mods_:
-	${@Ark}/@
+	${@Ark}/${runnable}
 	@if [ -f ${@Ark}/modules ]; then echo "Modules init"; fi
 
 outro_mods:

@@ -1,12 +1,4 @@
 
-def _getCaller( _pvtKey: str ) -> dict :
-	_w3 = Web3()
-	try:
-		pubKey = _w3.eth.account.from_key( _pvtKey ).address
-		return {"pvtKey": _pvtKey,"pubKey": pubKey}
-	except:
-		raise ConfErr( 5 )
-		quit()
 
 def _getRouterAddresses( aether_names : list , chainWss : str , routerAddr : str , routerAbi : list ) -> dict :
 	_w3 = _connectWss( chainWss )

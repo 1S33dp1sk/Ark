@@ -7,7 +7,7 @@
 
 
 #ifndef __atp_name
-	#define __atp_name "@-protocol"
+	#define __atp_name "ATP"
 
 
 int atp_activate(char const *_activation) {
@@ -25,28 +25,6 @@ atp_t stype_to_atype(inet_t inet_type) {
 	return HTTP_4;
 };
 
-#define __atp__(x) aip_sock * {\
-	printf("atp : @-Porotocol :: strt");\
-	void *varc = __arc_address(hashof(1, #x, sizeof(aip_sock)));\
-	__handle_convo(x);\
-	return varc;\
-};
-
-void *__atp_pointer() {
-	atp_pointer *atp_p=malloc(sizeof(atp_pointer));
-	memset(atp_p, 0, sizeof(atp_pointer));
-	__arcpid();
-	#ifdef PROCESS
-		printf("ATP<arcpid> = %lu\n", __arc.__pid);
-	#endif
-	atp_p->mem = atp_p;
-	sprintf(atp_p->addr, "%lu", __arc.__pid);
-	atp_p->chkref = hash_follow(0, atp_p->addr);
-	#ifdef DEBUG
-		printf("%p<%s>(%s)\n", atp_p->mem, atp_p->addr, atp_p->chkref);
-	#endif
-	return atp_p->mem;
-};
 
 void __handle_convo(aip_sock *sock) {
 	int rbytes=aip_recv(sock, dbuf);
@@ -1118,7 +1096,8 @@ void *atp_next(void *args) {
 		return 1;
 	};
 
-	void *__arc_pointer(void const *aipd){
+	
+	void *__arc_pointer(void const *__) {
 		atp_pointer *atp_p=malloc(sizeof(atp_pointer));
 		memset(atp_p, 0, sizeof(atp_pointer));
 		__arcpid();
@@ -1126,14 +1105,13 @@ void *atp_next(void *args) {
 			printf("ATP<arcpid> = %lu\n", __arc.__pid);
 		#endif
 		atp_p->mem = atp_p;
-		sprintf(atp_p->addr, "%lu", __arc.__pid);
+		memmove(atp_p->addr, num2char(__arc.__pid), 8);
 		atp_p->chkref = hash_follow(0, atp_p->addr);
-		#ifdef DEBUG
+		#ifdef OUTPUT
 			printf("%p<%s>(%s)\n", atp_p->mem, atp_p->addr, atp_p->chkref);
 		#endif
-		__arc.__next = atp_p -> mem;
-
-		return __arc.__next;
+		atp_p->mem = (void *)__;
+		return atp_p->mem;
 	};
 
 	void *__arc_address(void const *cert){
@@ -1190,10 +1168,6 @@ void *atp_next(void *args) {
 		if(temp==NULL){
 			printf("les : failed to bind, another instance is probably running.\n");
 			exit(1);
-		}else {
-			if(!__aip_listen(sockfd)) {
-				__ellrun(sockfd);
-			}
 		}
 		return __arc.__next;
 	};	
@@ -1246,6 +1220,7 @@ void *atp_next(void *args) {
 		}		
 		memset(&buf, 0, sizeof(buf));
 		inet_ntop(temp->ai_family, _sockaddr((struct sockaddr *)temp->ai_addr), buf, sizeof buf);
+		
 		freeaddrinfo(__servinfo);
 		#if OUTPUT
 			printf("client: connecting to %s\n", buf);

@@ -22,12 +22,6 @@ the "next" stage, another structure rebuilds to be any of the other 2 stages.
 '''
 
 
-def log(str_output):
-	print(_config.Colors.EVIOLET)
-	print("%s"%(str_output))
-	print(_config.Colors.NC)
-
-
 class Logger:
 	def __init__( self ):
 		pass
@@ -128,7 +122,8 @@ class Logger:
 
 class Configuration:
 	def __init__( self ):
-		self.config = _readFile( self._confPath , True )
+		self._confPath = "@charms/d.run/aeth/template-config.json"
+		self.config = _utils._readFile( self._confPath , True )
 		self.__check()
 
 	def __check( self ):
@@ -185,8 +180,8 @@ class Configuration:
 		return self.config[ 'CHAINS' ][ str( chainId ) ][ 'contracts' ][ contract_name ]
 
 	def sign( self , transaction ):
-
-		return Web3().eth.account.sign_transaction( transaction , private_key=self.config['CALLER']['pvtKey'] )
+		w3 = _utils._connectTemplate()
+		return w3.eth.account.sign_transaction( transaction , private_key=self.config['CALLER']['pvtKey'] )
 
 	def caller( self ):
 
@@ -726,7 +721,7 @@ class Dynamic( Aether , Configuration ):
 
 class Node( Dynamic , Logger , Configuration ):
 	def __init__( self , caller, aether_path : str):
-		self.node_name = self._pathify( aether_path )
+		self.node_name = self._pathify( aether_path, caller )
 		Configuration.__init__( self )
 		Aether.__init__( self )
 		Dynamic.__init__( self )
@@ -937,6 +932,24 @@ class Node( Dynamic , Logger , Configuration ):
 		finally:
 			self.log_status( False )
 			self.loop.close()
+
+
+
+
+
+
+
+
+
+
+
+
+def log(str_output):
+	print(_configs.Colors.EVIOLET)
+	print("%s"%(str_output))
+	print(_configs.Colors.NC)
+
+
 
 
 

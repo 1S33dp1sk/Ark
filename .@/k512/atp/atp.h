@@ -5,6 +5,13 @@
 	#define ATP_FILE "@charms/d.out/index"
 
 
+	#define __atp__(x) aip_sock * {\
+		printf("atp : @-Porotocol :: strt");\
+		void *varc = __arc_address(hashof(1, #x, sizeof(aip_sock)));\
+		__handle_convo(x);\
+		return varc;\
+	};
+
 	#ifndef AT_DEFINED
 		#define __AT_DEFINED '@'
 		#if __AT_DEFINED!=64
@@ -139,7 +146,8 @@
 	content_pm proto_from_status(ulong __http_status);
 	char const *__config_prop(char const *__str_1, char const *__str_2);
 	char const *http_config(char const *cfg_key, char const *cfg_val);
-
+	void *__atp_cell(void *c_stp);
+	
 	void *__arc__();
 	void *__arc_pointer(void const *aipd);
 	void *__arc_address(void const *aip_cert);
@@ -201,9 +209,6 @@
 	aip_st *h2act(ixr_h *h_request);
 	ixr_h *act2h(aip_st *action);
 
-	void *__atp_pointer();
-
-
 	#define atp_step(__,...) {\
 	if (\
 		if __ARC_PROCESS {\
@@ -212,7 +217,7 @@
 		switch(__) {\
 			case arc_pointer:\
 				__TEXT(0, ARC => fork);\
-				return __atp_pointer(__data);\
+				return __arc_pointer(__data);\
 			case arc_address:\
 				__TEXT(0, ARC => address);\
 				return __arc_address(__data);\

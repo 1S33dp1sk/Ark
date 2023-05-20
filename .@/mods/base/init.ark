@@ -2,18 +2,15 @@
 
 
 
-/**
-Any program always starts with `dPRG` 
- a simple sequential leveled interepreter based execution point/er.
 
-we can create a simple shell
-**/
+dFUN(get_ip, char const *, {
+	return __domain_ip("d-cloud.io");
+})
 
 
 dPRG(
-	printf("shard\n--\n%s\n--\n",Shard());
-	printf("alias : { %s }\n", Alias());
-	printf("domain :: %s\n", __domain_ip("d-cloud.io"));
+	string(dcloud_ip, get_ip())
+	out(dcloud_ip)
 )
 
 

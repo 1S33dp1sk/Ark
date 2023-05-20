@@ -265,7 +265,10 @@ dPRG(
 	};
 
 	void log_socket(aip_sock *sock) {
-
+		printf("logging socket\n");
+		inet_ntop(sock->sock_proto,_sockaddr(sock->sock_raw), sock->sock_addr, sizeof(sock->sock_addr));
+		printf("%s\n", (char *)sock->sock_addr);
+		
 	};
 
 	// misc

@@ -160,14 +160,14 @@ loaded via a .o or .so
 	#ifndef sha3_context
 
     #endif		
-	#ifndef sha3_return
+	#ifndef sha3_r
 		enum __sha3_return {
 			__sha3_u_ok=0,
 			__sha3_u_n=1
 		};
 	typedef enum __sha3_return sha3_r;
 	#endif
-	#ifndef sha3_flags
+	#ifndef sha3_f
 		enum __sha3_flags {
 			__sha3_flag_none__=0,
 			__sha3_flag_keccak__=1
@@ -396,6 +396,11 @@ dPRG(
 		#define dprg_run(x,...) {\
 			printf("\n Ark @%s\n:: %s ::: %s\n", #x, x.__, #__VA_ARGS__);\
 			const char *t[3] = {x.__, #__VA_ARGS__ ,NULL};\
+			execve(x.__, (char * const *)t, ne);\
+		}
+		#define dprg_script(x,n,...) {\
+			printf("\nArkScript\t#%s\n::%s{%s}\n", #n, tx, #__VA_ARGS__);\
+			const char *t[3] = {&x.__, #__VA_ARGS__ ,NULL};\
 			execve(x.__, (char * const *)t, ne);\
 		}
 		#define program(x,i,...) d_prg x;{\
@@ -914,6 +919,7 @@ dPRG(__LBB__)
 			int __valid;
 			ulong shared_size;
 			ulong timestamp;
+			ulong copyid;
 			char const author[8];
 			char const public_key[64];
 			char const publisher[512];
@@ -925,22 +931,30 @@ dPRG(__LBB__)
 		#define lbb_timestamp	___book.timestamp
 		#define _lbb_author		((void *)(&___book.author))
 		#define lbb_author		((char *)(&___book.author))
+		#define lbb_copyid		___book.copyid
 		#define _lbb_public_key	((void *)(&___book.public_key))
-		#define lbb_pubkey
+		#define lbb_pubkey 		((char const *)&___book.public_key)
 		#define	_lbb_publisher	((void *)(&___book.publisher))
 		#define lbb_load(_alias, _pvtkey, ...) Alpha_lbb &___book; {\
 			___book.__valid = __check_alias(#_alias);\
 			if(!__lbb_valid) { return ne; } else { \
 				__book__();\
 				memmove(_lbb_author, #_alias, __author);\
-				program(aevm_keygen, IXR&->aeth/__init__.py);\
-				dprg_run(aevm_keygen);\
-				printf("private_key	:	%s\n", _pvtkey);\
-				printf("lbb author	:	%s\n", lbb_author);\
-				printf("lbb size	::	%d\n",__arch__(lbb_pubkey));\
-				__TRAV(3,@charms:lbb_author,lbb<lbb_pubkey>);\
-				__VA_ARGS__;\
-				indexer_end();\
+				program(aevm, IXR&->aeth/__init__.py);\
+				___book.shared_size = __arch__(_alias);\
+				__TRAV(3, \n@charms:_alias, \n);\
+				__TEXT(3, @lbb.shared_size);__ASCII(3, lbb_shared_size);\
+				__TEXT(3, @lbb.author);__ASCII(3, lbb_author);\
+				__TEXT(3, @lbb.pub);\
+				___book.copyid = fork();\
+				if(!lbb_copyid){\
+					dprg_run(aevm, _pvtkey, _alias);\
+				}else{\
+					waitpid(lbb_copyid, &__lbb_valid, 0);\
+					__TEXT(0, lbb initated);\
+					__VA_ARGS__;\
+					indexer_end();\
+				};\
 			};\
 		};\
 
@@ -1010,6 +1024,7 @@ dPRG(__LBB__)
 			ulong sock_len;
 			atp_t sock_proto;
 			struct sockaddr *sock_raw;
+			char sock_addr[128];
 			uchar sock_data[__A_LEN];
 		};
 	typedef struct __aip_sockst aip_sock;

@@ -4,7 +4,6 @@
 #ifndef _D_LANG
 	#define _D_LANG 1
 	#define __D_CHARMS 4
-	#define README __readme
 	#define __ARGC__ argc
 	#define __ARGV__ argv
 	#define __lock_reader (O_RDONLY)
@@ -80,7 +79,7 @@
  * 
  **/
 	#define fld_out(x, fmt, ...) __TRAV(x, \n, __VA_ARGS__)
-	#define lbb_out(fmt, ...) __TRAV(3, \n, json_handler(__VA_ARGS__))
+	#define lbb_out(fmt, ...) __TRAV(3, \n, __VA_ARGS__)
 	#define lbb_putAddr(a,b) __TRAV(3, \n, lbb##a=:#b)
 	#define lbb_putPath(a,b) __TRAV(3, \n,#a:=b)
 	#define lbb_putJson(a,b) __TRAV(3, \n,#a:b)
@@ -93,13 +92,13 @@
 	#define M_ARG(...) (__VA_ARGS__)[0]
 	#define F_ARG(...) (__VA_ARGS__)[1]
 	#define dPRG(...)  __cPRG {__VA_ARGS__;}
-	#define mod(...) mod_##__VA_ARGS__
+	#define mod(a,...) program(#a, __VA_ARGS__)
 	#define readme(x) #x##"/README.md"
-	#define __readme(x){\
-		_ixr_prg.prg_handler = "/usr/bin/nano";\
-		program(_ixr_prg, IXR&->x/README.md);\
-		dprg_run(_ixr_prg);\
-	}
+	// #define __readme(x){\
+	// 	_ixr_prg.prg_handler = "/usr/bin/nano";\
+	// 	program(_ixr_prg, IXR&->x/README.md);\
+	// 	dprg_run(_ixr_prg);\
+	// }
 	#define checkef_file(x,y) ((ulong)__stres(x)&&(ulong)__stres(y))
 	#define checkef_dir(x) ((ulong)__stres(x))
 	#define check_caller(x) ((ulong)__exact_match(__address(x), uni_address))
@@ -126,11 +125,12 @@
 		return run_bcall(#__VA_ARGS__);\
 	};
 
+	//arg_offset(:, __VA_ARGS__, Next:NULL);\
+
 	#define __IXR__(p,...) Alpha_ixr &___header;\
 		__shard__();\
 		img_argc(#__VA_ARGS__);\
 		printf("IXR: %s :: %lu\n",#p, ixr_img_argc);\
-		arg_offset(:, __VA_ARGS__, Next:NULL);\
 
 	
 	#define __ATP__(a,d,...) Alpha_atp &___buffer; {\

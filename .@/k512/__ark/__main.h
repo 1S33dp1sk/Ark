@@ -94,6 +94,26 @@
 		return strdup(__hash);
 	};
 
+	char const *caller_l(int _l) {
+		char const *__=__getcaller();
+		char *__hash;
+		switch(_l){
+		case 0:
+			__hash = (char *)hashof(_l, __, str_rwings(__));
+			return expand("lbb0x",(char const *)__hash);
+		case 1:
+			__hash = (char *)hashof(_l, __, str_rwings(__));
+			return expand("lbb1x", (char const *)__hash);
+		case 2:
+			__hash = (char *)hashof(_l, __, str_rwings(__));
+			return expand("lbb2x", (char const *)__hash);
+		case 3:
+			__hash = (char *)hashof(_l, __, str_rwings(__));
+			return expand("lbb3x", (char const *)__hash);
+		default:
+			return NULL;
+		};
+	}
 	char const *caller() {
 		char const *__=__getcaller();
 		char const *__hash=hashof(1, __, str_rwings(__));

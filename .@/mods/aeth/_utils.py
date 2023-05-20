@@ -12,107 +12,14 @@ ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 ARGS=argv
 
-def _bytesToHex( _bytes: bytes ) -> str :
-	if type( _bytes ) != bytes:
-		return ''
-	return '0x%s'%str( _bytes.hex() )
-
-def _hexify( _hexList: list ) -> str:
-	if type( _hexList ) != list:
-		return ''
-	return '0x%s'%''.join( [i.replace( '0x' , '' ) for i in _hexList] )
-
-def _connectRpc( _rpc : str ) -> Web3 :
-
-	return Web3 ( Web3.HTTPProvider( _rpc ) )
-
-def _connectWss( _wss : str ) :
-
-	return Web3 ( Web3.WebsocketProvider( _wss ) )
-
-def _initContract( _w3 : Web3 , _addr : str , _abi : str ) : 
-
-	return _w3.eth.contract( address = _addr , abi = _abi )
-
-def _getBalance( _w3 : Web3 , callerAddr : str ) -> str :
-
-	return _w3.eth.get_balance( _w3.toChecksumAddress( callerAddr ) )
-
-def _getNonce( _w3 : Web3 , callerAddr : str ) -> int :
-
-	return _w3.eth.get_transaction_count( callerAddr )
-
-def execViewCall( _contract , _function : str , *args , _from=ZERO_ADDRESS ) :
-	w3_function = _contract.get_function_by_name( _function )
-	if _from != ZERO_ADDRESS :
-		return w3_function( *args ).call({'from':_from})
-	return w3_function( *args ).call() 
-
-def execActionCall( _contract , _w3 : Web3 , _function : str , _params : dict , _pvt : str , *args ) :
-	w3_function = _contract.get_function_by_name( _function )
-	_txn = w3_function( *args ).buildTransaction( _params )
-	txn = _w3.eth.send_raw_transaction( _w3.eth.account.sign_transaction( _txn, private_key=_pvt ).rawTransaction )
-	return _w3.toHex( txn )
-
-
-def all_of( self , attrType ):
-	__all = []
-	if attrType == self.w3_conn:
-		for i in self.conf_chains( return_type=int ):
-			__all.append( { self.a_conn( i ) : attrType( i ) } )
-		return __all
-	elif attrType == self.w3_contract:
-		for i in self.conf_chains( return_type=int ):
-			for j in self.chain_contracts( i ):
-				__all.append( { self.a_contract( i , j ) : attrType( i , j ) } )
-		return __all
-	elif attrType == self.w3_events:
-		return self.w3_events()
-	else:
-		for i in self.conf_chains( return_type=int ):
-			for j in self.chain_contracts( i ):
-				for k in self.w3_events( i , j ):
-					__all.append( { self.a_filter( i , j , k.event_name ) :  attrType( i , j , k.event_name ) } )
-		return __all
-
-def _partial( _dict ):
-	assert( type( _dict ) == dict )
-	values = []
-	_dictKeys = list( _dict.keys() )
-	for i in _dictKeys:
-		value = _dict.get( i )
-		if value != '0x' or value != b'' or value != [] or value != 0:
-			values.append( value )
-	return len( _dictKeys ) != len( values )
-
-def pathify( self , aether_path : str , node_name : str ):
-	self.node_name = node_name
-	if not self.node_name:
-		self.log_error( 0 )
-
-	self.aether_path = aether_path
-	if not isdir( aether_path ):
-		self.log_error( 1 )
-
-	self.node_path = '%s/nodes/%s.node'%( self.aether_path , self.node_name )
-	if not isdir( self.node_path ):
-		self.log_error( 7 )
-
-	self._logPath =  '%s/logs'%self.aether_path
-	if not isdir( self._logPath ):
-		self.log_error( 8 )
-
-	self._execPath = '%s/__%s__'%( self.node_path , node_name )
-	if not isfile( self._execPath ):
-		self.log_error( 9 )
-
-	self._confPath = '%s/.conf/config.json'%self.node_path
-	if not isfile( self._confPath ):
-		self.log_error( 2 )
-
-	self._cachePath = '%s/.A-block.json'%self.node_path
-
-
+def _getCaller( _pvtKey: str ) -> dict :
+	_w3 = Web3()
+	try:
+		pubKey = _w3.eth.account.from_key( _pvtKey ).address
+		return {"pvtKey": _pvtKey,"pubKey": pubKey}
+	except:
+		raise ConfErr( 5 )
+		quit()
 
 # Generality
 def _readFile( _filePath : str , _parse : bool = False ) -> str :
@@ -206,13 +113,109 @@ def getRandomHex( _bytes: int ) -> str :
 		temp += str( hexdigits[ randint( 0 , hexcase_length - 1 ) ] )
 	return temp
 
-
 # Exceptions
 def _formatArgs( args: list ) -> str :
 	_arglog = ""
 	for argument in args:
 		_arglog += "%s\n"%str( argument )
 	return _arglog
+
+def _bytesToHex( _bytes: bytes ) -> str :
+	if type( _bytes ) != bytes:
+		return ''
+	return '0x%s'%str( _bytes.hex() )
+
+def _hexify( _hexList: list ) -> str:
+	if type( _hexList ) != list:
+		return ''
+	return '0x%s'%''.join( [i.replace( '0x' , '' ) for i in _hexList] )
+
+def _connectTemplate() -> Web3 :
+	return Web3()
+
+def _connectRpc( _rpc : str ) -> Web3 :
+	return Web3 ( Web3.HTTPProvider( _rpc ) )
+
+def _connectWss( _wss : str ) :
+	return Web3 ( Web3.WebsocketProvider( _wss ) )
+
+def _initContract( _w3 : Web3 , _addr : str , _abi : str ) : 
+	return _w3.eth.contract( address = _addr , abi = _abi )
+
+def _getBalance( _w3 : Web3 , callerAddr : str ) -> str :
+	return _w3.eth.get_balance( _w3.toChecksumAddress( callerAddr ) )
+
+def _getNonce( _w3 : Web3 , callerAddr : str ) -> int :
+	return _w3.eth.get_transaction_count( callerAddr )
+
+def execViewCall( _contract , _function : str , *args , _from=ZERO_ADDRESS ) :
+	w3_function = _contract.get_function_by_name( _function )
+	if _from != ZERO_ADDRESS :
+		return w3_function( *args ).call({'from':_from})
+	return w3_function( *args ).call() 
+
+def execActionCall( _contract , _w3 : Web3 , _function : str , _params : dict , _pvt : str , *args ) :
+	w3_function = _contract.get_function_by_name( _function )
+	_txn = w3_function( *args ).buildTransaction( _params )
+	txn = _w3.eth.send_raw_transaction( _w3.eth.account.sign_transaction( _txn, private_key=_pvt ).rawTransaction )
+	return _w3.toHex( txn )
+
+def all_of( self , attrType ):
+	__all = []
+	if attrType == self.w3_conn:
+		for i in self.conf_chains( return_type=int ):
+			__all.append( { self.a_conn( i ) : attrType( i ) } )
+		return __all
+	elif attrType == self.w3_contract:
+		for i in self.conf_chains( return_type=int ):
+			for j in self.chain_contracts( i ):
+				__all.append( { self.a_contract( i , j ) : attrType( i , j ) } )
+		return __all
+	elif attrType == self.w3_events:
+		return self.w3_events()
+	else:
+		for i in self.conf_chains( return_type=int ):
+			for j in self.chain_contracts( i ):
+				for k in self.w3_events( i , j ):
+					__all.append( { self.a_filter( i , j , k.event_name ) :  attrType( i , j , k.event_name ) } )
+		return __all
+
+def _partial( _dict ):
+	assert( type( _dict ) == dict )
+	values = []
+	_dictKeys = list( _dict.keys() )
+	for i in _dictKeys:
+		value = _dict.get( i )
+		if value != '0x' or value != b'' or value != [] or value != 0:
+			values.append( value )
+	return len( _dictKeys ) != len( values )
+
+def pathify( self , aether_path : str , node_name : str ):
+	self.node_name = node_name
+	if not self.node_name:
+		self.log_error( 0 )
+
+	self.aether_path = aether_path
+	if not isdir( aether_path ):
+		self.log_error( 1 )
+
+	self.node_path = '%s/nodes/%s.node'%( self.aether_path , self.node_name )
+	if not isdir( self.node_path ):
+		self.log_error( 7 )
+
+	self._logPath =  '%s/logs'%self.aether_path
+	if not isdir( self._logPath ):
+		self.log_error( 8 )
+
+	self._execPath = '%s/__%s__'%( self.node_path , node_name )
+	if not isfile( self._execPath ):
+		self.log_error( 9 )
+
+	self._confPath = '%s/.conf/config.json'%self.node_path
+	if not isfile( self._confPath ):
+		self.log_error( 2 )
+
+	self._cachePath = '%s/.A-block.json'%self.node_path
 
 class ConfErr(Exception):
 	def __init__( self , errorNo , *args ):

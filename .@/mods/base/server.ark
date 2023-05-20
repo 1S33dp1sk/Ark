@@ -1,1 +1,7 @@
+/**
+Any program always starts with `dPRG` 
+ a simple sequential leveled interepreter based execution point/er.
+
+we can create a simple shell server
+**/
 
