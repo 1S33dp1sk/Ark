@@ -43,7 +43,8 @@
 	#define check_archfile(x) (get_mstat(x, lbb_mstat)!=1)
 	#define __ARK__() {\
 	};\
-
+	
+	#define ark(x,y,z,...) static y (x)(z) __VA_ARGS__;
 	#define dFUN(x,y,...) static y (x)() __VA_ARGS__;
 	#define lang(intrpt, ...) int intrpt;
 	#define arch_fld(x) __combine_str(lbb_mod, x)
@@ -78,8 +79,8 @@
  * provide a more roboust, effective communication adaptive protocol.
  * 
  **/
-	#define fld_out(x, fmt, ...) __TRAV(x, \n, __VA_ARGS__)
-	#define lbb_out(fmt, ...) __TRAV(3, \n, __VA_ARGS__)
+	#define fld_out(x,fmt,...) __TRAV(x, \n, __VA_ARGS__)
+	#define lbb_out(fmt,...) __TRAV(3, \n, __VA_ARGS__)
 	#define lbb_putAddr(a,b) __TRAV(3, \n, lbb##a=:#b)
 	#define lbb_putPath(a,b) __TRAV(3, \n,#a:=b)
 	#define lbb_putJson(a,b) __TRAV(3, \n,#a:b)
@@ -104,8 +105,6 @@
 	#define check_caller(x) ((ulong)__exact_match(__address(x), uni_address))
 	// base for charms
 	#define __LBB__(a,b,...) lbb_load(a,b)
-
-
 	#define arg_offset(a, ...) {\
 		int i=0,c=0,temp,__temp;\
 		char *__args=(char *)&#__VA_ARGS__, *__base, *__name;\
@@ -132,7 +131,6 @@
 		img_argc(#__VA_ARGS__);\
 		printf("IXR: %s :: %lu\n",#p, ixr_img_argc);\
 
-	
 	#define __ATP__(a,d,...) Alpha_atp &___buffer; {\
 		__dbuf__();\
 		memmove(_atp_domain, #d, str_rwings(#d));\

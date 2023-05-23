@@ -13,11 +13,7 @@ dFUN(myfunc, char const *, {
 	return "mrkj";
 })
 
-/** 
-One of the beauty points of Ark is the `lang` operator
-The initial Ark script is C89-friendly but any other interpreter
-can be called from within.
-**/
+
 
 lang(py_print,
 	return "ok";
@@ -28,6 +24,12 @@ dFUN(json_handler, char const *, {
 	return "ok";
 })
 
+/** 
+One of the beauty points of Ark is the `program` operator
+initate a program instance and access the different properties
+as seen fit. The initial Ark script is C89-friendly but any 
+other interpreter can be called from within.
+**/
 
 dPRG(
 	program(_start_cfg, IXR&->wrapper.sh)

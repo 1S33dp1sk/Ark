@@ -3,14 +3,17 @@
 
 
 
-dFUN(get_ip, char const *, {
-	return __domain_ip("d-cloud.io");
+ark(get_ipaddr, char const *, char const *__, {
+	return __domain_ip(__);	
 })
 
 
 dPRG(
-	string(dcloud_ip, get_ip())
-	out(dcloud_ip)
+	
+	Domain();
+	Shard();
+	Alias();
+
 )
 
 

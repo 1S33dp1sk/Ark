@@ -1,4 +1,4 @@
-from .. import onchain
+from ..hub.io import onchain
 from ..errors.Throwable import ConfErr
 from ..errors import _getAssertStr
 from ..constants.chains import chain_names,chain_symbols,chain_ids,cid_chains

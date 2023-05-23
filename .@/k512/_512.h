@@ -211,7 +211,7 @@
 			#define __arr_sep ", "
 			#define __key_sep " : "
 			#define keyis(x,y) {log_str(0,x); log_str(0,__key_sep); out_fmt(y); __line_endings; }
-			#define str_keyis(x,y) { log_str(0,#x); log_str(0,__key_sep); out_fmt(y); __line_endings; }
+			#define str_keyis(x,y) { log_str(0,#x); log_str(0,__key_sep); log_str(0,y.__); __line_endings; }
 			#define arr_keyis(x,y) { log_str(0,#x); log_str(0,__key_sep); log_str(0,y.__); log_str(0,__arr_sep); __line_endings; }
 
 			/** 
@@ -222,7 +222,12 @@
 			 * ... => ...is
 			**/
 			#define out_kv(x,y) arr_keyis(x,y)
-			#define out(x) out_kv(#x,x);
+			#define out(x) str_keyis(#x,x);
+
+			#define OUT(x) _Generic((x), \
+				laddr: 2,\
+				d_arr: 2,\
+				default: 1)
 
 
 		    #define OUT_ENK_H(fd,x) do { \

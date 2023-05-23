@@ -1,6 +1,26 @@
 from generality.w3 import execViewCall,_bytesToHex
 from ..constants.contract_names import AETHER_HUB
 
+
+def _addNodeAddress( _nodePath: str , _addr:str ):
+	_w3 = Web3()
+	_csAddr = _w3.toChecksumAddress( _addr )
+	_filepathENV = '%s/.conf/env.conf.json'%_nodePath
+	_filepathCONFIG = '%s/.conf/config.json'%_nodePath
+	if not isfile( _filepathENV ) or not isfile( _filepathCONFIG ) :
+		raise ConfErr( 8 , _nodePath )
+		quit()
+	temp_env = _readFile( _filepathENV , True )
+	temp_env["NODE_ADDR"] = _csAddr
+	_writeFile( _filepathENV , temp_env , True , True )
+	temp_conf = _readFile( _filepathCONFIG , True )
+	_chains = temp_conf["CHAINS"]["chainIds"]
+	for j in _chains:
+		temp_conf["CHAINS"][str(j)]["contracts"]["AETHER_NODE"] = _csAddr
+	_writeFile( _filepathCONFIG , temp_conf , True , True )
+
+
+
 def ATxnReceive( self , chainId=0 , ATxnHash="" , **kwargs ):
 	_atxnHash = _bytesToHex( ATxnHash )
 	txnData = self.w3_atxnHash( chainId , _atxnHash )
@@ -91,3 +111,11 @@ def aetherStep( self , chainId=0 ):
 		if txn_hash :
 			self.log_data( data='<CID, SBMT_TXN> : <%s, %s>'%( str( chainId ) , str( txn_hash ) ) )
 			return txn_hash
+
+
+
+def w3_blocksPerBlock( self , chainId ):
+
+	return execViewCall( self.w3_contract( chainId , AETHER_HUB ) , 'BLOCKS_PB' )
+
+

@@ -1,4 +1,3 @@
-from ..constants import *
 from generality.w3 import connect_wss,init_contract,execViewCall,_bytesToHex
 from generality.fileIO import _readFile,_writeFile
 from generality.key_value import mkdict,rddict
@@ -7,6 +6,7 @@ from os import getcwd
 from copy import deepcopy
 from .Aether import Aether
 from generality.constants import ZERO_ADDRESS
+
 '''
 Making 0xAether dynamic is all about having the correct calls
 to the correct contracts and updating when necessary
