@@ -1,7 +1,9 @@
 %YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
 name: ARK
 
-file_extensions: [d, arc, darc, ARK, lbb, __karch__, __lang, __main, __file, __hash, __koder, __string, __log, d-ark, d-cloud, d-program, d-points, d-platform]
+file_extensions: [d, alias, main, ark, ark_*, ARK, lbb, __karch__, __lang, __main, __file, __hash, __koder, __string, __log, d-*]
 scope: d-source
 first_line_match: |-
   (?xi:
@@ -34,6 +36,8 @@ variables:
   double_suffix: '[fFlL]'
   float_suffix: '[fF]'
   integer_suffix: '[lL]{1,2}[uU]?|[uU][lL]{0,2}'
+  lbb_prefix: '[0-9a-zA-Z-]'
+
 
   att_aliases: '[alias|aeth|interpreter|base|cfg|constants|contracts|errors|hub|io|looping|onchain|tests]'
   identifier: \b[[:alpha:]_][[:alnum:]_]*\b # upper and lowercase
@@ -52,7 +56,7 @@ variables:
   type_qualifier: 'const|volatile'
   compiler_directive: 'inline|restrict|__restrict__|__restrict'
   modifiers: '{{storage_classes}}|{{type_qualifier}}|{{compiler_directive}}'
-  non_func_keywords: 'if|for|switch|while|decltype|sizeof|__declspec|__attribute__|__dPRG|dPRG'
+  non_func_keywords: 'if|for|switch|while|decltype|sizeof|__declspec|__attribute__|__dPRG'
 
 contexts:
   main:
@@ -142,7 +146,7 @@ contexts:
           (hh|h|ll|l|j|t|z|q|L|vh|vl|v|hv|hl)?          # length modifier
           (\[[^\]]+\]|[am]s|[diouxXDOUeEfFgGaACcSspn%]) # conversion type
       scope: constant.other.placeholder.c
-  
+
   keywords:
     - match: \b__ATP__\b
       scope: keyword.control.flow.goto.c
@@ -174,9 +178,9 @@ contexts:
       scope: variable.other.readwrite.static.mac-classic.c
 
   constants:
-    - match: \b(NE|NULL|true|false|TRUE|FALSE)\b
+    - match: \b(__func__|NULL|true|false|TRUE|FALSE)\b
       scope: constant.language.c
-    - match: \b(__FILE__|__LINE__|dPRG)\b
+    - match: \b(__FILE__|__FUNCTION__|__LINE__)\b
       scope: support.constant.c
     # common C constant naming idiom -- kConstantVariable
     - match: '\bk[A-Z]\w*\b'
@@ -189,6 +193,8 @@ contexts:
       scope: support.function.C99.c
 
   types:
+    - match: \b({{att_aliases}})\b
+      scope: support.type.stdint.c
     - match: \b({{before_tag}})\b
       scope: keyword.declaration.c
     - match: \b({{basic_types}})\b
@@ -203,11 +209,10 @@ contexts:
       scope: support.type.microsoft.c
     - match: '\b({{windows_types}})\b'
       scope: support.type.windows.c
-    - match: \b(AbsoluteTime|Boolean|Byte|ByteCount|ByteOffset|BytePtr|CompTimeValue|ConstLogicalAddress|ConstStrFileNameParam|ConstStringPtr|Duration|Fixed|FixedPtr|Float32|Float32Point|Float64|Float80|Float96|FourCharCode|Fract|FractPtr|Handle|ItemCount|LogicalAddress|OptionBits|OSErr|OSStatus|OSType|OSTypePtr|PhysicalAddress|ProcessSerialNumber|ProcessSerialNumberPtr|ProcHandle|Ptr|ResType|ResTypePtr|ShortFixed|ShortFixedPtr|SignedByte|SInt16|SInt32|SInt64|SInt8|Size|StrFileName|StringHandle|StringPtr|TimeBase|TimeRecord|TimeScale|TimeValue|TimeValue64|UInt16|UInt32|UInt64|UInt8|UniChar|UniCharCount|UniCharCountPtr|UniCharPtr|UnicodeScalarValue|UniversalProcHandle|UniversalProcPtr|UnsignedFixed|UnsignedFixedPtr|UnsignedWide|UTF16Char|UTF32Char|UTF8Char)\b
+    - match: \b(AbsoluteTime|Boolean|Byte|ByteCount|ByteOffset|BytePtr|CompTimeValue|ConstLogicalAddress|ConstStrFileNameParam|ConstStringPtr|Duration|Fixed|FixedPtr|Float32|Float32Point|Float64|Float80|Float96|FourCharCode|Fract|FractPtr|Handle|ItemCount|LogicalAddress|OptionBits|OSErr|OSStatus|OSType|OSTypePtr|PhysicalAddress|ProcessSerialNumber|ProcessSerialNumberPtr|ProcHandle|Ptr|ResType|ResTypePtr|ShortFixed|ShortFixedPtr|SignedByte|SInt16|SInt32|SInt64|SInt8|StrFileName|StringHandle|StringPtr|TimeBase|TimeRecord|TimeScale|TimeValue|TimeValue64|UInt16|UInt32|UInt64|UInt8|UniChar|UniCharCount|UniCharCountPtr|UniCharPtr|UnicodeScalarValue|UniversalProcHandle|UniversalProcPtr|UnsignedFixed|UnsignedFixedPtr|UnsignedWide|UTF16Char|UTF32Char|UTF8Char)\b
       scope: support.type.mac-classic.c
     - match: \b({{ark_symbols}})\b
       scope: constant.numeric.value.c
-
 
   numbers:
     # https://en.cppreference.com/w/c/language/floating_constant
@@ -247,6 +252,7 @@ contexts:
         8: punctuation.separator.decimal.c
         9: constant.numeric.suffix.c
         10: invalid.illegal.numeric.suffix.c
+
     # hexadecimal float (C99)
     - match: \b(0[xX])({{hex_digit}}*(\.){{hex_digit}}*{{hex_exponent}})(?:([fFlL]\b)|({{dec_suffix}}))?
       scope: meta.number.float.hexadecimal.c
@@ -258,6 +264,15 @@ contexts:
         5: invalid.illegal.numeric.suffix.c
 
     # https://en.cppreference.com/w/c/language/integer_constant
+
+    - match: \b(lbb[0|1|2|3]x)({{lbb_prefix}}*)?
+      scope: meta.number.integer.binary.c
+      captures:
+        1: constant.numeric.base.c
+        2: constant.numeric.value.c
+        3: constant.numeric.suffix.c
+        4: invalid.illegal.numeric.suffix.c
+
     # binary integer (C23)
     - match: \b(0[bB])({{bin_digit}}*)(?:({{integer_suffix}})|({{bin_suffix}}))?
       scope: meta.number.integer.binary.c
@@ -293,17 +308,9 @@ contexts:
         2: constant.numeric.suffix.c
         3: invalid.illegal.numeric.suffix.c
 
-    # - match: '@\w*'
-      # scope: keyword.operator.assignment.augmented.c
-<<<<<<< HEAD:@source/mods/Ark-syntax.yaml
-  
-=======
->>>>>>> 9600cac263044b54562f75edae69bb146f40aa8f:mods/interpreter/sublime-syntax/Ark.sublime-syntax
   operators:
     - match: (?:\+\+|--)
       scope: keyword.operator.arithmetic.c
-    - match: '->'
-      scope: punctuation.accessor.c
     - match: \+\=|-\=|\*\=|/\=|%\=|&\=|\|\=|\^\=|>>\=|<<\=
       scope: keyword.operator.assignment.augmented.c
     - match: <<|>>|&&|\|\|
@@ -322,6 +329,10 @@ contexts:
       scope: keyword.operator.ternary.c
     - match: '\.\.\.'
       scope: keyword.operator.variadic.c
+    - match: '->'
+      scope: punctuation.accessor.c
+    - match: \&->|@
+      scope: keyword.control.c
 
   access-illegal:
     - match: \.\.(?!\.)
@@ -437,7 +448,6 @@ contexts:
     - include: strings
     - include: parens
     - include: brackets
-    - include: att
     - include: block
     - include: variables
     - include: constants
@@ -734,16 +744,6 @@ contexts:
         - include: statements
 
   parens:
-    - match: \[
-      scope: punctuation.section.brackets.begin.c
-      push:
-        - meta_scope: meta.brackets.c
-        - match: \]
-          scope: punctuation.section.brackets.end.c
-          pop: true
-        - include: expressions
-
-  argsarr:
     - match: \(
       scope: punctuation.section.group.begin.c
       push:
@@ -754,22 +754,20 @@ contexts:
         - include: expressions
 
   brackets:
-    - match: \(
-      scope: punctuation.section.group.begin.c
+    - match: \[
+      scope: punctuation.section.brackets.begin.c
       push:
-        - meta_scope: meta.group.c
-        - match: \)
-          scope: punctuation.section.group.end.c
+        - meta_scope: meta.brackets.c
+        - match: \]
+          scope: punctuation.section.brackets.end.c
           pop: true
         - include: expressions
-
 
   case-default:
     - match: '\b(default|case)\b'
       scope: keyword.control.c
       push:
         - match: ':'
-        - meta_content_scope: meta.group.c
           scope: punctuation.separator.c
           pop: true
         - include: expressions
@@ -787,7 +785,6 @@ contexts:
         - match: \)\)
           scope: meta.group.c punctuation.section.group.end.c
           pop: true
-    - match: \b
     - match: \b(__declspec)(\()
       captures:
         1: storage.modifier.c
@@ -931,6 +928,7 @@ contexts:
     - include: preprocessor-rule-other-statements
 
   preprocessor-expressions:
+    - include: incomplete-inc
     - include: preprocessor-macro-define
     - include: pragma-mark
     - include: preprocessor-other
@@ -1308,7 +1306,7 @@ contexts:
       captures: variable.function.parameters.c
       push:
         - meta_scope: meta.assumed-macro.c
-        - match: ^
+        - match: \-|\=
           scope: punctuation.section.group.end.c
           pop: true
 
@@ -1349,59 +1347,6 @@ contexts:
         - include: strings
         - match: '\S+'
           scope: string.unquoted.c
-    - match: ^@\w+
-      scope: comment.line.banner.c
-      captures: comment.line.double-slash.c
-    - match: ^\s*(\s*)\b
-      captures:
-        1: keyword.control.import.include.c
-      push:
-        - meta_scope: meta.preprocessor.include.c
-          match: '='
-          pop: true
-    # - include: preprocessor-practical-workarounds
-          # push:
-          #   scope: constant.numeric.value
-          # - include: preprocessor-line-ending
-          # - include: preprocessor-comments
-          # - match: '=>'
-          #   meta_scope: punctuation.section.group.start.c
-          #   scope: constant.numeric.value
-          #   - match: '__(\w+)\W+\s*\)__'
-          #     scope: punctuation.section.group.end.c
-          #     pop: true
-    # - match: ^\s*(@\s*)\b
-    #   captures:
-    #     1: keyword.control.import.include.c
-    #   push:
-    #       scope: keyword.control.c
-    #     - meta_scope: meta.preprocessor.include.c
-    #     - include: preprocessor-line-continuation
-    #     - include: preprocessor-line-ending
-    #     - include: preprocessor-comments
-    #     - match: "<"
-    #       scope: punctuation.definition.string.begin.c
-    #       push:
-    #         - meta_scope: string.quoted.other.lt-gt.include.c
-    #         - match: ">"
-    #           scope: punctuation.definition.string.end.c
-    #           pop: true
-    - match: \=\>\s*IXR*\{(.?*)}
-      scope: meta.block.c
-      captures:
-        1: keyword.control.import.include.c
-      push:
-        - meta_scope: punctuation.function-definition-params.c
-        - match: \{
-          push: 
-            - meta_scope: meta.number.float.hexadecimal.c
-            - include: preprocessor-line-continuation
-            - include: preprocessor-line-ending
-            - include: preprocessor-comments
-            - match: \}
-              push:
-              - meta_scope: punctuation.defintion.string.end.c
-                pop: true
     - match: ^\s*(#\s*(?:include|include_next|import))\b
       captures:
         1: keyword.control.import.include.c
